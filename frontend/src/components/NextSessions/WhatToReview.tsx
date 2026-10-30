@@ -146,8 +146,8 @@ export function WhatToReviewPanel() {
         <div className="ns-title">
           <h2>What to review</h2>
           <p>
-            Three review sessions for {scope}, picked from work you did 1, 3, 7, 14 or 30 days ago,
-            work that went badly, and hard work you never went back to. {dueLine}
+            Three review sessions for {scope}. They come from recent work, work that went badly and
+            hard work you never went back to. {dueLine}
           </p>
         </div>
       </header>

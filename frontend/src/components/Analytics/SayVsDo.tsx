@@ -228,8 +228,8 @@ function MoodHero({ mood }: { mood: MoodVsOutput }) {
         <PanelNote label="How this is worked out">
           <ul className="ax-sv-rules">
             <li>
-              A day's mood is what you tapped on the Log page. With no tap, it's read from the feeling
-              words in that day's entries ("so tired" counts double, "not tired" doesn't count).
+              A day's mood is what you tapped on the Log page. No tap? We go by the feeling words in
+              that day's entries. "So tired" counts double and "not tired" doesn't count.
             </li>
             <li>Rough is below the middle, okay is the middle, good is above it.</li>
             <li>
@@ -248,7 +248,7 @@ function MoodHero({ mood }: { mood: MoodVsOutput }) {
       {headline && <p className={`ax-sv-headline is-${headline.tone}`}>{headline.text}</p>}
       <p className="ax-sv-source">
         {plural(mood.mood_days, 'day')} with a mood in the last {mood.window_days} days
-        {mood.mood_days > 0 && `: ${mood.said_days} you tapped, ${mood.read_days} read from your words`}.
+        {mood.mood_days > 0 && `: ${mood.said_days} you tapped, ${mood.read_days} from your words`}.
         {!mood.today ? (
           <>
             {' '}
@@ -280,7 +280,7 @@ function FeelingsPanel({ feelings, small, recovery, energy, energyReady, weekday
   }
   const topEnergy = Math.max(...energy.map((row) => row.tasks_avg), 1);
   return (
-    <Panel title="When you write that you feel…" className="ax-sv-feel" note="Days with each kind of word against your logged days without it.">
+    <Panel title="When you write that you feel…" className="ax-sv-feel" note="Days with each kind of word vs. days without it.">
       {ready.length > 0 && (
         <ul className="ax-sv-feelings">
           {ready.map((row) => {
@@ -371,16 +371,16 @@ function verdictText(check: PerceptionCheck) {
     case 'matches':
       if (check.side === 'low') {
         return check.tasks === 0
-          ? 'The record agrees: nothing finished. Tomorrow is a fresh start.'
-          : `Fair: just ${did}, against your usual ${check.usual}.`;
+          ? 'Yep, nothing got finished. Tomorrow is a fresh start.'
+          : `Fair. Just ${did}, under your usual ${check.usual}.`;
       }
-      return `The record agrees: ${did}, against your usual ${check.usual}.`;
+      return `You called it: ${did} vs. your usual ${check.usual}.`;
     case 'deep':
       return `Fewer tasks (${check.tasks}), but ${minutes(check.focus_min)} of focus. The work went deep.`;
     case 'generous':
-      return `It felt big, but the record says ${did} against your usual ${check.usual}.`;
+      return `It felt big, but you did ${did} vs. your usual ${check.usual}.`;
     default:
-      return `A little under your usual: ${did} against ${check.usual}.`;
+      return `A little under your usual: ${did} vs. ${check.usual}.`;
   }
 }
 
@@ -401,7 +401,7 @@ function PerceptionPanel({ checks, harsher }: { checks: PerceptionCheck[]; harsh
       note={
         harsher >= 2
           ? `${harsher} times you called a day a write-off and still hit your usual.`
-          : 'What you wrote about getting things done, against what got done.'
+          : 'What you wrote about getting things done vs. what got done.'
       }
     >
       <ul>
@@ -445,9 +445,9 @@ export function SayVsDo({
           <div>
             <strong>See how your mood and your work move together</strong>
             <p>
-              Tap how your day went on the Log page, or write a few lines. After a few days this shows
-              whether rough days really cost you, what being tired or stressed does to your output, and
-              whether days that felt like a write-off actually were.
+              Tap how your day went on the Log page, or write a few lines. Give it a few days. Then you'll
+              see if rough days really cost you and what being tired does to your work. You'll also see if
+              the days that felt like a write-off really were.
             </p>
             <Link to="/log" className="ax-btn">
               Open the Log

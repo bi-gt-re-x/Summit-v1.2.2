@@ -186,7 +186,7 @@ export function ConsistencyPanel({ rows }: ConsistencyPanelProps) {
       footer={
         <PanelNote label="How this works">
           <ul className="ax-tips">
-            <li><b>Any work counts:</b> A day with any work on it is a day worked.</li>
+            <li><b>Any work counts:</b> Do anything at all and the day counts.</li>
             <li><b>Size doesn't matter:</b> 15 minutes counts the same as 6 hours.</li>
           </ul>
         </PanelNote>

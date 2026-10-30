@@ -462,16 +462,16 @@ def suggestions(found: dict, month: Counter) -> List[dict]:
             order = [label for _, _, label in RESOURCES]
             picked = sorted(top['resources'], key=lambda label: order.index(label) if label in order else 99)
             example = '"{}: 10 problems"'.format(picked[0])
-            how = 'You mentioned {}. A task like {} filed under {} makes those sessions count here.'.format(
+            how = 'You mentioned {}. A task like {} in {} makes those sessions count here.'.format(
                 _and(picked[:3]), example, top['name'])
         else:
-            how = 'A task like "{}: 45 minutes", filed under {}, is enough to get it on the board.'.format(
+            how = 'A task like "{}: 45 minutes" in {} is enough to get it on the board.'.format(
                 top['name'], top['name'])
         if found.get('best_day'):
             on_day = ' on {}, the day you get the most done'.format(found['best_day'])
         out.append({
             'key': 'start-top',
-            'title': 'Get {} on the record'.format(top['name']),
+            'title': 'Start logging {}'.format(top['name']),
             'body': ('{} comes up {} times in what you wrote, {}, and has no tasks in the last '
                      '30 days. {} Do the first one{}.').format(
                          top['name'], top['mentions'],
@@ -489,7 +489,7 @@ def suggestions(found: dict, month: Counter) -> List[dict]:
         out.append({
             'key': 'practice',
             'title': 'Count the practice you already do',
-            'body': ('{} {} practice you do anyway, but none of it is in your record. Make a '
+            'body': ('{} {} practice you do anyway, but none of it\'s logged here. Make a '
                      'repeating task for each (for example "{} practice", every day you do it) so the '
                      'time shows up here and in your streak.').format(
                          _and(practice), 'is' if len(practice) == 1 else 'are', practice[0]),

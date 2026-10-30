@@ -125,7 +125,7 @@ export function GoalForecast({ onBooked, reload = 0 }: { onBooked?: () => void; 
           <PanelNote label="How this works">
             <ul className="ax-tips">
               <li>
-                <b>What's left:</b> The steps you haven't ticked off, or how far you are from your number.
+                <b>What's left:</b> The steps you haven't ticked off, or how far you've got to go to your number.
               </li>
               <li>
                 <b>Your pace:</b> Sessions a week on the goal's subject over the last 4 weeks. Tasks and focus timers

@@ -212,11 +212,9 @@ class BriefUnavailable(RuntimeError):
 
 
 NO_KEY = (
-    'Writing this up needs an Anthropic key. Put one in ANTHROPIC_API_KEY in '
-    '.env and restart the server. A Hugging Face token does not cover this '
-    'one: it asks a model to write over a table of your figures without '
-    'adding any, and a small model inventing a number here would be worse '
-    'than no panel at all.')
+    'This needs an Anthropic key. Put one in ANTHROPIC_API_KEY in .env and '
+    "restart the server. A Hugging Face token won't work here. Smaller models "
+    "tend to make up numbers, and that's worse than no summary.")
 
 
 def configured() -> bool:
@@ -343,15 +341,15 @@ def _object(text: str) -> Dict[str, Any]:
     except (json.JSONDecodeError, ValueError):
         match = re.search(r'\{.*\}', body, re.S)
         if not match:
-            raise BriefUnavailable('The model’s answer could not be read. Try again.')
+            raise BriefUnavailable("The AI's answer came back garbled. Try again.")
         try:
             found = json.loads(match.group(0))
         except (json.JSONDecodeError, ValueError) as exc:
             raise BriefUnavailable(
-                'The model’s answer could not be read. Try again.') from exc
+                "The AI's answer came back garbled. Try again.") from exc
 
     if not isinstance(found, dict):
-        raise BriefUnavailable('The model’s answer could not be read. Try again.')
+        raise BriefUnavailable("The AI's answer came back garbled. Try again.")
     return found
 
 
@@ -407,7 +405,7 @@ def write(findings: Dict[str, Any], model_id: str = '') -> Dict[str, Any]:
     if not configured():
         raise BriefUnavailable(NO_KEY)
     if not (findings.get('subject') or '').strip():
-        raise BriefUnavailable('There is no subject to write about.')
+        raise BriefUnavailable("There's no subject to write about.")
 
     try:
         text = planner.from_provider(

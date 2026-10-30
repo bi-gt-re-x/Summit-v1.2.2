@@ -58,7 +58,7 @@ export const METRIC_META: Record<
     label: 'Productivity',
     tone: 'blue',
     glyph: 'sparkle',
-    asks: 'XP a working day, against your daily goal',
+    asks: 'XP a working day vs. your daily goal',
   },
   quality: {
     label: 'Quality',
@@ -82,7 +82,7 @@ export const METRIC_META: Record<
     label: 'Focus',
     tone: 'pink',
     glyph: 'sparkle',
-    asks: 'your focus time against your goal',
+    asks: 'your focus time vs. your goal',
   },
 };
 
@@ -279,7 +279,7 @@ export function PeriodCards({
             <span className="ax-gp-card-note">
               {card.previous === null
                 ? 'nothing earlier to compare with'
-                : `against the ${card.days} days before · ${card.previous} → ${card.overall}`}
+                : `vs. the ${card.days} days before · ${card.previous} → ${card.overall}`}
             </span>
             <Spark values={card.spark} way={way} />
           </button>
@@ -1071,8 +1071,8 @@ export function whatChanged(data: GrowthPeriods): ReactNode[] {
   if (Math.abs(xpNow - xpThen) >= 1) {
     lines.push(
       <>
-        You earned <strong>{fmtNumber(Math.round(xpNow))} XP a working day</strong>, against{' '}
-        {fmtNumber(Math.round(xpThen))} over the period before.
+        You earned <strong>{fmtNumber(Math.round(xpNow))} XP a working day</strong>, compared with{' '}
+        {fmtNumber(Math.round(xpThen))} the period before.
       </>,
     );
   }
@@ -1084,7 +1084,7 @@ export function whatChanged(data: GrowthPeriods): ReactNode[] {
   if (totalNow > 0 && totalThen > 0 && daysNow !== daysThen) {
     lines.push(
       <>
-        You worked on <strong>{daysNow} of {totalNow} days</strong>, against {daysThen} of{' '}
+        You worked on <strong>{daysNow} of {totalNow} days</strong>, compared with {daysThen} of{' '}
         {totalThen}.
       </>,
     );
@@ -1095,7 +1095,7 @@ export function whatChanged(data: GrowthPeriods): ReactNode[] {
   if (Math.abs(hoursNow - hoursThen) >= 0.5) {
     lines.push(
       <>
-        You logged <strong>{hoursNow.toFixed(1)} hours of focus</strong>, against{' '}
+        You logged <strong>{hoursNow.toFixed(1)} hours of focus</strong>, compared with{' '}
         {hoursThen.toFixed(1)}.
       </>,
     );
@@ -1107,7 +1107,7 @@ export function whatChanged(data: GrowthPeriods): ReactNode[] {
     lines.push(
       <>
         You finished <strong>{Math.round(onTimeNow)}% of tasks by their deadline</strong>,
-        against {Math.round(onTimeThen)}%.
+        compared with {Math.round(onTimeThen)}%.
       </>,
     );
   }
@@ -1120,7 +1120,7 @@ export function whatChanged(data: GrowthPeriods): ReactNode[] {
     lines.push(
       <>
         You rated your work <strong>{qNow.toFixed(1)} out of 25</strong> across{' '}
-        {fmtNumber(ratedNow)} tasks, against {qThen.toFixed(1)} across {fmtNumber(ratedThen)}.
+        {fmtNumber(ratedNow)} tasks, compared with {qThen.toFixed(1)} across {fmtNumber(ratedThen)}.
       </>,
     );
   }

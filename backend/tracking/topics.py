@@ -677,7 +677,7 @@ def plan(goal: Dict[str, Any], rows: Sequence[Dict[str, Any]]) -> Dict[str, Any]
             'id': 'weak-{}'.format(row['topic']),
             'weight': 'now' if at == 0 else 'next',
             'title': title_text,
-            'why': 'Your {} work rates {} out of 5, against {} across {}. It\'s the weakest part of {} you\'ve worked on ({} tasks).'.format(
+            'why': 'Your {} work rates {} out of 5, vs. {} across {}. It\'s the weakest part of {} you\'ve worked on ({} tasks).'.format(
                 lower(row['label']), _figure(row['execution']), _figure(row['base']),
                 row['subject_label'], aim, row['tasks']),
             'topic': row['topic'],
@@ -691,7 +691,7 @@ def plan(goal: Dict[str, Any], rows: Sequence[Dict[str, Any]]) -> Dict[str, Any]
         sample = sample_topic(area['subsubject'] if area else '')
         why = '{:,} tasks toward {} don\'t say what they covered, like "{}".'.format(unnamed, aim, example)
         if weak_areas and not primary:
-            why = 'Your {} work rates {} out of 5, against {} across {}, but {:,} of those tasks don\'t say the topic, like "{}".'.format(
+            why = 'Your {} work rates {} out of 5, vs. {} across {}. But {:,} of those tasks don\'t say the topic, like "{}".'.format(
                 weak_areas[0]['subsubject_label'], _figure(weak_areas[0]['execution']), _figure(weak_areas[0]['base']),
                 weak_areas[0]['subject_label'], weak_areas[0]['tasks'], weak_areas[0]['examples'][0])
         moves.append({
@@ -711,7 +711,7 @@ def plan(goal: Dict[str, Any], rows: Sequence[Dict[str, Any]]) -> Dict[str, Any]
             'id': 'start-{}'.format(spot['topic']),
             'weight': 'next',
             'title': work(primary, spot['label'], verb='Try', tree=tax.topics[spot['topic']]['tree']),
-            'why': '{} tests {}, and none of your tasks name it yet, so there\'s no read on it.'.format(
+            'why': '{} tests {}, and none of your tasks name it yet, so we can\'t tell how it\'s going.'.format(
                 primary['label'] if primary else aim, lower(spot['label'])),
             'topic': spot['topic'],
             'context': primary['id'] if primary else '',
@@ -739,7 +739,7 @@ def plan(goal: Dict[str, Any], rows: Sequence[Dict[str, Any]]) -> Dict[str, Any]
         insights.append({
             'id': 'topic-weak', 'tone': 'bad',
             'title': 'Weakest topic: {}'.format(row['label']),
-            'figure': '{} out of 5 over {} tasks, against {} across {}.'.format(
+            'figure': '{} out of 5 over {} tasks, vs. {} across {}.'.format(
                 _figure(row['execution']), row['tasks'], _figure(row['base']), row['subject_label']),
             'means': 'That\'s where {} gains the most per hour.'.format(aim),
         })
@@ -748,7 +748,7 @@ def plan(goal: Dict[str, Any], rows: Sequence[Dict[str, Any]]) -> Dict[str, Any]
         insights.append({
             'id': 'topic-weak', 'tone': 'bad',
             'title': 'Weakest area: {}'.format(row['subsubject_label']),
-            'figure': '{} out of 5 over {} tasks, against {} across {}.'.format(
+            'figure': '{} out of 5 over {} tasks, vs. {} across {}.'.format(
                 _figure(row['execution']), row['tasks'], _figure(row['base']), row['subject_label']),
             'means': 'Name the topic on those tasks and Summit can say which part of it.',
         })
@@ -768,7 +768,7 @@ def plan(goal: Dict[str, Any], rows: Sequence[Dict[str, Any]]) -> Dict[str, Any]
                 touched, len(position), primary['label'] if primary else 'goal'),
             'figure': ('Not yet: {}, and {} more.'.format(shown, len(untouched) - 4) if len(untouched) > 4
                        else 'Not yet: {}.'.format(shown)) if untouched else 'Every topic it tests has work behind it.',
-            'means': 'Topics you haven\'t tried are where {} can still surprise you.'.format(aim)
+            'means': '{} still has topics you haven\'t tried. Give one a go.'.format(aim)
             if untouched else 'Now it\'s about raising the weak ones.',
         })
 

@@ -1590,7 +1590,7 @@ export default function SubjectAnalytics() {
 
               {reading && (reading.diagnosis.length > 0 || reading.insights.length > 0) && (
                 <div className="sb-record-read">
-                  <h3 className="sb-sub">Key insights</h3>
+                  <h3 className="sb-sub">AI tips</h3>
                   <p className="sb-keys-note">
                     Written by AI from the numbers above. The tag on the right says if it helps or hurts.
                   </p>
@@ -1747,7 +1747,7 @@ export default function SubjectAnalytics() {
                   lead={
                     peakBand && peakBand.done > 0 ? (
                       <>
-                        Most of your work here is at <b>{peakBand.label.toLowerCase()}</b>:{' '}
+                        You mostly work at <b>{peakBand.label.toLowerCase()}</b>:{' '}
                         {peakBand.done} of {model.finished} finished tasks.
                       </>
                     ) : undefined
@@ -2171,7 +2171,7 @@ export default function SubjectAnalytics() {
                 >
                   <Panel
                     title="Your goals for this subject"
-                    note="How close you are to each one."
+                    note="How close you've got to each one."
                   >
                     <ul className="sb-goals">
                       {model.goals.map((goal) => (

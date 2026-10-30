@@ -264,7 +264,7 @@ export function habitVerdict(habit: Habit): string {
     return `Skipped for ${daysSince} days straight. Your usual is ${dayRate}% of days.`;
   }
   if (score >= 10 && recentScore < score * 0.5) {
-    return `Fading. ${recentScore}% the last 4 weeks, against ${score}% overall.`;
+    return `Fading. ${recentScore}% the last 4 weeks, down from ${score}% overall.`;
   }
   if (recentScore >= 10 && recentScore > score * 1.25) {
     return `Picking up. ${recentScore}% the last 4 weeks, up from ${score}% overall.`;
@@ -462,7 +462,7 @@ export function TimelinePanel({
   return (
     <Panel
       title="How your habits changed"
-      note="Where each one started and where it is now"
+      note="Where each one started and how it's doing now"
       claim={
         withPhases.length === 0 ? undefined : (
           <>

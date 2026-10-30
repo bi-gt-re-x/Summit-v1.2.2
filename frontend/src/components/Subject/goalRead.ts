@@ -214,7 +214,7 @@ export function goalRead({ subject, model, state, total, topics }: GoalReadInput
       title: `${curve.threshold.label} work goes worse than ${best.label} work`,
       figure:
         curve.threshold.execution !== null && best.execution !== null
-          ? `Your ${curve.threshold.label} work scores ${Math.round(curve.threshold.execution)} out of 100 on how it went, against ${Math.round(best.execution)} at ${best.label}.`
+          ? `Your ${curve.threshold.label} work scores ${Math.round(curve.threshold.execution)} out of 100 on how it went, vs. ${Math.round(best.execution)} at ${best.label}.`
           : `Your ratings are lower on ${curve.threshold.label} work than on ${best.label} work.`,
       means: `That's usually rushing. Points lost on easy work still cost ${aim}.`,
     });
@@ -226,7 +226,7 @@ export function goalRead({ subject, model, state, total, topics }: GoalReadInput
       title: `It falls off at ${curve.threshold.label}`,
       figure:
         best && best.execution !== null && curve.threshold.execution !== null
-          ? `Your ${curve.threshold.label} work scores ${Math.round(curve.threshold.execution)} out of 100 on how it went, against ${Math.round(best.execution)} at ${best.label}.`
+          ? `Your ${curve.threshold.label} work scores ${Math.round(curve.threshold.execution)} out of 100 on how it went, vs. ${Math.round(best.execution)} at ${best.label}.`
           : `Your ratings drop once the work gets to ${curve.threshold.label}.`,
       means: `${aim} needs that level. That's where the next gains are.`,
     });
@@ -260,7 +260,7 @@ export function goalRead({ subject, model, state, total, topics }: GoalReadInput
         id: 'volume',
         tone: change > 0 ? 'good' : 'bad',
         title: change > 0 ? 'More work than before' : 'Less work than before',
-        figure: `${total.now} tasks in this window, against ${total.before} the window before (${change > 0 ? '+' : ''}${change}%).`,
+        figure: `${total.now} tasks in this window, vs. ${total.before} the window before (${change > 0 ? '+' : ''}${change}%).`,
         means: change > 0 ? `More reps toward ${aim}.` : `Fewer reps means ${aim} moves slower.`,
       });
     }
@@ -298,7 +298,7 @@ export function goalRead({ subject, model, state, total, topics }: GoalReadInput
     moves.push({
       id: 'set-goal',
       title: `Set a main goal for ${subject}`,
-      why: 'Everything on this page reads against it: pace, what to fix first, and what to plan next.',
+      why: 'Everything on this page is about it: your pace, what to fix first and what to plan next.',
       weight: 'now',
       to: '/goals',
       link: 'Open Goals',

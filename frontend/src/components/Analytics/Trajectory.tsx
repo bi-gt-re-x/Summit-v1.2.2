@@ -117,7 +117,7 @@ export function Trajectory({
       <AreaChart
         id="ax-traj"
         height={220}
-        label={`${option.label} across ${spanLabel}, against the period before it`}
+        label={`${option.label} across ${spanLabel} vs. the period before`}
         /* The metric's own formatter, not the axis one. `option.axis` drops the
            unit because a tick is repeated six times up the left edge and has no
            room for it; the readout names one point once, and "1,240" without

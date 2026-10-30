@@ -109,7 +109,7 @@ export const MILESTONES: Milestone[] = [
        in utils/dataMaturity, where `full` is every flag already on. Saying so
        is better than inventing a feature to justify the number. */
     why: 'Three weeks of work makes long-term numbers solid.',
-    reward: 'Everything unlocked. No more low-data warnings.',
+    reward: "Everything's open. No more low-data warnings.",
     preview: 'full',
     href: '/analytics/growth',
   },

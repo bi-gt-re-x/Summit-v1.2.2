@@ -138,7 +138,7 @@ export function InsightsTab({
           have={historyDays}
           promise={whyFor(NEED_DAYS.habits)}
           spanDays={maturity.spanDays}
-          asksLead="Once you have more days in, Insights shows you:"
+          asksLead="Once you've got more days in, Insights shows you:"
           asks={[
             'Which routines stuck?',
             'When do you do your best work?',
@@ -252,7 +252,7 @@ export function InsightsTab({
         {data && (
           <PanelGroup
             title="What you say vs. what you do"
-            note="Your mood and your words, checked against your record"
+            note="Your mood and what you write, next to what you actually did"
             defaultOpen={sayVsDoHasNews(mood, said)}
           >
             <SayVsDo mood={mood} said={said} reloadSaid={() => data.said?.reload()} />

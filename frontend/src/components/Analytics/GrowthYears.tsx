@@ -164,7 +164,7 @@ function Verdict({ arc }: { arc: GrowthArc }) {
 
       <div className="ax-gy-moves">
         <Move
-          label="Execution"
+          label="How it went"
           note="how well the work went"
           from={arc.from.execution}
           to={arc.to.execution}
@@ -279,7 +279,7 @@ function RatingLines({ years }: { years: GrowthYear[] }) {
         <ul className="ax-gy-legend">
           <li className="ax-tone-green">
             <span className="ax-gy-key" aria-hidden="true" />
-            Execution
+            How it went
           </li>
           <li className="ax-tone-violet">
             <span className="ax-gy-key is-muted" aria-hidden="true" />
@@ -297,7 +297,7 @@ function RatingLines({ years }: { years: GrowthYear[] }) {
            and no sampling, unlike every other chart drawn with this. */
         readout={{
           labels: rated.map((year) => year.label),
-          names: ['Execution', 'Difficulty'],
+          names: ['How it went', 'Difficulty'],
           format: (value) => `${value.toFixed(1)} out of 5`,
         }}
         ticks={['5', '4', '3', '2', '1', '0']}
@@ -354,7 +354,7 @@ function ThenAndNow({ years }: { years: GrowthYear[] }) {
     {
       key: 'execution',
       series: rated.map((year) => year.execution!),
-      label: 'Execution',
+      label: 'How it went',
       value: last.execution === null ? '-' : last.execution.toFixed(1),
       unit: last.execution === null ? undefined : '/ 5',
       note: shift(first.execution, last.execution),
@@ -382,7 +382,7 @@ function ThenAndNow({ years }: { years: GrowthYear[] }) {
       note: `${first.tasksPerActiveDay.toFixed(1)} in ${first.label}`,
       tone: 'blue',
       glyph: 'check',
-      hint: 'Counted per day you worked, so a part year compares fairly with a full one.',
+      hint: 'Per day you worked, so a short year still compares fairly.',
     },
     {
       key: 'hours',
@@ -424,7 +424,7 @@ function StandingPanel({ hero }: { hero: ReturnType<typeof benchHero> }) {
   return (
     <Panel
       title="How this month ranks"
-      note="Your last 30 days against every other 30 you've had"
+      note="Your last 30 days vs. every other 30 days you've had"
       claim={standingClaim(hero)}
     >
       {hero.percentile === null ? (
@@ -446,7 +446,7 @@ function StandingPanel({ hero }: { hero: ReturnType<typeof benchHero> }) {
           </li>
           {hero.fromBaseline !== null && (
             <li>
-              <span>Against your first 30</span>
+              <span>Vs. your first 30</span>
               {/* As a multiple past a couple of doublings. "+1228%" is a
                   figure a reader has to do arithmetic on before it means
                   anything, and the arithmetic is "about thirteen times". */}
@@ -490,7 +490,7 @@ function YearTable({ years }: { years: GrowthYear[] }) {
               <th scope="col">Hours</th>
               <th scope="col">Rated</th>
               <th scope="col">Difficulty</th>
-              <th scope="col">Execution</th>
+              <th scope="col">How it went</th>
             </tr>
           </thead>
           <tbody>

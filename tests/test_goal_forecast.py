@@ -119,7 +119,7 @@ def test_too_little_history_says_what_is_missing():
     assert found['state'] == 'missing'
     assert found['missing'] == 'too_new'
     assert found['finish'] is None
-    assert found['line'] == 'Due Dec 18. We need two weeks of sessions on maths to tell your pace. You have 10 days so far.'
+    assert found['line'] == "Due Dec 18. We need two weeks of sessions on maths to tell your pace. You've got 10 days so far."
 
 
 def test_no_history_at_all():

@@ -726,7 +726,7 @@ export function subjectState(
     },
     {
       key: 'execution',
-      label: 'Execution',
+      label: 'How it went',
       value: executionOf(done),
       known: ratedTasks.length > 0,
       meaning: 'How well it went, by your own rating.',

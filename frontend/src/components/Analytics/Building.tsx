@@ -201,7 +201,7 @@ export function Building({
         <div className="ax-building-body">
           <h2>Nothing to report.</h2>
           <p className="ax-building-lead">
-            {emptyMessage ?? 'You have enough history. Nothing jumps out yet.'}
+            {emptyMessage ?? "You've got enough history. Nothing jumps out yet."}
           </p>
           {action && <div className="ax-building-action">{action}</div>}
         </div>

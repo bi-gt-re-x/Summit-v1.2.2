@@ -128,7 +128,7 @@ function Card({ step, activeDays }: { step: Milestone; activeDays: number }) {
             <strong>
               {left} more work {left === 1 ? 'day' : 'days'}
             </strong>{' '}
-            to unlock
+            to go
           </p>
         </div>
       </Link>

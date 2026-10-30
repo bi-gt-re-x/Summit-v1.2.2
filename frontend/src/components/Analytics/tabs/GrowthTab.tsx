@@ -469,7 +469,7 @@ export function GrowthTab({ model, records }: { model: AnalyticsModel; records?:
           <section className="ax-section">
             <Panel
               title="Time vs. progress"
-              note="Hours in, work out, and whether the level moved with them"
+              note="Hours in, work done, and whether your level moved"
             >
               <TimeProgressPanel progress={progress} periodText={periodText} />
             </Panel>
@@ -576,7 +576,7 @@ export function GrowthTab({ model, records }: { model: AnalyticsModel; records?:
             >
               <Panel
                 title="Milestones"
-                note="Worked out fresh each time, so they never go stale"
+                note="Updated every time you visit"
               >
                 <MilestoneFeed entries={feed} format={shortDate} />
               </Panel>

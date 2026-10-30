@@ -61,7 +61,7 @@ export function ChangedPanel({ changes, window: days }: ChangedPanelProps) {
     >
       {changes.length === 0 ? (
         <p className="ax-empty">
-          Nothing has changed much yet. This fills in once you have enough days to compare.
+          Nothing has changed much yet. This fills in once you've got enough days to compare.
         </p>
       ) : (
         <ul className="ax-changes">

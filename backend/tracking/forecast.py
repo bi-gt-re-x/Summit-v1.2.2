@@ -189,7 +189,7 @@ def forecast(goal, tasks, sittings, today, name_of=lambda key: key):
     history = (today - sessions[0]).days + 1
     out['history_days'] = history
     if history < HISTORY_DAYS:
-        return missing('too_new', 'We need two weeks of sessions on {} to tell your pace. You have {} {} so far.'.format(
+        return missing('too_new', 'We need two weeks of sessions on {} to tell your pace. You\'ve got {} {} so far.'.format(
             subject_name, history, 'day' if history == 1 else 'days'))
     if done <= 0:
         return missing('nothing_done', "Nothing's ticked off yet. Tick a step when it's done and we can tell your pace."

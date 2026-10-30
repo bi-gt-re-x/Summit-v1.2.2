@@ -181,7 +181,7 @@ export function WhatChangedPanel({
   return (
     <Panel
       title="What changed"
-      note={enoughRecord ? `Your last two weeks (${nowRange}) against the two before (${wasRange}).` : undefined}
+      note={enoughRecord ? `Your last two weeks (${nowRange}) vs. the two before (${wasRange}).` : undefined}
       className="ax-what-changed"
     >
       {move && <WeekRead move={move} blocks={blocks} />}
@@ -194,7 +194,7 @@ export function WhatChangedPanel({
       ) : moves.length === 0 ? (
         <p className="ax-empty">
           Nothing moved enough to count over the last two weeks. Small ups and downs are left out
-          so the real changes stand out.
+          so only real changes show up.
         </p>
       ) : (
         <div className="ax-moves">

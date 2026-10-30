@@ -384,7 +384,7 @@ export function NextActions({
           <ul className="ax-tips">
             <li><b>No repeats:</b> A subject you worked on today won't show up again.</li>
             <li><b>Real minutes:</b> Times come from how long your tasks usually take.</li>
-            <li><b>Just start:</b> If a row needs more time than you have, it's last. Starting still counts.</li>
+            <li><b>Just start:</b> If a row needs more time than you've got, it goes last. Starting still counts.</li>
           </ul>
         </PanelNote>
       }

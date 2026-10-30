@@ -265,10 +265,10 @@ def goal_lens(goal, tasks):
                     difficulty=mean, rated=len(rated))
 
     if measure in ('streak', 'focus'):
-        return wrap('consistency', '{} counts {}, so showing up is what matters.'.format(
+        return wrap('consistency', '{} counts {}, so showing up matters most.'.format(
             title, 'days in a row' if measure == 'streak' else 'time logged'))
     if measure in ('xp', 'tasks'):
-        return wrap('volume', '{} counts totals, so how fast you add to it is what matters.'.format(title))
+        return wrap('volume', '{} counts totals, so how fast you add to it matters most.'.format(title))
     if mean is None:
         return None
     if mean >= HARD:
@@ -534,7 +534,7 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
             found.append(_action(
                 id='weak-{}'.format(worst['subject']), kind='weak-subject',
                 title='Practice {}'.format(name_of(worst['subject'])),
-                because=('Your last {} rated {} tasks average {}/5, against {} for your other subjects. '
+                because=('Your last {} rated {} tasks average {}/5, vs. {} for your other subjects. '
                          'The lowest was "{}" ({}/5, {}): redo it or one like it, slower.').format(
                     len(worst['rated']), name_of(worst['subject']), to_fixed(worst['execution']),
                     to_fixed(average), lowest.get('title'), js_round(_num(lowest.get('execution'))),
@@ -676,7 +676,7 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
             found.append(_action(
                 id='xp-pace', kind='xp',
                 title="Make up this week's XP" + (' with {}'.format(name_of(top)) if top else ''),
-                because='{} XP in the last 7 days, against your usual {} for a week. {} XP behind.'.format(
+                because='{} XP in the last 7 days, vs. your usual {} a week. {} XP behind.'.format(
                     js_round(this_week), js_round(usual), js_round(usual - this_week)),
                 minutes=min(60, max(PRACTICE_MINUTES, slot)), subject=top, weight=470))
 

@@ -671,12 +671,10 @@ SCHEMA = {
 
 
 NO_KEY = (
-    'Reading your subject back needs a model that will answer in a fixed '
-    'shape. A free Groq key in GROQ_API_KEY is the shortest way there '
-    '(console.groq.com → API Keys); an ANTHROPIC_API_KEY also works. Add one '
-    'to .env and restart the server. A Hugging Face token on its own does not '
-    'cover this one: the router\u2019s default model will not hold the shape '
-    'this panel is drawn from.')
+    "This needs an AI key. The quickest is a free Groq key (get one at "
+    'console.groq.com) in GROQ_API_KEY. An ANTHROPIC_API_KEY works too. Add '
+    "one to .env and restart the server. A Hugging Face token alone won't "
+    "work here.")
 
 
 def configured() -> bool:
@@ -1715,7 +1713,7 @@ def plan(state: Dict[str, Any], model_id: str = '',
     if not configured():
         raise BriefUnavailable(NO_KEY)
     if not str(state.get('subject') or '').strip():
-        raise BriefUnavailable('There is no subject to plan for.')
+        raise BriefUnavailable("There's no subject to plan for.")
 
     # Reference facts about the subject (backend/tracking/sources.py) go in
     # the brief itself, so the figure check below allows their numbers too.
@@ -1953,7 +1951,7 @@ def read(state: Dict[str, Any], model_id: str = '') -> Dict[str, Any]:
     if not configured():
         raise BriefUnavailable(NO_KEY)
     if not str(state.get('subject') or '').strip():
-        raise BriefUnavailable('There is no subject to read.')
+        raise BriefUnavailable("There's no subject to look at.")
 
     brief = brief_from(state) + sources.brief_block(str(state.get('subject') or ''))
     try:

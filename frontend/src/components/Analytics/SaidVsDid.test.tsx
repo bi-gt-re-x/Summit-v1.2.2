@@ -41,7 +41,7 @@ describe('Your goals and routines', () => {
   it('is gentle with a new account', () => {
     draw(reading());
     expect(screen.getByText("You're just getting started.")).toBeInTheDocument();
-    expect(screen.getAllByText('Not on record yet').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Nothing logged yet').length).toBeGreaterThan(0);
     expect(screen.queryByText('Nothing yet')).not.toBeInTheDocument();
     expect(screen.getByText('Started')).toBeInTheDocument();
   });

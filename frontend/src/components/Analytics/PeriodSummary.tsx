@@ -65,7 +65,7 @@ export function PeriodSummary({
       ? `${withYear(summary.from)} to ${withYear(summary.to)}`
       : rangeLabel(summary.from, summary.to);
   const note = summary.compared
-    ? `${range}, against the ${period} before.`
+    ? `${range}, vs. the ${period} before.`
     : `${range}. Not enough history yet to compare with the ${period} before.`;
 
   return (

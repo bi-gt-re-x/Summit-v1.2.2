@@ -61,7 +61,7 @@ def test_the_part_of_the_day_a_subject_goes_best():
     tasks += [_task(i, 22, 'Calculus problem set', 'mathematics', 3) for i in range(12)]
     item = _items(growth_reads.reads(tasks, TODAY, 90))['best-time:mathematics']
     assert item['title'] == 'Your math goes best before noon'
-    assert item['detail'] == 'Rated 5.0 before noon, against 3.0 after 9 pm.'
+    assert item['detail'] == 'Rated 5.0 before noon, vs. 3.0 after 9 pm.'
 
 
 def test_session_length_sweet_spot():
@@ -69,7 +69,7 @@ def test_session_length_sweet_spot():
     tasks += [_task(i, 14, 'Proof practice', 'mathematics', 3, minutes=120) for i in range(10)]
     item = _items(growth_reads.reads(tasks, TODAY, 90))['length:30-60 minute']
     assert item['title'] == 'Your best work comes in 30-60 minute sessions'
-    assert item['detail'] == 'Rated 5.0 there, against 3.0 for sessions over 90 minutes.'
+    assert item['detail'] == 'Rated 5.0 there, vs. 3.0 for sessions over 90 minutes.'
 
 
 def test_when_the_usual_problem_shows_up():

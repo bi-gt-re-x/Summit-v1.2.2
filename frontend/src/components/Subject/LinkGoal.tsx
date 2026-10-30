@@ -104,7 +104,7 @@ export function LinkGoal({
         </strong>
         <p>
           {linked.length === 0
-            ? 'Pick one you already have. This page tracks your work against it.'
+            ? 'Pick one you already have. This page tracks your work toward it.'
             : room
               ? 'You can add one more.'
               : 'Remove one to swap it.'}

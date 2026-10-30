@@ -121,9 +121,9 @@ function spread(items: RecordRead[], count: number): RecordRead[] {
 function NoRecords() {
   return (
     <p className="ax-empty">
-      No records yet. Log a score, a time or a rating on{' '}
-      <Link className="ax-link" to="/achievements">Achievements</Link> and this shows how each one is improving,
-      what work it came from and which goals it counts toward.
+      No records yet. Log a score, time or rating on{' '}
+      <Link className="ax-link" to="/achievements">Achievements</Link>. Then you'll see how each one's
+      improving, what work went into it and which goals it helps.
     </p>
   );
 }
@@ -137,7 +137,7 @@ function NoRecords() {
  */
 export function RecordsBreakdownPanel({ read }: { read: RecordsRead }) {
   const data = read.data;
-  if (!data) return read.loading ? <p className="ax-empty">Reading your records…</p> : null;
+  if (!data) return read.loading ? <p className="ax-empty">Loading your records…</p> : null;
 
   const { summary } = data;
   const window = windowText(data.days);
@@ -147,7 +147,7 @@ export function RecordsBreakdownPanel({ read }: { read: RecordsRead }) {
   return (
     <Panel
       title="Records and improvement"
-      note={`Your personal bests, read by subject, over ${window}`}
+      note={`Your personal bests by subject, over ${window}`}
       aside={<Link className="ax-link" to="/achievements">Your records</Link>}
       className="ax-rx"
     >
@@ -218,7 +218,7 @@ export function RecordsBreakdownPanel({ read }: { read: RecordsRead }) {
 
           {data.reads.length > 0 && (
             <>
-              <h3 className="ax-tips-head">What stands out</h3>
+              <h3 className="ax-tips-head">Quick notes</h3>
               <Reads items={spread(data.reads, 3)} />
             </>
           )}
@@ -241,7 +241,7 @@ function PeriodPanel({ data }: { data: RecordAnalysis }) {
   return (
     <Panel
       title="Records this period"
-      note={`Bests set in ${window}, against the ${data.days} days before`}
+      note={`Bests set in ${window} vs. the ${data.days} days before`}
     >
       {rows.length === 0 ? (
         <p className="ax-empty">Nothing logged in {window}. Log a result on Achievements to see it here.</p>
@@ -291,13 +291,13 @@ function WorkPanel({ data }: { data: RecordAnalysis }) {
 
   return (
     <Panel
-      title="What your work bought"
-      note="Hours on related tasks from each record's first entry to its best, matched by the record's name"
+      title="The work behind each record"
+      note="Hours of related tasks between each record's first entry and its best. We match them by name."
     >
       {rows.length === 0 ? (
         <p className="ax-empty">
-          None of your records line up with your tasks yet. Name the contest, course or subject in a record
-          ("AMC 10", "Codeforces rating", "Mile run") and in your tasks, and this connects them.
+          None of your records match your tasks yet. Use the same name in both, like "AMC 10" or
+          "Mile run", and they'll link up.
         </p>
       ) : (
         <ul className="ax-rx-rows">
@@ -317,7 +317,7 @@ function WorkPanel({ data }: { data: RecordAnalysis }) {
                 {record.work.since_seconds > 0 && ` · ${hoursText(record.work.since_seconds)} since the best`}
               </p>
               <p className="ax-rx-basis">
-                Read as {readAs(record) || 'its category'}, from {BASIS[record.work.basis as keyof typeof BASIS]}
+                Matched to {readAs(record) || 'its category'}, using {BASIS[record.work.basis as keyof typeof BASIS]}
               </p>
             </li>
           ))}
@@ -337,13 +337,13 @@ function GoalsPanel({ data }: { data: RecordAnalysis }) {
   const tied = data.records.filter((record) => record.goals.length || record.milestones.length);
   return (
     <Panel
-      title="Where your records point"
-      note="Goals whose own words name the same contest, skill or subject, and milestones linked on Achievements"
+      title="Goals your records help"
+      note="Goals that mention the same contest, skill or subject, plus milestones you linked"
     >
       {tied.length === 0 ? (
         <p className="ax-empty">
-          No record lines up with a goal yet. A goal that names the contest ("Reach Codeforces 1300") gets
-          measured against your best automatically.
+          No record matches a goal yet. Name the contest in a goal, like "Reach Codeforces 1300", and
+          we'll track your best toward it.
         </p>
       ) : (
         <ul className="ax-rx-rows">
@@ -396,14 +396,14 @@ export function RecordsGrowthSection({ read }: { read: RecordsRead }) {
   const data = read.data;
   if (!data) {
     return read.loading ? (
-      <section className="ax-section"><p className="ax-empty">Reading your records…</p></section>
+      <section className="ax-section"><p className="ax-empty">Loading your records…</p></section>
     ) : null;
   }
 
   if (data.summary.records === 0) {
     return (
       <section className="ax-section">
-        <Panel title="Your records" note="Personal bests, read against your work and goals">
+        <Panel title="Your records" note="Your personal bests, next to your work and goals">
           <NoRecords />
         </Panel>
       </section>
@@ -414,14 +414,14 @@ export function RecordsGrowthSection({ read }: { read: RecordsRead }) {
     <>
       <section className="ax-section">
         <Panel
-          title="Your records, read"
-          note={`What your personal bests say about ${windowText(data.days)}, from their names, your tasks and your goals`}
+          title="What your records say"
+          note={`Your personal bests over ${windowText(data.days)}, next to your tasks and goals`}
           aside={<Link className="ax-link" to="/achievements">Your records</Link>}
         >
           {data.reads.length ? (
             <Reads items={data.reads} />
           ) : (
-            <p className="ax-empty">Nothing stands out yet. Log each record again when you try it and this fills in.</p>
+            <p className="ax-empty">Nothing to report yet. Log each record again when you try it.</p>
           )}
         </Panel>
       </section>

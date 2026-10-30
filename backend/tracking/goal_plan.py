@@ -184,10 +184,8 @@ SCHEMA = {
 
 NO_KEY = (
     'Planning a route needs an Anthropic key. Put one in ANTHROPIC_API_KEY in '
-    ".env and restart the server. A Hugging Face token doesn't cover this "
-    'one: it asks a model to lay a plan over a table of your figures without '
-    'adding any, and a small model inventing a number about you here would be '
-    'worse than no panel at all.')
+    ".env and restart the server. A Hugging Face token won't work here. "
+    "Smaller models tend to make up numbers, and that's worse than no plan.")
 
 
 def configured() -> bool:

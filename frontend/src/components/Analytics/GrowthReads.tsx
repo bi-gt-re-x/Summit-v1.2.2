@@ -30,7 +30,7 @@ export function GrowthReadsPanel({ span }: { span: WindowKey }) {
   const data = reads.data;
 
   if (!data) {
-    return reads.loading ? <p className="ax-empty">Reading your record…</p> : null;
+    return reads.loading ? <p className="ax-empty">Loading your growth…</p> : null;
   }
   const shown = days >= 730 ? 'the last two years' : days >= 365 ? 'the last year' : `the last ${days} days`;
 
@@ -42,7 +42,7 @@ export function GrowthReadsPanel({ span }: { span: WindowKey }) {
     >
       {data.groups.length === 0 ? (
         <p className="ax-empty">
-          Nothing stands out yet. This fills in as you rate more sessions and name the topic in your tasks.
+          Nothing to report yet. Rate more sessions and name the topic in your tasks, and this fills in.
         </p>
       ) : (
         <div className="ax-period-groups">

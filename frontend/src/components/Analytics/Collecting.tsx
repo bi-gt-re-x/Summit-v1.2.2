@@ -48,7 +48,7 @@ export function ActiveDayNote() {
   return (
     <p className="ax-active-note">
       A day counts as soon as you {ACTIVE_DAY_MEANS}. Even a small one counts. Days off
-      are skipped. They never count against you.
+      are skipped. They never hurt your numbers.
     </p>
   );
 }
@@ -158,7 +158,7 @@ export function StageNote({ maturity }: { maturity: Maturity }) {
             utils/dataMaturity: context, never a gate. */}
         {spanDays > activeDays ? (
           <>
-            Read from{' '}
+            Based on{' '}
             <strong>
               {activeDays} of your {spanDays} days
             </strong>{' '}
@@ -166,7 +166,7 @@ export function StageNote({ maturity }: { maturity: Maturity }) {
           </>
         ) : (
           <>
-            Read from <strong>{activeDays} days</strong> of your work.
+            Based on <strong>{activeDays} days</strong> of your work.
           </>
         )}{' '}
         <strong>
@@ -455,7 +455,7 @@ export function Collecting({ maturity, stats }: CollectingProps) {
           ) : (
             <>
               {activeDays === 1 ? 'One day' : `${activeDays} days`} of your work{' '}
-              {activeDays === 1 ? 'is' : 'are'} on record
+              {activeDays === 1 ? 'is' : 'are'} logged
               {spanDays > activeDays + 1 ? `, across ${spanDays} days` : ''}. The numbers below are exact counts. Trends, patterns and ratings show up as you log more.
             </>
           )}

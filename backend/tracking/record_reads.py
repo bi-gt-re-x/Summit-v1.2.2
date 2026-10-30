@@ -727,7 +727,7 @@ def reads(records: Sequence[Dict[str, Any]], days: int) -> List[Dict[str, Any]]:
         work = r['work']
 
         stalled = _stalled(r)
-        than = 'than' if r['direction'] == 'lower' and r['unit'] == 'minutes' else 'on'
+        than = 'than' if r['direction'] == 'lower' and r['unit'] == 'minutes' else 'over'
 
         # 1. A climb, and what it took.
         if r['gain'] > 0 and r['days_to_best']:
@@ -735,7 +735,7 @@ def reads(records: Sequence[Dict[str, Any]], days: int) -> List[Dict[str, Any]]:
                                              fmt(r['best'], r['unit'], r['target']),
                                              duration(r['days_to_best']))
             if work['basis'] and work['climb_tasks'] and work['climb_seconds'] >= 3600:
-                detail += ' That came with {} of {} over {} task{}'.format(
+                detail += ' You put in {} of {} over {} task{} to get there'.format(
                     hours(work['climb_seconds']), _area(r), work['climb_tasks'],
                     '' if work['climb_tasks'] == 1 else 's')
                 if work['seconds_per_unit'] and r['unit'] in PER and r['days_to_best'] <= PER_UNIT_DAYS:
@@ -755,7 +755,7 @@ def reads(records: Sequence[Dict[str, Any]], days: int) -> List[Dict[str, Any]]:
             size = last['jump'] / abs(r['first']) if r['first'] else 0.1
             say('fresh', r, 'good',
                 'New best on {}: {}'.format(r['name'], fmt(last['value'], r['unit'], r['target'])),
-                '{} {} your previous best, set {}. {} new best{} in {}.'.format(
+                '{} {} your old best, set {}. {} new best{} in {}.'.format(
                     change(last['jump'], unit_less, r['direction']), than,
                     _short(last['on']),
                     r['window']['new_bests'], '' if r['window']['new_bests'] == 1 else 's', span),
@@ -763,11 +763,11 @@ def reads(records: Sequence[Dict[str, Any]], days: int) -> List[Dict[str, Any]]:
 
         # 3. Stalled, with work going in.
         if stalled:
-            detail = 'Your best is {} from {}, and {} entr{} since haven\'t topped it.'.format(
+            detail = 'Your best is {} from {}. The {} entr{} since haven\'t beaten it.'.format(
                 fmt(r['best'], r['unit'], r['target']), _short(r['best_on']),
                 r['after_best'], 'y' if r['after_best'] == 1 else 'ies')
             if work['basis'] and work['since_seconds'] >= 3600:
-                detail += ' You\'ve put {} into {} since then, so a different kind of session may be what moves it.'.format(
+                detail += ' You\'ve put {} into {} since then, so maybe try a different kind of session.'.format(
                     hours(work['since_seconds']), _area(r))
             say('stalled', r, 'bad', '{} hasn\'t moved in {}'.format(r['name'], duration(r['days_since_best'])),
                 detail, 1.0 + r['after_best'] * 0.3)
@@ -776,7 +776,7 @@ def reads(records: Sequence[Dict[str, Any]], days: int) -> List[Dict[str, Any]]:
         trend = r['trend']
         if trend and not trend['early'] and trend['word'] == 'slipping' and not stalled:
             say('slipping', r, 'bad', '{} has been slipping'.format(r['name']),
-                'Your last {} results lean the wrong way. Your best is still {}.'.format(
+                'Your last {} results are trending down. Your best is still {}.'.format(
                     trend['basis'], fmt(r['best'], r['unit'], r['target'])), 1.2)
 
         # 5. What it is for.
@@ -784,17 +784,17 @@ def reads(records: Sequence[Dict[str, Any]], days: int) -> List[Dict[str, Any]]:
             progress = goal['progress']
             if progress:
                 if progress['met']:
-                    detail = 'Your best of {} already reaches {}. Worth checking it off.'.format(
+                    detail = 'Your best is {}, so you\'ve already hit {}. Go check it off.'.format(
                         fmt(r['best'], r['unit'], r['target']), fmt(progress['target'], r['unit']))
                 else:
-                    detail = 'Your best of {} is {}% of the way to {}{}.'.format(
+                    detail = 'Your best is {}. That\'s {}% of the way to {}.{}'.format(
                         fmt(r['best'], r['unit'], r['target']), round(progress['percent']),
                         fmt(progress['target'], r['unit']),
-                        ', with {} days left'.format(goal['days_left']) if goal['days_left'] is not None
+                        ' {} days left.'.format(goal['days_left']) if goal['days_left'] is not None
                         and goal['days_left'] >= 0 else '')
                 weight = 1.4 + progress['percent'] / 100
             else:
-                detail = 'Every new best here is progress toward it.'
+                detail = 'Each new best here moves you toward it.'
                 weight = 0.8
             say('goal', r, 'good' if not progress or progress['met'] or progress['percent'] >= 50 else 'flat',
                 '{} counts toward "{}"'.format(r['name'], goal['title']), detail, weight)
@@ -810,7 +810,7 @@ def reads(records: Sequence[Dict[str, Any]], days: int) -> List[Dict[str, Any]]:
         if top > 0 and top >= 1.5 * max(low, 0.01):
             found.append({'id': 'fastest', 'kind': 'fastest', 'record': '', 'tone': 'flat',
                           'title': 'Your records climb fastest in {}'.format(top_name),
-                          'detail': 'About {}% a month there, against {}% in {}.'.format(
+                          'detail': 'About {}% a month there, vs. {}% in {}.'.format(
                               round(top, 1), round(low, 1), low_name),
                           'weight': 1.3})
 

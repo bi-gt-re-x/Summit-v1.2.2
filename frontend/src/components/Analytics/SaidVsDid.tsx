@@ -26,7 +26,7 @@ const VERDICT: Record<Verdict, string> = {
   little: 'Barely touched',
   none: 'Nothing yet',
   started: 'Started',
-  not_yet: 'Not on record yet',
+  not_yet: 'Nothing logged yet',
 };
 
 const WINDOW: Record<string, string> = {
@@ -148,11 +148,11 @@ export function SaidVsDid({ data, reload }: { data: Reading | null; reload: () =
     <Panel
       title="Your goals and routines"
       className="ax-said"
-      note={`What you named in your Log and About you, checked against your last ${days} days.`}
+      note={`What you named in your Log and About you, next to your last ${days} days.`}
     >
       {nothingSaid ? (
         <p className="ax-said-empty">
-          Tell Summit what you're aiming for and this checks it against what you do.{' '}
+          Tell Summit what you're aiming for and this compares it with what you do.{' '}
           <Link to="/log" className="ax-link">Write in your Log</Link> or{' '}
           <Link to="/settings/about" className="ax-link">answer About you</Link>.
         </p>
@@ -160,9 +160,8 @@ export function SaidVsDid({ data, reload }: { data: Reading | null; reload: () =
         <>
           {stage === 'new' && (
             <p className="ax-said-start">
-              <b>You're just getting started.</b> {plural(data.total_tasks, 'task')} on record so far, so
-              this is where you're headed, not a report card. Each subject fills in as you finish tasks filed
-              under it.
+              <b>You're just getting started.</b> {plural(data.total_tasks, 'task')} logged so far, so
+              treat this as a heads-up. Each subject fills in as you finish tasks in it.
             </p>
           )}
 

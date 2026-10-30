@@ -96,7 +96,7 @@ describe('records on Growth', () => {
     expect(screen.getByText('Reach Codeforces 1300')).toBeInTheDocument();
     expect(screen.getByText(/70% of the way to 1,300 rating/)).toBeInTheDocument();
     // And says what it read each record as, so the inference is visible.
-    expect(screen.getAllByText(/Read as AMC 8 · Competition Mathematics · Mathematics/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Matched to AMC 8 · Competition Mathematics · Mathematics/).length).toBeGreaterThan(0);
   });
 
   it('shows what the work bought, per point', () => {

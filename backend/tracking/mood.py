@@ -479,12 +479,12 @@ def headline(found: dict, by_band: Dict[str, dict]) -> Optional[dict]:
                     _num(good['tasks_avg']), _num(rough['tasks_avg']),
                     ' That\'s {}.'.format(times) if times else '')
             else:
-                text = ('You get more done on rough days: {} tasks, against {} on good days. '
+                text = ('You get more done on rough days: {} tasks vs. {} on good days. '
                         'Hard days seem to push you to work.').format(
                             _num(rough['tasks_avg']), _num(good['tasks_avg']))
             return {'text': text, 'tone': 'insight', 'confidence': sure}
-        return {'text': 'Rough days and good days look about the same in your record: '
-                        '{} tasks against {}. How you feel isn\'t stopping you.'.format(
+        return {'text': 'Rough days and good days look about the same: '
+                        '{} tasks vs. {}. How you feel isn\'t stopping you.'.format(
                             _num(rough['tasks_avg']), _num(good['tasks_avg'])),
                 'tone': 'steady', 'confidence': sure}
 
@@ -498,7 +498,7 @@ def headline(found: dict, by_band: Dict[str, dict]) -> Optional[dict]:
                 'tone': 'insight', 'confidence': row['confidence']}
 
     if found['harsher'] >= 2:
-        return {'text': 'You\'re harder on yourself than your record is. {} times you wrote that '
+        return {'text': 'You\'re harder on yourself than your numbers are. {} times you wrote that '
                         'the day was a write-off and still did your usual or more.'.format(found['harsher']),
                 'tone': 'insight', 'confidence': 'early'}
 

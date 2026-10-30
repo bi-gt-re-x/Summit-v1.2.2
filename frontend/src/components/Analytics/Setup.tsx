@@ -737,7 +737,7 @@ export function AnalyticsSetup({
         key: 'detail',
         title: 'How much do you want on screen?',
         lead:
-          'Nothing gets deleted. Anything you hide here is still on its own tab. This only sets '
+          'Nothing gets deleted. Anything you hide here stays on its own tab. This only sets '
           + 'what Overview shows first.',
         body: (
           <Choices

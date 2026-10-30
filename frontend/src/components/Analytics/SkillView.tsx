@@ -195,7 +195,7 @@ export function SkillScorePanel({
   return (
     <Panel title="Skill level by subject" note="Based on your ratings">
       <p className="ax-muted ax-skill-lead">
-        Each score comes from tasks you rated: how well they went, how hard they were, how often you work, recent form, deadlines and how recently you worked. Open a subject to see all six.
+        Each score comes from your rated tasks. It mixes how well they went, how hard they were and how often you work. Open a subject to see all six parts.
       </p>
       <ul className="ax-skill-list">
         {rows.slice(0, limit).map((row) => (

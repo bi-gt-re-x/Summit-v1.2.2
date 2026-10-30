@@ -293,7 +293,7 @@ def favorite_times(sessions: List[Dict[str, Any]], since: date) -> List[Dict[str
                 out.append(_finding(
                     'best-time', subject, 'good',
                     'Your {} goes best {}'.format(_subject(name), words[best]),
-                    'Rated {:.1f} {}, against {:.1f} {}.'.format(rated[best], words[best], rated[worst], words[worst]),
+                    'Rated {:.1f} {}, vs. {:.1f} {}.'.format(rated[best], words[best], rated[worst], words[worst]),
                     _strength(gap, len(rows)), 'when'))
         # Its day of the week.
         days = Counter(s['start'].weekday() for s in rows)
@@ -328,7 +328,7 @@ def session_lengths(sessions: List[Dict[str, Any]], since: date) -> List[Dict[st
     plural = 'sessions ' + best if best.endswith('minutes') else best + ' sessions'
     worse = 'sessions ' + worst if worst.endswith('minutes') else worst + ' sessions'
     return [_finding('length', best, 'good', 'Your best work comes in {}'.format(plural),
-                     'Rated {:.1f} there, against {:.1f} for {}.'.format(rated[best], rated[worst], worse),
+                     'Rated {:.1f} there, vs. {:.1f} for {}.'.format(rated[best], rated[worst], worse),
                      _strength(gap, sum(len(v) for v in buckets.values())) * 0.9, 'when')]
 
 

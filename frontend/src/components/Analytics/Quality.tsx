@@ -184,7 +184,7 @@ export function QualityPanel({
   const quality = summary.quality ?? 0;
   const halves = [
     { label: 'Difficulty', value: summary.difficulty ?? 0, words: DIFFICULTY_WORDS, tone: 'amber' },
-    { label: 'Execution', value: summary.execution ?? 0, words: EXECUTION_WORDS, tone: 'green' },
+    { label: 'How it went', value: summary.execution ?? 0, words: EXECUTION_WORDS, tone: 'green' },
   ];
 
   return (
@@ -315,7 +315,7 @@ export function QualityGridPanel({ cells, summary, depth }: QualityGridPanelProp
           <>
             Across <strong>{summary.rated}</strong> rated{' '}
             {summary.rated === 1 ? 'task' : 'tasks'} you rate difficulty{' '}
-            <strong>{summary.difficulty.toFixed(1)}</strong> and execution{' '}
+            <strong>{summary.difficulty.toFixed(1)}</strong> and how it went{' '}
             <strong>{summary.execution.toFixed(1)}</strong>. The grid shows where they cluster.
           </>
         )
@@ -334,9 +334,9 @@ export function QualityGridPanel({ cells, summary, depth }: QualityGridPanelProp
     >
       <div className="ax-qgrid">
         <span className="ax-qgrid-y" aria-hidden="true">
-          Execution →
+          How it went →
         </span>
-        <div className="ax-qgrid-cells" role="img" aria-label="Rated tasks by difficulty and execution">
+        <div className="ax-qgrid-cells" role="img" aria-label="Rated tasks by how hard and how well they went">
           {cells.map((cell) => (
             <span
               key={`${cell.difficulty}-${cell.execution}`}

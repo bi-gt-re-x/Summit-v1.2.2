@@ -577,7 +577,7 @@ export default function Analytics() {
                than a hedge, so it sits beside it. */
             basis={
               maturity.activeDays < SOLID_AT.judgement
-                ? `Early read from ${maturity.activeDays} work days. It firms up around day ${SOLID_AT.judgement}.`
+                ? `Early numbers from ${maturity.activeDays} work days. They firm up around day ${SOLID_AT.judgement}.`
                 : stageShows(maturity.stage).note
                   ? `Based on ${maturity.activeDays} days of work. It'll get sharper as you log more.`
                   : null

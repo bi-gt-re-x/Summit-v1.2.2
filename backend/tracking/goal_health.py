@@ -200,7 +200,7 @@ def goal_health(goal, tasks, today=None, cache=None):
     # Nothing has happened at all. A goal set this morning is not failing, and
     # colouring it red would teach the reader to ignore the colour.
     if progress <= 0 and not done and stones_done == 0:
-        return result('not-started', 'Nothing recorded against this yet.')
+        return result('not-started', 'Nothing logged on this yet.')
 
     if days_left is not None and days_left < 0:
         return result('behind', 'Its date passed {} ago and it\'s {}% done.'.format(

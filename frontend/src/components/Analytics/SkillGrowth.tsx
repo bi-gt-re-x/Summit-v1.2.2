@@ -310,7 +310,7 @@ function SubjectCard({
             change={changeText(read.completion)}
           />
           <Tile
-            label="Execution"
+            label="How it went"
             value={shown(read.wentWell, ' went well')}
             tone={toneOf(read.wentWell, 70, 40)}
             detail={
@@ -367,7 +367,7 @@ function SubjectCard({
             detail={
               tree ? (
                 <>
-                  {tree.next ? <>Up next: <b>{tree.next.name}</b>. </> : 'Every skill on it is done. '}
+                  {tree.next ? <>Up next: <b>{tree.next.name}</b>. </> : "You've done every skill on it. "}
                   {tree.practiced > 0
                     ? `${tree.practiced} ${tree.practiced === 1 ? 'step' : 'steps'} practiced, best Level ${tree.best} of 5.`
                     : 'No problems marked on it yet.'}
@@ -1005,7 +1005,7 @@ export function SkillGrowthPanel({ tracks, periodText, limit = 6, context }: Ski
           )}
 
           <div className="sg-subjects-bar">
-            <span>Open a subject to see its tasks, ratings, deadlines, skill tree and goals.</span>
+            <span>Open a subject to see its tasks, ratings and goals.</span>
             <button
               type="button"
               className="sg-subjects-all"
@@ -1105,7 +1105,7 @@ export function TimeProgressPanel({ progress, periodText }: TimeProgressPanelPro
             {one(hours)}h
             {hoursBefore >= 1 && (
               <span className="sg-fact-against">
-                against {one(hoursBefore)}h before
+                vs. {one(hoursBefore)}h before
               </span>
             )}
           </dd>
