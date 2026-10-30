@@ -13491,6 +13491,65 @@ html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-pag
 html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-gf-took {
     color: var(--ax-muted)
 }
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-rx-stats small {
+    color: var(--ax-faint)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-rx-stats dd.is-down {
+    color: var(--ax-bad)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-rx-vs {
+    color: var(--ax-faint)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-rx-vs.is-up {
+    color: var(--ax-good)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-rx-vs.is-down {
+    color: var(--ax-bad)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-rx-subjects li {
+    border-top: 1px solid var(--ax-line)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-rx-subject-head strong,
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-rx-row-head strong {
+    color: var(--ax-text)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-rx-subject-head em {
+    color: var(--ax-faint)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-rx-count {
+    color: var(--ax-faint)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-rx-bar {
+    background: var(--ax-card-2)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-rx-bar > i {
+    background: var(--ax-violet)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-rx-bar > i.is-met {
+    background: var(--ax-good)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-rx-subject-foot,
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-rx-row-foot {
+    color: var(--ax-muted)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-rx-subject-foot b {
+    color: var(--ax-text)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-rx-rows > li {
+    border-top: 1px solid var(--ax-line)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-rx-rows > li:first-child {
+    border-top: 0
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-rx-move {
+    color: var(--ax-faint)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-rx-move.is-up {
+    color: var(--ax-good)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-rx-basis {
+    color: var(--ax-faint)
+}
 html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-reads li {
     border: 1px solid var(--ax-line);
     background: var(--ax-card-2, transparent)

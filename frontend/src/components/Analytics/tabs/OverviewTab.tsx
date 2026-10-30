@@ -53,6 +53,7 @@ import type { AnalyticsData } from '../useAnalyticsData';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 import { WhatYouToldUs } from '../WhatYouToldUs';
 import { GoalsFinished } from '../GoalsFinished';
+import { RecordsBreakdownPanel, type RecordsRead } from '../RecordsAnalysis';
 import { FirstReads } from '../FirstReads';
 import { SlumpAlert, WhatChangedPanel } from '../WeekTrend';
 import { PeriodSummary } from '../PeriodSummary';
@@ -63,10 +64,13 @@ import { useMemo } from 'react';
 export function OverviewTab({
   model,
   data,
+  records,
   onEditBaseline,
 }: {
   model: AnalyticsModel;
   data: AnalyticsData;
+  /** The records read for this window. Optional so a test can leave it out. */
+  records?: RecordsRead;
   /** Opens the baseline screen. The flag it sets belongs to the page. */
   onEditBaseline: () => void;
 }) {
@@ -182,6 +186,12 @@ export function OverviewTab({
         {/* A confirmed goal is a fact on day one: it does not wait for the
             record to fill the way the tallies do. */}
         <GoalsFinished />
+
+        {/* So is a logged record: a score from before the account existed is
+            still the reader's. */}
+        <section className="ax-section">
+          {records && <RecordsBreakdownPanel read={records} />}
+        </section>
 
         {/* What the account said about itself at sign-up, and what it counts
             for while the record is short. */}
@@ -354,6 +364,13 @@ export function OverviewTab({
 
       {/* Goals the reader confirmed done. Draws nothing until there is one. */}
       <GoalsFinished />
+
+      {/* Records and improvement: personal bests read by the subject they're
+          about, from their names. Fetched by the page with everything else;
+          the reading is backend/tracking/record_reads.py. */}
+      <section className="ax-section">
+        {records && <RecordsBreakdownPanel read={records} />}
+      </section>
 
       {/* The reader's own target, before the panels that measure against
           nothing. A total is not good or bad on its own — four days a week is

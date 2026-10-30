@@ -99,3 +99,122 @@ export function save(
 export function remove(id: string): Promise<ApiResult<{ id: string }>> {
   return post<{ id: string }>('/api/records/delete', { id });
 }
+
+// ---------------------------------------------------------------------------
+// The records, read against the rest of the account
+// ---------------------------------------------------------------------------
+/** A finding, already a sentence. See backend/tracking/record_reads.py. */
+export interface RecordRead {
+  id: string;
+  kind: 'climb' | 'fresh' | 'stalled' | 'slipping' | 'goal' | 'fastest';
+  record: string;
+  tone: 'good' | 'bad' | 'flat';
+  title: string;
+  detail: string;
+  weight: number;
+}
+
+/** A goal a record works toward, and how far its best gets toward the number in it. */
+export interface RecordGoal {
+  id: string;
+  title: string;
+  /** How it was tied: 'contest', 'name', 'tree', 'subject'. */
+  by: string[];
+  score: number;
+  progress: { target: number; percent: number; met: boolean } | null;
+  days_left: number | null;
+}
+
+export interface AnalysedRecord {
+  name: string;
+  category: string;
+  unit: string;
+  target: number;
+  direction: Direction;
+  /** What it was read as. Empty strings when its words file nowhere. */
+  subject: string;
+  subject_name: string;
+  tree: string;
+  tree_label: string;
+  topic: string;
+  topic_label: string;
+  context: string;
+  context_label: string;
+  how: 'name' | 'category' | 'subject' | 'none';
+  first: number;
+  first_on: string;
+  best: number;
+  best_on: string;
+  latest: number;
+  latest_on: string;
+  /** Signed toward better. */
+  gain: number;
+  percent: number;
+  entries: number;
+  days_to_best: number | null;
+  days_since_best: number;
+  after_best: number;
+  rate_per_month: number | null;
+  trend: { word: 'improving' | 'steady' | 'slipping'; early: boolean; basis: number } | null;
+  steps: Array<{ on: string; jump: number; value: number }>;
+  work: {
+    /** How the tasks were matched: 'context', 'tree', 'subject', or '' for none. */
+    basis: '' | 'context' | 'tree' | 'subject';
+    climb_tasks: number;
+    climb_seconds: number;
+    since_tasks: number;
+    since_seconds: number;
+    window_tasks: number;
+    window_seconds: number;
+    seconds_per_unit: number | null;
+  };
+  window: {
+    logged: number;
+    new_bests: number;
+    previous_bests: number;
+    gain: number | null;
+    started_in_window: boolean;
+    previous_gain: number | null;
+  };
+  goals: RecordGoal[];
+  milestones: string[];
+}
+
+export interface RecordSubject {
+  key: string;
+  label: string;
+  /** False when the records filed nowhere and this is their own category. */
+  inferred: boolean;
+  records: number;
+  improving: number;
+  new_bests: number;
+  median_percent: number | null;
+  window_seconds: number;
+  top: { name: string; percent: number; gain: string } | null;
+  names: string[];
+}
+
+export interface RecordAnalysis {
+  days: number;
+  since: string;
+  summary: {
+    records: number;
+    with_history: number;
+    improving: number;
+    not_yet: number;
+    new_bests: number;
+    previous_bests: number;
+    logged: number;
+    median_percent: number | null;
+    stalled: number;
+    tied_to_goals: number;
+  };
+  by_subject: RecordSubject[];
+  records: AnalysedRecord[];
+  reads: RecordRead[];
+}
+
+/** Every record read against the work and the goals, over the last `days` days. */
+export function analysis(days: number): Promise<ApiResult<RecordAnalysis>> {
+  return get<RecordAnalysis>(`/api/records/analysis?days=${Math.round(days)}`);
+}

@@ -23,7 +23,7 @@ about it and the disagreement would be written back. Nothing here is written
 back — the best is read, never stored — so there is nothing to keep honest.
 """
 import json
-from datetime import datetime
+from datetime import date, datetime
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends
@@ -32,6 +32,7 @@ from pydantic import BaseModel
 from backend.api.guard import current_username
 from backend.api.reply import fail, ok
 from backend.database import connection as db
+from backend.tracking import record_reads
 from backend.tracking.auth import load_user
 
 router = APIRouter(tags=['records'])
@@ -201,6 +202,25 @@ def list_records(username: str = Depends(current_username)):
     if not _known(username):
         return fail('Sign in to see your records.')
     return ok(records=_mine(username))
+
+
+@router.get('/api/records/analysis')
+def analyse_records(days: int = 90, username: str = Depends(current_username)):
+    """Every record read against the account's work and goals, the breakdown
+    by subject, and the findings worth a line, over the last `days` days (7 to
+    730). The reading is backend/tracking/record_reads.py; this only fetches.
+    Every finished task is read, because "what the climb took" runs from a
+    record's first entry, however long ago that was."""
+    if not _known(username):
+        return fail('Sign in to see your records.')
+    days = max(7, min(730, int(days or 90)))
+    return ok(**record_reads.analyse(
+        _mine(username),
+        db.growth_read_tasks(username, '0000-00-00'),
+        db.record_goals(username),
+        date.today(),
+        days,
+    ))
 
 
 @router.post('/api/records/save')

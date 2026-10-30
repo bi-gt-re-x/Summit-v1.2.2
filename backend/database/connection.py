@@ -3987,6 +3987,23 @@ GROWTH_READ_COLUMNS = ('title', 'description', 'subject', 'execution', 'difficul
                        'created_at', 'completion_seconds', 'show_on_calendar', 'reason')
 
 
+def record_goals(username):
+    """The account's active goals with the fields a record can be measured
+    against: their words, subjects, deadline and the number they aim at. See
+    backend/tracking/record_reads.py."""
+    con = connect()
+    try:
+        if not _schema(con, 'goals'):
+            return []
+        names = ('id', 'title', 'description', 'why', 'unit', 'measure', 'subject_ids', 'deadline',
+                 'target_number', 'target_value')
+        return [dict(zip(names, row)) for row in con.execute(
+            'SELECT {} FROM goals WHERE user_id = ? AND status = ?'.format(', '.join(names)),
+            (username, 'active'))]
+    finally:
+        con.close()
+
+
 def growth_read_tasks(username, since):
     """The account's tasks finished on or after `since` (ISO day), with when
     they started, how long they took and how they went."""

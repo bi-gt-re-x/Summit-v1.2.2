@@ -66,6 +66,7 @@ import { useSkillAttempts, useSkillReading, useStats } from '@/hooks';
 import type { GrowthPeriods, PeriodKey } from '@/services/analytics';
 import { SkillShapePanel } from '../SkillView';
 import { GrowthReadsPanel } from '../GrowthReads';
+import { RecordsGrowthSection, type RecordsRead } from '../RecordsAnalysis';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 import type { PeriodMetric } from '@/services/analytics';
 
@@ -357,7 +358,7 @@ export function ScoreChangesPanel({ data }: { data: GrowthPeriods }) {
   );
 }
 
-export function GrowthTab({ model }: { model: AnalyticsModel }) {
+export function GrowthTab({ model, records }: { model: AnalyticsModel; records?: RecordsRead }) {
   const { detail, heatRows, nameOf, skills, clock } = model;
   /* The page's window picker drives the period — see ../useGrowthPeriods. */
   const { period, setPeriod, periods } = useGrowthPeriods(model.span, model.chooseSpan);
@@ -413,6 +414,13 @@ export function GrowthTab({ model }: { model: AnalyticsModel }) {
       <section className="ax-section">
         <GrowthReadsPanel span={model.span} />
       </section>
+
+      {/* The records: what each personal best is about, read from its name,
+          set against the work on the same contest or subject and the goals
+          that name it. Before the grades because it is about the reader's own
+          results; the page fetched it with everything else. See
+          ../RecordsAnalysis and backend/tracking/record_reads.py. */}
+      {records && <RecordsGrowthSection read={records} />}
 
       {data && (
         <>

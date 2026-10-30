@@ -8705,6 +8705,63 @@ div.ax-opening > p { flex: 1; min-width: 0; margin: 0; line-height: 1.5; }
 .ax-gf-when { color: var(--ax-faint); font-size: var(--text-xs); white-space: nowrap; text-align: right; }
 .ax-gf-took { grid-column: 1 / -1; color: var(--ax-muted); font-size: var(--text-sm); }
 
+/* ---- Records ---------------------------------------------------------------
+   components/Analytics/RecordsAnalysis: the breakdown on Overview and the
+   record panels on Growth. Built from the Goals finished pieces above, with a
+   bar per subject and a two-line row per record. */
+.ax-rx-stats { row-gap: var(--space-4); }
+.ax-rx-stats small { font-size: var(--text-sm); font-weight: 600; color: var(--ax-faint); }
+.ax-rx-stats dd.is-down { color: var(--ax-bad); }
+.ax-rx-vs { font-size: var(--text-2xs); color: var(--ax-faint); }
+.ax-rx-vs.is-up { color: var(--ax-good); }
+.ax-rx-vs.is-down { color: var(--ax-bad); }
+.ax-rx-subjects { margin: 0 0 var(--space-4); padding: 0; list-style: none; }
+.ax-rx-subjects li { padding: var(--space-3) 0; border-top: 1px solid var(--ax-line); }
+.ax-rx-subject-head, .ax-rx-row-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-1) var(--space-2);
+}
+.ax-rx-subject-head strong, .ax-rx-row-head strong { color: var(--ax-text); font-weight: 700; }
+.ax-rx-subject-head em { font-style: normal; font-size: var(--text-2xs); color: var(--ax-faint); }
+.ax-rx-count { margin-left: auto; font-size: var(--text-xs); color: var(--ax-faint); white-space: nowrap; }
+.ax-rx-bar {
+    height: 6px;
+    margin: var(--space-2) 0;
+    border-radius: var(--radius-full);
+    background: var(--ax-card-2);
+    overflow: hidden;
+}
+.ax-rx-bar > i {
+    display: block;
+    height: 100%;
+    min-width: 2px;
+    border-radius: inherit;
+    background: var(--ax-violet);
+    transition: width .5s cubic-bezier(.22, 1, .36, 1);
+}
+.ax-rx-bar > i.is-met { background: var(--ax-good); }
+.ax-rx-subject-foot, .ax-rx-row-foot { margin: 0; font-size: var(--text-sm); color: var(--ax-muted); }
+.ax-rx-subject-foot b { color: var(--ax-text); font-weight: 650; }
+.ax-rx-rows { margin: 0; padding: 0; list-style: none; }
+.ax-rx-rows > li { padding: var(--space-3) 0; border-top: 1px solid var(--ax-line); }
+.ax-rx-rows > li:first-child { border-top: 0; padding-top: 0; }
+.ax-rx-move { margin-left: auto; font-size: var(--text-sm); font-weight: 700; color: var(--ax-faint); white-space: nowrap; }
+.ax-rx-move.is-up { color: var(--ax-good); }
+.ax-rx-row-foot { margin-top: 2px; }
+.ax-rx-basis { margin: var(--space-1) 0 0; font-size: var(--text-2xs); color: var(--ax-faint); }
+.ax-rx-goal {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 2px var(--space-2);
+    margin-top: var(--space-2);
+}
+.ax-rx-goal .ax-rx-bar { flex: 1 1 100%; max-width: 360px; margin: var(--space-1) 0; }
+.ax-rx-goal .ax-rx-count { margin-left: 0; white-space: normal; }
+@media (prefers-reduced-motion: reduce) { .ax-rx-bar > i { transition: none; } }
+
 /* ---- What your work says so far -------------------------------------------
    components/Analytics/FirstReads. Up to four sentences, each with a small
    label above and its sample below, in a grid that is two across when there

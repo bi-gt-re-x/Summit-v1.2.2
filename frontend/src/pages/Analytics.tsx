@@ -158,6 +158,7 @@ import '@/styles/growth.css';
 import { startAnalyticsReads } from '@/components/Analytics/earlyReads';
 import { SOLID_AT } from '@/components/Analytics/milestones';
 import { SubjectsOpening } from '@/components/Analytics/tabs/SubjectsTab';
+import { useRecordAnalysis } from '@/components/Analytics/RecordsAnalysis';
 
 /* The page's reads begin the moment this module is evaluated — when the route
    is first opened — rather than after the first commit. See
@@ -209,6 +210,16 @@ export default function Analytics() {
     || !ready
     || !subjectsReady;
   const model = useAnalyticsModel(data, subjects, waiting);
+  /* The records, read against the work and the goals — the Overview breakdown
+     and the Growth panels. Here rather than in either tab so it is one request
+     per window, and so the first paint waits for it like everything else.
+     It needs the window, which the model decides, so it follows the model. */
+  const recordRead = useRecordAnalysis(model.span);
+  /* Held for its first answer only. A failed first read leaves no data, and
+     `loading` would then come back on every window change and blank the
+     page; once it has answered at all, the panels show what they have. */
+  const recordsAnswered = useRef(false);
+  if (!recordRead.loading) recordsAnswered.current = true;
 
   /**
    * Which tab a bare visit lands on.
@@ -512,7 +523,7 @@ export default function Analytics() {
    * counts as answered — the panel that needed it says so, and the rest of the
    * page is not held hostage to it.
    */
-  if (waiting) {
+  if (waiting || (recordRead.loading && !recordsAnswered.current)) {
     return <Loading label="Loading your analytics" />;
   }
   if (!series.data) {
@@ -695,7 +706,8 @@ export default function Analytics() {
         {opening}
 
         {view.key === 'overview' && (
-          <OverviewTab model={model} data={data} onEditBaseline={() => setEditingSetup(true)} />
+          <OverviewTab model={model} data={data} records={recordRead}
+                       onEditBaseline={() => setEditingSetup(true)} />
         )}
 
         {view.key === 'recommendations' && <RecommendationsTab model={model} data={data} />}
@@ -703,7 +715,7 @@ export default function Analytics() {
         {view.key === 'subjects' && (
           <SubjectsTab model={model} subjects={subjects} username={username} />
         )}
-        {view.key === 'growth' && <GrowthTab model={model} />}
+        {view.key === 'growth' && <GrowthTab model={model} records={recordRead} />}
           </>
         )}
       </div>
