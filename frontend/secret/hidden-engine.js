@@ -78,7 +78,6 @@
         he.querySelectorAll('.he-cog').forEach(function (cog) {
             cog.classList.add('he-draggable');
             cog.addEventListener('pointerdown', function (e) {
-                if (cog._detached && false) return;
                 e.preventDefault();
                 try { cog.setPointerCapture(e.pointerId); } catch (_) {}
                 var rect = cog.getBoundingClientRect();
@@ -99,13 +98,18 @@
                         startDrain(he);
                     }
                 }
+                /* pointercancel too: a touch the browser takes back (a
+                   scroll, a system gesture) never sends pointerup, and the
+                   gear stayed glued to the next touch anywhere on screen. */
                 function upFn() {
                     cog.classList.remove('he-dragging');
                     document.removeEventListener('pointermove', move);
                     document.removeEventListener('pointerup', upFn);
+                    document.removeEventListener('pointercancel', upFn);
                 }
                 document.addEventListener('pointermove', move);
                 document.addEventListener('pointerup', upFn);
+                document.addEventListener('pointercancel', upFn);
             });
         });
     }
@@ -460,7 +464,7 @@
                worse than no rename at all: the old name is gone, so the rail
                would fall back to the band. */
             v = wearTitle(v);
-            hint.textContent = 'title set to "' + v + '" — it now shows on the dashboard.';
+            hint.textContent = 'title set to "' + v + '". it shows next to your name now.';
             hint.classList.add('ok');
             if (he) reactCore(he, false);
         }
@@ -471,12 +475,12 @@
             b.addEventListener('click', function () {
                 var on = b.classList.toggle('on');
                 if (he) reactCore(he, true);
-                acLog(ac, (on ? '✓ ' : '× ') + b.textContent.trim() + (on ? ' — ' + b.getAttribute('data-msg') : ' disabled'));
+                acLog(ac, (on ? '✓ ' : '× ') + b.textContent.trim() + (on ? ': ' + b.getAttribute('data-msg') : ' off'));
             });
         });
 
         var cmd = ac.querySelector('#acCmd');
-        acLog(ac, 'SUMMIT CORE shell — administrator session. type anything.');
+        acLog(ac, 'SUMMIT CORE shell. you\'re the admin here. type anything.');
         cmd.addEventListener('keydown', function (e) {
             if (e.key !== 'Enter') return;
             var raw = cmd.value; var c = raw.trim(); cmd.value = '';

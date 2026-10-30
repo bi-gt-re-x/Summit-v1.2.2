@@ -21,6 +21,26 @@
     var RIDDLE = "I have no legs, but I can run. I have no lungs, but I need air. " +
                  "I feed on fuel, and my heart beats with a roar. What am I?";
 
+    // What the void says to a wrong answer, one line per miss, the last one
+    // repeating. A flat "no" every time read as a broken box after the third
+    // try, so it starts pointing the way.
+    var NUDGES = [
+        '… no.',
+        '… still no.',
+        '… look under the hood.',
+        '… six letters. under the hood.'
+    ];
+
+    // "engine", "an engine", "The engine!", "engines": all the same answer. It
+    // used to strip everything but letters and compare, so "an engine" came out
+    // as "anengine" and got a "no" for being right. A short phrase with the
+    // word in it counts; a long list of guesses doesn't.
+    function isAnswer(raw) {
+        var words = String(raw || '').toLowerCase().match(/[a-z]+/g) || [];
+        if (words.length > 4) return false;
+        return words.some(function (w) { return w === ANSWER || w === ANSWER + 's'; });
+    }
+
     function ready(fn) {
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
         else fn();
@@ -71,16 +91,20 @@
         var input = document.getElementById('voidRiddleInput');
         var err = document.getElementById('voidRiddleErr');
 
+        var misses = 0;
         form.addEventListener('submit', function (e) {
             e.preventDefault();
-            var val = (input.value || '').trim().toLowerCase().replace(/[^a-z]/g, '');
-            if (val === ANSWER) {
+            if (isAnswer(input.value)) {
                 solve(wrap);
             } else {
-                err.textContent = '… no.';
+                misses++;
+                err.textContent = NUDGES[Math.min(misses, NUDGES.length) - 1];
                 input.classList.remove('wrong');
                 void input.offsetWidth;
                 input.classList.add('wrong');
+                // Leave the guess showing but selected, so the next one
+                // replaces it instead of landing on the end ("carfire").
+                input.select();
             }
         });
 
