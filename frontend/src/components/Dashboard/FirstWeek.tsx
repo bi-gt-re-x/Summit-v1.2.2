@@ -33,6 +33,8 @@ import { growth as growthService, quests as questService } from '@/services';
 import type { Quest, QuestClaim, QuestId, QuestLine } from '@/services/quests';
 import { dataMaturity, isActiveDay } from '@/utils/dataMaturity';
 import { dates, format } from '@/utils';
+import { useStarter } from '@/hooks/useStarter';
+import { daysOfTasks, featureForPath } from '@/utils/starter';
 import type { GrowthDay } from '@/types';
 
 /** Active days past which the line hides. Also SEASONED_XP_DAYS in backend/tracking/quests.py. */
@@ -186,6 +188,18 @@ export function Check({ on }: { on: boolean }) {
   );
 }
 
+/**
+ * Where a quest row links, or null with a note on when it opens. A quest whose
+ * page is still locked (utils/starter) says when instead of sending a new
+ * account to the lock note.
+ */
+export function useQuestTarget(to: string | null): { to: string | null; wait: string | null } {
+  const starter = useStarter();
+  const feature = to ? featureForPath(to) : undefined;
+  if (!feature || !starter.isLocked(feature.id)) return { to, wait: null };
+  return { to: null, wait: `${feature.name} opens after ${daysOfTasks(feature.after - starter.taskDays)}.` };
+}
+
 function QuestRow({ quest, busy, popped, onClaim }: {
   quest: Quest;
   busy: boolean;
@@ -193,12 +207,13 @@ function QuestRow({ quest, busy, popped, onClaim }: {
   onClaim: (id: QuestId) => void;
 }) {
   const xp = `+${format.number(quest.xp)} XP`;
+  const target = useQuestTarget(quest.to);
   const body = (
     <>
       <Check on={quest.done} />
       <span className="fw-text">
         <span className="fw-name">{quest.title}</span>
-        <span className="fw-hint">{quest.claimed ? 'Done. Nice.' : quest.hint}</span>
+        <span className="fw-hint">{quest.claimed ? 'Done. Nice.' : target.wait ?? quest.hint}</span>
       </span>
     </>
   );
@@ -234,7 +249,7 @@ function QuestRow({ quest, busy, popped, onClaim }: {
 
   /* Not done yet: the whole row goes where it's done. "Come back tomorrow"
      has nowhere to go, so it just says when. */
-  if (!quest.to) {
+  if (!target.to) {
     return (
       <li className="fw-quest">
         {body}
@@ -244,7 +259,7 @@ function QuestRow({ quest, busy, popped, onClaim }: {
   }
   return (
     <li className="fw-quest">
-      <Link className="fw-go" to={quest.to}>
+      <Link className="fw-go" to={target.to}>
         {body}
         <span className="fw-xp">{xp}</span>
       </Link>

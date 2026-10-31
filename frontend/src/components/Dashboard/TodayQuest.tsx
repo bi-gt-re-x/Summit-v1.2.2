@@ -27,7 +27,7 @@ import type { DailyQuest, QuestLine } from '@/services/quests';
 import { STAGE_BRINGS, STAGE_FLOOR } from '@/utils/dataMaturity';
 import type { Maturity } from '@/utils/dataMaturity';
 import { format } from '@/utils';
-import { Check } from './FirstWeek';
+import { Check, useQuestTarget } from './FirstWeek';
 
 /** Active days past which there's no daily quest: when Performance opens.
  *  Also DAILY_XP_DAYS in backend/tracking/quests.py. */
@@ -73,12 +73,13 @@ export interface TodayQuestProps {
 export function TodayQuest({ quest, maturity, todayActive, busy, popped, onClaim }: TodayQuestProps) {
   const xp = `+${format.number(quest.xp)} XP`;
   const countdown = stageCountdown(maturity);
+  const target = useQuestTarget(quest.to);
   const body = (
     <>
       <Check on={quest.done} />
       <span className="fw-text">
         <span className="fw-name">{quest.title}</span>
-        <span className="fw-hint">{quest.claimed ? 'Done. See you tomorrow.' : quest.hint}</span>
+        <span className="fw-hint">{quest.claimed ? 'Done. See you tomorrow.' : target.wait ?? quest.hint}</span>
       </span>
     </>
   );
@@ -109,10 +110,10 @@ export function TodayQuest({ quest, maturity, todayActive, busy, popped, onClaim
         </button>
       </li>
     );
-  } else if (quest.to) {
+  } else if (target.to) {
     row = (
       <li className="fw-quest">
-        <Link className="fw-go" to={quest.to}>
+        <Link className="fw-go" to={target.to}>
           {body}
           <span className="fw-xp">{xp}</span>
         </Link>

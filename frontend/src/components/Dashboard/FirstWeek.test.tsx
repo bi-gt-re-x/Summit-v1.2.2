@@ -5,12 +5,12 @@
  * The claim rules themselves (done only when the row exists, paid once) are
  * the server's and are pinned in tests/test_quests.py.
  */
-import { render, renderHook, screen, waitFor } from '@testing-library/react';
+import { renderHook, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { Quest, QuestLine } from '@/services/quests';
-import { days } from '@/test/factories';
+import { days, stats } from '@/test/factories';
+import { renderWithProviders } from '@/test/render';
 
 const list = vi.fn();
 const series = vi.fn();
@@ -50,12 +50,8 @@ function line(over: Partial<Record<Quest['id'], Partial<Quest>>> = {}, retired =
   };
 }
 
-function card(quests: Quest[], onClaim = vi.fn()) {
-  render(
-    <MemoryRouter>
-      <FirstWeek quests={quests} busy={null} lastClaim={null} onClaim={onClaim} />
-    </MemoryRouter>,
-  );
+function card(quests: Quest[], onClaim = vi.fn(), options = {}) {
+  renderWithProviders(<FirstWeek quests={quests} busy={null} lastClaim={null} onClaim={onClaim} />, options);
   return onClaim;
 }
 
@@ -104,6 +100,15 @@ describe('the card', () => {
     expect(screen.queryByRole('link', { name: /Quest back/ })).toBeNull();
     expect(screen.getByText('0 of 6 done')).toBeInTheDocument();
     expect(screen.getByText(/180 XP to grab/)).toBeInTheDocument();
+  });
+
+  it("says when a quest's page opens, for a new account, instead of linking to it", () => {
+    card(line({ goal: { to: '/goals' } }).quests, vi.fn(), {
+      settings: { createdAt: new Date().toISOString() },
+      stats: { stats: stats({ task_days: 1 }) },
+    });
+    expect(screen.queryByRole('link', { name: /Quest goal/ })).toBeNull();
+    expect(screen.getByText('Goals opens after 2 more days of tasks.')).toBeInTheDocument();
   });
 
   it('offers a claim once a quest is done, and says which was tapped', async () => {

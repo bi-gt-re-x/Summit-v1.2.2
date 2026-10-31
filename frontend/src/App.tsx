@@ -18,6 +18,7 @@ import { Ambient, AppBoundary, Loading, Rail, Toasts, Topbar, VerifyBanner } fro
 import { RequireAccount } from './RequireAccount';
 import { FeatureGate } from '@/components/FeatureGate';
 import { Tutorial } from '@/components/Tutorial/Tutorial';
+import { Unlocked } from '@/components/Tutorial/Unlocked';
 import { useSittingShown } from '@/components/Timer/FocusSitting';
 import { useAuth, usePinnedViewport, useSettings } from '@/hooks';
 import { useChainAccount } from '@/hooks/useChainAccount';
@@ -311,6 +312,7 @@ export default function App() {
       {!landing && (
         <div className="app-chrome" inert={sitting}>
           <Tutorial />
+          <Unlocked />
         </div>
       )}
       <main className="app-main">

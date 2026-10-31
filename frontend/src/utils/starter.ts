@@ -1,43 +1,32 @@
 /**
  * Getting started: which pages a new account sees, and when the rest arrive.
  *
- * Summit has a lot in it — goals with milestones, a skill tree, five tabs of
- * analytics, notes, spaces — and a brand-new reader shown all of it at once
- * sees a cockpit rather than a place to start. So an account opens on three
- * pages, the three that are the daily loop:
+ * A new account opens on the daily loop and nothing else: Dashboard (add and
+ * finish tasks), Calendar, Timer and Log. Settings is always there too.
  *
- *   - **Dashboard** — today's tasks, the streak, the XP.
- *   - **Calendar**  — when the work happens.
- *   - **Timer**     — sitting down and doing it.
+ * Everything else unlocks one page at a time, as a task habit forms. The count
+ * is days with at least one finished task (`task_days` in /api/stats), not
+ * days since sign-up, so somebody who signs up and vanishes for a week comes
+ * back to the same short list. Each page's `after` is the day it opens on.
+ * Nothing opens on day one however many tasks get done: the five-tab
+ * Analytics waits a week, and Spaces waits longest.
  *
- * Settings is always there as well; it is not a feature, it is the account.
+ * Locked pages aren't listed. A typed URL lands on a note
+ * (components/FeatureGate) that says when it opens, with a way in anyway.
+ * Mango says when one opens (components/Tutorial/Unlocked.tsx), once.
  *
- * ## Three stages
+ * ## Two stages
  *
- * `starter` — the first {@link STARTER_DAYS} days, or until level
- *   {@link STARTER_LEVEL}, whichever comes first. The rail lists the three
- *   pages and nothing else, apart from one quiet row saying more is coming.
- *
- * `gated` — after that. Every page is listed, and the advanced ones carry a
- *   lock. A lock is a note, not a wall: opening a locked page shows what it is
- *   and why it can wait (components/FeatureGate), and "Open it" opens it for
- *   good. Nothing is ever refused.
- *
- * `open` — nothing is locked. Every account made before this existed is here
- *   (see {@link STARTER_SINCE}), as is one that chose "Unlock everything", or
- *   has opened every advanced page one by one.
- *
- * A page can be opened early in either of the first two stages — from the
- * rail's "More tools" row, a link on the dashboard, search, or a typed URL.
- * Every route goes through the same note, so there is no way round it that
- * skips the explanation, and no way it stops anyone.
+ * `starter`: some page is still locked.
+ * `open`: nothing is. Every account made before this existed is here (see
+ *   {@link STARTER_SINCE}), and so is one that chose "Unlock everything" or has
+ *   unlocked every page.
  *
  * ## Where it is kept
  *
- * On the account, not the browser (`welcome_seen`, `starter_done` and
- * `features_open` in backend/api/settings.py): a page opened on the laptop is
- * open on the phone. The stage itself is never stored — it is worked out here
- * from the sign-up date and the level every time, so it cannot drift.
+ * On the account (`welcome_seen`, `features_open` in backend/api/settings.py).
+ * `features_open` is the pages opened early or already announced by Mango.
+ * The stage itself is never stored: it is worked out here every time.
  */
 import type { Prefs } from '@/services/settings';
 
@@ -55,6 +44,8 @@ export interface Feature {
   what: string;
   /** Why it waits: what makes it more than the starter pages. */
   why: string;
+  /** Days with a finished task before it opens. */
+  after: number;
 }
 
 /** In the rail's order. */
@@ -66,6 +57,7 @@ export const FEATURES: Feature[] = [
     paths: ['/analytics', '/recommendations', '/insights', '/habits', '/subjects', '/growth'],
     what: 'Reports on how you work: your growth score, trends, per-subject pages and recommended sessions.',
     why: 'It asks a few setup questions and has five tabs of charts. It also needs about a week of tasks and sessions before the numbers mean much.',
+    after: 7,
   },
   {
     id: 'tasks',
@@ -74,6 +66,7 @@ export const FEATURES: Feature[] = [
     paths: ['/tasks'],
     what: 'The full task manager: every task you have, with filters, grouping, sorting and ratings.',
     why: "The dashboard already shows what's due today. This is the whole list with lots of controls. It's most useful once you have more tasks than fit on one screen.",
+    after: 2,
   },
   {
     id: 'goals',
@@ -82,6 +75,7 @@ export const FEATURES: Feature[] = [
     paths: ['/goals', '/trends'],
     what: 'Long-term goals with milestones and a roadmap, linked to the tasks that move them.',
     why: 'A goal is a plan with checkpoints and dates. It works best once you know how your weeks usually go.',
+    after: 3,
   },
   {
     id: 'skill-tree',
@@ -90,6 +84,7 @@ export const FEATURES: Feature[] = [
     paths: ['/skill-trees', '/growth-tree'],
     what: 'Every class you take, mapped out skill by skill, with problems to practice and levels to earn.',
     why: "It's a big map with 150 subjects and practice sets. Worth the time, just not on day one.",
+    after: 4,
   },
   {
     id: 'notes',
@@ -98,6 +93,7 @@ export const FEATURES: Feature[] = [
     paths: ['/notes'],
     what: 'A notebook with Markdown, folders and search.',
     why: 'Not hard, just one more place to put things. Starting with fewer places makes the habit easier to build.',
+    after: 5,
   },
   {
     id: 'achievements',
@@ -106,6 +102,7 @@ export const FEATURES: Feature[] = [
     paths: ['/achievements', '/records'],
     what: 'Your personal bests and the badge wall.',
     why: "There's not much on it in the first few days. It fills up as you work.",
+    after: 6,
   },
   {
     id: 'spaces',
@@ -114,6 +111,7 @@ export const FEATURES: Feature[] = [
     paths: ['/spaces/', '/team/'],
     what: 'Pages of your own, like a notebook crossed with a whiteboard, with blocks, charts, sticky notes and team members.',
     why: 'A blank page with a block editor is a lot of freedom. Most people do better with the timer and the calendar first.',
+    after: 10,
   },
 ];
 
@@ -130,19 +128,13 @@ export function featureForPath(pathname: string): Feature | undefined {
   );
 }
 
-/** How long the starter pages are all a new account sees. */
-export const STARTER_DAYS = 3;
-/** Or until this level: about ten tasks at the default XP. */
-export const STARTER_LEVEL = 3;
 /**
  * Accounts made before this day never see a lock. They already know their way
  * round, and taking pages away from them would be a regression, not a tour.
  */
 export const STARTER_SINCE = '2026-10-09';
 
-export type Stage = 'open' | 'starter' | 'gated';
-
-const DAY_MS = 24 * 60 * 60 * 1000;
+export type Stage = 'open' | 'starter';
 
 /** The sign-up moment, or null when it cannot be read. */
 function joinedAt(createdAt: string): Date | null {
@@ -151,34 +143,52 @@ function joinedAt(createdAt: string): Date | null {
   return Number.isNaN(when.getTime()) ? null : when;
 }
 
+/**
+ * Whether this account goes through getting started at all. An account whose
+ * age cannot be read counts as an old one: a lock it should not have is worse
+ * than a tour it does not get.
+ */
+export function isNewAccount(createdAt: string): boolean {
+  const joined = joinedAt(createdAt);
+  return Boolean(joined && joined >= new Date(`${STARTER_SINCE}T00:00:00`));
+}
+
 export interface StarterInput {
   createdAt: string;
-  /** The account's level, or 0 when it is not known yet. */
-  level: number;
-  prefs: Pick<Prefs, 'starter_done' | 'features_open'>;
-  now?: Date;
+  /** Days with at least one finished task. */
+  taskDays: number;
+  prefs: Pick<Prefs, 'features_open'>;
 }
 
-export function stageOf({ createdAt, level, prefs, now = new Date() }: StarterInput): Stage {
-  const joined = joinedAt(createdAt);
-  // An account whose age cannot be read is treated as an old one: a lock it
-  // should not have is worse than a tour it does not get.
-  if (!joined || joined < new Date(`${STARTER_SINCE}T00:00:00`)) return 'open';
-  if (FEATURES.every((feature) => prefs.features_open.includes(feature.id))) return 'open';
-  const young = now.getTime() - joined.getTime() < STARTER_DAYS * DAY_MS;
-  if (!prefs.starter_done && young && level < STARTER_LEVEL) return 'starter';
-  return 'gated';
+/** Whether this feature is still locked. */
+export function isLocked({ createdAt, taskDays, prefs }: StarterInput, id: FeatureId): boolean {
+  if (!isNewAccount(createdAt) || prefs.features_open.includes(id)) return false;
+  return taskDays < (BY_ID.get(id)?.after ?? 0);
 }
 
-/** Whole days left in the starter stage, at least 1 while it lasts. */
-export function starterDaysLeft(createdAt: string, now = new Date()): number {
-  const joined = joinedAt(createdAt);
-  if (!joined) return 0;
-  const left = STARTER_DAYS * DAY_MS - (now.getTime() - joined.getTime());
-  return Math.max(1, Math.ceil(left / DAY_MS));
+export function stageOf(input: StarterInput): Stage {
+  return FEATURES.some((feature) => isLocked(input, feature.id)) ? 'starter' : 'open';
 }
 
-/** Whether this feature still shows its note before opening. */
-export function isLocked(stage: Stage, id: FeatureId, opened: readonly string[]): boolean {
-  return stage !== 'open' && !opened.includes(id);
+/** The next page to open, and how many more days of tasks it takes. */
+export function nextUnlock(input: StarterInput): { feature: Feature; days: number } | null {
+  const waiting = FEATURES.filter((feature) => isLocked(input, feature.id)).sort((a, b) => a.after - b.after);
+  const feature = waiting[0];
+  return feature ? { feature, days: feature.after - input.taskDays } : null;
+}
+
+/**
+ * Pages the task days have opened that Mango hasn't announced yet, in the
+ * order they opened. Announcing one adds it to `features_open`.
+ */
+export function newlyOpened(input: StarterInput): Feature[] {
+  if (!isNewAccount(input.createdAt)) return [];
+  return FEATURES.filter(
+    (feature) => !input.prefs.features_open.includes(feature.id) && input.taskDays >= feature.after,
+  ).sort((a, b) => a.after - b.after);
+}
+
+/** "1 more day of tasks", "3 more days of tasks". */
+export function daysOfTasks(days: number): string {
+  return `${days} more ${days === 1 ? 'day' : 'days'} of tasks`;
 }

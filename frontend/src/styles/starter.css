@@ -99,20 +99,19 @@ html[data-theme="dark"] .gs-bad { color: #f0736d; }
 /* A strip of icons has no room for a second one on a row. */
 html.nav-collapsed .rail-link .rail-lock { display: none; }
 
-/* "More tools": the one row a starter account sees beyond its three pages. */
+/* "Next: Goals": the one row past the open pages while some are locked. A
+   note, not a control: the way to open it is finishing tasks. */
 .rail-later {
     display: flex; align-items: center; gap: var(--space-3);
     width: 100%;
-    margin-top: var(--space-1);
+    margin: var(--space-1) 0 0;
     padding: var(--space-2) var(--space-3);
     border: 1px dashed var(--color-line);
     border-radius: var(--radius-md);
     background: none;
     color: var(--color-ink-muted);
     font: inherit; font-size: var(--text-sm); text-align: left;
-    cursor: pointer;
 }
-.rail-later:hover { color: var(--color-ink); border-color: var(--color-ink-faint); }
 .rail-later svg { width: 18px; height: 18px; flex: none; }
 .rail-later span { flex: 1 1 auto; min-width: 0; }
 .rail-later small { display: block; font-size: var(--text-xs); color: var(--color-ink-faint); }

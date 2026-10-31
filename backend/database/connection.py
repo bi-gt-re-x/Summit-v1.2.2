@@ -3382,6 +3382,27 @@ def first_week_facts(username):
         con.close()
 
 
+def task_days(username, cap=30):
+    """How many days this account has finished at least one task on, up to `cap`.
+
+    The getting-started ladder (frontend/src/utils/starter.ts) opens pages on
+    this count, and its last step is well under the cap, so an old account's
+    twenty thousand tasks stop being read after thirty distinct days.
+    """
+    if not username:
+        return 0
+    con = connect()
+    try:
+        row = con.execute(
+            'SELECT COUNT(*) AS n FROM (SELECT DISTINCT substr(completed_at, 1, 10) AS day '
+            "FROM tasks WHERE user_id = ? AND status = 'done' AND completed_at IS NOT NULL "
+            'LIMIT ?) AS days',
+            (username, int(cap))).fetchone()
+        return int(row['n'] or 0)
+    finally:
+        con.close()
+
+
 def claim_quest(username, quest_id, xp, stamp):
     """Write the claim row. True if this call made it, False if it was there.
 

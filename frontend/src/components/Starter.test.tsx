@@ -1,6 +1,6 @@
 /**
- * Getting started on screen: the rail's short list for a new account, the
- * padlocks after it, and the note in front of a locked page.
+ * Getting started on screen: the rail's short list for a new account, pages
+ * joining it as days of tasks add up, and the note in front of a locked page.
  * The rule itself is tested in utils/starter.test.ts.
  */
 import { fireEvent, screen, within } from '@testing-library/react';
@@ -36,16 +36,16 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-const rail = (createdAt: string, prefs = {}) => {
+const rail = (createdAt: string, prefs = {}, taskDays = 0) => {
   renderWithProviders(<Rail />, {
     settings: { createdAt, prefs },
-    stats: { stats: stats({ level: 1 }) },
+    stats: { stats: stats({ level: 1, task_days: taskDays }) },
   });
   return screen.getByRole('navigation', { name: 'Main' });
 };
 
 describe('the rail for a new account', () => {
-  it('lists the three starter pages and a row for the rest', () => {
+  it('lists the daily loop and names the next page, nothing more', () => {
     const nav = rail(justJoined);
     for (const label of ['Dashboard', 'Calendar', 'Timer']) {
       expect(within(nav).getByRole('link', { name: label })).toBeInTheDocument();
@@ -53,30 +53,30 @@ describe('the rail for a new account', () => {
     for (const label of ['Analytics', 'Tasks', 'Goals', 'Skill Tree', 'Notes', 'Achievements']) {
       expect(within(nav).queryByRole('link', { name: label })).not.toBeInTheDocument();
     }
-    expect(within(nav).getByRole('button', { name: /More tools/ })).toBeInTheDocument();
+    expect(within(nav).getByText(/Next: Tasks/)).toBeInTheDocument();
+    expect(within(nav).getByText('After 2 more days of tasks')).toBeInTheDocument();
+    expect(within(nav).queryByText('Personal')).not.toBeInTheDocument();
   });
 
-  it('unfolds the rest, padlocked, from that row', () => {
-    const nav = rail(justJoined);
-    fireEvent.click(within(nav).getByRole('button', { name: /More tools/ }));
-    const goals = within(nav).getByRole('link', { name: 'Goals' });
-    expect(goals).toHaveClass('is-locked');
-    expect(goals).toHaveAttribute('href', '/goals');
+  it('adds pages as days of tasks add up', () => {
+    const nav = rail(lastWeek, {}, 3);
+    expect(within(nav).getByRole('link', { name: 'Tasks' })).toBeInTheDocument();
+    expect(within(nav).getByRole('link', { name: 'Goals' })).toBeInTheDocument();
+    expect(within(nav).queryByRole('link', { name: 'Analytics' })).not.toBeInTheDocument();
+    expect(within(nav).getByText(/Next: Skill Tree/)).toBeInTheDocument();
   });
 
-  it('keeps a page it has opened in the list', () => {
+  it('keeps a page it opened early in the list', () => {
     const nav = rail(justJoined, { features_open: ['goals'] });
-    expect(within(nav).getByRole('link', { name: 'Goals' })).not.toHaveClass('is-locked');
+    expect(within(nav).getByRole('link', { name: 'Goals' })).toBeInTheDocument();
   });
 });
 
-describe('the rail after the starter days', () => {
-  it('lists everything, with the unopened pages padlocked', () => {
-    const nav = rail(lastWeek, { features_open: ['notes'] });
-    expect(within(nav).getByRole('link', { name: 'Goals' })).toHaveClass('is-locked');
-    expect(within(nav).getByRole('link', { name: 'Notes' })).not.toHaveClass('is-locked');
-    expect(within(nav).getByRole('link', { name: 'Dashboard' })).not.toHaveClass('is-locked');
-    expect(within(nav).queryByRole('button', { name: /More tools/ })).not.toBeInTheDocument();
+describe('the rail once everything is open', () => {
+  it('lists every page and no next row', () => {
+    const nav = rail(lastWeek, {}, 10);
+    expect(within(nav).getByRole('link', { name: 'Analytics' })).toBeInTheDocument();
+    expect(within(nav).queryByText(/^Next:/)).not.toBeInTheDocument();
   });
 });
 
@@ -98,7 +98,8 @@ describe('the note in front of a locked page', () => {
     const update = gate('/goals', justJoined);
     expect(screen.getByRole('heading', { name: 'Goals' })).toBeInTheDocument();
     expect(screen.queryByText('The goals page')).not.toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Open Goals' }));
+    expect(screen.getByText(/Goals opens after 3 more days of tasks/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Open Goals anyway' }));
     expect(update).toHaveBeenCalledWith({ features_open: ['goals'] });
   });
 

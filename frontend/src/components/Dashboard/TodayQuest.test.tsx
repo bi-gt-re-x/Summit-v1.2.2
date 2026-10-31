@@ -5,12 +5,12 @@
  * The pick, the tick and the once-a-day claim are the server's and are pinned
  * in tests/test_quests.py.
  */
-import { act, render, renderHook, screen, waitFor } from '@testing-library/react';
+import { act, renderHook, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { DailyQuest, QuestLine } from '@/services/quests';
 import { days } from '@/test/factories';
+import { renderWithProviders } from '@/test/render';
 import { dates } from '@/utils';
 import { dataMaturity } from '@/utils/dataMaturity';
 
@@ -57,17 +57,15 @@ function record(count: number, active: number) {
 }
 
 function card(quest: DailyQuest, todayActive = false, onClaim = vi.fn()) {
-  render(
-    <MemoryRouter>
-      <TodayQuest
-        quest={quest}
-        maturity={dataMaturity(record(4, 3))}
-        todayActive={todayActive}
-        busy={false}
-        popped={false}
-        onClaim={onClaim}
-      />
-    </MemoryRouter>,
+  renderWithProviders(
+    <TodayQuest
+      quest={quest}
+      maturity={dataMaturity(record(4, 3))}
+      todayActive={todayActive}
+      busy={false}
+      popped={false}
+      onClaim={onClaim}
+    />,
   );
   return onClaim;
 }

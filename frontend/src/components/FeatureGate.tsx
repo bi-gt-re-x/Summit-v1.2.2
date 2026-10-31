@@ -6,17 +6,17 @@
  * the same place. When the page is unlocked it renders the page and nothing
  * else.
  *
- * It explains and steps aside. It says what the page is, why it waits, and
- * offers two ways forward: open it (for good — the next visit goes straight
- * in) or go back to the three pages the account started with. See
- * utils/starter for when a page counts as locked.
+ * Locked pages aren't in the rail, so this is what a typed URL, a bookmark or
+ * a search result lands on. It says what the page is, why it waits and when
+ * it opens, and sends the reader back. Opening it anyway is still there, for
+ * good, as the quieter button. See utils/starter for when a page is locked.
  */
 import { Lock } from 'lucide-react';
 import { useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Loading } from './PageState';
 import { useStarter } from '@/hooks/useStarter';
-import { STARTER_LEVEL, featureForPath } from '@/utils/starter';
+import { daysOfTasks, featureForPath } from '@/utils/starter';
 import '@/styles/starter.css';
 
 export function FeatureGate() {
@@ -53,7 +53,7 @@ export function FeatureGate() {
         <span className="gs-badge" aria-hidden="true">
           <Lock />
         </span>
-        <p className="gs-eyebrow">Unlocks soon</p>
+        <p className="gs-eyebrow">Opens soon</p>
         <h1 id="gs-title">{feature.name}</h1>
         <p className="gs-what">{feature.what}</p>
 
@@ -62,22 +62,19 @@ export function FeatureGate() {
           <p>{feature.why}</p>
         </div>
 
-        {starter.stage === 'starter' && (
-          <p className="gs-when">
-            Your first days start with Dashboard, Calendar, Timer and Log, so it's not overwhelming. The rest shows up in{' '}
-            {starter.daysLeft === 1 ? '1 day' : `${starter.daysLeft} days`}, or sooner if you reach level{' '}
-            {STARTER_LEVEL}.
-          </p>
-        )}
+        <p className="gs-when">
+          {feature.name} opens after {daysOfTasks(feature.after - starter.taskDays)}. Any day you finish a task
+          counts. Until then, Dashboard, Calendar, Timer and Log are all you need.
+        </p>
 
         {failure && <p className="gs-bad" role="alert">{failure}</p>}
 
         <div className="gs-actions">
-          <button type="button" className="gs-btn is-primary" disabled={busy} onClick={() => void openIt()}>
-            {busy ? 'Opening…' : `Open ${feature.name}`}
+          <button type="button" className="gs-btn is-primary" disabled={busy} onClick={back}>
+            Go back
           </button>
-          <button type="button" className="gs-btn" disabled={busy} onClick={back}>
-            Not yet
+          <button type="button" className="gs-btn" disabled={busy} onClick={() => void openIt()}>
+            {busy ? 'Opening…' : `Open ${feature.name} anyway`}
           </button>
         </div>
         <p className="gs-foot">

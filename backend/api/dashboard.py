@@ -77,6 +77,8 @@ def _stats_of(user):
         "level": user.get('level', 1),
         "xp": user.get('xp', 0),
         "tasks_completed": user.get('tasks_completed', 0),
+        # What unlocks pages for a new account (frontend/src/utils/starter.ts).
+        "task_days": db.task_days(user.get('username')),
         "charge": user.get('charge', 0),
         **xp_tracking.streak_fields(user),
     }

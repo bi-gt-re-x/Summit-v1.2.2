@@ -36,6 +36,8 @@ export interface UserStats {
   level: number;
   xp: number;
   tasks_completed: number;
+  /** Days with at least one finished task, up to 30. What unlocks pages (utils/starter). */
+  task_days?: number;
   current_streak: number;
   best_streak: number;
   charge: number;

@@ -399,3 +399,25 @@
 @media (prefers-reduced-motion: reduce) {
     .mango-pet, .mango-pet * { animation: none !important; transition: none !important; }
 }
+
+/* ---- A page just opened (Unlocked.tsx) ------------------------------------ */
+/* Bottom left, just past the rail, no dark-out: good news, not a lesson. Not
+   the bottom right: that's where notifications stack (.nf-toasts), and a new
+   page often opens on the same task that earns a badge. On a phone the toasts
+   span the bottom, so the card sits under the top bar instead. */
+.tut-unlocked .tut-card {
+    left: calc(var(--rail-w, 0px) + var(--space-5));
+    bottom: var(--space-5);
+    width: min(340px, calc(100vw - 2 * var(--space-5)));
+    padding-top: var(--space-6);
+}
+.tut-unlocked-mango {
+    position: absolute;
+    top: -46px;
+    left: var(--space-4);
+    width: 64px;
+    height: 70px;
+}
+@media (max-width: 640px) {
+    .tut-unlocked .tut-card { left: var(--space-3); right: var(--space-3); top: 76px; bottom: auto; width: auto; }
+}

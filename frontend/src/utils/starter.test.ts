@@ -4,60 +4,69 @@
 import { describe, expect, it } from 'vitest';
 import {
   FEATURES,
-  STARTER_DAYS,
-  STARTER_LEVEL,
+  daysOfTasks,
   featureForPath,
   isLocked,
+  isNewAccount,
+  newlyOpened,
+  nextUnlock,
   stageOf,
-  starterDaysLeft,
 } from './starter';
 
-const now = new Date('2026-11-10T12:00:00');
-const hoursAgo = (hours: number) => new Date(now.getTime() - hours * 3600_000).toISOString();
-const fresh = { starter_done: false, features_open: [] as string[] };
+const joined = '2026-11-10T09:00:00';
+const none = { features_open: [] as string[] };
+const at = (taskDays: number, prefs = none, createdAt = joined) => ({ createdAt, taskDays, prefs });
 
-describe('the stage', () => {
-  it('starts a new account on the starter pages', () => {
-    expect(stageOf({ createdAt: hoursAgo(1), level: 1, prefs: fresh, now })).toBe('starter');
+describe('the ladder', () => {
+  it('opens nothing on day one, however many tasks get done', () => {
+    expect(FEATURES.every((feature) => isLocked(at(1), feature.id))).toBe(true);
+    expect(stageOf(at(1))).toBe('starter');
   });
 
-  it('moves on after the starter days', () => {
-    expect(stageOf({ createdAt: hoursAgo(STARTER_DAYS * 24 + 1), level: 1, prefs: fresh, now })).toBe('gated');
+  it('opens pages one at a time, with Analytics after a week and Spaces last', () => {
+    const order = [...FEATURES].sort((a, b) => a.after - b.after).map((feature) => feature.id);
+    expect(order[0]).toBe('tasks');
+    expect(order.at(-1)).toBe('spaces');
+    expect(new Set(FEATURES.map((feature) => feature.after)).size).toBe(FEATURES.length);
+    expect(isLocked(at(6), 'analytics')).toBe(true);
+    expect(isLocked(at(7), 'analytics')).toBe(false);
+    expect(isLocked(at(9), 'spaces')).toBe(true);
   });
 
-  it('moves on early at the starter level', () => {
-    expect(stageOf({ createdAt: hoursAgo(1), level: STARTER_LEVEL, prefs: fresh, now })).toBe('gated');
+  it('is open once every page is', () => {
+    expect(stageOf(at(30))).toBe('open');
+    expect(stageOf(at(0, { features_open: FEATURES.map((feature) => feature.id) }))).toBe('open');
   });
 
-  it('moves on early when the reader ends it', () => {
-    expect(stageOf({ createdAt: hoursAgo(1), level: 1, prefs: { ...fresh, starter_done: true }, now })).toBe('gated');
+  it('keeps a page opened early open', () => {
+    expect(isLocked(at(0, { features_open: ['goals'] }), 'goals')).toBe(false);
   });
 
-  it('never locks an account made before the starter existed', () => {
-    expect(stageOf({ createdAt: '2026-03-01T10:00:00', level: 1, prefs: fresh, now })).toBe('open');
+  it('never locks an account made before getting started existed', () => {
+    expect(stageOf(at(0, none, '2026-03-01T10:00:00'))).toBe('open');
+    expect(newlyOpened(at(30, none, '2026-03-01T10:00:00'))).toEqual([]);
   });
 
   it('treats an unreadable sign-up date as an old account', () => {
-    expect(stageOf({ createdAt: '', level: 1, prefs: fresh, now })).toBe('open');
-    expect(stageOf({ createdAt: 'not a date', level: 1, prefs: fresh, now })).toBe('open');
-  });
-
-  it('is open once every advanced page has been opened', () => {
-    const all = { starter_done: false, features_open: FEATURES.map((feature) => feature.id) };
-    expect(stageOf({ createdAt: hoursAgo(1), level: 1, prefs: all, now })).toBe('open');
+    expect(isNewAccount('')).toBe(false);
+    expect(isNewAccount('not a date')).toBe(false);
+    expect(stageOf(at(0, none, ''))).toBe('open');
   });
 });
 
-describe('locks', () => {
-  it('lock what has not been opened, and nothing once open', () => {
-    expect(isLocked('starter', 'goals', [])).toBe(true);
-    expect(isLocked('gated', 'goals', ['goals'])).toBe(false);
-    expect(isLocked('open', 'goals', [])).toBe(false);
+describe('what Mango says', () => {
+  it('names the next page and the days it takes', () => {
+    expect(nextUnlock(at(0))).toMatchObject({ feature: { id: 'tasks' }, days: 2 });
+    expect(nextUnlock(at(2, { features_open: ['tasks'] }))).toMatchObject({ feature: { id: 'goals' }, days: 1 });
+    expect(nextUnlock(at(30))).toBeNull();
+    expect(daysOfTasks(1)).toBe('1 more day of tasks');
+    expect(daysOfTasks(3)).toBe('3 more days of tasks');
   });
 
-  it('count the days left, never below one while they last', () => {
-    expect(starterDaysLeft(hoursAgo(1), now)).toBe(STARTER_DAYS);
-    expect(starterDaysLeft(hoursAgo(STARTER_DAYS * 24 - 1), now)).toBe(1);
+  it('announces a page once, when its day comes', () => {
+    expect(newlyOpened(at(1))).toEqual([]);
+    expect(newlyOpened(at(2)).map((feature) => feature.id)).toEqual(['tasks']);
+    expect(newlyOpened(at(3, { features_open: ['tasks'] })).map((feature) => feature.id)).toEqual(['goals']);
   });
 });
 

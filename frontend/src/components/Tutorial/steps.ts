@@ -2,8 +2,8 @@
  * The tutorial's script: what Mango points at, in order, and what it says.
  *
  * Targets are CSS selectors, and most of them are `data-tour` attributes put
- * on the element for this purpose (the rail rows, the Add Task button, More
- * tools). A selector list is tried in order and the first match that is
+ * on the element for this purpose (the rail rows, the Add Task button, the
+ * rail's "Next" row). A selector list is tried in order and the first match that is
  * actually on screen wins, which is how one step covers the Week, Day and
  * Month calendar views.
  *
@@ -18,7 +18,7 @@
  *     works, nothing outside it does, and the tour moves on when it closes.
  *
  * `skipIfMissing` is for things only some accounts have: the timer's first-run
- * setup, the More tools row a new account gets, panels Settings can hide.
+ * setup, the rail's "Next" row a new account gets, panels Settings can hide.
  *
  * `until` lets an `inside` step end before its dialog closes: the tour moves on
  * the moment that selector is on screen. That is how one dialog with several
@@ -26,7 +26,6 @@
  * reader presses the dialog's own Next.
  */
 import type { Stage } from '@/utils/starter';
-import { STARTER_DAYS, STARTER_LEVEL } from '@/utils/starter';
 
 export type StepKind = 'next' | 'click' | 'inside';
 
@@ -64,7 +63,7 @@ export const STEPS: Step[] = [
     kind: 'next',
     route: '/dashboard',
     title: ({ name }) => (name ? `Hi ${name}, I'm Mango!` : "Hi, I'm Mango!"),
-    body: "I'll show you around Summit. It takes about two minutes. We'll start with the three pages you'll use every day: Dashboard, Calendar and Timer.",
+    body: "I'll show you around. It takes about a minute. Summit starts simple: add tasks, tick them off, and the rest opens up as you go.",
     next: "Let's go",
   },
 
@@ -77,15 +76,7 @@ export const STEPS: Step[] = [
     title: 'This is your Dashboard',
     body: "It's home base. Everything about today lives here, and this button always brings you back.",
   },
-  {
-    id: 'stats',
-    kind: 'next',
-    route: '/dashboard',
-    target: ['.dash-stats'],
-    skipIfMissing: true,
-    title: 'Your day in four numbers',
-    body: 'Tasks done, XP earned, time focused and your streak. They fill up as you work.',
-  },
+
   {
     id: 'add-task',
     kind: 'click',
@@ -111,15 +102,7 @@ export const STEPS: Step[] = [
     title: "Here's your list",
     body: "When you finish a task, tick the box next to it. That's how you earn XP and keep your streak going.",
   },
-  {
-    id: 'focus-panel',
-    kind: 'next',
-    route: '/dashboard',
-    target: ['.dash-main .focus-panel .fp-controls', '.dash-main .focus-panel'],
-    skipIfMissing: true,
-    title: 'A focus timer, right here',
-    body: 'Press Start focus to work in timed blocks with short breaks. The screen clears so you can concentrate. Press Esc to come back.',
-  },
+
 
   // ---- Calendar ------------------------------------------------------------
   {
@@ -129,14 +112,7 @@ export const STEPS: Step[] = [
     title: 'Next up: Calendar',
     body: 'Click Calendar. This is where you plan when things happen.',
   },
-  {
-    id: 'calendar-views',
-    kind: 'next',
-    route: '/calendar',
-    target: ['.view-toggle'],
-    title: 'Zoom in or out',
-    body: 'Look at one day, a whole week or the full month.',
-  },
+
   {
     id: 'calendar-grid',
     kind: 'next',
@@ -171,15 +147,7 @@ export const STEPS: Step[] = [
     title: 'Start a session',
     body: 'When you sit down to work, press Start focus. Every minute counts toward your daily focus goal.',
   },
-  {
-    id: 'timer-controls',
-    kind: 'next',
-    route: '/timer',
-    target: ['.pom-ring-controls'],
-    skipIfMissing: true,
-    title: 'Reset or switch it up',
-    body: 'The left button resets the clock. The right one lets you pick a different timer style.',
-  },
+
 
   // ---- Everything else -----------------------------------------------------
   {
@@ -191,62 +159,13 @@ export const STEPS: Step[] = [
     body: "A private journal. Write about your day or your goals, and Summit uses it to fit your plans to you. Only you can see it.",
   },
   {
-    id: 'more-tools',
-    kind: 'click',
-    target: ['[data-tour="rail-more"][aria-expanded="false"]'],
+    id: 'unlocks',
+    kind: 'next',
+    target: ['[data-tour="rail-next"]'],
     skipIfMissing: true,
-    title: "There's more",
-    body: 'Summit has a few more tools. They stay tucked away for your first days so things stay simple. Click More tools (the padlock) to see them.',
-  },
-  {
-    id: 'analytics',
-    kind: 'next',
-    target: tab('recommendations'),
-    title: 'Analytics',
-    body: 'Charts and reports on how you work: your growth score, trends and what to try next. It gets useful after about a week of tasks.',
-  },
-  {
-    id: 'tasks',
-    kind: 'next',
-    target: tab('tasks'),
-    title: 'Tasks',
-    body: "Every task you've added, with filters, sorting and grouping. Handy once your list gets long.",
-  },
-  {
-    id: 'goals',
-    kind: 'next',
-    target: tab('goals'),
-    title: 'Goals',
-    body: "Bigger goals with milestones. Link tasks to a goal and you'll watch it move as you finish them.",
-  },
-  {
-    id: 'skill-tree',
-    kind: 'next',
-    target: tab('skill-trees'),
-    title: 'Skill Tree',
-    body: 'A subject broken into skills, with practice problems and levels to earn.',
-  },
-  {
-    id: 'notes',
-    kind: 'next',
-    target: tab('notes'),
-    title: 'Notes',
-    body: 'A notebook for class notes and ideas, with folders and search.',
-  },
-  {
-    id: 'achievements',
-    kind: 'next',
-    target: tab('achievements'),
-    title: 'Achievements',
-    body: 'Badges and personal bests. It fills up the more you use Summit.',
-  },
-  {
-    id: 'spaces',
-    kind: 'next',
-    target: ['.rail-section[aria-label="Personal"]'],
-    skipIfMissing: true,
-    title: 'Spaces',
-    body: 'Pages of your own, like a notebook crossed with a whiteboard. The Team ones can be shared with other people.',
+    title: 'More pages, one at a time',
+    body: ({ name }) =>
+      `That's all you need for now${name ? `, ${name}` : ''}. Finish a task on a few different days and new pages open here, one by one. I'll tell you when.`,
   },
   {
     id: 'settings',
@@ -259,10 +178,7 @@ export const STEPS: Step[] = [
     id: 'done',
     kind: 'next',
     title: "That's the tour!",
-    body: ({ stage }) =>
-      stage === 'open'
-        ? "You've seen it all. Go add a few tasks and start your streak."
-        : `Locked tools open with a short note the first time. They unlock on their own after ${STARTER_DAYS} days, or when you reach level ${STARTER_LEVEL}. Now go add a few tasks and start your streak.`,
+    body: 'Add a few tasks, tick them off and start your streak. See you tomorrow.',
     next: 'Finish',
   },
 ];

@@ -8,11 +8,15 @@
  *
  * ## Who sees it
  *
- * A new account, once, on its first visit after Complete Profile: the same
- * rule the welcome had (`welcome_seen` off, the account still in its starter
- * or gated stage). Settings can start it again for any account, which writes
- * a step to this browser's storage; a saved step is also what lets a reload
- * pick the tour up where it was instead of starting over.
+ * A new account, once, on its first visit after Complete Profile
+ * (`welcome_seen` off, some page still locked). It covers the daily loop only:
+ * adding and finishing tasks, the calendar, the timer, the log. Other pages
+ * open one at a time later (utils/starter), and each brings its own short
+ * guide the first time it's opened (./pageTours.ts), for new accounts only.
+ * An account made before getting started existed never gets a guide on its
+ * own. Settings can start the tour again for any account, which writes a step
+ * to this browser's storage; a saved step is also what lets a reload pick the
+ * tour up where it was instead of starting over.
  *
  * ## The dark-out
  *
@@ -145,7 +149,7 @@ export function Tutorial() {
   const feature = featureForPath(pathname);
   const pageSteps = feature ? PAGE_TOURS[feature.id] : undefined;
   const pageWanted = Boolean(
-    signedIn && feature && pageSteps && prefs.mango_tours
+    signedIn && feature && pageSteps && prefs.mango_tours && starter.fresh
       && !starter.isLocked(feature.id) && !prefs.tours_seen.includes(feature.id),
   );
   const tour: { id: string; steps: Step[] } | null =

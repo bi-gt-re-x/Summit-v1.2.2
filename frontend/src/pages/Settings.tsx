@@ -86,7 +86,7 @@ import { settingsExit } from '@/utils/settingsExit';
 import { useStarter } from '@/hooks/useStarter';
 import { THEMES, ThemeCard } from '@/components/Settings/ThemePicker';
 import { replayTutorial } from '@/components/Tutorial/Tutorial';
-import { FEATURES, STARTER_LEVEL, STARTER_SINCE } from '@/utils/starter';
+import { FEATURES, daysOfTasks, isNewAccount } from '@/utils/starter';
 
 const GOAL_MIN = 10;
 const GOAL_MAX = 2000;
@@ -926,59 +926,45 @@ export default function Settings() {
         items: [
           {
             id: 'starter',
-            label: 'Advanced tools',
-            hint:
-              starter.stage === 'open'
-                ? 'Every tool is unlocked.'
-                : starter.stage === 'starter'
-                  ? `For your first days the sidebar shows Dashboard, Calendar, Timer and Log. The rest appear in ${
-                      starter.daysLeft === 1 ? '1 day' : `${starter.daysLeft} days`
-                    }, or at level ${STARTER_LEVEL}. Locked tools open with a short note first.`
-                  : `${prefs.features_open.filter((id) => FEATURES.some((feature) => feature.id === id)).length} of ${
-                      FEATURES.length
-                    } advanced tools opened. The rest show a padlock and open with a short note first.`,
+            label: 'Unlocking pages',
+            hint: starter.next
+              ? `Pages open one at a time as you finish tasks on different days. Next up: ${
+                  starter.next.feature.name
+                }, after ${daysOfTasks(starter.next.days)}.`
+              : 'Every page is open.',
             control:
               starter.stage === 'open' ? (
-                new Date(sheet.created_at) >= new Date(`${STARTER_SINCE}T00:00:00`) ? (
-                  <button
-                    type="button"
-                    className="st-btn"
-                    disabled={busy}
-                    onClick={() =>
-                      void savePref({ starter_done: false, features_open: [], welcome_seen: false }, 'Beginner mode')
-                    }
-                  >
-                    Start over as a beginner
-                  </button>
-                ) : (
-                  <span className="st-fixed">All unlocked</span>
-                )
-              ) : (
-                <div className="st-links">
-                  {starter.stage === 'starter' && (
-                    <button
-                      type="button"
-                      className="st-btn"
-                      disabled={busy}
-                      onClick={() => void savePref({ starter_done: true }, 'Sidebar')}
-                    >
-                      Show all tools
-                    </button>
-                  )}
+                isNewAccount(sheet.created_at) ? (
                   <button
                     type="button"
                     className="st-btn"
                     disabled={busy}
                     onClick={() =>
                       void savePref(
-                        { starter_done: true, features_open: FEATURES.map((feature) => feature.id) },
-                        'Unlocks',
+                        { starter_done: false, features_open: [], welcome_seen: false, tours_seen: [] },
+                        'Beginner mode',
                       )
                     }
                   >
-                    Unlock everything
+                    Start over as a beginner
                   </button>
-                </div>
+                ) : (
+                  <span className="st-fixed">All open</span>
+                )
+              ) : (
+                <button
+                  type="button"
+                  className="st-btn"
+                  disabled={busy}
+                  onClick={() =>
+                    void savePref(
+                      { starter_done: true, features_open: FEATURES.map((feature) => feature.id) },
+                      'Unlocks',
+                    )
+                  }
+                >
+                  Unlock everything
+                </button>
               ),
           },
         ],
@@ -1853,7 +1839,7 @@ export default function Settings() {
     sheet,
     skinLabel,
     skinned,
-    starter.daysLeft,
+    starter.next,
     starter.stage,
     theme,
   ]);

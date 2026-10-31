@@ -52,10 +52,11 @@ from backend.tracking import xp as xp_tracking
 from backend.tracking.auth import created_date_for, load_user
 
 #: The quests, in the order the card lists them. `fact` is the key in
-#: `db.first_week_facts`; `to` is the page where it's done (None for the one
-#: done by showing up). Copy is user-facing: short, plain, contractions.
+#: `db.first_week_facts`; `to` is the page where it's done. None for the one
+#: done by showing up, and for task quests, which are done on the dashboard the
+#: card sits on: the Tasks page opens later (frontend/src/utils/starter.ts). Copy is user-facing: short, plain, contractions.
 QUESTS = (
-    {'id': 'task', 'fact': 'task', 'xp': 30, 'to': '/tasks',
+    {'id': 'task', 'fact': 'task', 'xp': 30, 'to': None,
      'title': 'Finish your first task',
      'hint': 'Add one, then tick it off.'},
     {'id': 'focus', 'fact': 'focus', 'xp': 40, 'to': '/timer',
@@ -86,7 +87,7 @@ SEASONED_XP_DAYS = 7
 #: The daily pool. `did` says whether one day's counts (a value from
 #: `db.daily_quest_facts`) meet it. Copy is user-facing, same rules as above.
 DAILY = (
-    {'id': 'tasks2', 'xp': 30, 'to': '/tasks',
+    {'id': 'tasks2', 'xp': 30, 'to': None,
      'title': 'Finish 2 tasks',
      'hint': 'Any two. Small ones count.',
      'did': lambda day: day['tasks'] >= 2},
@@ -102,11 +103,11 @@ DAILY = (
      'title': 'Write a Log entry',
      'hint': 'A few lines about your day.',
      'did': lambda day: day['log'] >= 1},
-    {'id': 'subject', 'xp': 25, 'to': '/tasks',
+    {'id': 'subject', 'xp': 25, 'to': None,
      'title': 'Finish a task with a subject',
      'hint': 'Pick a subject when you add it.',
      'did': lambda day: day['subject_tasks'] >= 1},
-    {'id': 'plan', 'xp': 20, 'to': '/tasks',
+    {'id': 'plan', 'xp': 20, 'to': None,
      'title': 'Plan tomorrow',
      'hint': 'Add a task that\'s due tomorrow.',
      'did': lambda day: day['planned'] >= 1},
