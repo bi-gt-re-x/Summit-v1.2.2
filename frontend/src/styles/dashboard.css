@@ -212,7 +212,7 @@ html.focus-mode .bottom-section .task-manager { order: 1; min-height: 0; }
  *
  * It is the same markup either way. Only these rules differ, which is what
  * keeps the two modes from being two panels — see the note in
- * components/Dashboard/FocusPanel.
+ * the old Focus panel.
  */
 html.focus-mode .focus-panel {
     display: grid;
@@ -957,13 +957,13 @@ html[data-theme="dark"] .calendar-hint a { color: #d8c3a5; }
 
 /* ==========================================================================
    HIDDEN QUOTE EASTER EGG
-   Ten clicks in the dark on the mark in the Focus card's corner
+   Ten clicks in the dark on the mark in the Today card's corner
    (hooks/useMarkEgg.ts): the quote below slides out sleekly, and the
    mysterious one rises in with an ominous glow while the whole screen shakes
    (hooks/useQuoteEgg.ts).
    ========================================================================== */
 
-/* The door: the Summit mark in the top-right corner of the Focus card.
+/* The door: the Summit mark in the top-right corner of the Today card.
 
    It has to look like the thing it is pretending to be, so it is a logo in a
    corner — quiet enough to be furniture, solid enough to be worth a click once

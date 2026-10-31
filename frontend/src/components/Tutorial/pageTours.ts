@@ -179,7 +179,7 @@ const tasks: Step[] = [
     target: ['.tk-side'],
     skipIfMissing: true,
     title: 'The side panel',
-    body: "A timer and quick facts about your list, right next to it.",
+    body: "What's next, what's on a streak, and a quick way to add a task.",
   },
   {
     id: 'tk-done',
@@ -362,55 +362,6 @@ const skillTree: Step[] = [
   },
 ];
 
-const notes: Step[] = [
-  {
-    id: 'nt-hello',
-    kind: 'next',
-    title: 'This is Notes',
-    body: 'A notebook for class notes and ideas, with Markdown, folders and search.',
-    next: "Let's go",
-  },
-  {
-    id: 'nt-new',
-    kind: 'next',
-    target: ['.nt-new-group', '.nt-new'],
-    skipIfMissing: true,
-    title: 'Start a note',
-    body: 'Make a new note here. The arrow next to it has other kinds.',
-  },
-  {
-    id: 'nt-search',
-    kind: 'next',
-    target: ['.nt-search-wrap', '.nt-search'],
-    skipIfMissing: true,
-    title: 'Find anything',
-    body: "Search every note by title or what's in it.",
-  },
-  {
-    id: 'nt-list',
-    kind: 'next',
-    target: ['.nt-list-panel', '.nt-list'],
-    skipIfMissing: true,
-    title: 'Your notes',
-    body: 'All your notes, newest first. Pin the ones you use most so they stay on top.',
-  },
-  {
-    id: 'nt-editor',
-    kind: 'next',
-    target: ['.nt-editor'],
-    skipIfMissing: true,
-    title: 'Write here',
-    body: 'Type in Markdown. The toolbar has headings, lists and checkboxes if you would rather click.',
-  },
-  {
-    id: 'nt-done',
-    kind: 'next',
-    title: "That's Notes",
-    body: 'Tag a note with a subject and it shows up on that subject page too.',
-    next: 'Finish',
-  },
-];
-
 const achievements: Step[] = [
   {
     id: 'rc-hello',
@@ -495,7 +446,6 @@ export const PAGE_TOURS: Partial<Record<FeatureId, Step[]>> = {
   tasks,
   goals,
   'skill-tree': skillTree,
-  notes,
   achievements,
   spaces,
 };

@@ -1,5 +1,5 @@
 /**
- * The hidden quote — what the ten clicks on the Focus card's mark are for.
+ * The hidden quote — what the ten clicks on the Today card's mark are for.
  *
  * When the chain is unlocked, the day's quote at the foot of the dashboard
  * slips away and is replaced, for the rest of the day, by a cryptic clue. The
@@ -7,7 +7,7 @@
  * glow, the rest of the screen goes dark for a beat, and the whole page shakes.
  *
  * This hook is the *room*, not the door. The counting lives in
- * hooks/useMarkEgg.ts, on the mark in the corner of the Focus card, and the
+ * hooks/useMarkEgg.ts, on the mark in the corner of the Today card, and the
  * tenth click there sends `EGG_UNLOCKED`. Both are children of
  * pages/Dashboard.tsx and are on screen together, so the news arrives the
  * moment it is sent and there is nothing to hold it over. All this file
@@ -168,7 +168,7 @@ export function useQuoteEgg(): UseQuoteEgg {
     if (unlockedToday(account)) setClue(CLUE);
   }, [account]);
 
-  /* The tenth click, from the mark in the Focus card's corner. Nothing is
+  /* The tenth click, from the mark in the Today card's corner. Nothing is
      held over between the two: both are on the dashboard, so by the time this
      is sent the quote is already mounted and listening. The unlock is written
      by the door before it announces itself, so there is nothing left to ask:

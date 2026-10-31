@@ -123,7 +123,7 @@ export interface Prefs {
   /**
    * Whether the dashboard asks, once a day, about the days since the last
    * visit — work that was done and never tracked. Off removes the prompt
-   * entirely; see components/Dashboard/CatchUp.
+   * entirely. The prompt is gone with the timer, so nothing reads it now.
    */
   catchup_prompt: boolean;
   /**

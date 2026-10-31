@@ -51,13 +51,11 @@ import {
 import { useBlockActions } from '@/hooks/useBlockActions';
 import { busyDays } from '@/utils/calendarBusy';
 import { planFamilies } from '@/utils/calendarFamilies';
-import { useFocusSession } from '@/hooks/useFocusSession';
 import {
   useGridDrag,
   type DraggedSlot,
   type DroppedBlock,
 } from '@/hooks/useGridDrag';
-import { focus as focusService } from '@/services';
 import { weekStartDay } from '@/services/settings';
 import { dates } from '@/utils';
 import {
@@ -77,7 +75,6 @@ import {
   saveWeekSnapshot,
 } from '@/utils/calendarStore';
 import { subjectXp } from '@/utils/subjectXp';
-import type { FocusHistory } from '@/types';
 /* The frame, then the dialogs every view opens, then this view's own — and
    the colour system last, so it has the final word on every block.
    day.css is here for the mini-month in the overview column, which the Day
@@ -140,7 +137,6 @@ export default function Week() {
   } = account;
   const store = useCalendarStore(username);
   const dayFocus = useDayFocus(username);
-  const session = useFocusSession(username);
   const subjects = useSubjectIndex(username);
   // The same catalogue as a list, for the library. Both hooks read one cache,
   // so this is not a second request — see hooks/useSubjects.
@@ -191,7 +187,6 @@ export default function Week() {
   }, [opens]);
   /** True while the overview column is showing the subject library instead. */
   const [library, setLibrary] = useState(false);
-  const [history, setHistory] = useState<FocusHistory>({});
   /** The day whose focus chip is currently an input, if any. */
   const [focusEditing, setFocusEditing] = useState<string | null>(null);
 
@@ -217,17 +212,6 @@ export default function Week() {
       }),
     [opens],
   );
-
-  useEffect(() => {
-    if (!username) return;
-    let live = true;
-    void focusService.history(opensIso, closesIso).then((result) => {
-      if (live && result.success) setHistory(result.days);
-    });
-    return () => {
-      live = false;
-    };
-  }, [opensIso, closesIso, username]);
 
   /** Opening the week lands on the current hour — see hooks/useNowScroll. */
   const centerOnNow = useNowScroll(scroller, !loading && thisWeek);
@@ -302,35 +286,6 @@ export default function Week() {
   }, [thisWeekIso, opensIso, closesIso, tasks, username]);
 
   /**
-   * Focused against planned.
-   *
-   * Today comes from the live session, which the server has not been told
-   * about yet — but the server can be ahead when today's focus was tracked in
-   * another browser, so the larger of the two wins.
-   */
-  const focus = useMemo(() => {
-    let focusedSeconds = 0;
-    let plannedHours = 0;
-
-    Object.entries(history).forEach(([iso, day]) => {
-      if (iso === todayIso) return;
-      focusedSeconds += Number(day.seconds) || 0;
-      plannedHours += Number(day.goal_hours) || 0;
-    });
-
-    const today = history[todayIso];
-    if (todayIso >= opensIso && todayIso <= closesIso) {
-      focusedSeconds += Math.max(session.focused, Number(today?.seconds) || 0);
-      plannedHours += session.goalHours;
-    } else if (today) {
-      focusedSeconds += Number(today.seconds) || 0;
-      plannedHours += Number(today.goal_hours) || 0;
-    }
-
-    return { focused: focusedSeconds, planned: plannedHours * 3600 };
-  }, [history, opensIso, session.focused, session.goalHours, closesIso, todayIso]);
-
-  /**
    * The seven days, as the sidebar's sparkline and streak dots need them.
    *
    * XP is counted from completion stamps rather than from due dates: the
@@ -351,31 +306,16 @@ export default function Week() {
           xp += Number(task.xp_value) || 0;
         });
 
-        // Focus, day by day, on the same rule the week's total above uses:
-        // today's figure is whichever of the live session and the server's
-        // record is larger, because the session has not been written back yet
-        // but the server can be ahead if today was tracked in another browser.
-        const entry = history[day.iso];
-        const isToday = day.iso === todayIso;
-        const focused = isToday
-          ? Math.max(session.focused, Number(entry?.seconds) || 0)
-          : Number(entry?.seconds) || 0;
-        const planned = isToday
-          ? session.goalHours * 3600
-          : (Number(entry?.goal_hours) || 0) * 3600;
-
         return {
           initial: day.name.charAt(0),
           name: day.name,
           xp,
-          focused,
-          planned,
           active: done > 0,
           future: day.iso > todayIso,
-          today: isToday,
+          today: day.iso === todayIso,
         };
       }),
-    [days, history, session.focused, session.goalHours, tasks, todayIso],
+    [days, tasks, todayIso],
   );
 
   /**
@@ -869,13 +809,11 @@ export default function Week() {
           onOpenLibrary={() => setLibrary(true)}
           stats={overview}
           streak={Number(stats.current_streak) || 0}
-          focus={focus}
           days={weekDays}
           breakdown={breakdown}
           priorities={priorities}
           upcoming={upcoming}
           onViewMonth={() => navigate('/calendar/month')}
-          onViewAnalytics={() => navigate('/analytics')}
           collapsed={collapsed}
         />
         )}

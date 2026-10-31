@@ -2,7 +2,7 @@
  * Getting started: which pages a new account sees, and when the rest arrive.
  *
  * A new account opens on the daily loop and nothing else: Dashboard (add and
- * finish tasks), Calendar, Timer and Log. Settings is always there too.
+ * finish tasks), Calendar and Log. Settings is always there too.
  *
  * Everything else unlocks one page at a time, as a task habit forms. The count
  * is days with at least one finished task (`task_days` in /api/stats), not
@@ -30,7 +30,7 @@
  */
 import type { Prefs } from '@/services/settings';
 
-export type FeatureId = 'tasks' | 'goals' | 'analytics' | 'skill-tree' | 'notes' | 'achievements' | 'spaces';
+export type FeatureId = 'tasks' | 'goals' | 'analytics' | 'skill-tree' | 'achievements' | 'spaces';
 
 export interface Feature {
   id: FeatureId;
@@ -87,22 +87,13 @@ export const FEATURES: Feature[] = [
     after: 4,
   },
   {
-    id: 'notes',
-    name: 'Notes',
-    to: '/notes',
-    paths: ['/notes'],
-    what: 'A notebook with Markdown, folders and search.',
-    why: 'Not hard, just one more place to put things. Starting with fewer places makes the habit easier to build.',
-    after: 5,
-  },
-  {
     id: 'achievements',
     name: 'Achievements',
     to: '/achievements',
     paths: ['/achievements', '/records'],
     what: 'Your personal bests and the badge wall.',
     why: "There's not much on it in the first few days. It fills up as you work.",
-    after: 6,
+    after: 5,
   },
   {
     id: 'spaces',
@@ -110,7 +101,7 @@ export const FEATURES: Feature[] = [
     to: '/spaces/1',
     paths: ['/spaces/', '/team/'],
     what: 'Pages of your own, like a notebook crossed with a whiteboard, with blocks, charts, sticky notes and team members.',
-    why: 'A blank page with a block editor is a lot of freedom. Most people do better with the timer and the calendar first.',
+    why: 'A blank page with a block editor is a lot of freedom. Most people do better with tasks and the calendar first.',
     after: 10,
   },
 ];

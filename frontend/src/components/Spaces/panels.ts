@@ -2,7 +2,7 @@
  * A panel block's settings, and what each kind is called. No React.
  *
  * A panel block puts one of the app's own panels on a space's page — the
- * plan, the trend chart, the habit cards, the focus timer, the badges — drawn
+ * plan, the trend chart, the habit cards, the badges — drawn
  * by the component the page it comes from uses (./PanelBlock, ./panelViews),
  * from the account's numbers as they are now. Like a live block (./live) it
  * stores where it looks and how it is set, never what it saw.
@@ -17,7 +17,7 @@ import { RULES } from '@/utils/sharedRules';
 
 const PANELS = RULES.spaces.panels;
 
-export type PanelGroup = 'analytics' | 'suggest' | 'insights' | 'growth' | 'timer' | 'goals';
+export type PanelGroup = 'analytics' | 'suggest' | 'insights' | 'growth' | 'goals';
 
 export type PanelKind = keyof typeof PANELS.kinds;
 
@@ -117,19 +117,17 @@ export function cleanPanel(raw: unknown): PanelConfig {
  * - `model`: the Analytics page's own figures (components/Analytics/
  *   useAnalyticsModel), worked out once per time range and subject for the
  *   whole page and shared by every panel set the same way.
- * - `timer`: the one focus clock on the page (hooks/usePomodoro). One, so two
- *   timer panels can't both log the same session.
  * - `self`: the panel reads what it needs on its own, as it does on its own
  *   page (the plan's minutes, the growth periods, the badges).
  */
-export type Needs = 'model' | 'timer' | 'self';
+export type Needs = 'model' | 'self';
 
 const SELF: ReadonlySet<PanelKind> = new Set<PanelKind>([
   'sessions', 'goals-finished', 'badges',
   'growth-line', 'then-now', 'movers', 'score-changes', 'periods', 'milestones',
 ]);
 
-export const needsOf = (kind: PanelKind): Needs => (groupOf(kind) === 'timer' ? 'timer' : SELF.has(kind) ? 'self' : 'model');
+export const needsOf = (kind: PanelKind): Needs => (SELF.has(kind) ? 'self' : 'model');
 
 /** The time range a model-backed kind with no range of its own is worked out over. */
 export const MODEL_WINDOW = '30d';
@@ -147,19 +145,17 @@ export const splitKey = (key: string): { span: string; subject: string } => {
 /**
  * What a page's panels need read, from its blocks: the model keys, sorted,
  * as one JSON string (so a page that only moved a block doesn't make the
- * readers start over), and whether a timer panel is on it.
+ * readers start over).
  */
-export function pageNeeds(blocks: ReadonlyArray<{ type: string; panel?: unknown }>): { models: string; timer: boolean } {
+export function pageNeeds(blocks: ReadonlyArray<{ type: string; panel?: unknown }>): { models: string } {
   const keys = new Set<string>();
-  let timer = false;
   for (const one of blocks) {
     if (one.type !== 'panel') continue;
     const config = cleanPanel(one.panel);
     const needs = needsOf(config.kind);
     if (needs === 'model') keys.add(modelKey(config));
-    if (needs === 'timer') timer = true;
   }
-  return { models: JSON.stringify([...keys].sort()), timer };
+  return { models: JSON.stringify([...keys].sort()) };
 }
 
 /** A setting read back with its type: the cleaner has already made it so. */
@@ -252,12 +248,6 @@ export const PANEL_INFO: Record<PanelKind, PanelInfo> = {
   milestones: { hint: 'Days your score hit a new grade.', glyph: '⚑', keys: ['milestones', 'grade', 'score'], home: GROWTH },
   'core-hours': { hint: 'The hours that hold half your finished work.', glyph: '◑', keys: ['core', 'hours', 'when'], home: GROWTH },
   years: { hint: 'How hard and how well, one year at a time.', glyph: '⧉', keys: ['years', 'year', 'history'], home: GROWTH },
-  timer: { hint: 'The focus clock: start, pause, skip, reset.', glyph: '⏲', keys: ['timer', 'pomodoro', 'focus', 'clock'], home: '/timer' },
-  'timer-task': { hint: 'Pick the task your sessions get logged to.', glyph: '☐', keys: ['timer', 'task', 'working', 'pick'], home: '/timer' },
-  'timer-today': { hint: 'Where your focus time went, by task.', glyph: '⧖', keys: ['timer', 'sessions', 'today', 'tasks'], home: '/timer' },
-  'timer-recent': { hint: 'Your last few sessions, with their pauses.', glyph: '☰', keys: ['timer', 'sessions', 'recent', 'history'], home: '/timer' },
-  'timer-suggest': { hint: 'The session length that works best for you.', glyph: '✦', keys: ['timer', 'suggest', 'length', 'ai'], home: '/timer' },
-  'timer-chart': { hint: 'Focus minutes or sessions per day.', glyph: '▥', keys: ['timer', 'chart', 'focus', 'minutes'], home: '/timer' },
   badges: { hint: 'Badges you earned or are closest to.', glyph: '🏅', keys: ['badges', 'achievements', 'earned'], home: '/achievements' },
 };
 
@@ -267,7 +257,6 @@ export const PANEL_GROUP_LABEL: Record<PanelGroup, string> = {
   suggest: 'Suggestions',
   insights: 'Insights and habits',
   growth: 'Growth and subjects',
-  timer: 'Timer',
   goals: 'Goals & records',
 };
 
@@ -281,7 +270,6 @@ export const FIELD_LABEL: Record<FieldName, string> = {
   range: 'Range',
   limit: 'How many',
   budget: 'Minutes',
-  days: 'Days',
   show: 'Show',
   style: 'Style',
   category: 'Category',
@@ -295,13 +283,11 @@ export const CHOICE_LABEL: Partial<Record<FieldName, Record<string, string>>> = 
   metric: {
     productivity: 'Productivity', consistency: 'Consistency', quality: 'Quality',
     xp: 'Total XP', tasks: 'Total tasks', focus: 'Total focus',
-    minutes: 'Minutes', sessions: 'Sessions',
   },
   grain: { daily: 'Day', weekly: 'Week', monthly: 'Month' },
   range: { '30': '30 days', '90': '90 days', '365': '1 year' },
-  days: { '1': 'Today', '7': '7 days', '14': '14 days', '30': '30 days' },
   budget: { '15': '15m', '30': '30m', '45': '45m', '60': '1h', '90': '1.5h', '120': '2h' },
-  style: { card: 'Full panel', line: 'One line', bars: 'Bars', area: 'Area' },
+  style: { card: 'Full panel', line: 'One line' },
   category: { all: 'All' },
   which: { earned: 'Earned', next: 'Up next', all: 'All' },
   show: {

@@ -179,8 +179,8 @@ PANEL BLOCKS: the app's own panels, from their real data
   caption. It starts on the kind's own settings, and the reader can change
   them (time range, subject, how many rows, which lines a chart plots) with
   the block's gear. Use one when the reader asks for something the app
-  already shows: a plan or suggestions, habits, insights, a focus timer,
-  their sessions, badges.
+  already shows: a plan or suggestions, habits, insights, their study
+  sessions, badges.
 """ + _panel_menu() + """
 
 THE PAGE

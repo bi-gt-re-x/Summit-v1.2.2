@@ -72,7 +72,7 @@ describe('periodSummary', () => {
   it('adds up effort and focus time', () => {
     const summary = periodSummary(all, tasks, 'week', TODAY, nameOf);
     expect(line(summary, 'effort', 'Done')!.text).toBe('4 tasks and 200 XP, down 33% on the week before.');
-    expect(line(summary, 'effort', 'Focus')!.text).toBe('2h 30m on the timer, up from 1h 30m.');
+    expect(line(summary, 'effort', 'Focus')!.text).toBe('2h 30m of focus, up from 1h 30m.');
   });
 
   it("doesn't compare when the record doesn't reach back far enough", () => {

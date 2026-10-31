@@ -148,7 +148,7 @@
     "panels": {
       "_about": "Panel blocks: a panel from Analytics, the Timer or Achievements on a space's page, drawn by the page's own component from the account's live numbers. A block stores only `kind` and its settings. `fields` are the settings a kind can take; a kind's own entry names the ones it uses and may change a field's choices (`of`), limits or default. frontend/src/components/Spaces/panels.ts and backend/tracking/panels.py clean every saved block against this list, and shared/cases/space_panels.json pins the two together. docs/space-panels.md lists which Analytics panels are here.",
       "ref_max": 80,
-      "groups": ["analytics", "suggest", "insights", "growth", "timer", "goals"],
+      "groups": ["analytics", "suggest", "insights", "growth", "goals"],
       "fields": {
         "window": { "type": "choice", "of": ["7d", "30d", "90d", "1y", "2y", "all"], "default": "30d" },
         "period": { "type": "choice", "of": ["7d", "30d", "90d", "365d", "730d", "all"], "default": "30d" },
@@ -158,7 +158,6 @@
         "range": { "type": "choice", "of": ["30", "90", "365"], "default": "365" },
         "limit": { "type": "count", "min": 1, "max": 12, "default": 5 },
         "budget": { "type": "choice", "of": [15, 30, 45, 60, 90, 120], "default": 45 },
-        "days": { "type": "choice", "of": [1, 7, 30], "default": 1 },
         "show": { "type": "set", "of": [], "default": [] },
         "style": { "type": "choice", "of": [""], "default": "" },
         "category": { "type": "choice", "of": ["all", "Productivity", "Consistency", "Learning", "Mastery", "Milestones", "Analytics", "Special"], "default": "all" },
@@ -220,12 +219,6 @@
         "milestones": { "group": "growth", "name": "Score milestones", "fields": { "period": { "default": "all" }, "limit": { "default": 6 } } },
         "core-hours": { "group": "growth", "name": "Core hours", "fields": { "window": {}, "subject": {} } },
         "years": { "group": "growth", "name": "Year by year", "fields": {} },
-        "timer": { "group": "timer", "name": "Focus timer", "fields": { "show": { "of": ["task", "method"], "default": ["task"] } } },
-        "timer-task": { "group": "timer", "name": "What you're working on", "fields": { "limit": { "max": 8, "default": 5 } } },
-        "timer-today": { "group": "timer", "name": "Sessions by task", "fields": { "days": {} } },
-        "timer-recent": { "group": "timer", "name": "Recent sessions", "fields": { "limit": { "default": 5 } } },
-        "timer-suggest": { "group": "timer", "name": "Suggested length", "fields": {} },
-        "timer-chart": { "group": "timer", "name": "Focus chart", "fields": { "days": { "of": [7, 14, 30], "default": 14 }, "metric": { "of": ["minutes", "sessions"], "default": "minutes" }, "style": { "of": ["bars", "area"], "default": "bars" } } },
         "badges": { "group": "goals", "name": "Badges", "fields": { "category": {}, "which": {}, "limit": { "default": 6 } } }
       }
     }

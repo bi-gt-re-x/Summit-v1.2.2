@@ -343,7 +343,7 @@ FIELDS: Dict[str, Any] = {
     #: Whether the dashboard asks, on the first visit of a day, about the days
     #: since the last one — hours the reader worked and never tracked. Off is
     #: a supported answer and the whole prompt disappears; see
-    #: frontend/src/components/Dashboard/CatchUp.tsx.
+    #: the dashboard's catch-up prompt, gone with the timer.
     'catchup_prompt':    (True, _boolean),
     #: The last day the prompt was put (or found nothing to put), ISO. This is
     #: what makes it once a day rather than once a page load, and what defines

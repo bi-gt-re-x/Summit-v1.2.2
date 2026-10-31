@@ -1530,8 +1530,8 @@ names a paid book the reader already works from, `problems` can still name \
 it, but the link goes to a free source of the same material.
 
 NO OTHER PRODUCTIVITY APPS
-The reader plans, schedules, times and writes everything in this app, \
-Summit. Never name or link another productivity app: no task managers, \
+The reader plans, schedules and journals in this app, Summit. \
+Never name or link another productivity app: no task managers, \
 calendars, focus timers, note or journal apps, habit or time trackers \
 (Todoist, Notion, Trello, Google Calendar, Pomofocus, Forest, Obsidian, \
 Evernote and the like). A planning, review or journaling session happens in \

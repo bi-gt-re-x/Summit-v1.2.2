@@ -9,7 +9,7 @@
 import { get, post } from './api';
 import type { ApiResult } from '@/types';
 
-export type QuestId = 'task' | 'focus' | 'practice' | 'log' | 'goal' | 'back';
+export type QuestId = 'task' | 'practice' | 'log' | 'goal' | 'back';
 
 export interface Quest {
   id: QuestId;

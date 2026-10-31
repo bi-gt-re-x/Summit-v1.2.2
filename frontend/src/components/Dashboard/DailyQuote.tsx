@@ -12,7 +12,7 @@
  * quote's stylesheet is written against exactly those — the HIDDEN QUOTE
  * EASTER EGG block in styles/dashboard.css. This line is what the hidden chain
  * replaces; the ten clicks that unlock it are on the mark in the corner of the
- * Focus card (hooks/useMarkEgg.ts), and hooks/useQuoteEgg.ts is how the two
+ * Today card (hooks/useMarkEgg.ts), and hooks/useQuoteEgg.ts is how the two
  * meet.
  *
  * The quote element deliberately takes no `className`. The egg restarts CSS

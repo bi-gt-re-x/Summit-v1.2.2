@@ -20,8 +20,6 @@ function panel(scale: OverviewScale, props = {}) {
       scale={scale}
       tasks={12}
       done={5}
-      focused="3h 20m"
-      planned="6h"
       xp={1450}
       {...props}
     />,
@@ -35,14 +33,14 @@ function labels(): string[] {
 }
 
 describe('what every scale says', () => {
-  it('draws the same three tiles, in the same order, at all three scales', () => {
+  it('draws the same two tiles, in the same order, at all three scales', () => {
     const seen: string[][] = [];
     for (const scale of ['day', 'week', 'month'] as OverviewScale[]) {
       const { unmount } = panel(scale);
       seen.push(labels());
       unmount();
     }
-    expect(seen[0]).toEqual(['Tasks', 'Focus time', 'XP earned']);
+    expect(seen[0]).toEqual(['Tasks', 'XP earned']);
     expect(seen[1]).toEqual(seen[0]);
     expect(seen[2]).toEqual(seen[0]);
   });
@@ -54,13 +52,6 @@ describe('what every scale says', () => {
     panel('week');
     const tile = document.querySelector('.cal-tile.tone-tasks')!;
     expect(within(tile as HTMLElement).getByText('5 / 12')).toBeInTheDocument();
-  });
-
-  it('measures focus against what was planned', () => {
-    panel('month');
-    const tile = document.querySelector('.cal-tile.tone-focus')!;
-    expect(tile).toHaveTextContent('3h 20m');
-    expect(tile).toHaveTextContent('of 6h planned');
   });
 
   it('groups the XP figure, so four digits are readable', () => {
@@ -98,7 +89,7 @@ describe('the fourth tile, which belongs to the view', () => {
     panel('month', {
       extra: { icon: null, label: 'Best day', value: 'Aug 14', sub: '620 XP' },
     });
-    expect(labels()).toEqual(['Tasks', 'Focus time', 'XP earned', 'Best day']);
+    expect(labels()).toEqual(['Tasks', 'XP earned', 'Best day']);
   });
 
   /* A day has a streak and a month does not. Three tiles has to be a working
@@ -106,7 +97,7 @@ describe('the fourth tile, which belongs to the view', () => {
      worth showing. */
   it('is simply absent when it has not', () => {
     panel('week');
-    expect(document.querySelectorAll('.cal-tile')).toHaveLength(3);
+    expect(document.querySelectorAll('.cal-tile')).toHaveLength(2);
   });
 });
 
@@ -121,12 +112,5 @@ describe('the slots around the tiles', () => {
     expect(order[0]).toContain('Today');
     expect(order[1]).toBe('the ring');
     expect(order[3]).toBe('the sparkline');
-  });
-
-  /* The Day view's focus figure is the goal for today and can be typed into,
-     which is why a tile's value is a node and not a string. */
-  it('takes a field where a figure would go', () => {
-    panel('day', { focused: <input aria-label="Focus goal" defaultValue="2h" /> });
-    expect(screen.getByLabelText('Focus goal')).toBeInTheDocument();
   });
 });

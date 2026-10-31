@@ -53,7 +53,7 @@ const TITLES: Record<AuthStep, string> = {
 };
 
 const POINTS: [IconName, string][] = [
-  ['check', 'Tasks, calendar and focus timer in one app'],
+  ['check', 'Tasks, calendar and goals in one app'],
   ['flame', 'Earn XP and build a streak as you go'],
   ['chart', 'A growth score that shows you the math'],
 ];

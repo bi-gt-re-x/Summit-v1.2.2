@@ -2,7 +2,7 @@
  * Whether a skill check is on screen.
  *
  * The check takes the whole window, so the guided tour stands down while it's
- * up, the way it does for a focus sitting (components/Timer/FocusSitting.tsx).
+ * up.
  * Its own small module so the tour, which ships with every page, doesn't pull
  * the check into the first download.
  */

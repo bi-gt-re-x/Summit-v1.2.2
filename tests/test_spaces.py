@@ -215,15 +215,15 @@ def test_a_page_keeps_a_panel_block_and_its_settings_only(client):
     doc = {'blocks': [
         {'id': 'p', 'type': 'panel', 'text': 'My week', 'panel': {
             'kind': 'trajectory', 'window': '1y', 'metric': 'tasks', 'grain': 'monthly', 'data': [1, 2]}},
-        {'id': 'q', 'type': 'panel', 'panel': {'kind': 'timer-chart', 'days': 30, 'style': 'area'}},
+        {'id': 'q', 'type': 'panel', 'panel': {'kind': 'subject-xp', 'window': '90d'}},
         {'id': 'r', 'type': 'panel'},
     ]}
     space = client.post('/api/spaces/1', json={'doc': doc}).json()['space']
     blocks = space['doc']['blocks']
     assert blocks[0]['panel'] == {'kind': 'trajectory', 'window': '1y', 'metric': 'tasks', 'grain': 'monthly'}
-    assert blocks[1]['panel'] == {'kind': 'timer-chart', 'days': 30, 'metric': 'minutes', 'style': 'area'}
+    assert blocks[1]['panel'] == {'kind': 'subject-xp', 'window': '90d', 'style': 'card'}
     assert blocks[2]['panel'] == {'kind': 'summary'}
-    assert space['body'] == '[Panel: Trend chart, My week]\n[Panel: Focus chart]\n[Panel: Score and grade]'
+    assert space['body'] == '[Panel: Trend chart, My week]\n[Panel: Where the work went]\n[Panel: Score and grade]'
     # And it comes back the same on the next read.
     assert client.get('/api/spaces').json()['spaces'][0]['doc']['blocks'] == blocks
 

@@ -14,6 +14,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { TodayCard, XpCard } from './StatCards';
 import type { DaySummary, Typical } from './summary';
+import { renderWithProviders } from '@/test/render';
 
 const USUAL: Typical = { tasks: 8, xp: 400, days: 30 };
 
@@ -22,7 +23,7 @@ function day(done: number, total = 10): DaySummary {
 }
 
 function today(props: { done: number; usual?: Typical }) {
-  render(
+  renderWithProviders(
     <TodayCard day={day(props.done)} xpLeft={0} usual={props.usual ?? USUAL} />,
   );
 }

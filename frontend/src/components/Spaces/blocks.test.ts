@@ -88,12 +88,12 @@ describe('the slash menu', () => {
   it('finds a chart by its kind', () => {
     expect(matchKinds('pie').map((kind) => kind.chart)).toEqual(['pie']);
     expect(matchKinds('chart').filter((kind) => kind.type === 'chart')).toHaveLength(5);
-    expect(matchKinds('chart').filter((kind) => kind.type === 'panel').map((kind) => kind.panel)).toEqual(['trajectory', 'growth-line', 'timer-chart']);
+    expect(matchKinds('chart').filter((kind) => kind.type === 'panel').map((kind) => kind.panel)).toEqual(['trajectory', 'growth-line']);
   });
 
   it('finds a panel by what people call it', () => {
-    expect(matchKinds('pomodoro').map((kind) => kind.panel)).toEqual(['timer']);
-    expect(matchKinds('suggest').map((kind) => kind.panel)).toEqual(expect.arrayContaining(['plan', 'diagnosis', 'sessions', 'coach', 'timer-suggest']));
+    expect(matchKinds('pomodoro')).toEqual([]);
+    expect(matchKinds('suggest').map((kind) => kind.panel)).toEqual(expect.arrayContaining(['plan', 'diagnosis', 'sessions', 'coach']));
     expect(matchKinds('badges').map((kind) => kind.panel)).toEqual(['badges']);
   });
 

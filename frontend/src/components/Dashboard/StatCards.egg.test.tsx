@@ -1,5 +1,5 @@
 /**
- * The mark in the Focus card's corner: the hidden chain's front door.
+ * The mark in the Today card's corner: the hidden chain's front door.
  *
  * Almost all of this is about the door staying shut. It is a logo on a card
  * anybody might click, so the tests that matter are the ones that prove it
@@ -29,10 +29,9 @@
  */
 import { fireEvent, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { FocusCard } from './StatCards';
+import { TodayCard } from './StatCards';
 import { renderWithProviders } from '@/test/render';
 import { EGG_UNLOCKED } from '@/utils/easterEgg';
-import type { UseFocusSession } from '@/hooks/useFocusSession';
 
 const TODAY = new Date('2026-08-30T21:00:00');
 
@@ -41,20 +40,10 @@ const TODAY = new Date('2026-08-30T21:00:00');
    hooks/useChainAccount.ts. */
 const KEY = 'easterEgg:myles:2026-08-30';
 
-function session(): UseFocusSession {
-  return {
-    goalHours: 4,
-    focused: 0,
-    percent: 0,
-    running: false,
-    start: vi.fn(),
-    stop: vi.fn(),
-    setGoalHours: vi.fn(),
-  };
-}
-
 function draw() {
-  return renderWithProviders(<FocusCard session={session()} usualHours={1.3} />);
+  return renderWithProviders(
+    <TodayCard day={{ total: 3, done: 1, xp: 30, percent: 33 }} xpLeft={60} usual={{ tasks: 2, xp: 60, days: 14 }} />,
+  );
 }
 
 /** The door. Deliberately not a button, so it is found by its class. */
@@ -99,7 +88,7 @@ afterEach(() => {
   document.documentElement.removeAttribute('data-theme');
 });
 
-describe('the mark on the Focus card', () => {
+describe('the mark on the Today card', () => {
   it('is there, and says nothing to a screen reader', () => {
     draw();
     expect(mark()).toBeInTheDocument();
@@ -228,7 +217,7 @@ describe('the mark on the Focus card', () => {
       { left: 100, top: 100, width: 18, height: 18, right: 118, bottom: 118, x: 100, y: 100 } as DOMRect,
     );
     click(4);
-    const card = document.querySelector('.dash-stat-focus') as HTMLElement;
+    const card = document.querySelector('.dash-stat-today') as HTMLElement;
     for (let i = 0; i < 6; i++) {
       fireEvent.click(card, { clientX: 109 + 25, clientY: 109 - 12 });
     }
@@ -240,7 +229,7 @@ describe('the mark on the Focus card', () => {
     vi.spyOn(mark(), 'getBoundingClientRect').mockReturnValue(
       { left: 100, top: 100, width: 18, height: 18, right: 118, bottom: 118, x: 100, y: 100 } as DOMRect,
     );
-    const card = document.querySelector('.dash-stat-focus') as HTMLElement;
+    const card = document.querySelector('.dash-stat-today') as HTMLElement;
     for (let i = 0; i < 12; i++) fireEvent.click(card, { clientX: 110, clientY: 110 });
     expect(announced).toBe(0);
 

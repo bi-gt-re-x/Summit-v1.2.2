@@ -131,12 +131,6 @@ describe('what a page reads for its panels', () => {
     ];
     const needs = pageNeeds(blocks);
     expect(JSON.parse(needs.models)).toEqual(['30d|', '90d|', '90d|mathematics']);
-    expect(needs.timer).toBe(false);
-  });
-
-  it('runs the clock only when a timer panel is on the page', () => {
-    expect(pageNeeds([panelBlock('timer-today')]).timer).toBe(true);
-    expect(pageNeeds([panelBlock('timer-today')]).models).toBe('[]');
   });
 
   it('reads nothing for a panel that reads on its own', () => {

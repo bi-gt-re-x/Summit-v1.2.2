@@ -303,18 +303,6 @@ function slumpSteps({
     });
   }
 
-  // 5. Short sessions, if the usual ones were long.
-  const usualFocus = median(prior.map((block) => (block.active ? block.focus / block.active : 0)));
-  if (usualFocus >= 40) {
-    steps.push({
-      id: 'short-sessions',
-      title: 'Keep sessions to 25 minutes for now',
-      detail: `Your usual session was about ${Math.round(usualFocus)} minutes. Short sessions you actually start beat long ones you keep putting off.`,
-      to: '/timer',
-      link: 'Open Timer',
-    });
-  }
-
   return steps.slice(0, 4);
 }
 

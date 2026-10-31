@@ -196,35 +196,9 @@ describe('an Analytics panel', () => {
   });
 });
 
-describe('a timer panel', () => {
-  it("shows today's sessions, then a week's when asked", async () => {
-    draw(<Host kind="timer-today" />);
-    expect(await screen.findByText("Today's sessions")).toBeInTheDocument();
-    openSettings();
-    fireEvent.click(within(settingsGroup()).getByRole('radio', { name: '7 days' }));
-    expect(latest.panel).toMatchObject({ days: 7 });
-    expect(await screen.findByText('Sessions, last 7 days')).toBeInTheDocument();
-  });
-
-  it('runs the focus clock', async () => {
-    draw(<Host kind="timer" extra={{ show: ['task', 'method'] }} />);
-    expect(await screen.findByRole('button', { name: /Start focus/ })).toBeInTheDocument();
-    expect(screen.getByText('Working on')).toBeInTheDocument();
-    expect(screen.getByRole('combobox', { name: 'Timer style' })).toBeInTheDocument();
-  });
-
-  it('charts focus by day, as bars or a line', async () => {
-    draw(<Host kind="timer-chart" />);
-    expect(await screen.findAllByLabelText(/Focus minutes per day, last 14 days/)).not.toHaveLength(0);
-    openSettings();
-    fireEvent.click(within(settingsGroup()).getByRole('radio', { name: 'Sessions' }));
-    expect(await screen.findAllByLabelText(/Focus sessions per day, last 14 days/)).not.toHaveLength(0);
-  });
-});
-
 describe('every panel', () => {
   /* One page with all of them on it, the way a reader could build one: one
-     set of reads, two shared models (30 and 90 days) and one clock. A panel
+     set of reads and two shared models (30 and 90 days). A panel
      that throws on real data shows the guard's line instead of itself. */
   function Page() {
     const [blocks] = useState<Block[]>(() => PANEL_KINDS.map((kind) => ({ ...panelBlock(kind), id: kind })));

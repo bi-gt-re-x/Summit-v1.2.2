@@ -39,7 +39,6 @@ const DESTINATIONS: [Prefs['home_page'], string][] = [
   ['calendar', '/calendar'],
   ['goals', '/goals'],
   ['analytics', '/analytics'],
-  ['notes', '/notes'],
 ];
 
 function draw(
@@ -83,19 +82,24 @@ describe('where the app opens', () => {
   it('waits for the preferences rather than opening on the default', () => {
     // The failure this guards is not a wrong page, it is a right page arrived
     // at second: redirect on the default and correct a moment later, and
-    // somebody who chose Notes watches the dashboard load every morning and
+    // somebody who chose Goals watches the dashboard load every morning and
     // reports that the setting does nothing.
-    draw({ home_page: 'notes' }, { ready: false });
+    draw({ home_page: 'goals' }, { ready: false });
     expect(screen.queryByTestId('at')).not.toBeInTheDocument();
   });
 
   it('waits for the session rather than assuming signed out', () => {
-    draw({ home_page: 'notes' }, { auth: { status: 'loading' }, ready: true });
+    draw({ home_page: 'goals' }, { auth: { status: 'loading' }, ready: true });
     expect(screen.queryByTestId('at')).not.toBeInTheDocument();
   });
 
+  it('sends an account that chose Notes, which is gone, to the dashboard', () => {
+    draw({ home_page: 'notes' });
+    expect(landedOn()).toBe('/dashboard');
+  });
+
   it('sends a visitor with no account to the landing page', () => {
-    draw({ home_page: 'notes' }, { auth: { status: 'signed-out', username: null } });
+    draw({ home_page: 'goals' }, { auth: { status: 'signed-out', username: null } });
     expect(landedOn()).toBe('/home');
   });
 });

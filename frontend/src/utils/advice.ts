@@ -914,29 +914,6 @@ function fallbacks(
     });
   }
 
-  // ---- focus, at "you finish more than you log" ---------------------------
-  // Every account whose focus timer is used less often than its task list.
-  // Not a scolding about the timer: focus is a graded metric, and a metric fed
-  // by a third of the days it could be fed by is scoring the logging rather
-  // than the work.
-  const workedDays = days.filter((day) => (Number(day.xp_earned) || 0) > 0).length;
-  const focusDays = days.filter((day) => (Number(day.focus_minutes) || 0) > 0).length;
-  if (workedDays >= 5 && focusDays < workedDays * 0.6) {
-    const share = Math.round((focusDays / workedDays) * 100);
-    out.push({
-      id: 'log-the-focus',
-      kind: 'depth',
-      category: 'Focus time',
-      title: "Most of your focus time isn't logged",
-      because: `Only ${share}% of your working days have focus time logged, so your focus score is too low.`,
-      action: 'Start the focus timer before your first task each day.',
-      evidence: `${focusDays} of ${workedDays} work days here have focus time.`,
-      impact: 0,
-      workings: "This one doesn't change your XP.",
-      effort: 1,
-    });
-  }
-
   return out;
 }
 

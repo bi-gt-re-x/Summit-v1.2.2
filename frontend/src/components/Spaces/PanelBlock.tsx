@@ -1,6 +1,6 @@
 /**
  * A panel block on a space's page: one of the app's own panels — from
- * Analytics, the Timer or Achievements — drawn by the component that page
+ * Analytics or Achievements — drawn by the component that page
  * uses, from the account's numbers as they are now.
  *
  * The block stores only its kind and its settings (./panels). What it shows
@@ -51,7 +51,6 @@ const PAGE_NAME: Record<string, string> = {
   '/subjects': 'Subjects',
   '/analytics/growth': 'Growth',
   '/goals': 'Goals',
-  '/timer': 'Timer',
   '/achievements': 'Achievements',
 };
 

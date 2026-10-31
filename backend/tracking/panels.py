@@ -1,8 +1,8 @@
-"""Panel blocks: a panel from Analytics, the Timer or Achievements on a page.
+"""Panel blocks: a panel from Analytics or Achievements on a page.
 
 A `panel` block on a space's page (frontend/src/components/Spaces/PanelBlock.tsx)
 draws one of the app's own panels — the plan, the trend chart, the habit
-cards, the focus timer, the badge wall — with the same component the page it
+cards, the badge wall — with the same component the page it
 comes from uses, from the account's live numbers. The block stores only which
 panel it is (`kind`) and how it is set: a time range, a subject, how many rows,
 which series a chart plots, which parts show. Nothing it shows is stored.

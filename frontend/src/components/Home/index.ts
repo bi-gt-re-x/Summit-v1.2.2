@@ -41,5 +41,4 @@ export {
   Numbers,
   SkillsTour,
   SpacesTour,
-  TimerTour,
 } from './Tour';

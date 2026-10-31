@@ -209,7 +209,7 @@ export function periodSummary(
     effort.push({
       label: 'Focus',
       text:
-        `${hours(focusNow)} on the timer` +
+        `${hours(focusNow)} of focus` +
         (compared && focusWas > 0 && focusMove.tone !== 'flat' ? `, ${focusMove.tone === 'up' ? 'up' : 'down'} from ${hours(focusWas)}.` : '.'),
       tone: compared ? focusMove.tone : 'flat',
     });

@@ -17,11 +17,11 @@
     {"why": "a number for a subject is read as its id", "raw": {"kind": "quality", "subject": 42}, "clean": {"kind": "quality", "window": "30d", "subject": "42"}},
     {"why": "true is not a subject", "raw": {"kind": "quality", "subject": true}, "clean": {"kind": "quality", "window": "30d", "subject": ""}},
     {"why": "a subject is cut to length", "raw": {"kind": "quality", "subject": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}, "clean": {"kind": "quality", "window": "30d", "subject": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}},
-    {"why": "the timer chart's own choices", "raw": {"kind": "timer-chart", "days": 30, "metric": "sessions", "style": "area"}, "clean": {"kind": "timer-chart", "days": 30, "metric": "sessions", "style": "area"}},
-    {"why": "a choice from another kind's list doesn't count", "raw": {"kind": "timer-chart", "days": 1, "metric": "focus", "style": "card"}, "clean": {"kind": "timer-chart", "days": 14, "metric": "minutes", "style": "bars"}},
+    {"why": "a kind's own choices", "raw": {"kind": "subject-xp", "window": "90d", "style": "line"}, "clean": {"kind": "subject-xp", "window": "90d", "style": "line"}},
+    {"why": "a choice from another kind's list doesn't count", "raw": {"kind": "subject-xp", "window": "90d", "style": "area"}, "clean": {"kind": "subject-xp", "window": "90d", "style": "card"}},
     {"why": "badges by category, up next", "raw": {"kind": "badges", "category": "Mastery", "which": "next", "limit": 12}, "clean": {"kind": "badges", "category": "Mastery", "which": "next", "limit": 12}},
     {"why": "badge limits out of range", "raw": {"kind": "badges", "category": "Sports", "which": "locked", "limit": 13}, "clean": {"kind": "badges", "category": "all", "which": "earned", "limit": 6}},
-    {"why": "a set ignores what isn't one of its words", "raw": {"kind": "timer", "show": [1, "method", null]}, "clean": {"kind": "timer", "show": ["method"]}},
+    {"why": "a set ignores what isn't one of its words", "raw": {"kind": "stage", "show": [1, "next", null]}, "clean": {"kind": "stage", "show": ["next"]}},
     {"why": "a growth timeline's lines", "raw": {"kind": "growth-line", "period": "365d", "show": ["overall", "quality"]}, "clean": {"kind": "growth-line", "period": "365d", "show": ["quality", "overall"]}},
     {"why": "a kind with no settings keeps none", "raw": {"kind": "say-do", "window": "7d", "limit": 3}, "clean": {"kind": "say-do"}}
   ]

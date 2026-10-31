@@ -23,7 +23,7 @@ export interface Note {
    * What the note is about — catalogue subject ids, comma-separated.
    *
    * Absent on every note written before the column existed, which is why every
-   * reader goes through `subjectIds` in pages/Notes rather than splitting this
+   * reader goes through `subjectIds` in the old Notes page rather than splitting this
    * directly: `undefined.split` is the shape of that bug.
    */
   subject_ids?: string;

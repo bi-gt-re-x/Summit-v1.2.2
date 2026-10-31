@@ -9,13 +9,12 @@
  * twice. When a few open at once (an account restarted as a beginner), one
  * card names them all.
  *
- * It waits while a tour, a focus session or a skill check is on screen.
+ * It waits while a tour or a skill check is on screen.
  */
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useStarter } from '@/hooks/useStarter';
-import { useSittingShown } from '@/components/Timer/FocusSitting';
 import { useCheckShown } from '@/components/SkillTree/checkShown';
 import { MangoFigure } from './Mango';
 import { useTourShowing } from './Tutorial';
@@ -27,14 +26,13 @@ export function Unlocked() {
   const { status, profileComplete } = useAuth();
   const starter = useStarter();
   const touring = useTourShowing();
-  const sitting = useSittingShown();
   const checking = useCheckShown();
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
 
   const opened = starter.unannounced;
   const first = opened[0];
-  if (status !== 'signed-in' || !profileComplete || !first || touring || sitting || checking) return null;
+  if (status !== 'signed-in' || !profileComplete || !first || touring || checking) return null;
 
   const close = async (go: boolean) => {
     setBusy(true);

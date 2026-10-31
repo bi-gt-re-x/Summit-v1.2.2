@@ -1,5 +1,5 @@
 /**
- * The hidden chain's front door — ten clicks on the mark in the Focus card's
+ * The hidden chain's front door — ten clicks on the mark in the Today card's
  * corner.
  *
  * Nothing at all for the first three, so a reader who taps the logo twice out
@@ -12,7 +12,7 @@
  * ## Why the door and the room are separate again
  *
  * They were one hook for a while, when the door was the mark sitting directly
- * over the quote. The door is in the corner of the Focus card now, which is a
+ * over the quote. The door is in the corner of the Today card now, which is a
  * different component, so the two need a word between them — `EGG_UNLOCKED` in
  * utils/easterEgg.ts. It carries no payload and expects no answer, because
  * there is exactly one thing to say.

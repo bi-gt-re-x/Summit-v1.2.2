@@ -27,7 +27,7 @@ minute, and that's the whole promise of a session plan. So:
    needs, so the page can say "Free, no signup".
 
 4. **No other productivity apps.** Summit is the reader's task list,
-   calendar, focus timer, notes and log. A session never sends them to
+   calendar, goals and log. A session never sends them to
    another one (Todoist, Notion, Google Calendar, Pomofocus...), even a free
    one, and even when it's a link they keep: `competitor` and
    `names_competitor` catch them, the guard drops the link, and

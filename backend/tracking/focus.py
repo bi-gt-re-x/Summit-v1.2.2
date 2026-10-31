@@ -1,6 +1,6 @@
 """Focus time: how long the user actually sat down and worked.
 
-The session itself runs client-side (src/hooks/useFocusSession.ts keeps the
+The session itself runs client-side (the old focus timer kept the
 timer in localStorage, as focus.js did before the port — same key, same shape).
 What is tracked here is each day's total, one row per user per
 day in focus.sql — so the calendar's Weekly Focus Time panel, the growth chart
@@ -148,7 +148,7 @@ def set_day_note(username, day, text):
 # columns lives here and nowhere else.
 
 #: How many sittings a read hands back: the newest, oldest first. The same cap
-#: the browser keeps (hooks/useIntervals), about two months of ordinary use.
+#: the browser keeps (the old timer's copy), about two months of ordinary use.
 SITTINGS_KEPT = 120
 
 #: Client field → column, for the plain fields. `breaks` and `finished` are

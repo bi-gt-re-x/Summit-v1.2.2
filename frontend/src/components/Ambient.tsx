@@ -43,7 +43,7 @@
  * ordinary colour before drifting on. One sitting's worth of that reads as a
  * field with something going on in it rather than as wallpaper.
  *
- * It is off everywhere except the focus sitting (pages/Timer.tsx), and for the
+ * Nothing turns it on now that the focus sitting is gone. It stays off, for the
  * same reason the cursor glow is: movement with a beginning and an end pulls
  * the eye, which is right behind a clock somebody is watching on purpose and
  * wrong behind a task list somebody is reading. Nothing accelerates when the

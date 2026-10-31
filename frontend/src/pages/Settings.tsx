@@ -109,21 +109,7 @@ const HOME_PAGES: { key: Prefs['home_page']; label: string }[] = [
   { key: 'calendar', label: 'Calendar' },
   { key: 'goals', label: 'Goals' },
   { key: 'analytics', label: 'Analytics' },
-  { key: 'notes', label: 'Notes' },
 ];
-
-/** The daily focus goal, in hours. Quarter-hour steps, which is the grain the
-    backend snaps to — see `_fraction` in backend/api/settings.py. */
-const FOCUS_GOALS = [0.5, 1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10, 12];
-
-/** The list above, plus whatever is actually stored if it is not on it.
- *  The backend accepts any quarter hour, so a value set by hand — or by a
- *  build with a different list — would otherwise leave this select showing
- *  nothing at all, which reads as "no goal" rather than "a goal I cannot draw". */
-function goalOptions(current: number): number[] {
-  if (FOCUS_GOALS.includes(current)) return FOCUS_GOALS;
-  return [...FOCUS_GOALS, current].sort((a, b) => a - b);
-}
 
 /** What each of the three levels actually does, said in full under the seg. */
 const RATING_DEPTHS: Record<Prefs['rating_depth'], string> = {
@@ -139,14 +125,6 @@ const RATING_DEPTH_NAMES: Record<Prefs['rating_depth'], string> = {
   ratings: 'Two questions',
   reasons: 'Three questions',
 };
-
-function hoursLabel(hours: number): string {
-  const whole = Math.floor(hours);
-  const minutes = Math.round((hours - whole) * 60);
-  if (!whole) return `${minutes} minutes`;
-  if (!minutes) return whole === 1 ? '1 hour' : `${whole} hours`;
-  return `${whole}h ${minutes}m`;
-}
 
 /**
  * The six kinds of thing the app can tell you about, and what each one covers.
@@ -1041,7 +1019,7 @@ export default function Settings() {
           {
             id: 'tour',
             label: 'Tutorial',
-            hint: 'Mango walks you through the Dashboard, Calendar and Timer, then the rest of the tabs.',
+            hint: 'Mango shows you the Dashboard, Calendar and Log. Other pages open as you finish tasks.',
             control: (
               <button
                 type="button"
@@ -1110,19 +1088,6 @@ export default function Settings() {
                 busy={busy}
                 label="Show the insights panel"
                 onFlip={() => void savePref({ show_insights: !prefs.show_insights }, 'Dashboard')}
-              />
-            ),
-          },
-          {
-            id: 'focus-panel',
-            label: 'Show the focus panel',
-            hint: 'The timer beside your tasks. Off, the list takes the full width.',
-            control: (
-              <Toggle
-                on={prefs.show_focus}
-                busy={busy}
-                label="Show the focus panel"
-                onFlip={() => void savePref({ show_focus: !prefs.show_focus }, 'Dashboard')}
               />
             ),
           },
@@ -1400,68 +1365,6 @@ export default function Settings() {
             label: 'How "most improved" is sorted',
             hint: 'Most improved first. A score that went from 18 to 25 ranks above one that was always 400.',
             control: <span className="st-fixed">Most improved</span>,
-          },
-        ],
-      },
-      {
-        id: 'focus',
-        label: 'Focus',
-        group: 'Productivity',
-        items: [
-          {
-            id: 'focus-goal',
-            label: 'Daily focus goal',
-            hint: 'Your daily focus target. A day with its own goal keeps that one.',
-            control: (
-              <select
-                className="st-input"
-                value={String(prefs.focus_goal_hours)}
-                disabled={busy}
-                onChange={(event) =>
-                  void savePref(
-                    { focus_goal_hours: Number(event.target.value) },
-                    'Focus goal',
-                  )
-                }
-              >
-                {goalOptions(prefs.focus_goal_hours).map((hours) => (
-                  <option key={hours} value={hours}>
-                    {hoursLabel(hours)}
-                  </option>
-                ))}
-              </select>
-            ),
-          },
-          {
-            id: 'focus-dim',
-            label: 'Clear the page while focusing',
-            hint: "Start Focus on the dashboard opens the full timer screen. Off, it just runs in the Focus panel.",
-            control: (
-              <Toggle
-                on={prefs.focus_dim}
-                busy={busy}
-                label="Clear the page while focusing"
-                onFlip={() => void savePref({ focus_dim: !prefs.focus_dim }, 'Focus mode')}
-              />
-            ),
-          },
-          {
-            id: 'catchup',
-            label: 'Ask about untracked days',
-            hint:
-              'Once a day, the dashboard asks about days you missed logging focus time. What you enter '
-              + "counts just like timed work. Days you tracked aren't asked about, and blank days stay "
-              + 'blank.',
-            control: (
-              <Toggle
-                on={prefs.catchup_prompt}
-                busy={busy}
-                label="Ask about untracked days"
-                onFlip={() =>
-                  void savePref({ catchup_prompt: !prefs.catchup_prompt }, 'Catch-up prompt')
-                }
-              />
-            ),
           },
         ],
       },

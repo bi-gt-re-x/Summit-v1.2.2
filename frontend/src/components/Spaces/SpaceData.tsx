@@ -1,14 +1,13 @@
 /**
  * What a space's panels read, read once for the whole page.
  *
- * A panel block (./PanelBlock) draws a panel from Analytics or the Timer with
- * that page's own component, and those components are fed by two hooks that
- * are each written to run once per page: the Analytics page's calls and its
- * model (components/Analytics/useAnalyticsData, useAnalyticsModel), and the
- * focus clock (hooks/usePomodoro). Calling them inside every block would be
- * eight requests per panel, a model worked out per panel, and two clocks that
- * would each log the same session. So they run here, above the editor, and
- * the blocks read what they produced.
+ * A panel block (./PanelBlock) draws a panel from Analytics with that page's
+ * own component, and those components are fed by hooks written to run once
+ * per page: the Analytics page's calls and its model
+ * (components/Analytics/useAnalyticsData, useAnalyticsModel). Calling them
+ * inside every block would be eight requests per panel and a model worked out
+ * per panel. So they run here, above the editor, and the blocks read what
+ * they produced.
  *
  * - **One set of reads**, made only when a panel needs the model, and read
  *   again when ./liveWatch says the account moved (this tab at once, others
@@ -17,11 +16,9 @@
  *   Mathematics share one; a third on 30 days gets its own. `pageNeeds` in
  *   ./panels says which are wanted, and each is worked out by a `ModelHost`
  *   that renders nothing and hands its result to the store.
- * - **One clock**, only when a timer panel is on the page.
  *
  * The store is a plain object with listeners, read with
- * `useSyncExternalStore`, so a panel redraws when its own model or the clock
- * changes and not when the page's text does.
+ * `useSyncExternalStore`, so a panel redraws when its own model changes and not when the page's text does.
  */
 import {
   createContext,
@@ -37,9 +34,7 @@ import {
 import { useAnalyticsData, type AnalyticsData } from '@/components/Analytics/useAnalyticsData';
 import { useAnalyticsModel, type AnalyticsModel } from '@/components/Analytics/useAnalyticsModel';
 import type { WindowKey } from '@/components/Analytics/data';
-import { useAuth, useSettings, useSubjectIndex, useSubjectsReady } from '@/hooks';
-import { useFocusSession, type UseFocusSession } from '@/hooks/useFocusSession';
-import { usePomodoro, type UsePomodoro } from '@/hooks/usePomodoro';
+import { useSettings, useSubjectIndex, useSubjectsReady } from '@/hooks';
 import type { SubjectIndex } from '@/hooks/useSubjects';
 import { modelKey, pageNeeds, splitKey, type PanelConfig } from './panels';
 import { watchLive } from './liveWatch';
@@ -52,15 +47,9 @@ export interface Shared {
   waiting: boolean;
 }
 
-export interface Clock {
-  session: UseFocusSession;
-  pomodoro: UsePomodoro;
-}
-
 class Store {
   shared: Shared | null = null;
   models = new Map<string, AnalyticsModel>();
-  clock: Clock | null = null;
   private listeners = new Set<() => void>();
 
   subscribe = (listener: () => void) => {
@@ -86,11 +75,10 @@ const SETTLE_MS = 400;
 export function SpaceData({ blocks, children }: { blocks: ReadonlyArray<{ type: string; panel?: unknown }>; children: ReactNode }) {
   const store = useRef<Store | null>(null);
   if (!store.current) store.current = new Store();
-  const { models, timer } = pageNeeds(blocks);
+  const { models } = pageNeeds(blocks);
   return (
     <StoreContext.Provider value={store.current}>
       {models !== '[]' && <AnalyticsHost keys={models} store={store.current} />}
-      {timer && <ClockHost store={store.current} />}
       {children}
     </StoreContext.Provider>
   );
@@ -173,24 +161,6 @@ const ModelHost = memo(function ModelHost({ id, shared, store }: { id: string; s
   return null;
 });
 
-const ClockHost = memo(function ClockHost({ store }: { store: Store }) {
-  const { username } = useAuth();
-  const session = useFocusSession(username);
-  const pomodoro = usePomodoro(username, session);
-  useLayoutEffect(() => {
-    store.clock = { session, pomodoro };
-    store.tell();
-  });
-  useEffect(
-    () => () => {
-      store.clock = null;
-      store.tell();
-    },
-    [store],
-  );
-  return null;
-});
-
 function useStore(): Store {
   const store = useContext(StoreContext);
   if (!store) throw new Error('A panel block has to sit inside <SpaceData>.');
@@ -208,10 +178,4 @@ export function usePanelModel(config: PanelConfig): AnalyticsModel | null {
   const store = useStore();
   const key = modelKey(config);
   return useSyncExternalStore(store.subscribe, () => store.models.get(key) ?? null);
-}
-
-/** The page's focus clock, or null until it's running. */
-export function useClock(): Clock | null {
-  const store = useStore();
-  return useSyncExternalStore(store.subscribe, () => store.clock);
 }

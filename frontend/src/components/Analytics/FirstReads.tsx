@@ -11,7 +11,6 @@
  * failed read just leaves the sitting-based reads out.
  */
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Panel } from './charts';
 import { firstReads, readsToGo } from './reads';
 import { focus as focusService } from '@/services';
@@ -53,9 +52,8 @@ export function FirstReads({ tasks, goals }: { tasks: Task[]; goals: Goal[] }) {
       ) : (
         <p className="ax-reads-empty">
           {toGo > 0
-            ? `Finish ${toGo} more ${toGo === 1 ? 'task or focus session' : 'tasks or focus sessions'} and your first results show up here.`
-            : "Keep going. Results show up once there's enough of one kind of work."}{' '}
-          <Link className="ax-link" to="/timer">Start a session</Link>
+            ? `Finish ${toGo} more ${toGo === 1 ? 'task' : 'tasks'} and your first results show up here.`
+            : "Keep going. Results show up once there's enough of one kind of work."}
         </p>
       )}
     </Panel>

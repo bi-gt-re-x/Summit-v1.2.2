@@ -49,11 +49,11 @@ def _finish_a_task(client):
 # ---------------------------------------------------------------------------
 # What's done
 # ---------------------------------------------------------------------------
-def test_a_new_account_has_six_open_quests(client):
+def test_a_new_account_has_five_open_quests(client):
     _joined_today()
     line = _line(client)
     assert [quest['id'] for quest in line['quests']] == [
-        'task', 'focus', 'practice', 'log', 'goal', 'back']
+        'task', 'practice', 'log', 'goal', 'back']
     assert not any(quest['done'] or quest['claimed'] for quest in line['quests'])
     assert line['retired'] is False
     assert all(quest['xp'] > 0 for quest in line['quests'])
@@ -62,9 +62,6 @@ def test_a_new_account_has_six_open_quests(client):
 def test_each_quest_is_ticked_by_the_row_its_action_leaves(client):
     _joined_today()
     _finish_a_task(client)
-    db.insert_row('focus_sittings', {
-        'id': 's1', 'user_id': 'tester', 'day': date.today().isoformat(),
-        'style_id': 'classic', 'minutes': 5})
     db.insert_row('skill_attempts', {
         'id': 'a1', 'user_id': 'tester', 'node_id': 'algebra-1', 'ordinal': 1,
         'weight': 'core', 'attempted': 1, 'correct': 1, 'source': 'problem',
@@ -76,15 +73,7 @@ def test_each_quest_is_ticked_by_the_row_its_action_leaves(client):
 
     found = _by_id(client)
     assert {key for key, quest in found.items() if quest['done']} == {
-        'task', 'focus', 'practice', 'log', 'goal'}
-
-
-def test_focus_counts_from_the_days_total_too(client):
-    # Sittings are sent up in batches, so the day's seconds can land first.
-    _joined_today()
-    db.insert_row('focus_days', {'user_id': 'tester', 'date': date.today().isoformat(),
-                                 'seconds': 120})
-    assert _by_id(client)['focus']['done']
+        'task', 'practice', 'log', 'goal'}
 
 
 def test_a_log_entry_without_a_mood_does_not_count(client):
@@ -247,8 +236,6 @@ def _do(action, client, username='tester'):
                 'name': name, 'priority': 'low', 'xp_reward': 10,
                 'subject': 'algebra' if action == 'subject' else None}).json()['task_id']
             assert client.post('/api/complete_task', json={'task_id': task}).json()['success']
-    elif action == 'focus15':
-        db.insert_row('focus_days', {'user_id': username, 'date': _today(), 'seconds': 15 * 60})
     elif action == 'practice3':
         db.insert_row('skill_attempts', {
             'id': 'p-' + username, 'user_id': username, 'node_id': 'algebra-1', 'ordinal': 1,
@@ -267,8 +254,6 @@ def test_each_daily_action_reads_its_own_rows():
     did = {quest['id']: quest['did'] for quest in quests.DAILY}
     assert not any(check(_counts()) for check in did.values())
     assert did['tasks2'](_counts(tasks=2)) and not did['tasks2'](_counts(tasks=1))
-    assert did['focus15'](_counts(focus_minutes=15))
-    assert did['focus15'](_counts(focus_seconds=900)) and not did['focus15'](_counts(focus_seconds=899))
     assert did['practice3'](_counts(practice=3)) and not did['practice3'](_counts(practice=2))
     assert did['log'](_counts(log=1))
     assert did['subject'](_counts(subject_tasks=1)) and not did['subject'](_counts(tasks=5))

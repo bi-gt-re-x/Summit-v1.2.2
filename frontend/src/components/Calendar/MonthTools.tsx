@@ -106,15 +106,11 @@ export function MonthTools({ upcoming, goals, onAddTask, onAddEvent }: MonthTool
             <span className="mv-quick-ico">{ICONS.event}</span>
             Event
           </button>
-          {/* Goals and notes have pages of their own. A second editor in the
-              corner of a calendar would be a worse copy of one that exists. */}
+          {/* Goals have a page of their own. A second editor in the corner of
+              a calendar would be a worse copy of one that exists. */}
           <Link className="mv-quick tone-goal" to="/goals">
             <span className="mv-quick-ico">{ICONS.goal}</span>
             Goal
-          </Link>
-          <Link className="mv-quick tone-note" to="/notes">
-            <span className="mv-quick-ico">{ICONS.note}</span>
-            Note
           </Link>
         </div>
       </section>

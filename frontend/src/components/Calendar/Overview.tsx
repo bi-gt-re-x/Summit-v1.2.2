@@ -1,6 +1,6 @@
 /**
- * What the period on screen came to — the same four figures, in the same
- * order, under the same words, at all three magnifications.
+ * What the period on screen came to — the same figures, in the same order,
+ * under the same words, at all three magnifications.
  *
  * The three views each grew their own version of this panel and each invented
  * its own vocabulary for it. Laid side by side they were:
@@ -17,9 +17,9 @@
  *
  * ## What is shared and what is not
  *
- * Three of the four tiles are fixed, because they are the three questions
- * every period answers: how much of what I planned did I finish, how long did
- * I work, and what did it earn. They read identically at every scale; only the
+ * Two of the three tiles are fixed, because they are the two questions every
+ * period answers: how much of what I planned did I finish, and what did it
+ * earn. They read identically at every scale; only the
  * sub-line changes, and it changes to name the period, which is the one thing
  * that differs.
  *
@@ -62,7 +62,7 @@ const WHEN: Record<OverviewScale, string> = {
 
 export interface OverviewTile {
   /** One of the four colour tones in styles/calendar/overview.css. */
-  tone: 'tasks' | 'focus' | 'xp' | 'extra';
+  tone: 'tasks' | 'xp' | 'extra';
   icon: ReactNode;
   label: string;
   /** A node, so a view can make one figure a field — see `focused` below. */
@@ -75,17 +75,10 @@ export interface OverviewProps {
   /** Tasks landing in the period, and how many are done. */
   tasks: number;
   done: number;
-  /**
-   * Already formatted, and a node rather than a string: on the Day view the
-   * focus figure is the goal for today and can be typed into, so that view
-   * passes the field itself. The other two pass "1h 30m".
-   */
-  focused: ReactNode;
-  planned: string;
   xp: number;
   /**
    * The view's own fourth figure: a streak, a best day, whatever only this
-   * magnification can say. Omitted, the panel is three tiles and still reads.
+   * magnification can say. Omitted, the panel is two tiles and still reads.
    */
   extra?: Omit<OverviewTile, 'tone'>;
   /** Anything that belongs above the tiles — the Week view's ring. */
@@ -101,12 +94,6 @@ const TASKS_ICON = (
   <svg viewBox="0 0 24 24" aria-hidden="true">
     <path d="M9 11.5 11 13.5 15.5 9" />
     <rect x="4" y="4" width="16" height="16" rx="4" />
-  </svg>
-);
-const FOCUS_ICON = (
-  <svg viewBox="0 0 24 24" aria-hidden="true">
-    <circle cx="12" cy="12" r="8.5" />
-    <path d="M12 7.5V12l3 1.8" />
   </svg>
 );
 const XP_ICON = (
@@ -132,8 +119,6 @@ export function Overview({
   scale,
   tasks,
   done,
-  focused,
-  planned,
   xp,
   extra,
   lead,
@@ -153,16 +138,6 @@ export function Overview({
           label="Tasks"
           value={`${done} / ${tasks}`}
           sub={tasks ? `done ${WHEN[scale]}` : `nothing on ${WHEN[scale]}`}
-        />
-        {/* Focused against planned. "Planned" alone was the sub-line for a
-            while, which is the one figure that cannot be wrong and also cannot
-            be interesting: it is what the reader typed in. */}
-        <Tile
-          tone="focus"
-          icon={FOCUS_ICON}
-          label="Focus time"
-          value={focused}
-          sub={`of ${planned} planned`}
         />
         <Tile
           tone="xp"

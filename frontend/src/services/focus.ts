@@ -14,7 +14,7 @@
  * Also here: the one-line note attached to a calendar day, which the Week, Day
  * and Month views all show — an edit in one view lands everywhere; and the
  * sittings, one row per focus sitting with the task it was for, which
- * hooks/useIntervals keeps in step with the browser's own copy.
+ * the old timer kept in step with the browser's own copy.
  *
  * Backend: backend/api/focus.py, backend/api/calendar.py.
  */

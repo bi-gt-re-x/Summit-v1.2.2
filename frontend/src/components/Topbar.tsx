@@ -345,9 +345,6 @@ export function Topbar() {
               <Link to="/dashboard" onClick={() => setOpen(null)}>
                 Dashboard
               </Link>
-              <Link to="/notes" onClick={() => setOpen(null)}>
-                Notes
-              </Link>
               <Link to="/settings" onClick={() => setOpen(null)}>
                 Settings
               </Link>

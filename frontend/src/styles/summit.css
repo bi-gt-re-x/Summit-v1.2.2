@@ -2,7 +2,7 @@
    summit.css — the mountain hero every page opens with.
 
    The focus page was the only one that looked like anywhere. Its hero carries
-   two radial washes and a drawn range (styles/timer.css, "Hero"), and every
+   two radial washes and a drawn range (the old timer sheet, "Hero"), and every
    other page opened with a bare `<h1>` on the page's own ground — so moving
    between them read as moving between two applications rather than two rooms.
    This is that card, taken out of timer.css and made something a page can wear

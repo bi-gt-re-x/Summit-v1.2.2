@@ -287,41 +287,15 @@ const TABS: Tab[] = [
     ),
   },
   {
-    to: '/notes',
-    label: 'Notes',
-    icon: (
-      <svg {...stroke}>
-        <path d="M15 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" />
-        <path d="M15 3v5h5M8.5 13h7M8.5 17h4" />
-      </svg>
-    ),
-  },
-  {
     // The private journal Summit learns from (pages/Log.tsx). Not gated in
     // the starter days: it's how a new account tells Summit about itself.
     to: '/log',
     label: 'Log',
     icon: (
       <svg {...stroke}>
-        {/* A bound journal with a ribbon, so it doesn't read as Notes'
-            folded page beside it. */}
         <path d="M5 4.5A1.5 1.5 0 0 1 6.5 3H19v15H6.5A1.5 1.5 0 0 0 5 19.5Z" />
         <path d="M5 19.5A1.5 1.5 0 0 0 6.5 21H19v-3" />
         <path d="M14 3v6l-1.75-1.25L10.5 9V3" />
-      </svg>
-    ),
-  },
-  {
-    // Under Notes, because both are places you go *to* rather than results you
-    // come back for — the pages above this point report on work that is
-    // already done, and these two are where some of it happens.
-    to: '/timer',
-    label: 'Timer',
-    icon: (
-      <svg {...stroke}>
-        <circle cx="12" cy="13" r="8" />
-        <path d="M12 9.5V13l2.5 1.5" />
-        <path d="M9 2h6" />
       </svg>
     ),
   },

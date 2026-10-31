@@ -9,8 +9,8 @@
  * with its own route in App.tsx, which is exactly the exit this file's own
  * instructions below describe. Growth Tree left the same way and is
  * pages/SkillTrees.tsx; its old path redirects, because the placeholder was
- * routed long enough for links to it to exist. Notes left next, into
- * pages/Notes.tsx over the table data/sql/notes.sql had been holding for it.
+ * routed long enough for links to it to exist. Notes left next, into a page
+ * over the table data/sql/notes.sql had been holding for it (gone since).
  * Settings and Achievements left together, over the two schemas that had been
  * waiting for them — three left.
  *
@@ -41,16 +41,6 @@ interface Unbuilt {
 }
 
 const PAGES: Record<string, Unbuilt> = {
-  '/focus': {
-    name: 'Focus',
-    description:
-      'The focus timer as its own page, with your session history.',
-    files: [
-      'backend/api/focus.py: sync and history already exist',
-      'src/services/focus.ts: already wired',
-      'frontend/js/timer.js: the timer to port',
-    ],
-  },
   '/library': {
     name: 'Library',
     description: 'Saved resources and reference material.',

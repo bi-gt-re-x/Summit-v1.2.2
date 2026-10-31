@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS day_focus_notes (
 -- for. focus_days above is the ledger of hours; this is the shape of them,
 -- which the Timer page's sittings panel, its length recommendation and the
 -- after-sitting strip read. Written by the browser as each sitting ends
--- (hooks/useIntervals), and kept here so a second device or a cleared cache
+-- (the old timer's copy), and kept here so a second device or a cleared cache
 -- sees the same record. Served by backend/api/focus.py.
 CREATE TABLE IF NOT EXISTS focus_sittings (
     -- Made by the browser that ran the sitting, so a row written offline and

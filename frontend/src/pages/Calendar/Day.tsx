@@ -47,7 +47,6 @@ import {
   type DraggedSlot,
   type DroppedBlock,
 } from '@/hooks/useGridDrag';
-import { fmtHM, useFocusSession } from '@/hooks/useFocusSession';
 import {
   MAX_DAY_FOCUSES,
   focusList,
@@ -112,7 +111,6 @@ export default function Day() {
   } = account;
   const store = useCalendarStore(username);
   const dayFocus = useDayFocus(username);
-  const session = useFocusSession(username);
   const subjects = useSubjectIndex(username);
   const now = useNow();
   const { prefs } = useSettings();
@@ -352,16 +350,6 @@ export default function Day() {
     });
     return { total, done };
   }, [iso, tasks]);
-
-  /**
-   * Focus Time. On today it is the goal the dashboard's panel sets — the same
-   * number, editable in both places. On any other day there is no goal to
-   * speak of, so it is what that day has been planned to hold.
-   */
-  const plannedHours = blocks.reduce((sum, block) => sum + (block.end - block.start), 0);
-  const focusTime = isToday
-    ? fmtHM(session.goalHours * 3600)
-    : fmtHM(plannedHours * 3600);
 
   const pending = useMemo(
     () =>
@@ -663,17 +651,9 @@ export default function Day() {
             })
           }
           onPickDate={(picked) => goTo(dates.fromIsoDate(picked))}
-          focus={{
-            focused: fmtHM(session.focused),
-            goal: fmtHM(session.goalHours * 3600),
-            percent: session.percent,
-          }}
-          goalEditable={isToday}
-          onSetGoalHours={session.setGoalHours}
           stats={{
             tasks: tally.total,
             done: tally.done,
-            focusTime,
             xp: xpEarned,
             streak: Number(stats.current_streak) || 0,
           }}

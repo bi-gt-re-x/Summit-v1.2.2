@@ -87,8 +87,8 @@ SPA_ROUTES = (
     '/spaces/{space_id}',
     # The three Team spaces: the same page, with a member list.
     '/team/{space_id}',
-    # The focus timer with a pomodoro cycle over it. The session it runs is the
-    # account's ordinary one — see src/pages/Timer.tsx.
+    # The Timer page is gone. Kept so an old link reaches the app, which
+    # sends it to the dashboard.
     '/timer',
     # The calendar is one page in three views. It was one URL and a script
     # that swapped panes; it is three routes now, and /calendar keeps working

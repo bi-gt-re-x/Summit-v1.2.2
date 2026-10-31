@@ -187,7 +187,7 @@ export function startParticles(
     const sheet = fromSheet(now);
     if (sheet) return sheet;
     // `surge` is the focus sitting and the focus sitting paints over a tint
-    // that is dark in both themes — see `.pom-sit-scrim` in styles/timer.css.
+    // that is dark in both themes — see `.pom-sit-scrim` in the old timer sheet.
     // So the field is read against *that* ground rather than against the
     // account's theme: the light-theme dots are near-black and would be a
     // canvas of nothing on it.

@@ -1,8 +1,8 @@
 /**
  * The dashboard — the account's day, at a glance.
  *
- * Four rows: a greeting, four stat cards, the Tasks list beside the Focus
- * panel, and three summary cards along the bottom. Every one of them is
+ * Four rows: a greeting, three stat cards, the Tasks list, and three summary
+ * cards along the bottom. Every one of them is
  * counted from a single `/api/get_user_data` call, by the pure functions in
  * components/Dashboard/summary.ts — nothing on this page fetches for itself, so
  * no two panels can disagree about what a task is.
@@ -19,22 +19,12 @@
  * their counters restarted from zero — a completed task read as a page flash
  * rather than as a number going up. The Refresh button in the header is the one
  * thing that asks the server again.
- *
- * The focus session is owned here rather than inside the Focus panel, because
- * two things show it: the panel and the Focus Time stat card. One
- * `useFocusSession` shared between them is what stops the two disagreeing
- * about the same day. The pomodoro over it is owned here for the same reason
- * and one stronger: it starts and stops that session, so a second copy would
- * be a second hand on the account's focus clock.
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ErrorState, Loading, PageHero, RefreshButton } from '@/components';
 import {
-  CatchUp,
   DailyQuote,
   FirstWeek,
-  FocusCard,
-  FocusPanel,
   GoalReached,
   GoalsCard,
   LevelUp,
@@ -53,7 +43,6 @@ import {
 } from '@/components/Dashboard';
 import { RatePrompt } from '@/components/Tasks';
 import {
-  TYPICAL_DAYS,
   bucketTasks,
   dayPlan,
   daySummary,
@@ -64,8 +53,6 @@ import {
   weekSummary,
 } from '@/components/Dashboard/summary';
 import {
-  timerTitle,
-  useCatchUp,
   useDocumentTitle,
   useNow,
   usePageEntrance,
@@ -73,17 +60,9 @@ import {
   useSubjectIndex,
   useUserData,
 } from '@/hooks';
-import { fmtHM, useFocusSession } from '@/hooks/useFocusSession';
-import { usePomodoro } from '@/hooks/usePomodoro';
-import { useHandover } from '@/hooks/useHandover';
-import { FocusSitting } from '@/components/Timer/FocusSitting';
 import { MangoPet } from '@/components/Tutorial/MangoPet';
 import { useTourShowing } from '@/components/Tutorial/Tutorial';
-import type { Counting } from '@/pages/Timer';
-import { currentStone } from '@/utils/goalStage';
-import { reduced } from '@/utils/homePlay';
 import {
-  focus as focusService,
   goals as goalService,
   quests as questService,
   tasks as taskService,
@@ -100,36 +79,12 @@ import '@/styles/dashboard.css';
 import '@/styles/dashboard-home.css';
 import { announceStatsChanged } from '@/utils/statsBus';
 
-/** How long the page and the sitting take to hand over. See `sitting` below. */
-const SITTING_MS = 200;
-
 export default function Dashboard() {
   const { data, error, loading, refreshing, reload, mutate, username } = useUserData();
-  const session = useFocusSession(username);
-  /* The cycle over the session, for the Focus panel.
-   *
-   * Owned here for the reason the session is: it is one account-wide record in
-   * localStorage, and a second copy of it would be a second thing starting and
-   * stopping the focus clock. It takes `session` because a running focus phase
-   * *is* a running session — see the note at the top of hooks/usePomodoro. */
-  const pomodoro = usePomodoro(username, session);
 
-  /* The tab carries the session while it runs.
-   *
-   * The focus page counts a phase down; this counts the day up, which is the
-   * same figure the Focus panel prints and the same one the goal is measured
-   * against — a tab that disagreed with the panel under it would be worse than
-   * a tab that said nothing. Below `session` rather than at the top of the
-   * component because it reads from it; every hook here is unconditional, so
-   * the order is stable. See hooks/useDocumentTitle. */
-  useDocumentTitle(session.running ? timerTitle(session.focused, 'Focus') : 'Dashboard');
+  useDocumentTitle('Dashboard');
   const subjects = useSubjectIndex(username);
   const { prefs, dailyGoal, displayName } = useSettings();
-  /* The days this page was not told about — see hooks/useCatchUp. Usually
-     nothing: an account that runs the timer has no unrecorded days, and one
-     that has already been asked today is not asked again. Saving re-reads the
-     page, so the streak and week figures take in the hours straight away. */
-  const catchUp = useCatchUp(username, reload);
 
   const [tab, setTab] = useState<TaskTab>('today');
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -178,22 +133,6 @@ export default function Dashboard() {
      for why every calendar day counts and today does not. */
   const usual = useMemo(() => typicalDay(tasks, todayIso), [tasks, todayIso]);
 
-  /* ---- The sitting --------------------------------------------------------
-   *
-   * Start Focus here opens the same screen it opens on the Timer page:
-   * components/Timer/FocusSitting, the clock and today's work over a tinted
-   * window. Pausing brings the dashboard back, and so does Escape, which
-   * pauses. A break brings it back on its own, the way it does there.
-   *
-   * Only when "Clear the page while focusing" is on (Settings, Focus). Turned
-   * off, the timer runs in the Focus panel and the page stays put, which is
-   * what that switch has always promised.
-   *
-   * `SITTING_MS` is the length of `pomSitOut` in styles/timer.css and of
-   * `dashOut` in styles/dashboard-home.css; see the same handover on
-   * pages/Timer.tsx for why it has to match. */
-  const sitting = pomodoro.running && pomodoro.phase === 'focus' && prefs.focus_dim;
-  const swap = useHandover(sitting, reduced ? 0 : SITTING_MS);
   /* Mango rests on the top card between tours, and steps aside while one runs
      (it's the same Mango, and two on screen would be one too many). See
      components/Tutorial/MangoPet and Settings, Mango. */
@@ -248,53 +187,6 @@ export default function Dashboard() {
     [daily?.day, firstWeek, mutate],
   );
 
-  /* The rest of what the sitting shows, read off what this page already has.
-     Same order and length as the Timer page's "Up next". */
-  const upcoming = useMemo(() => tasks
-    .filter((task) => task.status !== 'done')
-    .sort((a, b) => (a.due_date ?? '9').localeCompare(b.due_date ?? '9'))
-    .slice(0, 5), [tasks]);
-  const ticking = useMemo<ReadonlySet<string>>(
-    () => new Set(busyId ? [busyId] : []),
-    [busyId],
-  );
-
-  /**
-   * Hours focused on an average day, from the record rather than the task list.
-   *
-   * The one figure on this page that cannot be counted off the tasks — focus is
-   * its own table — so it is its own read, over the same two weeks `typicalDay`
-   * uses. Null until it lands, and the card simply does not draw the line
-   * until then rather than showing a zero it would have to take back.
-   */
-  const [usualFocus, setUsualFocus] = useState<number | null>(null);
-  useEffect(() => {
-    if (!username) return;
-    let live = true;
-    const from = dates.addDays(now, -TYPICAL_DAYS);
-    const until = dates.addDays(now, -1);
-    void focusService
-      .history(dates.isoDate(from), dates.isoDate(until))
-      .then((result) => {
-        if (!live || !result.success) return;
-        const days = Object.values(result.days);
-        if (!days.length) {
-          setUsualFocus(null);
-          return;
-        }
-        const seconds = days.reduce((sum, day) => sum + (Number(day.seconds) || 0), 0);
-        // Over the window rather than over the days that came back: a day with
-        // nothing tracked is a day, and averaging only the tracked ones would
-        // compare today against the reader's good days alone.
-        setUsualFocus(seconds / 3600 / TYPICAL_DAYS);
-      });
-    return () => {
-      live = false;
-    };
-    // `now` ticks every minute and this window only moves at midnight, so the
-    // day is the dependency rather than the clock.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [todayIso, username]);
 
   /* The account's goals, for the card that says what the day's work is for.
      Read once per account rather than with the task list: a goal is not a fact
@@ -311,23 +203,6 @@ export default function Dashboard() {
     };
   }, [username]);
 
-  /* The first goal measured in focus time, which the sitting shows moving
-     with the clock. The same pick the Timer page makes. */
-  const counting = useMemo<Counting | null>(() => {
-    const goal = goals.find((row) => row.status === 'active'
-      && row.measure === 'focus' && row.target_focus > 0);
-    if (!goal) return null;
-    return {
-      goal,
-      now: goal.current_focus,
-      target: goal.target_focus,
-      next: currentStone(goal),
-      subjects: (goal.subject_ids || '')
-        .split(',')
-        .map((id) => subjects.get(id.trim())?.name)
-        .filter((name): name is string => Boolean(name)),
-    };
-  }, [goals, subjects]);
 
   // ---- Reaching a goal ----------------------------------------------------
   /* The two figures the dashboard already draws against a target, watched for
@@ -340,7 +215,6 @@ export default function Dashboard() {
   }, []);
 
   const xpGoal = Math.max(1, Math.round(dailyGoal));
-  const focusGoal = Math.max(1, Math.round(session.goalHours * 3600));
 
   useCrossing(
     day.xp,
@@ -359,20 +233,6 @@ export default function Dashboard() {
     ),
   );
 
-  useCrossing(
-    Math.round(session.focused),
-    focusGoal,
-    true,
-    useCallback(
-      () =>
-        announce({
-          kind: 'focus',
-          target: fmtHM(focusGoal),
-          reached: fmtHM(session.focused),
-        }),
-      [announce, focusGoal, session.focused],
-    ),
-  );
 
   /**
    * Finish one task.
@@ -600,41 +460,15 @@ export default function Dashboard() {
   if (loading && !data) return <Loading label="Loading your dashboard" />;
   if (!data) return <ErrorState message={error ?? "Couldn't load your dashboard. Try refreshing."} onRetry={reload} />;
 
-  if (swap.shown) {
-    return (
-      <FocusSitting
-        leaving={swap.leaving}
-        phase={pomodoro.phase}
-        percent={pomodoro.percent}
-        remaining={pomodoro.remaining}
-        onPause={pomodoro.pause}
-        tasksDone={day.done}
-        tasksTotal={day.total}
-        focused={session.focused}
-        focusGoal={session.goalHours * 3600}
-        upcoming={upcoming}
-        onComplete={(task) => void complete(task)}
-        busy={busyId !== null}
-        done={ticking}
-        goal={counting}
-        goalMinutes={Math.round(session.focused / 60)}
-        task={pomodoro.task}
-      />
-    );
-  }
-
   return (
     <div
-      className={`dash${entering ? ' pg-enter' : ''}${swap.leaving ? ' is-going' : ''}${
+      className={`dash${entering ? ' pg-enter' : ''}${
         prefs.mango_rest ? ' has-mango' : ''
       }`}
     >
       {prefs.mango_rest && !touring && <MangoPet anchor=".dash-hero" energy={prefs.mango_energy} />}
 
-      {/* The greeting slides away with the stat row while a focus session
-          runs — see html.focus-mode in styles/dashboard-home.css, which folds
-          this card rather than the header inside it. Indigo, and first in the
-          rail: the sky you land on when you sign in. */}
+      {/* Indigo, and first in the rail: the sky you land on when you sign in. */}
       <PageHero variant="dashboard" tone="indigo" className="dash-hero">
         <header className="dash-greeting">
           <div>
@@ -677,7 +511,6 @@ export default function Dashboard() {
         <div className="dash-stats pg-stagger">
           <TodayCard day={day} xpLeft={plan.xp} usual={usual} />
           <XpCard stats={data.stats} xpToday={day.xp} dailyGoal={dailyGoal} usual={usual} />
-          <FocusCard session={session} usualHours={usualFocus} />
           <StreakCard
             stats={data.stats}
             held={levelled !== null || news !== null || rating !== null}
@@ -713,13 +546,10 @@ export default function Dashboard() {
         />
       )}
 
-      {/* The focus panel is a preference too, and hiding it widens the task
-          list rather than leaving a hole where it was — see `.is-solo` in
-          styles/dashboard-home.css. */}
       {/* The "next" card that sat here was the top of the Recommendations
           plan. What to do next is said on that tab only. */}
 
-      <div className={`dash-main${prefs.show_focus ? '' : ' is-solo'}`}>
+      <div className="dash-main is-solo">
         <TaskPanel
           buckets={buckets}
           tab={tab}
@@ -732,7 +562,6 @@ export default function Dashboard() {
           onCompleteDay={(review) => void completeDay(review)}
           busy={saving}
         />
-        {prefs.show_focus && <FocusPanel session={session} pomodoro={pomodoro} />}
       </div>
 
       {/* Three, not four. Top Priorities used to sit in this row: the same
@@ -755,21 +584,6 @@ export default function Dashboard() {
       <NextSessionsPanel where="dashboard" />
 
       {prefs.show_quote && <DailyQuote />}
-
-      {/* Last in the queue of overlays, and deliberately: the other three are
-          all reactions to something the reader just did, and this one is the
-          page asking for something. It only ever appears on the first load of
-          a day, when none of the others can have been triggered yet, but the
-          ordering says which would give way if that ever stopped being true. */}
-      {catchUp.days && levelled === null && news === null && rating === null && (
-        <CatchUp
-          days={catchUp.days}
-          busy={catchUp.saving}
-          failure={catchUp.failure}
-          onSubmit={catchUp.submit}
-          onClose={catchUp.dismiss}
-        />
-      )}
 
       {levelled !== null && <LevelUp level={levelled} onDone={() => setLevelled(null)} />}
 

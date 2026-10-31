@@ -7,14 +7,7 @@
  * "what happens next" and "is it worth staying at the desk" not at all — and
  * those are the three things somebody looking at today actually wants. The
  * arithmetic is in utils/dayShape, so the panels here are only the drawing.
- *
- * Focus Time is the one number that changes meaning with the day. On today it
- * *is* the focus goal — the same one the dashboard's Focus panel sets — and
- * clicking it lets you type a new one, so the two pages can never disagree. On
- * any other day there is no goal to speak of, so it shows what that day has
- * been planned to hold, and is read-only.
  */
-import { useState } from 'react';
 import { MiniMonth } from './MiniMonth';
 import { Overview } from './Overview';
 import type { DayLoad } from '@/utils/calendarBusy';
@@ -27,8 +20,6 @@ export interface DayStats {
       The shared overview writes the fraction, so every view writes it alike. */
   tasks: number;
   done: number;
-  /** Already formatted: "1h 30m". */
-  focusTime: string;
   /** Null while the ledger is still being asked. */
   xp: number | null;
   streak: number;
@@ -45,12 +36,6 @@ export interface DaySidebarProps {
   onMiniStep: (delta: number) => void;
   onPickDate: (iso: string) => void;
 
-  /** The shared focus session, as the dashboard's panel reports it. */
-  focus: { focused: string; goal: string; percent: number };
-  /** Only today's goal can be typed into. */
-  goalEditable: boolean;
-  onSetGoalHours: (hours: number) => void;
-
   stats: DayStats;
   /**
    * What the day comes to — see utils/dayShape. The two panels it feeds are
@@ -66,22 +51,6 @@ export interface DaySidebarProps {
   onAddTask: () => void;
 }
 
-/** "2h", "1h 30m" or "45m" back to hours; anything unreadable is rejected. */
-function parseGoalHours(raw: string): number | null {
-  const text = raw.trim().toLowerCase();
-  if (!text) return null;
-
-  const hoursAndMinutes = /^(\d+(?:\.\d+)?)\s*h(?:\s*(\d+)\s*m?)?$/.exec(text);
-  if (hoursAndMinutes) {
-    return Number(hoursAndMinutes[1]) + Number(hoursAndMinutes[2] ?? 0) / 60;
-  }
-  const minutesOnly = /^(\d+)\s*m$/.exec(text);
-  if (minutesOnly) return Number(minutesOnly[1]) / 60;
-
-  const bare = Number(text);
-  return Number.isFinite(bare) ? bare : null;
-}
-
 export function DaySidebar({
   miniYear,
   miniMonth,
@@ -90,9 +59,6 @@ export function DaySidebar({
   miniLoad,
   onMiniStep,
   onPickDate,
-  focus,
-  goalEditable,
-  onSetGoalHours,
   stats,
   shape,
   isToday,
@@ -101,15 +67,6 @@ export function DaySidebar({
   completingId,
   onAddTask,
 }: DaySidebarProps) {
-  const [editingGoal, setEditingGoal] = useState(false);
-  const [goalText, setGoalText] = useState('');
-
-  const commitGoal = () => {
-    const hours = parseGoalHours(goalText);
-    if (hours !== null) onSetGoalHours(hours);
-    setEditingGoal(false);
-  };
-
   return (
     <aside className="day-sidebar" id="daySidebar">
       <MiniMonth
@@ -121,36 +78,6 @@ export function DaySidebar({
         onStep={onMiniStep}
         onPick={onPickDate}
       />
-
-      <section className="wk-panel">
-        <div className="day-panel-head">
-          <h3 className="wk-panel-title">Focus</h3>
-        </div>
-        <div className="day-focus-row">
-          <span className="day-focus-icon">
-            <i
-              className="cal-ico"
-              style={{
-                ['--ico' as string]: `url(${iconUrlFor('focus')})`,
-                width: '18px',
-                height: '18px',
-              }}
-            />
-          </span>
-          <div className="day-focus-main">
-            <div className="day-focus-name">Deep work</div>
-            <div className="day-focus-sub">{focus.focused}</div>
-          </div>
-          <div className="day-focus-time">{focus.goal}</div>
-        </div>
-        <div className="day-focus-barrow">
-          <span>Today&apos;s focus time</span>
-          <span className="day-focus-pct">{focus.percent}%</span>
-        </div>
-        <div className="wk-progress">
-          <div className="wk-progress-bar" style={{ width: `${focus.percent}%` }} />
-        </div>
-      </section>
 
       {/* ---- What is next -------------------------------------------------
           The grid draws every block and leaves the reader to find the one that
@@ -234,37 +161,6 @@ export function DaySidebar({
         scale="day"
         tasks={stats.tasks}
         done={stats.done}
-        /* On today this is the goal the reader set rather than what the grid
-           holds; `Booked` below is the grid. The Day view has always drawn the
-           distinction and the tile keeps it. */
-        focused={
-          editingGoal ? (
-            <input
-              type="text"
-              value={goalText}
-              autoFocus
-              onChange={(event) => setGoalText(event.target.value)}
-              onBlur={commitGoal}
-              onKeyDown={(event) => {
-                if (event.key === 'Enter') commitGoal();
-                if (event.key === 'Escape') setEditingGoal(false);
-              }}
-            />
-          ) : (
-            <span
-              className={goalEditable ? 'is-editable' : undefined}
-              title={goalEditable ? 'Click to set your focus time' : ''}
-              onClick={() => {
-                if (!goalEditable || editingGoal) return;
-                setGoalText(stats.focusTime);
-                setEditingGoal(true);
-              }}
-            >
-              {stats.focusTime}
-            </span>
-          )
-        }
-        planned={focus.goal}
         xp={stats.xp ?? 0}
         extra={{
           icon: (

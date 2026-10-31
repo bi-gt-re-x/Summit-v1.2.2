@@ -12,7 +12,7 @@
  * length rather than estimate one.
  *
  * So the page now keeps a record of intervals as they finish — one row per
- * focus phase, written by hooks/usePomodoro, held by hooks/useIntervals and
+ * focus phase, written by the old timer, held in the browser and
  * kept on the account (`/api/focus/sittings`), so a second device or a
  * cleared cache reads the same record.
  *
@@ -61,7 +61,7 @@ export interface Interval {
    * Made client-side so a row written while offline and sent again later is
    * the same row on the server rather than a second one. Optional only in the
    * type: rows from before the log reached the server have none until
-   * hooks/useIntervals gives them one on load.
+   * the old timer gave them one on load.
    */
   id?: string;
   /** ISO date the interval ran on, as `YYYY-MM-DD`. */
@@ -207,7 +207,7 @@ export function byTask(log: Interval[], day: string, to: string = day): TaskTime
  *
  * A kind used to carry a `lead` as well, naming which of the hero's three live
  * readings went first while it ran. Those readings are gone from the hero —
- * see the header of pages/Timer.tsx — and nothing read the field afterwards.
+ * see the old Timer page — and nothing read the field afterwards.
  */
 export type Kind =
   | 'deep' | 'speed' | 'learning' | 'repetition' | 'experiment' | 'challenge' | 'recovery';

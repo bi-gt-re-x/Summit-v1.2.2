@@ -1,4 +1,4 @@
-"""Quests: six first things worth XP once, then one small one a day.
+"""Quests: five first things worth XP once, then one small one a day.
 
 A new account opens Analytics to a page that needs days of data before it
 can say much. These give the first few days something to aim at instead: a
@@ -9,7 +9,7 @@ The card is frontend/src/components/Dashboard/FirstWeek.tsx.
 
 Never by the browser saying so. Each quest names a fact in
 `db.first_week_facts`, which looks for the row the action leaves behind: a
-finished task, a focus sitting, a skill attempt, a Log entry with a mood on
+finished task, a skill attempt, a Log entry with a mood on
 it, a goal. "Come back tomorrow" is the one with no row; it is done when today
 is a later day than the one the account was made on.
 
@@ -32,7 +32,7 @@ series to find out.
 
 ## Today's quest
 
-After the first week's six, days three to ten still have nothing to aim at
+After the first week's five, days three to ten still have nothing to aim at
 while Analytics fills in. So a young account gets one small quest a day from
 DAILY: a real action, ticked the same way (the rows it left today, per
 `db.daily_quest_facts`) and paid once a day. The claim row is
@@ -59,9 +59,6 @@ QUESTS = (
     {'id': 'task', 'fact': 'task', 'xp': 30, 'to': None,
      'title': 'Finish your first task',
      'hint': 'Add one, then tick it off.'},
-    {'id': 'focus', 'fact': 'focus', 'xp': 40, 'to': '/timer',
-     'title': 'Run a focus timer',
-     'hint': 'Even one minute counts.'},
     {'id': 'practice', 'fact': 'practice', 'xp': 40, 'to': '/skill-trees',
      'title': 'Answer a practice problem',
      'hint': 'Pick a skill and try one.'},
@@ -91,10 +88,6 @@ DAILY = (
      'title': 'Finish 2 tasks',
      'hint': 'Any two. Small ones count.',
      'did': lambda day: day['tasks'] >= 2},
-    {'id': 'focus15', 'xp': 30, 'to': '/timer',
-     'title': 'Focus for 15 minutes',
-     'hint': 'One timer or a few short ones.',
-     'did': lambda day: day['focus_minutes'] >= 15 or day['focus_seconds'] >= 15 * 60},
     {'id': 'practice3', 'xp': 30, 'to': '/skill-trees',
      'title': 'Answer 3 practice problems',
      'hint': 'Pick any skill and go.',

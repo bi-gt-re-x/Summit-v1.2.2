@@ -39,7 +39,7 @@ function quest(id: Quest['id'], over: Partial<Quest> = {}): Quest {
   };
 }
 
-const ALL: Quest['id'][] = ['task', 'focus', 'practice', 'log', 'goal', 'back'];
+const ALL: Quest['id'][] = ['task', 'practice', 'log', 'goal', 'back'];
 
 function line(over: Partial<Record<Quest['id'], Partial<Quest>>> = {}, retired = false): QuestLine {
   return {
@@ -94,12 +94,12 @@ describe('when the card shows', () => {
 describe('the card', () => {
   it('links each open quest to the page where it is done', () => {
     card(line().quests);
-    expect(screen.getByRole('link', { name: /Quest focus/ })).toHaveAttribute('href', '/focus');
+    expect(screen.getByRole('link', { name: /Quest practice/ })).toHaveAttribute('href', '/practice');
     expect(screen.getByRole('link', { name: /Quest goal/ })).toHaveAttribute('href', '/goal');
     // Coming back has nowhere to go.
     expect(screen.queryByRole('link', { name: /Quest back/ })).toBeNull();
-    expect(screen.getByText('0 of 6 done')).toBeInTheDocument();
-    expect(screen.getByText(/180 XP to grab/)).toBeInTheDocument();
+    expect(screen.getByText('0 of 5 done')).toBeInTheDocument();
+    expect(screen.getByText(/150 XP to grab/)).toBeInTheDocument();
   });
 
   it("says when a quest's page opens, for a new account, instead of linking to it", () => {
@@ -123,12 +123,12 @@ describe('the card', () => {
     expect(screen.getByText('Done. Nice.')).toBeInTheDocument();
     expect(screen.queryByRole('button')).toBeNull();
     expect(screen.queryByRole('link', { name: /Quest log/ })).toBeNull();
-    expect(screen.getByText('1 of 6 done')).toBeInTheDocument();
+    expect(screen.getByText('1 of 5 done')).toBeInTheDocument();
   });
 
-  it('says well done when all six are claimed', () => {
+  it('says well done when all five are claimed', () => {
     card(line(Object.fromEntries(ALL.map((id) => [id, { done: true, claimed: true }]))).quests);
-    expect(screen.getByText(/That's all six/)).toBeInTheDocument();
+    expect(screen.getByText(/That's all five/)).toBeInTheDocument();
     expect(screen.queryByText(/to grab/)).toBeNull();
   });
 

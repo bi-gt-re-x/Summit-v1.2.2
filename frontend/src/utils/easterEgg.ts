@@ -44,7 +44,7 @@
  *
  * The same device as `summit:stats-changed` in components/Rail.tsx, for the
  * same reason: one fact, one direction, no reply. The door is the mark in the
- * corner of the Focus card and the room is the quote at the foot of the page —
+ * corner of the Today card and the room is the quote at the foot of the page —
  * two children of pages/Dashboard.tsx with no state between them and no reason
  * to be given any, since one of them has exactly one thing to tell the other.
  *

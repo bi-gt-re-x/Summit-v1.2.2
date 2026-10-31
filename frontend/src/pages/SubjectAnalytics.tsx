@@ -96,7 +96,6 @@ import { subjectState } from '@/components/Subject/state';
 import { recentWork, workGroups } from '@/components/Subject/recentWork';
 import { Dimensions, Ring } from '@/components/Subject/Dimensions';
 import { Fold } from '@/components/Subject/Fold';
-import { SubjectNotes } from '@/components/Subject/SubjectNotes';
 import { SubjectHeat } from '@/components/Subject/Heat';
 import { SubjectCards } from '@/components/Subject/Cards';
 import { LinkGoal } from '@/components/Subject/LinkGoal';
@@ -1235,12 +1234,6 @@ export default function SubjectAnalytics() {
             <p className="ax-opening is-flat">
               No tasks under {subject.name} yet. Add a few tasks to fill this page.
             </p>
-            {/* Notes are not measured, so they do not wait for tasks: a
-                subject somebody has only written about still shows what
-                they wrote. */}
-            <div className="sb-folds">
-              <SubjectNotes subjectId={subjectId} name={subject.name} />
-            </div>
           </>
         ) : (
           <>
@@ -2492,9 +2485,6 @@ export default function SubjectAnalytics() {
                   </div>
                 )}
               </Fold>
-
-              {/* ---- Notes -------------------------------------------- */}
-              <SubjectNotes subjectId={subjectId} name={subject?.name ?? 'this subject'} />
 
               {/* ---- The lattice --------------------------------------- */}
               {lattice && treeRead && (

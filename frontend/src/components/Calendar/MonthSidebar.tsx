@@ -17,7 +17,6 @@
  * when the month is empty is a column the reader learns not to trust.
  */
 import { Overview } from './Overview';
-import { fmtHM } from '@/hooks/useFocusSession';
 import { dates } from '@/utils';
 import type { MonthDay, MonthInsight } from '@/utils/monthSummary';
 
@@ -25,9 +24,6 @@ export interface MonthSidebarProps {
   /** Tasks landing in the month, and how many are finished. */
   tasks: number;
   done: number;
-  /** Focused against planned, in seconds. */
-  focused: number;
-  planned: number;
   xpEarned: number;
   best: MonthDay | null;
   /** The three best days by XP earned, best first. */
@@ -48,8 +44,6 @@ function dayLabel(iso: string): string {
 export function MonthSidebar({
   tasks,
   done,
-  focused,
-  planned,
   xpEarned,
   best,
   top,
@@ -71,8 +65,6 @@ export function MonthSidebar({
         scale="month"
         tasks={tasks}
         done={done}
-        focused={fmtHM(focused)}
-        planned={fmtHM(planned)}
         xp={xpEarned}
         extra={{
           icon: (

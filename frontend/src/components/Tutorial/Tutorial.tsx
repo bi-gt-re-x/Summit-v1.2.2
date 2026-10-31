@@ -28,9 +28,6 @@
  * the page ever hears them. Filtering by element rather than by screen
  * position is what lets a dialog that opens somewhere else stay usable.
  *
- * A focus session's full screen (components/Timer/FocusSitting) pauses the
- * tour: it hides until the session is paused, then picks up where it was.
- *
  * Nothing is ever a dead end. A target that never shows up either skips its
  * step (`skipIfMissing`) or gets a plain card in the middle with a Next
  * button, and Skip tour is on every card.
@@ -42,7 +39,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { useSettings } from '@/hooks/useSettings';
 import { useStarter } from '@/hooks/useStarter';
 import { reduced } from '@/utils/homePlay';
-import { useSittingShown } from '@/components/Timer/FocusSitting';
 import { useCheckShown } from '@/components/SkillTree/checkShown';
 import { Mango } from './Mango';
 import { STEPS, type Step, type TourContext } from './steps';
@@ -169,9 +165,8 @@ export function Tutorial() {
     setAt(tourId ? readSaved(username, tourId) ?? 0 : 0);
   }
 
-  const sitting = useSittingShown();
   const checking = useCheckShown();
-  const showing = tour !== null && atFor === tourId && !sitting && !checking && at < steps.length;
+  const showing = tour !== null && atFor === tourId && !checking && at < steps.length;
   const step = steps[Math.min(at, steps.length - 1)]!;
 
   useEffect(() => {

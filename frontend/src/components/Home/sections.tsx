@@ -139,7 +139,7 @@ export function Hero({
           A study planner <em>that keeps score.</em>
         </h1>
         <p className="lp-hero-sub hm-rise">
-          Summit puts your tasks, calendar and focus timer in one app. Every task you
+          Summit puts your tasks, calendar and goals in one app. Every task you
           finish earns XP and keeps your streak going. Analytics shows you which subjects
           are getting better.
         </p>
@@ -297,8 +297,8 @@ export function TaskStats() {
       {/* What a task actually has, each checked against the app: the XP
           range and its six named bands (RULES.task_xp, utils/priority.ts),
           subjects, the late cut (RULES.overdue, utils/overdue.ts), repeats
-          (components/Calendar/RecurrencePicker, twelve months ahead) and the
-          row's "Focus on this" (components/Tasks). Sub-tasks and reminders
+          (components/Calendar/RecurrencePicker, twelve months ahead).
+          Sub-tasks and reminders
           were here once, and a task has neither. */}
       <ul className="lp-list">
         <li>
@@ -338,16 +338,6 @@ export function TaskStats() {
             <p>
               Set a task to repeat on certain days of the week or month. Summit fills in
               the next 12 months for you.
-            </p>
-          </div>
-        </li>
-        <li>
-          <span className="lp-list-ico"><Icon name="timer" /></span>
-          <div>
-            <h4>Focus on this</h4>
-            <p>
-              Every task's menu has a Focus on this button. It opens the timer with that
-              task picked.
             </p>
           </div>
         </li>
@@ -509,11 +499,11 @@ export function Pricing({
         <div className="lp-card lp-price">
           <span className="lp-price-tag">Free</span>
           <ul className="lp-price-list">
-            <li>✓ Tasks, calendar and focus timer</li>
+            <li>✓ Tasks and a calendar</li>
             <li>✓ Goals with checkpoints</li>
             <li>✓ Analytics and your growth score</li>
             <li>✓ Skill trees, badges and personal bests</li>
-            <li>✓ Notes, the Log and Spaces</li>
+            <li>✓ The Log and Spaces</li>
           </ul>
           {/* The same correction as the closing block's: a signed-out reader
               clicking the price card's button wants an account, not the log-in

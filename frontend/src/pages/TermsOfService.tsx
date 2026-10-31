@@ -71,7 +71,7 @@ const SECTIONS: LegalSection[] = [
     id: 'service',
     title: 'What Summit provides',
     body: [
-      'Summit is a study and productivity tracker. It lets you keep tasks, goals and checkpoints, a calendar, a focus timer, notes, Spaces and a private Log, and it turns your activity into streaks, XP, levels, achievements, analytics and suggestions such as recommended study sessions and when to schedule them.',
+      'Summit is a study and productivity tracker. It lets you keep tasks, goals and checkpoints, a calendar, Spaces and a private Log, and it turns your activity into streaks, XP, levels, achievements, analytics and suggestions such as recommended study sessions and when to schedule them.',
       'Summit is free. There are no paid plans, subscriptions, ads or in-app purchases. If we ever introduce paid features, we will tell you first, and nothing you already have will be charged for without your clear agreement.',
       'Summit is still being built. We may add, change, limit or remove features at any time, including how XP, streaks, levels and analytics are worked out. We will try to give notice of changes that matter, but we can\'t promise that every number you see today will carry over unchanged.',
     ],

@@ -9,16 +9,12 @@
  * imported from its own path because it exports functions rather than
  * components.
  */
-export { CatchUp } from './CatchUp';
-export type { CatchUpEntry, CatchUpProps } from './CatchUp';
-export { FocusCard, StreakCard, TodayCard, XpCard } from './StatCards';
+export { StreakCard, TodayCard, XpCard } from './StatCards';
 export { DailyQuote } from './DailyQuote';
 export { FirstWeek, FIRST_WEEK_DAYS, showFirstWeek, useFirstWeek } from './FirstWeek';
 export type { FirstWeekProps } from './FirstWeek';
 export { DAILY_DAYS, TodayQuest, showTodayQuest, stageCountdown } from './TodayQuest';
 export type { TodayQuestProps } from './TodayQuest';
-export { FocusPanel } from './FocusPanel';
-export type { FocusPanelProps } from './FocusPanel';
 export { RecentActivity, WeeklyOverview } from './InsightCards';
 export { GoalReached, useCrossing } from './GoalReached';
 export type { GoalKind, GoalNews, GoalReachedProps } from './GoalReached';

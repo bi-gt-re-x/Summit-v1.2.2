@@ -239,12 +239,12 @@ describe('work, not clicks', () => {
     expect(screen.queryByRole('button', { name: /skill check|Plan a session/ })).toBeNull();
   });
 
-  it('says what was booked and links to the timer', () => {
+  it('says what was booked', () => {
     drawWork('algebra', {
       booking: { busy: false, task: { id: 'b1', title: 'algebra: Step 1', start: '2026-10-25T16:30', end: '2026-10-25T17:00', xp: 15 } },
     });
     expect(screen.getByText('algebra: Step 1')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Start it on the timer' })).toHaveAttribute('href', '/timer?task=b1');
+    expect(screen.queryByRole('link', { name: 'Start it on the timer' })).toBeNull();
   });
 
   it('names the goals the skill feeds', () => {

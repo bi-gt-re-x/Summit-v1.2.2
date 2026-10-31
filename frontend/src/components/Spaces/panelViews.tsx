@@ -3,8 +3,7 @@
  *
  * Nothing here works a figure out. Every view takes what the Analytics page's
  * model already worked out (./SpaceData shares one per time range and
- * subject), what the page's one focus clock says, or what its own page would
- * have read, and hands it to the panel that page draws. A setting on the block
+ * subject) or what its own page would have read, and hands it to the panel that page draws. A setting on the block
  * is passed where the page would have passed its own picker's value, so a
  * chart set to "Tasks by month" here is the same chart Analytics draws when
  * its pickers say so. A control inside a panel that the block also has as a
@@ -18,7 +17,6 @@ import { useCallback, useMemo, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '@/styles/analytics.css';
 import '@/styles/growth.css';
-import '@/styles/timer.css';
 import { NEED_DAYS, type AnalyticsModel } from '@/components/Analytics/useAnalyticsModel';
 import { Summary } from '@/components/Analytics/Summary';
 import { TabOpening, scoreMovement } from '@/components/Analytics/Header';
@@ -73,11 +71,8 @@ import { FocusChapter, type FocusPanel as FocusPart } from '@/components/Growth/
 import { SkillsChapter } from '@/components/Growth';
 import { NextSessionsPanel } from '@/components/NextSessions/NextSessions';
 import { FollowupPanel } from '@/components/Recommendations';
-import { FocusPanel } from '@/components/Dashboard/FocusPanel';
-import { MethodPicker, Recommend, RecentSessions, TaskPicker, TodaySittings, iso, shift } from '@/components/Timer/panels';
-import { byTask, recommend } from '@/components/Timer/intervals';
 import { BadgeTile, pickBadges } from '@/components/Achievements/BadgeWall';
-import { useApi, useAuth, useSkillAttempts, useUserData } from '@/hooks';
+import { useApi, useAuth, useSkillAttempts } from '@/hooks';
 import { achievements as badgeService, analytics as analyticsService, next as nextService } from '@/services';
 import { NO_PLAN, type NextResult } from '@/services/next';
 import type { GrowthPeriods, PeriodKey, PeriodMetric } from '@/services/analytics';
@@ -85,9 +80,8 @@ import { heatmapGrid, type HeatWindowKey } from '@/utils/growthSummary';
 import { partsOfDay } from '@/utils/habits';
 import { unlock } from '@/utils/insight';
 import type { Grain, MetricKey } from '@/components/Analytics/data';
-import { Columns, LineChart } from './LiveCharts';
 import { list, text, whole, type PanelConfig, type PanelKind } from './panels';
-import { useClock, usePanelModel, useShared, type Clock, type Shared } from './SpaceData';
+import { usePanelModel, useShared, type Shared } from './SpaceData';
 
 /** Change some of the block's settings. */
 export type SetPanel = (patch: Record<string, unknown>) => void;
@@ -100,10 +94,6 @@ interface Base {
 interface ModelProps extends Base {
   model: AnalyticsModel;
   shared: Shared;
-}
-
-interface ClockProps extends Base {
-  clock: Clock;
 }
 
 function Note({ children }: { children: ReactNode }) {
@@ -545,99 +535,11 @@ function GoalsFinishedView() {
 }
 
 // --------------------------------------------------------------------------
-// From the focus clock
-// --------------------------------------------------------------------------
-const CLOCK_VIEWS: Partial<Record<PanelKind, (props: ClockProps) => ReactNode>> = {
-  timer: ({ clock, config }) => {
-    const { pomodoro, session } = clock;
-    const show = list(config, 'show');
-    return (
-      <div className="sp-timer">
-        <FocusPanel session={session} pomodoro={pomodoro} />
-        {show.includes('task') && (
-          <p className="sp-timer-task">
-            <span>Working on</span>
-            <strong>{pomodoro.task ? pomodoro.task.title : 'No task picked'}</strong>
-          </p>
-        )}
-        {show.includes('method') && (
-          <MethodPicker levelId={pomodoro.level.id} styleId={pomodoro.style.id} onLevel={pomodoro.setLevel} onStyle={pomodoro.choose} />
-        )}
-      </div>
-    );
-  },
-  'timer-task': TaskView,
-  'timer-today': ({ clock, config }) => {
-    const days = whole(config, 'days');
-    const today = new Date();
-    const rows = byTask(clock.pomodoro.intervals, iso(shift(today, 1 - days)), iso(today));
-    return <TodaySittings rows={rows} days={days} />;
-  },
-  'timer-recent': ({ clock, config }) => <RecentSessions rows={clock.pomodoro.intervals} limit={whole(config, 'limit')} />,
-  'timer-suggest': ({ clock }) => {
-    const { pomodoro } = clock;
-    const at = recommend(pomodoro.intervals, pomodoro.kind) ?? recommend(pomodoro.intervals);
-    return <Recommend at={at} sittings={pomodoro.intervals.length} current={pomodoro.style.id} onUse={pomodoro.choose} />;
-  },
-  'timer-chart': FocusChartView,
-};
-
-function TaskView({ clock, config }: ClockProps) {
-  const account = useUserData();
-  const { pomodoro } = clock;
-  const limit = whole(config, 'limit');
-  const today = useMemo(() => new Date(), []);
-  const choices = useMemo(() => {
-    const open = (account.data?.tasks ?? [])
-      .filter((task) => task.status !== 'done')
-      .sort((a, b) => (a.due_date ?? '9').localeCompare(b.due_date ?? '9'));
-    const picked = pomodoro.task ? open.find((task) => task.id === pomodoro.task!.id) : undefined;
-    return (picked ? [picked, ...open.filter((task) => task.id !== picked.id)] : open).slice(0, limit);
-  }, [account.data, limit, pomodoro.task]);
-  if (!account.data) return <Note>Loading…</Note>;
-  return <TaskPicker tasks={choices} picked={pomodoro.task?.id ?? null} onPick={pomodoro.setTask} today={today} />;
-}
-
-/** Focus minutes or sessions per day, from the session log. */
-function FocusChartView({ clock, config }: ClockProps) {
-  const days = whole(config, 'days');
-  const metric = text(config, 'metric');
-  const style = text(config, 'style');
-  const { intervals } = clock.pomodoro;
-  const { values, labels, dates } = useMemo(() => {
-    const today = new Date();
-    const dates = Array.from({ length: days }, (_, at) => iso(shift(today, at - days + 1)));
-    const values = dates.map((day) => {
-      const rows = intervals.filter((row) => row.day === day);
-      return metric === 'sessions' ? rows.length : rows.reduce((sum, row) => sum + row.minutes, 0);
-    });
-    const labels = dates.map((day) => new Date(`${day}T00:00:00`).toLocaleDateString('en-US', days > 7 ? { month: 'numeric', day: 'numeric' } : { weekday: 'short' }));
-    return { values, labels, dates };
-  }, [days, intervals, metric]);
-  const total = values.reduce((sum, value) => sum + value, 0);
-  const unit = metric === 'sessions' ? 'sessions' : 'min';
-  const title = `Focus ${metric === 'sessions' ? 'sessions' : 'minutes'} per day, last ${days} days`;
-  return (
-    <div className="sp-timer-chart">
-      <p className="sp-live-kicker">
-        <strong>{total.toLocaleString()} {unit}</strong> in the last {days} days
-      </p>
-      {style === 'area' ? (
-        <LineChart series={[{ values, kind: 'area', label: title }]} from={shortDate(dates[0]!)} to="Today" title={title} />
-      ) : (
-        <Columns values={values} labels={labels} title={title} format={(value) => (metric === 'sessions' ? String(value) : `${value}m`)} />
-      )}
-    </div>
-  );
-}
-
-// --------------------------------------------------------------------------
 // Which view, and what it waits for
 // --------------------------------------------------------------------------
 /** The body of a panel block: the right view, or a line saying what it's waiting for. */
 export function PanelView({ config, set }: Base) {
   if (MODEL_VIEWS[config.kind]) return <ModelView config={config} set={set} />;
-  if (CLOCK_VIEWS[config.kind]) return <ClockView config={config} set={set} />;
   const Self = SELF_VIEWS[config.kind];
   return Self ? <Self config={config} set={set} /> : <Note>This panel isn't here anymore.</Note>;
 }
@@ -651,20 +553,8 @@ function ModelView({ config, set }: Base) {
   return <View config={config} set={set} model={model} shared={shared} />;
 }
 
-function ClockView({ config, set }: Base) {
-  const clock = useClock();
-  if (!clock) return <Note>Loading…</Note>;
-  const View = CLOCK_VIEWS[config.kind]!;
-  return (
-    <div className="sp-pom">
-      <View config={config} set={set} clock={clock} />
-    </div>
-  );
-}
-
 /** Every kind has exactly one view. The registry test holds this. */
 export const VIEW_KINDS: ReadonlySet<PanelKind> = new Set([
   ...Object.keys(MODEL_VIEWS),
-  ...Object.keys(CLOCK_VIEWS),
   ...Object.keys(SELF_VIEWS),
 ] as PanelKind[]);

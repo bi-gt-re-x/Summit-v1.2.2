@@ -64,7 +64,6 @@ describe('the slash menu', () => {
       ['Suggestions', false],
       ['Insights and habits', false],
       ['Growth and subjects', false],
-      ['Timer', false],
       ['Goals & records', false],
       ['Basic blocks', true],
       ['Layout', true],

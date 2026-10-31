@@ -1,5 +1,5 @@
 /* ==========================================================================
-   notes.css — the page that scores nothing. See src/pages/Notes.tsx.
+   notes.css — written for the Notes page, which is gone. The Log still uses it.
 
    Prefixed `nt-` for the reason analytics.css prefixes `ax-`: dashboard.css is
    loaded on every page and dresses a pile of generic names, so a page reaching
@@ -154,7 +154,7 @@ html[data-theme="dark"] .nt-page {
 .nt-editor      { animation: nt-rise .40s cubic-bezier(.22, 1, .36, 1) .12s both; }
 
 /* 2. Opening a note. Keyed off a counter in the page that flips this class
-      between two identical keyframes — see the `beat` note in pages/Notes.
+      between two identical keyframes — see the `beat` note the old Notes page had.
       Two names rather than one because an animation only restarts when its
       name changes, and the alternative is remounting the element, which would
       take the caret out of the textarea inside it.

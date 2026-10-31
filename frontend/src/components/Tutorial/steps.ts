@@ -17,8 +17,8 @@
  *   * `inside`: the target is a dialog or a panel to use. Everything in it
  *     works, nothing outside it does, and the tour moves on when it closes.
  *
- * `skipIfMissing` is for things only some accounts have: the timer's first-run
- * setup, the rail's "Next" row a new account gets, panels Settings can hide.
+ * `skipIfMissing` is for things only some accounts have: the rail's "Next" row
+ * a new account gets, panels Settings can hide.
  *
  * `until` lets an `inside` step end before its dialog closes: the tour moves on
  * the moment that selector is on screen. That is how one dialog with several
@@ -121,33 +121,6 @@ export const STEPS: Step[] = [
     title: 'Block out time',
     body: "Press on an empty spot and drag down to block out time. You'll be asked if it's an event or a task. Drag a block to move it, or drag its edge to make it longer or shorter.",
   },
-
-  // ---- Timer ---------------------------------------------------------------
-  {
-    id: 'to-timer',
-    kind: 'click',
-    target: rail('timer'),
-    title: 'Now the Timer',
-    body: "Click Timer. It's where the focused work happens.",
-  },
-  {
-    id: 'timer-setup',
-    kind: 'inside',
-    route: '/timer',
-    target: ['.pom-setup'],
-    skipIfMissing: true,
-    title: 'Set up your timer',
-    body: 'Pick how long you can usually stay focused, then choose a style and press Start. You can change it later.',
-  },
-  {
-    id: 'timer-start',
-    kind: 'next',
-    route: '/timer',
-    target: ['.pom-start'],
-    title: 'Start a session',
-    body: 'When you sit down to work, press Start focus. Every minute counts toward your daily focus goal.',
-  },
-
 
   // ---- Everything else -----------------------------------------------------
   {

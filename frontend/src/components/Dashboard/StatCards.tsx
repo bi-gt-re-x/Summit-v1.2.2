@@ -18,7 +18,6 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useCountUp, useSettings } from '@/hooks';
 import { format } from '@/utils';
 import { addDays, fromIsoDate, isoDate } from '@/utils/dates';
-import type { UseFocusSession } from '@/hooks/useFocusSession';
 import type { DaySummary, Typical } from './summary';
 import type { UserStats } from '@/types';
 import type { WeekStart } from '@/services/settings';
@@ -89,7 +88,7 @@ function ProgressRing({ percent, label }: { percent: number; label: string }) {
  * that changed with the data would be a second reading of the same figure and
  * would have to be read every time.
  *
- * `aside` is the corner, and only the Focus card uses it — for the mark that
+ * `aside` is the corner, and only the Today card uses it — for the mark that
  * opens the hidden chain, which is 18px and fits anywhere. The trend badge
  * was there too for a while and had to come out: a stat card is about 270px
  * of content at the width this row is drawn at, and a name beside a badge
@@ -231,6 +230,10 @@ const ICON = {
  * "On Track" under the percentage is a claim, so it is only made when there is
  * something to be on track with: a day with nothing on it reads "Nothing due",
  * not 0% On Track.
+ *
+ * The mark in the corner is the hidden chain's front door, ten clicks on it.
+ * It lived on the Focus card until the timer went; same mark, same class, same
+ * hook. See hooks/useMarkEgg.ts; the card is otherwise unaware of it.
  */
 export function TodayCard({
   day,
@@ -246,14 +249,31 @@ export function TodayCard({
   const total = useCountUp(day.total);
   const done = useCountUp(day.done);
   const left = useCountUp(xpLeft);
+  const { markRef, onMarkClick } = useMarkEgg();
 
   return (
     <Card className="dash-stat dash-stat-today">
+      {/* No role, no tabIndex, no alt text and no pointer cursor: this is
+          where the hidden chain starts, and a mark that announced itself as a
+          button would be advertising it. What it looks like is a logo in the
+          corner of a card, and for anybody not counting to ten that is all it
+          is. Decorative to a screen reader for the same reason. */}
       <StatHead
         tone="today"
         icon={ICON.tasks}
         title="Today"
         tag="What's done and what's left"
+        aside={
+          <img
+            className="dash-focus-mark"
+            src="/static/images/logo.svg"
+            alt=""
+            width={18}
+            height={18}
+            ref={markRef}
+            onClick={onMarkClick}
+          />
+        }
       />
       <Trend now={day.done} usual={{ ...usual, value: usual.tasks }} />
       <div className="dash-stat-mid">
@@ -423,94 +443,6 @@ export function XpCard({
           {goalMet ? 'daily goal met' : `of ${format.number(goal)} goal`}
         </span>
       </p>
-    </Card>
-  );
-}
-
-// --------------------------------------------------------------------------
-// Focus Time
-// --------------------------------------------------------------------------
-/**
- * Time focused today, against the goal set for today.
- *
- * Both figures come from the *same* session object the Focus panel below is
- * driven by, passed down rather than re-read. Two `useFocusSession` calls would
- * each hold their own copy of the day's localStorage record, and pressing + on
- * the panel would move its goal while this card went on showing the old one.
- *
- * The mark in the corner is the hidden chain's front door — ten clicks on it
- * in the dark. See hooks/useMarkEgg.ts; the card is otherwise unaware of it.
- */
-export function FocusCard({
-  session,
-  usualHours,
-}: {
-  session: UseFocusSession;
-  /** Hours focused on an average day, or null while the record is still
-      being read. The figure comes from the focus history rather than from the
-      task list, which is why it arrives separately from `Typical`. */
-  usualHours: number | null;
-}) {
-  // Rounded to the tenth it is shown at *before* it is animated. The session
-  // ticks every second, but this reading only moves every six minutes, and
-  // feeding the hook the raw total would leave it tweening all day for changes
-  // too small to render.
-  const hours = useCountUp(Math.round((session.focused / 3600) * 10) / 10);
-  // Already whole percents out of the hook that computes it, so the same rule
-  // holds: it moves when the bar would move.
-  const percent = useCountUp(session.percent);
-  const { markRef, onMarkClick } = useMarkEgg();
-
-  return (
-    <Card className="dash-stat dash-stat-focus">
-      {/* No role, no tabIndex, no alt text and no pointer cursor: this is
-          where the hidden chain starts, and a mark that announced itself as a
-          button would be advertising it. What it looks like is a logo in the
-          corner of a card, and for anybody not counting to ten that is all it
-          is. Decorative to a screen reader for the same reason — it says
-          nothing the wordmark in the rail has not already said. */}
-      <StatHead
-        tone="focus"
-        icon={ICON.clock}
-        title="Focus"
-        tag="Time on the timer today"
-        aside={
-          <img
-            className="dash-focus-mark"
-            src="/static/images/logo.svg"
-            alt=""
-            width={18}
-            height={18}
-            ref={markRef}
-            onClick={onMarkClick}
-          />
-        }
-      />
-      <div className="dash-stat-mid">
-        <p className="dash-big">
-          {hours.toFixed(1)} <span className="dash-big-unit">hrs</span>
-        </p>
-        <p className="dash-stat-sub">Today</p>
-      </div>
-      <StatPanel icon={ICON.smallClock}>
-        <span className="dash-stat-panel-text">
-          Goal: {session.goalHours.toFixed(1)} hrs
-          {usualHours !== null && usualHours > 0 && (
-            <span className="dash-stat-usual">· usually {usualHours.toFixed(1)}</span>
-          )}
-        </span>
-        <div className="dash-bar dash-bar-green">
-          <div
-            className="dash-bar-fill"
-            style={{ width: `${percent}%` }}
-            role="progressbar"
-            aria-valuenow={session.percent}
-            aria-valuemin={0}
-            aria-valuemax={100}
-            aria-label="Focus goal progress"
-          />
-        </div>
-      </StatPanel>
     </Card>
   );
 }

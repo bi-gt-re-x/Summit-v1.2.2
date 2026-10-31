@@ -45,8 +45,6 @@ const PAGES = [
   'summit.css',
   'dashboard.css',
   'dashboard-home.css',
-  'timer.css',
-  'focus-session.css',
   'catch-up.css',
   'rate-prompt.css',
   'day-complete.css',

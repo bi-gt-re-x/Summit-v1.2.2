@@ -13,7 +13,7 @@
  * on screen. With reduced motion nothing plays and each drawing shows its
  * finished state, which is how the stylesheet writes them by default.
  * `useCycle` is the same rule for the few pieces that are driven from script
- * (the timer's clock, the Spaces chat, the goal wizard's questions).
+ * (the Spaces chat, the goal wizard's questions).
  */
 import { useEffect, useRef, useState, type CSSProperties, type RefObject } from 'react';
 import { Icon, type IconName } from '@/components/Icon';
@@ -84,7 +84,7 @@ const NUMBERS = [
   { n: '150', label: 'subjects to pick from' },
   { n: '125', label: 'skill trees' },
   { n: '149', label: 'badges to earn' },
-  { n: '10', label: 'timer styles' },
+  { n: '5', label: 'analytics tabs' },
 ];
 
 /** A slice of the catalog in backend/config/subjects.py, by its full names. */
@@ -133,8 +133,8 @@ export function Numbers() {
 
 /*
  * The four steps are the path the Mango tour walks a new account through
- * (components/Tutorial/steps.ts): add a task, put it on the calendar, start
- * the timer, finish it. The XP range is RULES.task_xp (10 to 250), and the
+ * (components/Tutorial/steps.ts): add a task, put it on the calendar, write
+ * in the Log, finish it. The XP range is RULES.task_xp (10 to 250), and the
  * "how did it go?" question is the rate prompt a finished task opens, which
  * can be skipped (backend/tracking/analytics.py).
  */
@@ -186,16 +186,14 @@ export function HowItWorks() {
         <li className="lp-card lp-step">
           <span className="lp-step-n">3</span>
           <div className="lp-step-art lp-loop" aria-hidden="true">
-            <svg className="lp-mini-ring" viewBox="0 0 48 48">
-              <circle cx="24" cy="24" r="20" className="lp-mini-ring-bed" />
-              <circle cx="24" cy="24" r="20" className="lp-mini-ring-arc" pathLength={100} />
-            </svg>
-            <small className="lp-mini-ring-label">Focus · 25 min</small>
+            <div className="lp-mini-input">
+              <span className="lp-type">Tired, but math clicked today</span>
+            </div>
           </div>
-          <h3>Focus on it</h3>
+          <h3>Write it down</h3>
           <p>
-            Start the timer on that task. The session gets saved with it, so you can see
-            how long it really took.
+            Jot a few lines in your Log about how the day went. Summit uses it to fit its
+            advice to you.
           </p>
         </li>
         <li className="lp-card lp-step">
@@ -219,7 +217,7 @@ export function HowItWorks() {
 
       {/* Mango and the first-week quests, both for brand new accounts.
           components/Tutorial (the tour, replayed from Settings > Getting
-          started) and backend/tracking/quests.py (six one-off quests, then a
+          started) and backend/tracking/quests.py (five one-off quests, then a
           daily one until ten active days). */}
       <div className="lp-card lp-mango-card">
         <div className="lp-mango lp-loop" aria-hidden="true">
@@ -228,12 +226,13 @@ export function HowItWorks() {
         <div className="lp-mango-text">
           <h3>New here? Mango will show you around.</h3>
           <p>
-            On your first day, a little mango with googly eyes walks you through every page.
-            You can skip it, or replay it from Settings later.
+            On your first day, a little mango with googly eyes shows you the basics. More
+            pages open as you finish tasks, one at a time. You can skip the tour, or replay
+            it from Settings later.
           </p>
           <p>
-            New accounts also get six quick quests worth XP, like finishing a first task or
-            starting a first timer. After that there's one small quest a day until you've
+            New accounts also get five quick quests worth XP, like finishing a first task or
+            writing a first Log entry. After that there's one small quest a day until you've
             been active on ten days.
           </p>
         </div>
@@ -268,13 +267,6 @@ const TILES: {
     to: '#calendar',
   },
   {
-    icon: 'timer',
-    title: 'Focus timer',
-    body: 'Ten styles, from 10 to 90 minutes. Start one on a task and the session is saved with that task.',
-    bits: ['Pomodoro', 'Daily target', 'Notes'],
-    to: '#timer',
-  },
-  {
     icon: 'target',
     title: 'Goals',
     body: "Split a big goal into checkpoints. Summit tells you if you're on track or falling behind.",
@@ -307,13 +299,6 @@ const TILES: {
     title: 'Achievements',
     body: '149 badges that pay XP when you earn them. Log your own personal bests too.',
     bits: ['Badges', 'Personal bests', 'Titles'],
-    to: '#more',
-  },
-  {
-    icon: 'pin',
-    title: 'Notes',
-    body: 'Write notes and link them to a task or a subject. They save while you type.',
-    bits: ['Autosave', 'Linked to tasks'],
     to: '#more',
   },
   {
@@ -378,122 +363,6 @@ export function FeatureGrid() {
   );
 }
 
-// ---------------------------------------------------------------------------
-// Focus timer
-// ---------------------------------------------------------------------------
-
-/*
- * The ten styles and their lines are components/Timer/pomodoro.ts (`STYLES`,
- * `who`), and the daily target is its `LEVELS` (2 to 10 sessions a day).
- * "The task pays the XP" is the note above `LEVELS`: running the timer earns
- * nothing on its own. A session tied to a task, and the jot box after it,
- * are the Timer page's (components/Timer, hooks/usePomodoro).
- */
-const STYLES = [
-  { name: 'Gentle', min: 10, who: 'When starting is the hard part.' },
-  { name: 'Short burst', min: 15, who: 'Drills, flashcards, admin.' },
-  { name: 'Sprint', min: 20, who: 'Tiring work, generous breaks.' },
-  { name: 'Classic', min: 25, who: 'The default. Start here.' },
-  { name: 'Extended', min: 30, who: 'Room to finish a thought.' },
-  { name: 'Animedoro', min: 40, who: 'Long evenings, real breaks.' },
-  { name: 'Study hall', min: 45, who: 'The length of a school period.' },
-  { name: 'Deep work', min: 50, who: 'Essays, proofs, code, practice.' },
-  { name: 'DeskTime', min: 52, who: '52 on, 17 off. A popular split.' },
-  { name: 'Ultradian', min: 90, who: 'As long as most people stay sharp.' },
-];
-
-/** The clock: 120 ticks of focus (25:00 down to 0:00), then 20 of break. */
-const FOCUS_TICKS = 120;
-const CLOCK_TICKS = 140;
-
-function clock(tick: number): { label: string; time: string; left: number } {
-  if (tick >= FOCUS_TICKS) return { label: 'Break', time: '5:00', left: 1 };
-  const seconds = Math.round(25 * 60 * (1 - tick / FOCUS_TICKS));
-  const mm = Math.floor(seconds / 60);
-  const ss = String(seconds % 60).padStart(2, '0');
-  return { label: 'Focus', time: `${mm}:${ss}`, left: seconds / (25 * 60) };
-}
-
-export function TimerTour() {
-  const card = useRef<HTMLDivElement>(null);
-  const list = useRef<HTMLUListElement>(null);
-  // Resting at a third of the way through, so a still page shows a clock
-  // that is clearly running rather than one that hasn't started.
-  const tick = useCycle(card, CLOCK_TICKS, 100, 40);
-  const pick = useCycle(list, STYLES.length, 1800, 3);
-  const now = clock(tick);
-
-  return (
-    <section className="lp-section" id="timer">
-      <SectionHead
-        title="Focus timer"
-        blurb="Pick a style that fits the work and start it on a task. When the session ends, jot down what you got done."
-      />
-      <div className="lp-duo">
-        <div className="lp-card lp-timer" ref={card} aria-hidden="true">
-          <div className="lp-card-top">
-            <span className="lp-pill-mini">Classic · 25 min</span>
-            <span className="lp-timer-round">Session 2 of 4</span>
-          </div>
-          <div className="lp-timer-dial">
-            <svg viewBox="0 0 120 120">
-              <circle cx="60" cy="60" r="52" className="lp-timer-bed" />
-              <circle
-                cx="60"
-                cy="60"
-                r="52"
-                className="lp-timer-arc"
-                pathLength={100}
-                style={{ strokeDashoffset: 100 - now.left * 100 } as CSSProperties}
-              />
-            </svg>
-            <div className="lp-timer-mid">
-              <small>{now.label}</small>
-              <strong>{now.time}</strong>
-            </div>
-          </div>
-          <div className="lp-timer-task">
-            <Icon name="clipboard" /> Working on <b>Physics problem set</b>
-          </div>
-          <div className="lp-timer-jot">
-            <small>Jot it down</small>
-            <span>Did 1 to 12. Stuck on 9, ask in class.</span>
-          </div>
-        </div>
-        <ul className="lp-card lp-styles" ref={list} aria-label="The ten timer styles">
-          {STYLES.map((style, i) => (
-            <li key={style.name} className={i === pick ? 'is-on' : undefined}>
-              <b>{style.min}</b>
-              <span>
-                <strong>{style.name}</strong>
-                <small>{style.who}</small>
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <Facts
-        items={[
-          {
-            icon: 'target',
-            title: 'Set a daily target',
-            body: 'Pick how hard the day is. Level 1 aims for 2 sessions and Level 5 aims for 10.',
-          },
-          {
-            icon: 'zap',
-            title: 'The task pays the XP',
-            body: "Running the timer doesn't earn XP on its own. Finishing the task does.",
-          },
-          {
-            icon: 'chart',
-            title: 'Sessions add up',
-            body: "Your focus time feeds the Focus stat in Analytics. That's one of the five stats in your growth score.",
-          },
-        ]}
-      />
-    </section>
-  );
-}
 
 // ---------------------------------------------------------------------------
 // Goals
@@ -713,8 +582,7 @@ export function SkillsTour() {
 
 /*
  * Badges: backend/api/achievements.py, 149 in five tiers paying 25 to 500 XP
- * (TIER_XP), plus personal bests and milestones on the same page. Notes:
- * autosave and links to tasks and subjects (pages/Notes.tsx, utils/noteLinks).
+ * (TIER_XP), plus personal bests and milestones on the same page.
  * Log: RULES.log, a private journal read into insights of four kinds, where a
  * passing feeling fades after `feeling_days` (7).
  */
@@ -724,10 +592,10 @@ export function MoreTour() {
   return (
     <section className="lp-section" id="more">
       <SectionHead
-        title="Badges, notes and your Log"
-        blurb="Three more things that come with your account."
+        title="Badges and your Log"
+        blurb="Two more things that come with your account."
       />
-      <div className="lp-trio">
+      <div className="lp-duo">
         <article className="lp-card lp-more">
           <div className="lp-more-art lp-badges lp-loop" aria-hidden="true">
             {BADGES.map((name, i) => (
@@ -744,25 +612,6 @@ export function MoreTour() {
           <p>
             You can also log your own personal bests, like a mile time or a test score, and
             watch them improve.
-          </p>
-        </article>
-        <article className="lp-card lp-more">
-          <div className="lp-more-art lp-note lp-loop" aria-hidden="true">
-            <strong>Momentum</strong>
-            <span className="lp-note-line" style={{ '--w': '92%' } as CSSProperties} />
-            <span className="lp-note-line" style={{ '--w': '78%' } as CSSProperties} />
-            <span className="lp-note-line" style={{ '--w': '54%' } as CSSProperties} />
-            <span className="lp-note-tag">
-              <Icon name="link" /> Physics problem set
-            </span>
-          </div>
-          <h3>Notes</h3>
-          <p>
-            Write notes and link them to a task or a subject. They save while you type.
-          </p>
-          <p>
-            A task shows how many notes it has, so your work and what you wrote about it
-            stay together.
           </p>
         </article>
         <article className="lp-card lp-more">
@@ -797,8 +646,7 @@ export function MoreTour() {
 /*
  * Spaces: pages/Space.tsx and shared/rules.json `spaces`. 18 block types,
  * three personal and three team spaces, live blocks over 11 sources that
- * follow changes as they happen, and 62 panels from Analytics, the Timer and
- * the badges (e00d90b). The chat builds or edits a page from a sentence
+ * follow changes as they happen, and 56 panels from Analytics and the badges. The chat builds or edits a page from a sentence
  * (backend/tracking/space_ai.py), and the prompt below is the example in
  * that file's own notes.
  */
@@ -843,12 +691,12 @@ export function SpacesTour() {
             </span>
           </div>
           <div className={`lp-space-block lp-space-panel${shown(2) ? ' is-in' : ''}`}>
-            <small>Panel · Timer</small>
+            <small>Panel · Growth score</small>
             <span className="lp-space-clock">
               <svg viewBox="0 0 36 36">
                 <circle cx="18" cy="18" r="14" />
               </svg>
-              <b>18:40</b>
+              <b>7.4</b>
             </span>
           </div>
           <div className={`lp-space-block lp-space-sticky${shown(3) ? ' is-in' : ''}`}>
@@ -864,8 +712,8 @@ export function SpacesTour() {
             {!answered && <i className="lp-caret" />}
           </p>
           <p className={`lp-space-ai${answered ? ' is-in' : ''}`}>
-            Done. I added a checklist, a live XP chart and a timer, plus a note about your
-            test date.
+            Done. I added a checklist, a live XP chart and your growth score, plus a note
+            about your test date.
           </p>
         </div>
       </div>
@@ -884,7 +732,7 @@ export function SpacesTour() {
           {
             icon: 'chart',
             title: 'Panels from your pages',
-            body: 'Drop in any of 62 panels from Analytics, the Timer and your badges. Each one has settings.',
+            body: 'Drop in any of 56 panels from Analytics and your badges. Each one has settings.',
           },
           {
             icon: 'sparkles',
@@ -932,7 +780,7 @@ const FAQ = [
   },
   {
     q: 'Does it use AI?',
-    a: 'Some parts do. It can draft goal checkpoints, plan study sessions, read your Log and build Spaces pages. Tasks, the calendar, the timer and your stats all work without it.',
+    a: 'Some parts do. It can draft goal checkpoints, plan study sessions, read your Log and build Spaces pages. Tasks, the calendar and your stats all work without it.',
   },
   {
     q: 'Can I get my data out?',

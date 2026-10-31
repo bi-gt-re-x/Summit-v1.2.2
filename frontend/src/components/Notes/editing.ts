@@ -453,7 +453,7 @@ export function linkSelection(root: HTMLElement, href: string, label: string): v
  * Read off the ancestors rather than remembered, which is the property the
  * old string version had and the reason it is kept: a control whose label
  * never changes when you use it is indistinguishable from one that does
- * nothing. See the note in pages/Notes.
+ * nothing. The old Notes page had the longer note.
  */
 export function marksAt(root: HTMLElement): Record<Family, string | null> {
   const found: Record<Family, string | null> = { ink: null, mark: null, face: null, size: null };

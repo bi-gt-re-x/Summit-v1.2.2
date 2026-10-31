@@ -59,7 +59,6 @@ import {
   TaskDemo,
   TaskStats,
   TechStack,
-  TimerTour,
   useCharts,
   useCountUps,
   useFinalMotion,
@@ -287,7 +286,6 @@ export default function Homepage() {
             />
           </section>
 
-          <TimerTour />
           <GoalsTour />
 
           {/* The grace day and vacation mode are backend/tracking/xp.py

@@ -1,5 +1,5 @@
 /**
- * The first-week quest line: six first things, each worth some XP once.
+ * The first-week quest line: five first things, each worth some XP once.
  *
  * A new account lands on an Analytics page that needs days of data before it
  * can say much. This gives those days something to aim at: a short list of
@@ -293,7 +293,7 @@ export function FirstWeek({ quests, busy, lastClaim, onClaim }: FirstWeekProps) 
       </div>
       <p className="fw-lede">
         {all
-          ? "That's all six. You've got the hang of it. Analytics fills in as you keep going."
+          ? "That's all five. You've got the hang of it. Analytics fills in as you keep going."
           : "Quick wins to get you going. Each one pays XP, and they help Analytics learn your habits sooner."}
       </p>
       <span

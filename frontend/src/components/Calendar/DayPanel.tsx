@@ -44,17 +44,6 @@ export interface DayPanelProps {
   onComplete: (taskId: string) => void;
   completingId?: string | null;
   /**
-   * Start the focus session. Drawn on the first unfinished task of the day and
-   * nowhere else: a Start on every card is six ways to begin the same one
-   * timer, and the next thing is the only one anybody means.
-   *
-   * The session is the account's, not the task's — the same one the dashboard's
-   * Focus panel and the Day view's ring drive. Nothing here claims otherwise.
-   */
-  onStart?: () => void;
-  /** Whether that session is already running, which makes Start a no-op. */
-  focusRunning?: boolean;
-  /**
    * A card has been picked up, and put down again.
    *
    * The month grid beside this list is the drop target — the coarse gesture a
@@ -165,14 +154,11 @@ export function DayPanel({
   onRetimeEvent,
   onComplete,
   completingId,
-  onStart,
-  focusRunning = false,
   onDragEntry,
   onDragEnd,
   onMoveEntry,
 }: DayPanelProps) {
   let taskNumber = 0;
-  let nextClaimed = false;
 
   // Only one card's menu is open at a time, and a click anywhere else closes
   // it — including a click on one of its own items, which has already acted.
@@ -249,10 +235,6 @@ export function DayPanel({
               if (isTask) taskNumber += 1;
 
               const canComplete = isTask && !entry.completed && Boolean(entry.taskId);
-              /* The first thing still to do. `nextUp` is claimed once and then
-                 stays claimed, so exactly one card carries the Start. */
-              const isNext = canComplete && !nextClaimed;
-              if (isNext) nextClaimed = true;
               const level = difficulty(entry.xp, entry.priority);
               const classes = [
                 'task-section',
@@ -396,26 +378,10 @@ export function DayPanel({
                           Completed <CheckIcon className="completed-check" />
                         </span>
                       )}
-                      {isNext && onStart ? (
-                        <button
-                          type="button"
-                          className="dp-start"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            onStart();
-                          }}
-                        >
-                          {focusRunning ? 'Focusing' : 'Start'}
-                          <svg viewBox="0 0 24 24" aria-hidden="true">
-                            <path d="M8 5.5v13l11-6.5z" />
-                          </svg>
-                        </button>
-                      ) : (
-                        canComplete && (
-                          <span className="complete-hint">
-                            Mark complete <CheckIcon className="completed-check" />
-                          </span>
-                        )
+                      {canComplete && (
+                        <span className="complete-hint">
+                          Mark complete <CheckIcon className="completed-check" />
+                        </span>
                       )}
                     </div>
                   </div>

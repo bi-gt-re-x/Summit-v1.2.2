@@ -128,8 +128,7 @@ export function GoalForecast({ onBooked, reload = 0 }: { onBooked?: () => void; 
                 <b>What's left:</b> Steps not done yet, or the gap to your number.
               </li>
               <li>
-                <b>Your pace:</b> Sessions a week on the goal's subject over the last 4 weeks. Tasks and focus timers
-                both count.
+                <b>Your pace:</b> Finished tasks a week on the goal's subject over the last 4 weeks.
               </li>
               <li>
                 <b>Your finish:</b> The sessions a step has taken you so far, times the steps left, at your pace.

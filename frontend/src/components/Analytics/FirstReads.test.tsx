@@ -21,7 +21,7 @@ describe('what your work says so far', () => {
   it('counts down before there is anything to read', async () => {
     sittings.mockResolvedValue({ success: true, sittings: [] });
     renderWithProviders(<FirstReads tasks={[{ status: 'done' } as Task]} goals={[]} />, { route: '/analytics' });
-    expect(await screen.findByText(/Finish 2 more tasks or focus sessions/)).toBeInTheDocument();
+    expect(await screen.findByText(/Finish 2 more tasks and/)).toBeInTheDocument();
   });
 
   it('shows the reads, each with what it rests on', async () => {

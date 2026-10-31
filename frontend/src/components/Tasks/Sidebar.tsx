@@ -1,118 +1,16 @@
 /**
- * The right-hand column: a timer, what is next, what is running, and a box.
+ * The right-hand column: what is next, what is running, and a box.
  *
- * All four are about *now* rather than about the list — which is why they sit
+ * All three are about *now* rather than about the list — which is why they sit
  * beside it rather than in it, and why none of them takes the page's filters.
  * Searching for "physics" should not empty the panel telling you what is due at
  * four o'clock.
  */
 import { useEffect, useRef, useState } from 'react';
-import { useFocusSession } from '@/hooks';
 import type { Task } from '@/types';
 import type { Streak } from './board';
 import { timeLabel } from './board';
 import { Icon } from '@/components/Icon';
-
-// --------------------------------------------------------------------------
-// Focus timer
-// --------------------------------------------------------------------------
-/**
- * A stopwatch on the focus time the account actually records.
- *
- * **It counts up, and it is not its own clock.** The figure is
- * `useFocusSession`'s — the same day total the dashboard and the calendar read,
- * the same localStorage day, the same minutes that reach the growth chart and
- * the report card's focus metric. Starting here starts *that* session; there is
- * no second timer to disagree with it and nothing to reconcile.
- *
- * It was a twenty-five minute countdown, and a countdown is the wrong
- * instrument for this panel. A pomodoro measures a promise — how long you said
- * you would sit — and the account has no use for that number. What everything
- * downstream wants is how long you actually sat, which is the thing a stopwatch
- * reads and a countdown throws away the moment somebody works past the bell.
- *
- * The elapsed figure is derived from the session's own timestamps rather than
- * counted in ticks, so a backgrounded tab, a shut laptop or a closed browser
- * lose nothing: the display catches up the instant anyone looks at it. The
- * interval below re-renders, it does not measure.
- */
-function FocusTimer({ username }: { username: string | null }) {
-  const session = useFocusSession(username);
-  const [, tick] = useState(0);
-
-  // Only while running, and only once a second. Nothing here counts — see above.
-  useEffect(() => {
-    if (!session.running) return;
-    const id = window.setInterval(() => tick((n) => n + 1), 1000);
-    return () => window.clearInterval(id);
-  }, [session.running]);
-
-  const seconds = Math.max(0, Math.floor(session.focused));
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  const rest = seconds % 60;
-  const pad = (n: number) => String(n).padStart(2, '0');
-
-  // The ring is the day's goal, which is the only thing a stopwatch has to fill
-  // — an open-ended count has no arc of its own to draw.
-  const share = Math.max(0, Math.min(1, session.percent / 100));
-  const radius = 52;
-
-  return (
-    <section className="tk-side tk-timer">
-      <header className="tk-side-head">
-        <span className="tk-side-ico is-violet" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
-            <circle cx="12" cy="13" r="8" />
-            <path d="M12 9v4l2.5 2M9 2h6" />
-          </svg>
-        </span>
-        <h2>Focus timer</h2>
-      </header>
-
-      <div className="tk-dial">
-        <svg viewBox="0 0 120 120" aria-hidden="true">
-          <circle className="tk-dial-track" cx="60" cy="60" r={radius} pathLength={100} />
-          <circle
-            className="tk-dial-fill"
-            cx="60"
-            cy="60"
-            r={radius}
-            pathLength={100}
-            strokeDasharray={`${(share * 100).toFixed(2)} 100`}
-          />
-        </svg>
-        <div className="tk-dial-face">
-          <strong className={hours > 0 ? 'is-long' : undefined}>
-            {hours > 0 ? `${hours}:${pad(minutes)}:${pad(rest)}` : `${minutes}:${pad(rest)}`}
-          </strong>
-          <span>{session.running ? 'Running' : seconds > 0 ? 'Paused' : 'Focus'}</span>
-        </div>
-      </div>
-
-      <div className="tk-dial-tools">
-        <button
-          type="button"
-          className="tk-play"
-          aria-label={session.running ? 'Pause the session' : 'Start focusing'}
-          onClick={() => (session.running ? session.stop() : session.start())}
-        >
-          {session.running ? (
-            <svg viewBox="0 0 24 24" fill="currentColor"><rect x="7" y="6" width="4" height="12" rx="1" /><rect x="13" y="6" width="4" height="12" rx="1" /></svg>
-          ) : (
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5l12 7-12 7z" /></svg>
-          )}
-        </button>
-      </div>
-      <p className="tk-dial-note">
-        {/* No reset button, and that is deliberate: the number is the account's
-            record of today, not this panel's scratch value, and a control that
-            appeared to zero it would either lie or destroy real data. */}
-        {Math.round(share * 100)}% of today&apos;s {session.goalHours}h goal
-      </p>
-    </section>
-  );
-}
 
 // --------------------------------------------------------------------------
 // What is next
@@ -354,7 +252,6 @@ export interface SidebarProps {
 export function Sidebar(props: SidebarProps) {
   return (
     <aside className="tk-rail">
-      <FocusTimer username={props.username} />
       <Upcoming
         tasks={props.upcoming}
         subjectName={props.subjectName}

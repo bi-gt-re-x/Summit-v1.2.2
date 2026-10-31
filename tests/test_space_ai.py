@@ -176,12 +176,12 @@ def test_it_can_place_the_apps_own_panels(app, monkeypatch):
     client = sign_in(app, 'panels')
     _stub(monkeypatch, json.dumps(json.loads(_answer(blocks=[
         _live_block(type='panel', panel_kind='plan', text='Today'),
-        _live_block(type='panel', panel_kind='timer'),
+        _live_block(type='panel', panel_kind='badges'),
     ]))))
-    doc = client.post('/api/spaces/1/ai', json={'prompt': 'a plan and a timer'}).json()['space']['doc']
-    plan, timer = doc['blocks'][0], doc['blocks'][1]
+    doc = client.post('/api/spaces/1/ai', json={'prompt': 'a plan and my badges'}).json()['space']['doc']
+    plan, badges = doc['blocks'][0], doc['blocks'][1]
     assert plan['panel'] == {'kind': 'plan', 'budget': 45, 'limit': 8} and plan['text'] == 'Today'
-    assert timer['panel'] == {'kind': 'timer', 'show': ['task']}
+    assert badges['panel'] == {'kind': 'badges', 'category': 'all', 'which': 'earned', 'limit': 6}
 
     # The reader sets the plan to an hour; an AI edit to its caption keeps that.
     doc['blocks'][0]['panel']['budget'] = 60
@@ -193,7 +193,8 @@ def test_it_can_place_the_apps_own_panels(app, monkeypatch):
     doc = client.post('/api/spaces/1/ai', json={'prompt': 'rename the plan'}).json()['space']['doc']
     assert doc['blocks'][0]['panel'] == {'kind': 'plan', 'budget': 60, 'limit': 8}
     assert doc['blocks'][0]['text'] == 'This hour'
-    assert '  - timer: timer (Focus timer)' in space_ai.SYSTEM
+    assert '  - goals: badges (Badges)' in space_ai.SYSTEM
+    assert 'Focus timer' not in space_ai.SYSTEM
 
 
 def test_the_brief_lists_every_live_source_and_the_accounts_picks():

@@ -19,7 +19,6 @@ import { RequireAccount } from './RequireAccount';
 import { FeatureGate } from '@/components/FeatureGate';
 import { Tutorial } from '@/components/Tutorial/Tutorial';
 import { Unlocked } from '@/components/Tutorial/Unlocked';
-import { useSittingShown } from '@/components/Timer/FocusSitting';
 import { useAuth, usePinnedViewport, useSettings } from '@/hooks';
 import { useChainAccount } from '@/hooks/useChainAccount';
 import { useVoid } from '@/hooks/useVoid';
@@ -44,10 +43,8 @@ const Tasks = lazy(() => import('@/pages/Tasks'));
 const Analytics = lazy(() => import('@/pages/Analytics'));
 const SubjectAnalytics = lazy(() => import('@/pages/SubjectAnalytics'));
 const SkillTrees = lazy(() => import('@/pages/SkillTrees'));
-const Notes = lazy(() => import('@/pages/Notes'));
 const Log = lazy(() => import('@/pages/Log'));
 const Space = lazy(() => import('@/pages/Space'));
-const Timer = lazy(() => import('@/pages/Timer'));
 const Achievements = lazy(() => import('@/pages/Achievements'));
 const Settings = lazy(() => import('@/pages/Settings'));
 const AboutUs = lazy(() => import('@/pages/AboutUs'));
@@ -77,7 +74,8 @@ const HOME_PATHS: Record<Prefs['home_page'], string> = {
   calendar: '/calendar',
   goals: '/goals',
   analytics: '/analytics',
-  notes: '/notes',
+  // Notes is gone. An account that chose it lands on the dashboard.
+  notes: '/dashboard',
 };
 /**
  * `/calendar` itself, which is a redirect to whichever view the account
@@ -207,9 +205,6 @@ export default function App() {
   // every page but this one wants it. Off here, so the landing page gets the
   // full width back.
   const landing = isLanding(pathname);
-  /* See the note on <Ambient /> below. */
-  const sitting = useSittingShown();
-  const ownsAmbient = pathname === '/timer' || sitting;
   /* The Personal and Team spaces are the reader's own pages, and keep a plain
      ground: no graph paper behind what they write. */
   const custom = pathname.startsWith('/spaces/') || pathname.startsWith('/team/');
@@ -242,16 +237,6 @@ export default function App() {
     document.body.classList.toggle('on-calendar', onCalendar);
     return () => document.body.classList.remove('on-calendar');
   }, [onCalendar]);
-  /* A focus sitting is on screen (the Timer page's or the dashboard's). The
-     rail is hidden and its width given back — styles/rail.css, `is-sitting` —
-     and the rest of the shell below is made inert, so nothing behind the
-     sitting can be clicked, tabbed to or read out while it runs. Pausing ends
-     the sitting and gives all of it back. */
-  useEffect(() => {
-    document.body.classList.toggle('is-sitting', sitting);
-    return () => document.body.classList.remove('is-sitting');
-  }, [sitting]);
-
   /* Whose hidden chain this is. Above the router so the name is right before
      any page mounts a script that reads it — see hooks/useChainAccount.ts. */
   useChainAccount();
@@ -276,16 +261,10 @@ export default function App() {
           Every page wears the whole layer — the graph paper, the slow wash and
           the drifting dots — and the landing page adds the glow that follows
           the pointer (see components/Ambient for why only there). The custom
-          spaces have none — see `custom`.
-          
-          The timer is the one page that renders its own. While a sitting is
-          running its field accelerates — `surge`, in the same component — and
-          a second canvas behind the first would be a second rAF loop drawing
-          something nobody can see. See pages/Timer.tsx. The dashboard shows
-          the same sitting, and `sitting` stands this one down for it too. */}
-      {!ownsAmbient && !custom && <Ambient cursor={pathname === '/home'} />}
+          spaces have none — see `custom`. */}
+      {!custom && <Ambient cursor={pathname === '/home'} />}
       {!landing && (
-        <div className="app-chrome" inert={sitting}>
+        <div className="app-chrome">
           <Rail />
         </div>
       )}
@@ -295,7 +274,7 @@ export default function App() {
           read they both show is not theirs any more — it belongs to
           UserDataProvider above them, and happens once for the session. */}
       {!landing && (
-        <div className="app-chrome" inert={sitting}>
+        <div className="app-chrome">
           <Topbar />
         </div>
       )}
@@ -304,13 +283,13 @@ export default function App() {
           here rather than by each page for the same reason the bar is — one
           strip for the app, not one per screen. See components/VerifyBanner. */}
       {!landing && (
-        <div className="app-chrome" inert={sitting}>
+        <div className="app-chrome">
           <VerifyBanner />
         </div>
       )}
       {/* The guided tour, with Mango. See components/Tutorial. */}
       {!landing && (
-        <div className="app-chrome" inert={sitting}>
+        <div className="app-chrome">
           <Tutorial />
           <Unlocked />
         </div>
@@ -379,7 +358,7 @@ export default function App() {
                   for real is exactly the exit that file's instructions
                   describe. */}
               <Route path="/skill-trees" element={<SkillTrees />} />
-              <Route path="/notes" element={<Notes />} />
+              <Route path="/notes" element={<Navigate to="/dashboard" replace />} />
               <Route path="/log" element={<Log />} />
               {/* The three Personal spaces in the rail. An id outside 1-3
                   goes to the first. */}
@@ -387,7 +366,7 @@ export default function App() {
               {/* The three Team spaces: the same page with a member list. Keyed
                   apart so moving between the two kinds starts afresh. */}
               <Route path="/team/:spaceId" element={<Space key="team" kind="team" />} />
-              <Route path="/timer" element={<Timer />} />
+              <Route path="/timer" element={<Navigate to="/dashboard" replace />} />
               {/* One page, two tabs: personal bests and the badge wall. It was
                   called Records until the badges' own name took over, so the
                   /records paths redirect. Growth was a third tab here and is an

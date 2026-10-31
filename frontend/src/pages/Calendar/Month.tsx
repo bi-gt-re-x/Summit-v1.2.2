@@ -48,7 +48,6 @@ import {
   useSettings,
 } from '@/hooks';
 import { useBlockActions } from '@/hooks/useBlockActions';
-import { useFocusSession } from '@/hooks/useFocusSession';
 import { focus as focusService, goals as goalService } from '@/services';
 import { weekStartDay } from '@/services/settings';
 import { dates } from '@/utils';
@@ -96,7 +95,6 @@ export default function Month() {
   } = account;
   const store = useCalendarStore(username);
   const dayFocus = useDayFocus(username);
-  const session = useFocusSession(username);
   const navigate = useNavigate();
   const { prefs, dailyGoal } = useSettings();
 
@@ -158,28 +156,9 @@ export default function Month() {
     };
   }, [month, username, year]);
 
-  /**
-   * Today's focus, folded into the record the server returned.
-   *
-   * The live session has not been written back yet, but the server can be
-   * ahead of it when today was tracked in another browser — so the larger of
-   * the two wins, which is the rule the Week view's figures use as well.
-   */
-  const focusHistory = useMemo(() => {
-    const todayIso = dates.isoDate();
-    const stored = history[todayIso];
-    return {
-      ...history,
-      [todayIso]: {
-        seconds: Math.max(session.focused, Number(stored?.seconds) || 0),
-        goal_hours: session.goalHours || Number(stored?.goal_hours) || 0,
-      },
-    };
-  }, [history, session.focused, session.goalHours]);
-
   const figures = useMemo(
-    () => monthFigures(year, month, tasks, store.data, focusHistory),
-    [focusHistory, month, store.data, tasks, year],
+    () => monthFigures(year, month, tasks, store.data, history),
+    [history, month, store.data, tasks, year],
   );
 
   /**
@@ -213,11 +192,11 @@ export default function Month() {
         new Date(year, month - 1, 1).getMonth(),
         tasks,
         store.data,
-        focusHistory,
+        history,
         new Date(),
         compared,
       ),
-    [compared, focusHistory, month, store.data, tasks, year],
+    [compared, history, month, store.data, tasks, year],
   );
 
   const previousMonthName = dates.formatDate(new Date(year, month - 1, 1), {
@@ -550,11 +529,6 @@ export default function Month() {
               }}
               onComplete={complete}
               completingId={completing}
-              /* The account's focus session — the same one the dashboard's
-                 panel and the Day view's ring drive. The button on the next
-                 task begins it; it does not claim to be timing that task. */
-              onStart={session.start}
-              focusRunning={session.running}
               onDragEntry={setDragging}
               onDragEnd={() => setDragging(null)}
               onMoveEntry={setPending}
@@ -564,8 +538,6 @@ export default function Month() {
           <MonthSidebar
             tasks={figures.tasks}
             done={figures.done}
-            focused={figures.focused}
-            planned={figures.planned}
             xpEarned={figures.xpEarned}
             best={figures.best}
             top={figures.top}

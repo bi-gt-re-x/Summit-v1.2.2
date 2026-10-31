@@ -7,8 +7,8 @@
  *
  * The shape follows the design: This Week Progress leads with a ring and the
  * week's three figures over a per-day XP sparkline, then XP by Subject and
- * Tasks by Priority, then Streaks as seven dots, then what is coming, the
- * week's focus time, and last of all the way through to the month.
+ * Tasks by Priority, then Streaks as seven dots, then what is coming, and
+ * last of all the way through to the month.
  *
  * "XP by Subject" was once five invented rows — Math 160, Coding 140 — because
  * splitting XP by subject needed a subject on a task and the table had no such
@@ -22,20 +22,14 @@
  * of what was in it — where it is really the way out of the week, and so the
  * last thing the column offers rather than a part of one of its panels.
  *
- * Weekly Focus Time is not here. It was, for a while — a figure about the week
- * belongs with the figures about the week — but the design pins it to the
- * bottom-left corner of the grid, and that is where it is: `WeekFocusCard`
- * below, placed by pages/Calendar/Week.tsx.
- *
  * Two panels this column used to carry, the weekly focus note and Top
- * Priorities, are gone with them. Neither is in the design, and Top Priorities
- * is a card the dashboard already draws.
+ * Priorities, are gone. Neither is in the design, and Top Priorities is a card
+ * the dashboard already draws. Weekly focus time went with the timer.
  */
 import { useMemo } from 'react';
 import { MiniMonth } from './MiniMonth';
 import { Overview } from './Overview';
 import type { DayLoad } from '@/utils/calendarBusy';
-import { fmtHM } from '@/hooks/useFocusSession';
 import { useCountUp } from '@/hooks/useCountUp';
 import { OTHER_KEY, type SubjectXp } from '@/utils/subjectXp';
 import { Icon, type IconName } from '@/components/Icon';
@@ -47,12 +41,6 @@ export interface WeekStats {
   xp: number;
 }
 
-/** Focused against planned across the week, in seconds. */
-export interface WeekFocus {
-  focused: number;
-  planned: number;
-}
-
 /** One day of the week, for the sparkline, the charts and the streak dots. */
 export interface WeekDay {
   /** Mon…Sun, single letter. */
@@ -61,10 +49,6 @@ export interface WeekDay {
   name: string;
   /** XP earned that day. */
   xp: number;
-  /** Seconds focused that day. */
-  focused: number;
-  /** Seconds that day's goal asked for. */
-  planned: number;
   /** Whether anything was completed. Drives the streak dot. */
   active: boolean;
   /** A day that has not happened yet is drawn hollow, not missed. */
@@ -123,8 +107,6 @@ export interface WeekSidebarProps {
   onOpenLibrary: () => void;
   stats: WeekStats;
   streak: number;
-  /** Focused against planned across the week — the last card in the column. */
-  focus: WeekFocus;
   days: WeekDay[];
   /** The week's earned XP by subject, five rows and Other. */
   breakdown: SubjectXp;
@@ -133,24 +115,11 @@ export interface WeekSidebarProps {
   upcoming: UpcomingEntry[];
   /** The way out of the week — the design's "View Full Calendar". */
   onViewMonth: () => void;
-  onViewAnalytics: () => void;
   collapsed: boolean;
 }
 
 const RING_R = 26;
 const RING_C = 2 * Math.PI * RING_R;
-
-/**
- * A value's share of the plot's height, as a percentage.
- *
- * Zero is zero — a day with nothing on it draws nothing at all. Anything above
- * zero gets at least a sliver, because a real 3 XP rounded to half a pixel is
- * a day that happened and looks like a day that did not.
- */
-function barHeight(value: number, peak: number): string {
-  if (value <= 0 || peak <= 0) return '0%';
-  return `${Math.max(3, (value / peak) * 100)}%`;
-}
 
 /**
  * XP earned, split by what the work was about.
@@ -278,104 +247,6 @@ function PriorityChart({ priorities }: { priorities: PriorityRow[] }) {
 }
 
 /**
- * Weekly Focus Time — the week's total, and the shape of it.
- *
- * The design floats this over the foot of the grid, and it was floated for a
- * while. It is the last panel of the same overview, written in the same
- * furniture as the ones above it, so it now simply sits with them — which also
- * gives back the corner of Sunday evening it was covering.
- *
- * The chart under the summary is focused against planned, a day at a time.
- * They are a measure and its target rather than two series, so they are drawn
- * as one: the pale column is the day's goal and the solid one in front of it is
- * what was actually focused. Height is shared across the week and scaled to
- * whichever is largest, so a day that overshot its goal visibly overshoots it.
- * That is also why the two are told apart by shape and position rather than by
- * colour alone.
- */
-function WeekFocusCard({
-  focus,
-  days,
-  onViewAnalytics,
-}: {
-  focus: WeekFocus;
-  days: WeekDay[];
-  onViewAnalytics: () => void;
-}) {
-  const percent =
-    focus.planned > 0 ? Math.min(100, Math.round((focus.focused / focus.planned) * 100)) : 0;
-  const peak = Math.max(...days.map((day) => Math.max(day.focused, day.planned)), 1);
-  const anyFocus = days.some((day) => day.focused > 0 || day.planned > 0);
-
-  return (
-    <section className="wk-panel">
-      <h3 className="wk-panel-title"><Icon name="timer" /> Weekly focus time</h3>
-      <p className="wk-focustime">
-        {fmtHM(focus.focused)} <span className="wk-focustime-of">/ {fmtHM(focus.planned)}</span>
-      </p>
-      <div className="wk-progress">
-        <div
-          className="wk-progress-bar"
-          style={{ width: `${percent}%` }}
-          role="progressbar"
-          aria-valuenow={percent}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-label="Weekly focus goal progress"
-        />
-      </div>
-      <p className="wk-focustime-sub">{percent}% of goal</p>
-
-      {anyFocus && (
-        <>
-          <div
-            className="wk-chart wk-chart-focus"
-            role="img"
-            aria-label={`Focused against planned each day: ${days
-              .map((day) => `${day.name} ${fmtHM(day.focused)} of ${fmtHM(day.planned)}`)
-              .join(', ')}`}
-          >
-            {days.map((day, index) => (
-              <div className="wk-chart-col" key={index}>
-                <div
-                  className="wk-chart-track"
-                  title={`${day.name}: ${fmtHM(day.focused)} focused of ${fmtHM(day.planned)}`}
-                >
-                  <i
-                    className="wk-chart-goal"
-                    style={{ height: barHeight(day.planned, peak) }}
-                  />
-                  <i
-                    className={`wk-chart-bar is-focus${day.today ? ' is-today' : ''}`}
-                    style={{ height: barHeight(day.focused, peak) }}
-                  />
-                </div>
-                <span
-                  className={`wk-chart-day${day.today ? ' is-today' : ''}`}
-                  aria-hidden="true"
-                >
-                  {day.initial}
-                </span>
-              </div>
-            ))}
-          </div>
-          <p className="wk-chart-legend" aria-hidden="true">
-            <span className="wk-chart-key is-focus" />
-            Focused
-            <span className="wk-chart-key is-goal" />
-            Planned
-          </p>
-        </>
-      )}
-
-      <button type="button" className="wk-panel-link" onClick={onViewAnalytics}>
-        Open Analytics<span aria-hidden="true"> →</span>
-      </button>
-    </section>
-  );
-}
-
-/**
  * The sparkline's path, and the dot on each day.
  *
  * Drawn in a 100x34 box the SVG scales to the panel, so nothing here needs to
@@ -427,13 +298,11 @@ export function WeekSidebar({
   onOpenLibrary,
   stats,
   streak,
-  focus,
   days,
   breakdown,
   priorities,
   upcoming,
   onViewMonth,
-  onViewAnalytics,
   collapsed,
 }: WeekSidebarProps) {
   // This Week Progress counts itself up rather than arriving finished. The
@@ -501,8 +370,7 @@ export function WeekSidebar({
       {/* --- What the week came to ---------------------------------------- */}
       {/* The panel all three views share — components/Calendar/Overview.tsx.
           This one was a `<dl>` of three bare counts under the heading "This
-          Week Progress": Tasks, Completed and XP Earned, with no focus figure
-          at all even though the card below it has one, and with Tasks and
+          Week Progress": Tasks, Completed and XP Earned, with Tasks and
           Completed spending two entries on a fraction the reader still had to
           work out. The ring is the Week's own and stays — it is the one thing
           this magnification says that a day and a month do not. */}
@@ -510,8 +378,6 @@ export function WeekSidebar({
         scale="week"
         tasks={stats.total}
         done={stats.done}
-        focused={fmtHM(focus.focused)}
-        planned={fmtHM(focus.planned)}
         xp={stats.xp}
         lead={
           <div className="wk-weekly">
@@ -632,9 +498,6 @@ export function WeekSidebar({
           </ul>
         )}
       </section>
-
-      {/* --- Weekly Focus Time -------------------------------------------- */}
-      <WeekFocusCard focus={focus} days={days} onViewAnalytics={onViewAnalytics} />
 
       {/* --- The way out --------------------------------------------------
           The month, which is the only view that shows what comes after the

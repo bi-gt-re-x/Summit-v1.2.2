@@ -72,7 +72,7 @@ describe('what Mango says', () => {
 
 describe('which page is which', () => {
   it('leaves the three starter pages and Settings alone', () => {
-    for (const path of ['/dashboard', '/calendar', '/calendar/week', '/timer', '/settings', '/settings/profile']) {
+    for (const path of ['/dashboard', '/calendar', '/calendar/week', '/log', '/settings', '/settings/profile']) {
       expect(featureForPath(path)).toBeUndefined();
     }
   });
@@ -83,7 +83,6 @@ describe('which page is which', () => {
     expect(featureForPath('/tasks')?.id).toBe('tasks');
     expect(featureForPath('/goals')?.id).toBe('goals');
     expect(featureForPath('/skill-trees')?.id).toBe('skill-tree');
-    expect(featureForPath('/notes')?.id).toBe('notes');
     expect(featureForPath('/achievements/badges')?.id).toBe('achievements');
     expect(featureForPath('/spaces/2')?.id).toBe('spaces');
     expect(featureForPath('/team/1')?.id).toBe('spaces');

@@ -66,7 +66,7 @@ export const PLACES: Place[] = [
     name: 'Dashboard',
     where: '',
     to: '/dashboard',
-    keywords: 'home today progress xp level streak focus timer daily goal quote greeting',
+    keywords: 'home today progress xp level streak daily goal quote greeting',
   },
   {
     id: 'tasks',
@@ -82,13 +82,7 @@ export const PLACES: Place[] = [
     to: '/goals',
     keywords: 'targets milestones deadlines ambitions objectives ladder',
   },
-  {
-    id: 'notes',
-    name: 'Notes',
-    where: '',
-    to: '/notes',
-    keywords: 'writing markdown notebook shelf',
-  },
+
   {
     id: 'log',
     name: 'Log',
@@ -228,7 +222,7 @@ export const PLACES: Place[] = [
     name: 'Dashboard',
     where: 'Settings',
     to: '/settings/dashboard',
-    keywords: 'daily xp goal stat cards insights focus panel quote which panels',
+    keywords: 'daily xp goal stat cards insights quote which panels',
   },
   {
     id: 'settings-tasks',
@@ -244,13 +238,7 @@ export const PLACES: Place[] = [
     to: '/settings/calendar',
     keywords: 'default view week starts on monday sunday',
   },
-  {
-    id: 'settings-focus',
-    name: 'Focus',
-    where: 'Settings',
-    to: '/settings/focus',
-    keywords: 'daily focus goal hours dim the page catch up untracked days',
-  },
+
   {
     id: 'settings-notifications',
     name: 'Notifications',
@@ -290,13 +278,7 @@ export const PLACES: Place[] = [
   // --- Routed, but not built yet. In the index on purpose: a reader looking
   //     for one should find the page that says what it will be and what it is
   //     waiting on, not nothing at all. See pages/Unbuilt.tsx.
-  {
-    id: 'focus-page',
-    name: 'Focus',
-    where: 'Not built yet',
-    to: '/focus',
-    keywords: 'timer pomodoro session history deep work',
-  },
+
   {
     id: 'library',
     name: 'Library',

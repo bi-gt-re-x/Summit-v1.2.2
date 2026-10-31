@@ -4,7 +4,7 @@
  * ## Why a subset, and why written here
  *
  * The notes toolbar writes Markdown into a plain-text column (see
- * pages/Notes.tsx) — which keeps a note readable as itself, in the database
+ * the old Notes page) — which keeps a note readable as itself, in the database
  * and in any other window it is ever opened in. The cost of that choice is
  * that something has to turn it back into headings, and this is that
  * something.

@@ -47,10 +47,10 @@ const rail = (createdAt: string, prefs = {}, taskDays = 0) => {
 describe('the rail for a new account', () => {
   it('lists the daily loop and names the next page, nothing more', () => {
     const nav = rail(justJoined);
-    for (const label of ['Dashboard', 'Calendar', 'Timer']) {
+    for (const label of ['Dashboard', 'Calendar', 'Log']) {
       expect(within(nav).getByRole('link', { name: label })).toBeInTheDocument();
     }
-    for (const label of ['Analytics', 'Tasks', 'Goals', 'Skill Tree', 'Notes', 'Achievements']) {
+    for (const label of ['Analytics', 'Tasks', 'Goals', 'Skill Tree', 'Achievements', 'Notes', 'Timer']) {
       expect(within(nav).queryByRole('link', { name: label })).not.toBeInTheDocument();
     }
     expect(within(nav).getByText(/Next: Tasks/)).toBeInTheDocument();

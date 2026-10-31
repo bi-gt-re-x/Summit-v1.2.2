@@ -218,7 +218,7 @@ const SECTIONS: LegalSection[] = [
         list: [
           <><strong>Sign-in cookie.</strong> Keeps you signed in for up to 14 days. It's signed so it can't be forged, marked HttpOnly so page scripts can't read it, sent only over secure connections when the site is served over HTTPS, and limited to Summit (SameSite=Lax).</>,
           <><strong>Theme cookie.</strong> Remembers light or dark mode so the page doesn't flash the wrong colors.</>,
-          <><strong>Browser storage.</strong> Your browser keeps small conveniences on your device, such as a running focus timer, which tab or view you last had open, and drafts you haven't saved. It stays on your device, and clearing your browser's site data removes it.</>,
+          <><strong>Browser storage.</strong> Your browser keeps small conveniences on your device, such as which tab or view you last had open and drafts you haven't saved. It stays on your device, and clearing your browser's site data removes it.</>,
         ],
       },
       'We don\'t use advertising or analytics cookies, so there is nothing to opt out of. Because we don\'t track you across sites, we treat every visitor as if they had sent a "Do Not Track" or Global Privacy Control signal.',

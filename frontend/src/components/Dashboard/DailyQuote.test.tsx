@@ -4,7 +4,7 @@
  * Two things are being protected. The first is that the quote is a quote: it
  * paints immediately, it improves when the fetch lands, and it survives the
  * fetch never landing. The second is the reveal — which is not triggered here.
- * The ten clicks are on the mark in the Focus card's corner
+ * The ten clicks are on the mark in the Today card's corner
  * (hooks/useMarkEgg.ts and components/Dashboard/StatCards.egg.test.tsx), and
  * what this file pins is the one message that reaches the quote from there.
  *
