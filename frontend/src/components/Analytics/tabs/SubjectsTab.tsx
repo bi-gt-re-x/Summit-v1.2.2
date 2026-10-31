@@ -333,7 +333,7 @@ export function SubjectsOpening({ rows, span }: { rows: SubjectXpRow[]; span: st
   return (
     <TabOpening>
       <strong>{rows.length}</strong>{' '}
-      {rows.length === 1 ? 'subject has' : 'subjects have'} XP in {span}, and{' '}
+      {rows.length === 1 ? 'subject has' : 'subjects have'} XP {span.includes(' to ') ? 'from' : 'in'} {span}, and{' '}
       <strong>{rows[0]!.label}</strong> is the furthest along.
     </TabOpening>
   );

@@ -259,9 +259,9 @@ export function HabitCard({
  */
 export function habitVerdict(habit: Habit): string {
   const { daysSince, score, recentScore, dayRate } = habit;
-  if (daysSince !== null && daysSince >= 14) return `Gone quiet. Nothing in ${daysSince} days.`;
+  if (daysSince !== null && daysSince >= 14) return `Gone quiet. Nothing in ${daysSince.toLocaleString()} days.`;
   if (daysSince !== null && daysSince >= 7) {
-    return `Skipped for ${daysSince} days straight. Your usual is ${dayRate}% of days.`;
+    return `Skipped for ${daysSince.toLocaleString()} days straight. Your usual is ${dayRate}% of days.`;
   }
   if (score >= 10 && recentScore < score * 0.5) {
     return `Fading. ${recentScore}% the last 4 weeks, down from ${score}% overall.`;
@@ -547,7 +547,7 @@ export function habitLead(summary: HabitSummary, span: string): string {
   const parts: string[] = [];
   if (summary.tracked > 0) {
     parts.push(
-      `${summary.tracked} ${summary.tracked === 1 ? 'habit' : 'habits'} found in ${span}`,
+      `${summary.tracked} ${summary.tracked === 1 ? 'habit' : 'habits'} found ${span.includes(' to ') ? 'from' : 'in'} ${span}`,
     );
   }
   if (summary.anchor) {

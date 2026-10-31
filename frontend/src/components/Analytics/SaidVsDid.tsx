@@ -227,7 +227,7 @@ export function SaidVsDid({ data, reload }: { data: Reading | null; reload: () =
                 <b>{row.name}</b>
                 <span>
                   {row.topics.map((topic) => `${topic.name} ${topic.tasks}`).join(' · ')}
-                  <small> of {row.tasks}</small>
+                  <small> of {row.tasks.toLocaleString()}</small>
                 </span>
               </li>
             ))}

@@ -14,9 +14,37 @@ STYLE = """
 How to write: like a friendly tutor talking to one student. Short sentences
 and everyday words. Use contractions (it's, you're, don't). No dashes as
 punctuation, no semicolons and no curly quotes. Skip words like genuinely,
-leverage, robust, delve, crucial, journey, unlock and seamless. Never write
+leverage, robust, delve, crucial, journey, unlock and seamless, and don't
+start steps with Attempt, Summarize or Utilize (say Try, Sum up, Use). Don't
+tack ", focusing on" or ", aiming for" onto the end of a step. Never write
 "not X, but Y" or "X, not Y" slogans. Say the thing plainly.
 """
+
+# Stiff words a model reaches for, and what a person would say. Scored on the
+# local detector over saved plan steps: "Summarize the experiment steps..."
+# 73% AI, "Sum up..." 9%. ", aiming for smooth phrasing" 61%, ". Go for
+# smooth phrasing" 6%. Prose only: the step library is math and code.
+_SWAPS = [
+    (re.compile(r',\s+focusing on\s+'), '. Watch '),
+    (re.compile(r',\s+aiming for\s+'), '. Go for '),
+    (re.compile(r'\bsummarize\b', re.I), 'sum up'),
+    (re.compile(r'\bwrite down\b', re.I), 'jot down'),
+    (re.compile(r'\bcompleted\b', re.I), 'finished'),
+    (re.compile(r'\butilize\b', re.I), 'use'),
+    (re.compile(r'\bensure\b', re.I), 'make sure'),
+    (re.compile(r'\bin order to\b', re.I), 'to'),
+    (re.compile(r'\bapproximately\b', re.I), 'about'),
+    (re.compile(r'\badditionally\b', re.I), 'also'),
+    (re.compile(r'^attempt\b|(?<=[.!?:]\s)attempt\b|(?<=\)\s)attempt\b', re.I | re.M), 'try'),
+]
+
+
+def _swap(text: str) -> str:
+    """Each swap keeps the capital when the word it replaces had one."""
+    for pattern, word in _SWAPS:
+        text = pattern.sub(
+            lambda m, word=word: word.capitalize() if m.group(0)[0].isupper() else word, text)
+    return text
 
 # Curly quotes, and the hyphens a model sometimes swaps in for "-" inside a
 # word ("30\u2011minute"), which look the same but break search and copying.
@@ -39,6 +67,7 @@ def plain_text(text: str, semicolons: bool = True) -> str:
     out = _PAUSE.sub(', ', out)
     if semicolons:
         out = _SEMI.sub(lambda m: '. ' + m.group(1).upper(), out)
+        out = _swap(out)
     out = re.sub(r',\s*,', ',', out)
     out = re.sub(r'^\s*,\s*', '', out)
     return out

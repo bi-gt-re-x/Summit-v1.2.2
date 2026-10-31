@@ -1259,7 +1259,7 @@ export function Scatter({ points, tone, xLabel, yLabel, trend }: ScatterProps) {
       <svg
         viewBox={`0 0 ${width} ${height}`}
         role="img"
-        aria-label={`${xLabel} vs. ${yLabel}. ${points.length} ${points.length === 1 ? 'point' : 'points'}${trend ? ', with a trend line' : ''}.`}
+        aria-label={`${xLabel} vs. ${yLabel}. ${points.length.toLocaleString()} ${points.length === 1 ? 'point' : 'points'}${trend ? ', with a trend line' : ''}.`}
       >
         {[0.25, 0.5, 0.75].map((ratio) => (
           <line

@@ -361,7 +361,7 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
         <PanelHead
           title="Habit stability"
           hint={`Your ${HABIT_ROWS} steadiest subjects since day one`}
-          note={habits.length ? `since day one · ${habits[0]!.spanDays} days` : undefined}
+          note={habits.length ? `since day one · ${habits[0]!.spanDays.toLocaleString()} days` : undefined}
         />
         {habits.length === 0 ? (
           <p className="gr-empty">
@@ -385,7 +385,7 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
                 </span>
                 <div className="gr-habit-foot">
                   <span>
-                    {habit.consistency}% of your {habit.spanDays} days
+                    {habit.consistency}% of your {habit.spanDays.toLocaleString()} days
                   </span>
                   <span>
                     <Glyph name="flame" size={11} /> {habit.streak} wk · best {habit.bestStreak}

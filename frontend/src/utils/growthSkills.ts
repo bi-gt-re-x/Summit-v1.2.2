@@ -436,7 +436,7 @@ export function skillBalance(card: SkillCard): BalanceAxis[] {
   const pct = (value: number, top: number) =>
     Math.max(0, Math.min(100, Math.round((value / top) * 100)));
   const R = BALANCE_RULES;
-  const plural = (count: number, word: string) => `${count} ${word}${count === 1 ? '' : 's'}`;
+  const plural = (count: number, word: string) => `${count.toLocaleString()} ${word}${count === 1 ? '' : 's'}`;
 
   return [
     {

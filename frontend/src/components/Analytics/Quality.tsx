@@ -349,7 +349,7 @@ export function QualityGridPanel({ cells, summary, depth }: QualityGridPanelProp
                   '--fill': cell.count ? Math.max(0.18, cell.count / peak) : 0,
                 } as CSSProperties
               }
-              title={`${DIFFICULTY_WORDS[cell.difficulty - 1]} · ${EXECUTION_WORDS[cell.execution - 1]}: ${cell.count} ${cell.count === 1 ? 'task' : 'tasks'}, worth ${cell.quality}/${QUALITY_MAX}`}
+              title={`${DIFFICULTY_WORDS[cell.difficulty - 1]} · ${EXECUTION_WORDS[cell.execution - 1]}: ${cell.count.toLocaleString()} ${cell.count === 1 ? 'task' : 'tasks'}, worth ${cell.quality}/${QUALITY_MAX}`}
             >
               {cell.count > 0 ? cell.count : ''}
             </span>

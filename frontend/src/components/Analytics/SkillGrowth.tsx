@@ -710,11 +710,11 @@ function Headline({ summary, since, periodText, long }: {
         {biggest ? (
           <>
             From <strong>{biggest.then}</strong> to <strong>{biggest.now}</strong> (
-            {signed(biggest.delta ?? 0)} points)
+            {signed(biggest.delta ?? 0)})
             {biggest.thenOn ? ` since ${pointDate(biggest.thenOn, long)}` : ''}
             {biggest.promoted && biggest.bandThen
-              ? `, up from ${biggest.bandThen} to ${biggest.band}.`
-              : `, still ${biggest.band}.`}
+              ? `. That's ${biggest.bandThen} to ${biggest.band}.`
+              : `. Still ${biggest.band}.`}
           </>
         ) : (
           <>Nothing rose over {periodText}.</>
@@ -1086,7 +1086,7 @@ export function TimeProgressPanel({ progress, periodText }: TimeProgressPanelPro
         You logged <strong>{one(hours)}h</strong> of focus in {periodText}
         {pointsGained > 0 ? (
           <>
-            . That's <strong>+{pointsGained}</strong> points of level across{' '}
+            . That's <strong>+{pointsGained}</strong> level points over{' '}
             {subjectsUp} {subjectsUp === 1 ? 'subject' : 'subjects'}.
           </>
         ) : (

@@ -319,7 +319,7 @@ function WorkPanel({ data }: { data: RecordAnalysis }) {
                 </span>
               </div>
               <p className="ax-rx-row-foot">
-                {hoursText(record.work.climb_seconds)} on {record.work.climb_tasks}{' '}
+                {hoursText(record.work.climb_seconds)} on {record.work.climb_tasks.toLocaleString()}{' '}
                 {record.work.climb_tasks === 1 ? 'task' : 'tasks'}
                 {record.work.seconds_per_unit !== null && PER[record.unit] &&
                   ` · about ${hoursText(record.work.seconds_per_unit)} per ${PER[record.unit]}`}

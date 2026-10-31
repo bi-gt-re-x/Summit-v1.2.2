@@ -1084,8 +1084,8 @@ export function whatChanged(data: GrowthPeriods): ReactNode[] {
   if (totalNow > 0 && totalThen > 0 && daysNow !== daysThen) {
     lines.push(
       <>
-        You worked on <strong>{daysNow} of {totalNow} days</strong>, compared with {daysThen} of{' '}
-        {totalThen}.
+        You worked on <strong>{daysNow.toLocaleString()} of {totalNow.toLocaleString()} days</strong>, compared with {daysThen.toLocaleString()} of{' '}
+        {totalThen.toLocaleString()}.
       </>,
     );
   }
