@@ -440,7 +440,7 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
         <PanelHead
           title="Bouncing back"
           hint="Compared with your usual day"
-          note={`${recovery.totalDays} days logged`}
+          note={`${recovery.totalDays.toLocaleString()} days logged`}
         />
         <div className="gr-recov-row">
           <div className="gr-recov-figure">
@@ -449,11 +449,11 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
             <p>
               {recovery.rate === null
                 ? 'No missed days yet. Nice.'
-                : `You usually return to your routine within ${
+                : `Off days don't last. You're back in ${
                     recovery.typicalDays !== null && recovery.typicalDays <= 1.5
                       ? '1 day'
                       : `${recovery.typicalDays} days`
-                  } after a quiet one.`}
+                  }, usually.`}
             </p>
           </div>
 

@@ -988,7 +988,7 @@ export function milestones(data: GrowthPeriods, limit = 6): Milestone[] {
           date: point.date,
           kind: 'grade',
           headline: `Reached ${nextLetter}`,
-          detail: `Your overall score reached ${nextLetter} (${point.overall}/100).`,
+          detail: `Overall score hit ${nextLetter} (${point.overall}/100).`,
         });
       }
       letter = nextLetter;

@@ -137,7 +137,9 @@ def hours(seconds: float) -> str:
     if seconds < 3600:
         return '{}m'.format(max(1, round(seconds / 60)))
     value = seconds / 3600
-    return '{}h'.format(round(value) if value >= 10 else round(value, 1)).replace('.0h', 'h')
+    if value >= 10:
+        return '{:,}h'.format(round(value))
+    return '{}h'.format(round(value, 1)).replace('.0h', 'h')
 
 
 # --------------------------------------------------------------------------
@@ -731,7 +733,7 @@ def reads(records: Sequence[Dict[str, Any]], days: int) -> List[Dict[str, Any]]:
 
         # 1. A climb, and what it took.
         if r['gain'] > 0 and r['days_to_best']:
-            detail = '{} to {} in {}.'.format(fmt(r['first'], r['unit'], r['target']),
+            detail = 'Went {} → {}. Took {}.'.format(fmt(r['first'], r['unit'], r['target']),
                                              fmt(r['best'], r['unit'], r['target']),
                                              duration(r['days_to_best']))
             if work['basis'] and work['climb_tasks'] and work['climb_seconds'] >= 3600:
@@ -741,7 +743,7 @@ def reads(records: Sequence[Dict[str, Any]], days: int) -> List[Dict[str, Any]]:
                 if work['seconds_per_unit'] and r['unit'] in PER and r['days_to_best'] <= PER_UNIT_DAYS:
                     detail += ', about {} per {}'.format(hours(work['seconds_per_unit']), PER[r['unit']])
                 detail += '.'
-            say('climb', r, 'good', '{}: {} since your first entry'.format(
+            say('climb', r, 'good', '{}: {} since you started'.format(
                 r['name'], change(r['gain'], unit_less, r['direction'])),
                 # Size of the climb, scaled by how much record is behind it,
                 # topping out near a fresh best's weight rather than far above.

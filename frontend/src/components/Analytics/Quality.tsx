@@ -191,11 +191,11 @@ export function QualityPanel({
     <Panel
       title="Quality of finished work"
       aside={aside}
-      note={`${summary.rated} rated task${summary.rated === 1 ? '' : 's'} in ${span}`}
+      note={`${summary.rated.toLocaleString()} rated task${summary.rated === 1 ? '' : 's'} · ${span}`}
       footer={
         <PanelNote label="How this works">
           <ul className="ax-tips">
-            <li><b>Hard times good:</b> Difficulty times how well it went, averaged over rated tasks.</li>
+            <li><b>Score:</b> Difficulty times how well it went, averaged over rated tasks.</li>
             <li><b>Top score:</b> 25 means a brutal task done really well.</li>
             <li><b>Skips are fine:</b> Tasks you didn't rate are left out. They don't count as zero.</li>
           </ul>
@@ -208,7 +208,7 @@ export function QualityPanel({
           <em className="ax-tile-unit">/ {QUALITY_MAX}</em>
         </strong>
         <span className="ax-muted">
-          Rated {summary.rated} of {summary.finished} finished ({summary.coverage}%)
+          Rated {summary.rated.toLocaleString()} of {summary.finished.toLocaleString()} finished ({summary.coverage}%)
         </span>
       </div>
 
@@ -239,7 +239,7 @@ export function QualityPanel({
             <span className="ax-quality-band-label">{band.label}</span>
             <span className="ax-quality-band-share">{band.share}%</span>
             <span className="ax-muted ax-small">
-              {band.count} {band.count === 1 ? 'task' : 'tasks'}
+              {band.count.toLocaleString()} {band.count === 1 ? 'task' : 'tasks'}
             </span>
           </li>
         ))}
@@ -313,10 +313,10 @@ export function QualityGridPanel({ cells, summary, depth }: QualityGridPanelProp
           </>
         ) : (
           <>
-            Across <strong>{summary.rated}</strong> rated{' '}
-            {summary.rated === 1 ? 'task' : 'tasks'} you rate difficulty{' '}
-            <strong>{summary.difficulty.toFixed(1)}</strong> and how it went{' '}
-            <strong>{summary.execution.toFixed(1)}</strong>. The grid shows where they cluster.
+            Across <strong>{summary.rated.toLocaleString()}</strong> rated{' '}
+            {summary.rated === 1 ? 'task' : 'tasks'}: difficulty{' '}
+            <strong>{summary.difficulty.toFixed(1)}</strong>, how it went{' '}
+            <strong>{summary.execution.toFixed(1)}</strong>.
           </>
         )
       }
@@ -327,7 +327,7 @@ export function QualityGridPanel({ cells, summary, depth }: QualityGridPanelProp
             <li><b>Bottom to top:</b> Went badly to went well.</li>
             <li><b>Top right:</b> Hard work going well. That's the goal.</li>
             <li><b>Top left:</b> Easy work done well. Comfy, but it won't stretch you.</li>
-            <li><b>Rated only:</b> Just your {summary.rated} rated tasks show up here.</li>
+            <li><b>Rated only:</b> Just your {summary.rated.toLocaleString()} rated tasks show up here.</li>
           </ul>
         </PanelNote>
       }

@@ -273,19 +273,19 @@ export function qualityBands(rated: RatedTask[]): QualityBand[] {
   return [
     band(
       'Hard, done well',
-      'Difficulty 3+ and execution 3+. This is the work that counts most.',
+      'Difficulty 3+, how it went 3+. This is the work that counts most.',
       'green',
       count((task) => task.difficulty >= 3 && task.execution >= 3),
     ),
     band(
       'Hard, went badly',
-      'Difficulty 3+, execution below 3. Look for what these had in common.',
+      'Difficulty 3+, how it went below 3. Look for what these had in common.',
       'amber',
       count((task) => task.difficulty >= 3 && task.execution < 3),
     ),
     band(
       'Easy, done well',
-      "Difficulty below 3, execution 3+. Real work, but it's not stretching you.",
+      "Difficulty below 3, how it went 3+. Real work, but it's not stretching you.",
       'blue',
       count((task) => task.difficulty < 3 && task.execution >= 3),
     ),
@@ -339,19 +339,19 @@ export function ratingFindings(summary: RatingSummary, rated: RatedTask[]): Rati
         ? {
             tone: 'watch',
             headline: 'Your tasks may be too easy.',
-            hint: `Execution ${execution.toFixed(1)}, difficulty ${difficulty.toFixed(1)}. Try harder tasks.`,
+            hint: `How it went ${execution.toFixed(1)}, difficulty ${difficulty.toFixed(1)}. Try harder tasks.`,
           }
         : {
             tone: 'watch',
             headline: 'Your tasks may be too hard.',
-            hint: `Difficulty ${difficulty.toFixed(1)}, execution ${execution.toFixed(1)}. Fine for now, but keep an eye on it.`,
+            hint: `Difficulty ${difficulty.toFixed(1)}, how it went ${execution.toFixed(1)}. Fine for now. Keep an eye on it.`,
           },
     );
   } else {
     out.push({
       tone: 'good',
       headline: 'Your tasks are the right difficulty.',
-      hint: `Difficulty ${difficulty.toFixed(1)}, execution ${execution.toFixed(1)}. You're challenged but still doing well.`,
+      hint: `Difficulty ${difficulty.toFixed(1)}, how it went ${execution.toFixed(1)}. Hard enough, and going fine.`,
     });
   }
 
@@ -363,7 +363,7 @@ export function ratingFindings(summary: RatingSummary, rated: RatedTask[]): Rati
     out.push({
       tone: share >= 60 ? 'good' : 'watch',
       headline: `${share}% of your hardest tasks went well.`,
-      hint: `${hardWell} of ${hard.length} hard tasks (4-5 difficulty) rated 3+ for execution.`,
+      hint: `${hardWell.toLocaleString()} of ${hard.length.toLocaleString()} hard tasks (4-5 difficulty) rated 3+ for how it went.`,
     });
   }
 
@@ -390,7 +390,7 @@ export function ratingFindings(summary: RatingSummary, rated: RatedTask[]): Rati
   // it is even when — especially when — the findings sound confident.
   out.push({
     tone: 'note',
-    headline: `Based on ${summary.rated} of ${summary.finished} finished tasks.`,
+    headline: `Based on ${summary.rated.toLocaleString()} of ${summary.finished.toLocaleString()} finished tasks.`,
     hint:
       summary.coverage >= 60
         ? 'Enough to be reliable.'

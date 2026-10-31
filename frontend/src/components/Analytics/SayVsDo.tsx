@@ -150,7 +150,7 @@ function Timeline({ series, usual }: { series: MoodDay[]; usual: number }) {
       <svg
         viewBox={`0 0 ${width} ${barTop + barH + 4}`}
         role="img"
-        aria-label="Mood and tasks for each of the last 60 days"
+        aria-label="Mood and tasks, last 60 days"
         onMouseLeave={() => setHover(null)}
       >
         {[-2, 0, 2].map((mood) => (
@@ -221,7 +221,7 @@ function MoodHero({ mood }: { mood: MoodVsOutput }) {
   const anyBand = mood.bands.some((band) => band.days > 0);
   return (
     <Panel
-      title="How you feel vs. what you get done"
+      title="Mood vs. work done"
       className="ax-sv-hero"
       aside={headline ? <Sure level={headline.confidence} days={mood.mood_days} /> : undefined}
       footer={
@@ -233,8 +233,8 @@ function MoodHero({ mood }: { mood: MoodVsOutput }) {
             </li>
             <li>Rough is below the middle, okay is the middle, good is above it.</li>
             <li>
-              We match each day with what you got done that day. Your usual day is the middle of your
-              active days in the last {usual.days} days: {plural(usual.tasks, 'task')}.
+              Each day is matched with what you got done that day. A usual day for you is{' '}
+              {plural(usual.tasks, 'task')} (the middle of your last {usual.days} active days).
             </li>
             <li>
               A comparison needs {mood.min_days} days on each side, and a gap under {mood.small_change}%
@@ -247,8 +247,8 @@ function MoodHero({ mood }: { mood: MoodVsOutput }) {
     >
       {headline && <p className={`ax-sv-headline is-${headline.tone}`}>{headline.text}</p>}
       <p className="ax-sv-source">
-        {plural(mood.mood_days, 'day')} with a mood in the last {mood.window_days} days
-        {mood.mood_days > 0 && `: ${mood.said_days} you tapped, ${mood.read_days} from your words`}.
+        Mood on {mood.mood_days} of the last {mood.window_days} days
+        {mood.mood_days > 0 && `: ${mood.said_days} tapped, ${mood.read_days} from your words`}.
         {!mood.today ? (
           <>
             {' '}

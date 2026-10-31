@@ -224,12 +224,12 @@ export function Summary({
             {(value / 10).toFixed(1)}
             <em>/10</em>
           </strong>
-          . That&apos;s {GRADE_MEANING[grade].toLowerCase()}.
+          . {GRADE_MEANING[grade]}
           {next && (
             <>
               {' '}
               <span className="ax-summary-next">
-                <strong>{(next.points / 10).toFixed(1)}</strong> to {next.grade}.
+                <strong>{(next.points / 10).toFixed(1)}</strong> more for {/^[AFS]/.test(next.grade) ? 'an' : 'a'} {next.grade}.
               </span>
             </>
           )}

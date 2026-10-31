@@ -503,7 +503,7 @@ export function AreaChart({
           ? {
               tabIndex: 0,
               role: 'group' as const,
-              'aria-label': `${label}. Use the left and right arrow keys to read each point.`,
+              'aria-label': `${label}. Arrow keys step through the points.`,
               onPointerMove: track,
               onPointerDown: track,
               onPointerLeave: () => setActive(null),

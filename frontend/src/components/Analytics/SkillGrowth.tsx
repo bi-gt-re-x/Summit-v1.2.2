@@ -304,7 +304,7 @@ function SubjectCard({
             tone={toneOf(read.completion, 80, 50)}
             detail={
               read.completion.den > 0
-                ? `${read.completion.num} of ${read.completion.den} tasks you added were finished`
+                ? `${read.completion.num.toLocaleString()} of ${read.completion.den.toLocaleString()} tasks you added were finished`
                 : 'No tasks added in this period'
             }
             change={changeText(read.completion)}
@@ -424,7 +424,7 @@ function SubjectCard({
           <Sparkline values={track.spark} tone={toneFor(track)} />
         </span>
         <p className="sg-basis">
-          Level score{' '}
+          Level{' '}
           <span className="sg-move">
             {track.then === null ? (
               <>new this period, <strong>{track.now}</strong></>
@@ -435,9 +435,9 @@ function SubjectCard({
               </>
             )}
           </span>{' '}
-          out of 100, from {track.rated} rated {track.rated === 1 ? 'task' : 'tasks'}
+          out of 100 · {track.rated.toLocaleString()} rated {track.rated === 1 ? 'task' : 'tasks'}
           {track.confidence < 0.5 ? '(not much data yet)' : ''}
-          {read?.lastDone ? ` · last finished ${shortDate(read.lastDone)}` : ''}
+          {read?.lastDone ? ` · last one ${shortDate(read.lastDone)}` : ''}
         </p>
       </div>
         </div>
@@ -650,11 +650,10 @@ function Headline({ summary, since, periodText, long }: {
           </>
         ) : (
           <>
-            Your average level went from <strong>{overall.avgThen}</strong> to{' '}
-            <strong>{overall.avgNow}</strong> out of 100 ({signed(overall.points)}{' '}
-            {Math.abs(overall.points) === 1 ? 'point' : 'points'}) across{' '}
-            {overall.subjects === 1 ? 'one subject' : `${overall.subjects} subjects`}. Each one counts from
-            when its level first held steady.
+            Average level: <strong>{overall.avgThen}</strong> →{' '}
+            <strong>{overall.avgNow}</strong> out of 100 ({signed(overall.points)}) over{' '}
+            {overall.subjects === 1 ? 'one subject' : `${overall.subjects} subjects`}. Each starts from
+            its first steady level.
           </>
         )}
       </Stat>
@@ -1116,7 +1115,7 @@ export function TimeProgressPanel({ progress, periodText }: TimeProgressPanelPro
           <dd>
             {round(finished)} finished
             <span className="sg-fact-against">
-              {rated} rated, {hard} of them hard
+              {rated.toLocaleString()} rated, {hard.toLocaleString()} of them hard
             </span>
           </dd>
         </div>

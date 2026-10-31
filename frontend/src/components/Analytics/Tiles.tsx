@@ -115,7 +115,7 @@ export function Tiles({
       hint:
         figures.ratedTasks === 0
           ? 'How hard times how well, from your task ratings. Optional.'
-          : `How hard times how well, out of 25. From the ${figures.ratedTasks} of ${figures.finishedTasks} tasks you rated.`,
+          : `How hard times how well, out of 25. From the ${figures.ratedTasks.toLocaleString()} of ${figures.finishedTasks.toLocaleString()} tasks you rated.`,
     },
     ...((only ? only.includes('tasks') : showsTaskVolume(logStyle))
       ? [

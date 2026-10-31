@@ -29,10 +29,11 @@ const VERDICT: Record<Verdict, string> = {
   not_yet: 'Nothing logged yet',
 };
 
+/* Each window reads after "get done" and after "busiest time is". */
 const WINDOW: Record<string, string> = {
-  morning: 'the morning',
-  afternoon: 'the afternoon',
-  evening: 'the evening',
+  morning: 'in the morning',
+  afternoon: 'in the afternoon',
+  evening: 'in the evening',
   night: 'late at night',
 };
 
@@ -81,7 +82,7 @@ function NamedItem({ row, rank, total, open, onToggle }: {
             'No tasks yet'
           ) : (
             <>
-              <b>{row.tasks}</b> of {total} {total === 1 ? 'task' : 'tasks'}
+              <b>{row.tasks.toLocaleString()}</b> of {total.toLocaleString()} {total === 1 ? 'task' : 'tasks'}
               <small> {row.share}%</small>
             </>
           )}
@@ -205,8 +206,8 @@ export function SaidVsDid({ data, reload }: { data: Reading | null; reload: () =
                     <p className="ax-said-quote">"{row.text}"<span className="ax-said-src">Log</span></p>
                     <p className="ax-said-did">
                       {row.matches
-                        ? `That matches. ${WINDOW[row.busiest]} is your busiest time, with ${row.busiest_share}% of your tasks.`
-                        : `${row.share}% of your tasks get done in ${WINDOW[row.said]}. Your busiest time is ${WINDOW[row.busiest]} (${row.busiest_share}%).`}
+                        ? `That matches. It's your busiest time, with ${row.busiest_share}% of your tasks.`
+                        : `${row.share}% of your tasks get done ${WINDOW[row.said]}. Most get done ${WINDOW[row.busiest]} (${row.busiest_share}%).`}
                       <span className="ax-said-basis"> From {plural(row.tasks, 'task')} in 60 days.</span>
                     </p>
                   </li>

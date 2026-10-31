@@ -75,18 +75,18 @@ describe('the distance to the next grade', () => {
   it('is in the lead sentence', () => {
     // 62 is a D; C starts at 70.
     show({ score: scoreOf(62, 'D') });
-    expect(nextClause()).toMatch(/0\.8 to C/);
+    expect(nextClause()).toMatch(/0\.8 more for a C/);
   });
 
   it('counts from the band the letter came from', () => {
     // 88 is a B; A starts at 90.
     show({ score: scoreOf(88, 'B') });
-    expect(nextClause()).toMatch(/0\.2 to A/);
+    expect(nextClause()).toMatch(/0\.2 more for an A/);
   });
 
   it('says the distance on the ten-point scale the score is printed on', () => {
     show({ score: scoreOf(69, 'D') });
-    expect(nextClause()).toMatch(/0\.1 to C/);
+    expect(nextClause()).toMatch(/0\.1 more for a C/);
   });
 
   it('is absent at the top, where there is no band above', () => {
@@ -125,7 +125,7 @@ describe('what must not have changed', () => {
   it('still prints the score and what the letter means', () => {
     show({ score: scoreOf(62, 'D') });
     expect(lead().textContent).toMatch(/6\.2\/10/);
-    expect(lead().textContent).toMatch(/two or three of the five are low/i);
+    expect(lead().textContent).toMatch(/A few parts are low\./);
   });
 
   it('still tells an account with no record what the score needs', () => {

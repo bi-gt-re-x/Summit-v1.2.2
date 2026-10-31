@@ -398,8 +398,8 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
         found.append(_action(
             id='check-{}'.format(ready['node_id']), kind='check',
             title='Take the {} skill check'.format(ready['name']),
-            because=("You've put in {} session{} on it. Get 3 of 4 or 4 of 5 right and "
-                     'it\'s mastered.').format(ready['sessions'], '' if ready['sessions'] == 1 else 's'),
+            because=('{} session{} on it so far. Get 3 of 4 or 4 of 5 right and '
+                     "it's mastered.").format(ready['sessions'], '' if ready['sessions'] == 1 else 's'),
             minutes=CHECK_MINUTES, to='/skill-trees?node={}&check=1'.format(ready['node_id']),
             weight=CHECK_WEIGHT))
 
@@ -507,7 +507,7 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
             title=('Finish "{}" for {}'.format(linked.get('title'), title) if linked
                    else 'Start "{}" for {}'.format(stone.get('title'), title) if stone
                    else 'Plan the next step for {}'.format(title)),
-            because="Nothing finished toward it in {} days. It's at {}%.".format(
+            because="Nothing finished toward it in {:,} days. It's at {}%.".format(
                 since, js_round(_num(goal.get('progress')))),
             minutes=slot, taskId=linked.get('id') if linked else None, goalId=goal.get('id'),
             weight=580 + min(since, 30)))
@@ -607,7 +607,7 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
         found.append(_action(
             id='neglected-{}'.format(subject), kind='neglected',
             title='Come back to {}'.format(name_of(subject)),
-            because='Nothing in {} days, after {} tasks.'.format(since, count),
+            because='Nothing in {:,} days, after {:,} tasks.'.format(since, count),
             minutes=PRACTICE_MINUTES, subject=subject, weight=540 + min(since, 40)))
 
     stale = []

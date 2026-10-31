@@ -524,7 +524,7 @@ def suggestions(found: dict, month: Counter) -> List[dict]:
                 'key': 'timing',
                 'title': 'Try the {} you said works best'.format(WINDOW_WORDS[row['said']]),
                 'body': ('You wrote "{}", but only {}% of your tasks land in the {}. Most land in the '
-                         '{} ({}%). Move tomorrow\'s hardest task to the {} and see if it goes better.').format(
+                         "{} ({}%). Move tomorrow's hardest task to the {}. See if it helps.").format(
                              row['text'], row['share'], row['said'], row['busiest'],
                              row['busiest_share'], row['said']),
                 'action': None,

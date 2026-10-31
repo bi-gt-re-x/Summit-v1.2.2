@@ -804,7 +804,7 @@ export function scoreCards(all: GrowthDay[], tasks: Task[], days = 30): ScoreCar
     build('focus', 'Focus', 'clock', '', focusScore, (value) =>
       value === null
         ? 'no days yet'
-        : `${Math.round(minutes / Math.max(1, now.length))} min a day vs. a ${FOCUS_REFERENCE_MINUTES}-min day`,
+        : `${Math.round(minutes / Math.max(1, now.length))} min a day. The target is ${FOCUS_REFERENCE_MINUTES}.`,
     ),
     build(
       'follow',

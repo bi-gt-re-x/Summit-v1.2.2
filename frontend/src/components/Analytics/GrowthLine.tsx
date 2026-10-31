@@ -293,7 +293,7 @@ export function GrowthLine({
             role="img"
             aria-label={
               `${series.map((line) => line.label).join(', ')} from ${labels[0]} to ` +
-              `${labels[count - 1]}. The numbers are under "Then and now" below.`
+              `${labels[count - 1]}. Scroll to "Then and now" for the numbers.`
             }
           >
             <defs>

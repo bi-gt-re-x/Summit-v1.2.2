@@ -669,7 +669,7 @@ export function CoreHoursPanel({ clock }: { clock: AnalyticsModel['clock'] }) {
             <li>
               <span>Busiest single hour</span>
               <strong>
-                {clock.peak.label} <em>{clock.peak.tasks} tasks</em>
+                {clock.peak.label} <em>{clock.peak.tasks.toLocaleString()} tasks</em>
               </strong>
             </li>
           )}

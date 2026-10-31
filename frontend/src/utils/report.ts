@@ -163,7 +163,7 @@ function scoreSection(input: ReportInput): string {
     '',
     `                    ${(score.value / 10).toFixed(1)} / 10        Grade ${score.grade}`,
     '',
-    wrap(`${score.grade} is ${GRADE_MEANING[score.grade]}.`),
+    wrap(`${score.grade}: ${GRADE_MEANING[score.grade]}`),
     '',
     wrap(howItIsCalculated(score)),
     '',

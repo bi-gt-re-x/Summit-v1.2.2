@@ -35,7 +35,7 @@ const fmt = (value: number) => Math.round(value).toLocaleString('en-US');
 export function SlumpAlert({ slump }: { slump: Slump }) {
   const lead =
     slump.now === 0
-      ? `You haven't earned any XP in the last 7 days. Your usual week is about ${fmt(slump.usual)} XP.`
+      ? `No XP in the last 7 days. Your usual week is about ${fmt(slump.usual)} XP.`
       : `You earned ${fmt(slump.now)} XP in the last 7 days, ${slump.drop}% under your usual ${fmt(slump.usual)}.`;
 
   return (

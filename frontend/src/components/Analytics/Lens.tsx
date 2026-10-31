@@ -56,8 +56,8 @@ export function LensCard({ lens }: { lens: GoalLens }) {
 export function LensLine({ lens }: { lens: GoalLens }) {
   return (
     <p className="ax-goal-line">
-      Sorted for <strong>{lens.goalTitle}</strong>. It starts with{' '}
-      <strong>{lens.label.toLowerCase()}</strong> because that matters most for this goal.{' '}
+      Your goal is <strong>{lens.goalTitle}</strong>, so{' '}
+      <strong>{lens.label.toLowerCase()}</strong> comes first.{' '}
       <Link to="/recommendations" className="ax-link">
         What that changes
       </Link>

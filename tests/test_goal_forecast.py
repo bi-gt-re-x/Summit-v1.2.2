@@ -45,7 +45,7 @@ def test_on_track():
     assert found['state'] == 'on_track'
     assert found['per_week'] == 2.0
     assert found['finish'] == (TODAY + timedelta(days=42)).isoformat()
-    assert found['line'] == "Due Dec 18. At this pace you finish Nov 30. You're on track."
+    assert found['line'] == "Due Dec 18. At this pace: done Nov 30. You're on track."
     assert found['facts'] == '4 of 10 steps done. About 2 sessions a week lately.'
     # 12 sessions in 60 days is 1.4 a week, so this week owes 2 and has none yet.
     assert (found['week_target'], found['to_book']) == (2, 2)
@@ -57,7 +57,7 @@ def test_behind_says_how_many_more_a_week():
     assert found['state'] == 'behind'
     assert found['more_per_week'] == 1
     assert found['need_per_week'] == 2.8
-    assert found['line'] == 'Due Nov 18. At this pace you finish Nov 30. 1 more session a week gets you there.'
+    assert found['line'] == 'Due Nov 18. At this pace: done Nov 30. 1 more session a week gets you there.'
     # The week asks for 3 and nothing's done or booked yet.
     assert found['to_book'] == 3
 
@@ -243,7 +243,7 @@ def test_the_plan_books_what_the_forecast_says():
     row = deadline_row(goal, TWO_A_WEEK)
     assert row['book']['count'] == found['to_book'] == 3
     assert row['title'] == 'Book 3 Math sessions for AIME'
-    assert 'At this pace you finish Nov 30. 1 more session a week gets you there.' in row['because']
+    assert 'At this pace: done Nov 30. 1 more session a week gets you there.' in row['because']
     assert 'This week needs 3. 3 to go.' in row['because']
     assert 'behind schedule' not in row['because']
 

@@ -38,7 +38,7 @@ describe('a recommended session', () => {
     draw([step(1)]);
     expect(screen.getByText('Stewart Calculus, Chapter 7, problems 1-8')).toBeInTheDocument();
     expect(lineOf('Pace:')).toHaveTextContent('Pace: 8 min per problem');
-    expect(lineOf('Where to get it:')).toHaveTextContent('James Stewart, Calculus, 8th edition');
+    expect(lineOf('Get it:')).toHaveTextContent('James Stewart, Calculus, 8th edition');
   });
 
   it('does not print the problems twice when the title already says them', () => {
@@ -141,7 +141,7 @@ describe('where to get it', () => {
     draw([step(1, { resources: [{ name: 'bad', url: 'javascript:alert(1)' }] })]);
     expect(screen.queryByRole('link')).toBeNull();
     // Falls back to the old named source.
-    expect(lineOf('Where to get it:')).toHaveTextContent('James Stewart, Calculus, 8th edition');
+    expect(lineOf('Get it:')).toHaveTextContent('James Stewart, Calculus, 8th edition');
   });
 
   it('names a link after its site when it has no name', () => {

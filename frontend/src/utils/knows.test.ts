@@ -206,7 +206,7 @@ describe('the advice turns on the figure', () => {
       ],
     });
     expect(dominant).toMatch(/Over half/);
-    expect(scattered).toMatch(/Your time is spread out/);
+    expect(scattered).toMatch(/Your time is spread thin/);
   });
 
   it('does not call a deliberate pair of interests unfocused', () => {

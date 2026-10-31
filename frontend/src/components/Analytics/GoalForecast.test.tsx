@@ -19,7 +19,7 @@ const row = (over: Partial<Forecast>): Forecast => ({
   days_left: 30,
   state: 'behind',
   missing: null,
-  line: 'Due Feb 5. At this pace you finish Feb 19. 2 more sessions a week gets you there.',
+  line: 'Due Feb 5. At this pace: done Feb 19. 2 more sessions a week gets you there.',
   facts: '4 of 10 steps done. About 2 sessions a week lately.',
   per_week: 2,
   need_per_week: 3.4,
@@ -45,7 +45,7 @@ describe('GoalForecast', () => {
     expect(screen.getByText('AIME')).toBeInTheDocument();
     expect(screen.getByText('Behind')).toBeInTheDocument();
     expect(
-      screen.getByText('Due Feb 5. At this pace you finish Feb 19. 2 more sessions a week gets you there.'),
+      screen.getByText('Due Feb 5. At this pace: done Feb 19. 2 more sessions a week gets you there.'),
     ).toBeInTheDocument();
     expect(screen.getByText('30 days')).toBeInTheDocument();
   });

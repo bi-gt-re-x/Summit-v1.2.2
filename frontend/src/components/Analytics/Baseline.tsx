@@ -115,7 +115,7 @@ export function BaselinePanel({
 
   return (
     <Panel
-      title="How you're doing vs. your targets"
+      title="You vs. your targets"
       note={span}
       aside={
         <button type="button" className="ax-baseline-edit" onClick={onEdit}>

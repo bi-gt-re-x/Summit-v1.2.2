@@ -247,7 +247,7 @@ function slumpSteps({
   )[0];
   const gap =
     idle >= 2
-      ? `It's been ${idle} days since you last got anything done.`
+      ? `Nothing done in ${idle} days.`
       : `You've done ${now.tasks} ${now.tasks === 1 ? 'task' : 'tasks'} in the last 7 days.`;
   steps.push({
     id: 'one-task',
@@ -529,7 +529,7 @@ export function moveSentence(move: TrackedMove): string {
   const way = move.up ? 'Up' : 'Down';
   const range = `from ${move.show(move.before)} to ${move.show(move.after)}`;
   if (move.before === 0) return `New: ${move.show(move.after)}, from nothing.`;
-  if (move.after === 0) return `Down to nothing, from ${move.show(move.before)}.`;
+  if (move.after === 0) return `Zero, down from ${move.show(move.before)}.`;
   if (move.pct === null || !move.percent) {
     return `${way} ${range}.`;
   }

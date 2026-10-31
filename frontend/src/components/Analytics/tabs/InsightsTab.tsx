@@ -218,7 +218,7 @@ export function InsightsTab({
         {habitsReady && (
           <PanelGroup
             title="Your habits"
-            note="How often you keep each one and how it helps"
+            note="Times per week"
             defaultOpen
           >
             <EarlyRead days={historyDays} solidAt={SOLID_AT.habits} />
@@ -317,7 +317,7 @@ export function InsightsTab({
         {habitsReady && (
           <PanelGroup
             title="Holding or slipping"
-            note="How steady each habit is and when it started"
+            note="How steady each habit is"
           >
             <div className="ax-grid ax-grid-halves-even">
               <HabitConsistencyPanel habits={habits} />
@@ -360,7 +360,7 @@ export function InsightsTab({
         {habitsReady && (
           <PanelGroup
             title="Do you follow through?"
-            note="What you planned vs. what you finished, and how you bounce back"
+            note="Planned vs. done, and how fast you bounce back"
           >
             <div className="gr-scope">
               <FocusChapter

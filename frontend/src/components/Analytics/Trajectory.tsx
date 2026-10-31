@@ -69,7 +69,7 @@ export function Trajectory({
 
   return (
     <Panel
-      title="Productivity, consistency and quality over time"
+      title="Productivity, consistency, quality"
       note="This period vs. the last one, day by day"
       aside={
         <label className="ax-select-wrap">
@@ -126,8 +126,8 @@ export function Trajectory({
           labels: now.map((point) => pointLabel(point.date)),
           names:
             before.length > 1
-              ? [`This period (${spanLabel})`, `Previous period (${previousSpanLabel})`]
-              : [`This period (${spanLabel})`],
+              ? [`This stretch: ${spanLabel}`, `Before: ${previousSpanLabel}`]
+              : [`This stretch: ${spanLabel}`],
           format: option.format,
         }}
         series={[
@@ -143,12 +143,12 @@ export function Trajectory({
       <div className="ax-legend">
         <span className="ax-legend-item">
           <i className="ax-legend-line" style={{ background: toneVar('violet') }} />
-          This period ({spanLabel})
+          This stretch: {spanLabel}
         </span>
         {before.length > 1 && (
           <span className="ax-legend-item">
             <i className="ax-legend-line ax-legend-muted" />
-            Previous period ({previousSpanLabel})
+            Before: {previousSpanLabel}
           </span>
         )}
       </div>

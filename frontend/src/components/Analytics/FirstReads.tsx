@@ -36,8 +36,8 @@ export function FirstReads({ tasks, goals }: { tasks: Task[]; goals: Goal[] }) {
 
   return (
     <Panel
-      title="What we see so far"
-      note="From your work so far. Each one shows where it came from."
+      title="So far"
+      note="What your work shows so far."
       className="ax-reads-panel"
     >
       {reads.length ? (

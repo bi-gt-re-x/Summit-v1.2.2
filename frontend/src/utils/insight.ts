@@ -273,22 +273,19 @@ export function howFindings(
       mean(rows.map((day) => num(day.xp_earned) / Math.max(1, num(day.focus_minutes))));
     const shortRate = perMinute(short);
     const longRate = perMinute(long);
-    const bestBand = longRate >= shortRate ? long : short;
-    const bandLow = Math.round(num(bestBand[0]?.focus_minutes));
-    const bandHigh = Math.round(num(bestBand[bestBand.length - 1]?.focus_minutes));
     const { r, n } = correlate(
       focusDays.map((day) => [num(day.focus_minutes), num(day.xp_earned)] as [number, number]),
     );
     out.push({
       id: 'how-session',
-      headline: `You work best in ${bandLow} to ${bandHigh} minute sessions`,
-      detail: `Over ${focusDays.length} days, your ${
-        longRate >= shortRate ? 'longest' : 'shortest'
-      } sessions earned ${pct(
+      headline: `Your ${longRate >= shortRate ? 'longer' : 'shorter'} focus days earn more per minute`,
+      detail: `Over ${focusDays.length.toLocaleString()} days, days with the ${
+        longRate >= shortRate ? 'most' : 'least'
+      } focus earned ${pct(
         ((Math.max(longRate, shortRate) - Math.min(longRate, shortRate)) /
           Math.max(0.0001, Math.min(longRate, shortRate))) *
           100,
-      )} more XP per minute than your ${longRate >= shortRate ? 'shortest' : 'longest'}.`,
+      )} more XP per minute than days with the ${longRate >= shortRate ? 'least' : 'most'}.`,
       strength: strengthOf(r, n),
       tone: 'green',
     });
@@ -567,7 +564,7 @@ export function relationships(days: GrowthDay[], tasks: Task[], week: WeekShape)
     const bottom = Math.min(...values);
     out.push({
       id: 'rel-weekday',
-      pair: 'Day of the week',
+      pair: 'Day of the week and XP',
       r: 0,
       // The days behind the seven averages, not the seven. Reporting 7 put
       // "Observations: 7" beside a Strong evidence chip, which reads as the

@@ -190,7 +190,7 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
               value: deepest.level.exact,
               text: deepest.level.exact.toFixed(2),
               scale: `· ${deepest.rank}`,
-              foot: `${Math.round(deepest.xp).toLocaleString()} XP over ${deepest.tasks} tasks`,
+              foot: `${Math.round(deepest.xp).toLocaleString()} XP over ${deepest.tasks.toLocaleString()} tasks`,
               icon: 'award',
             },
             {
@@ -289,9 +289,9 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
                 {isCooling(card) ? (
                   <span
                     className="gr-skillcard-cooling"
-                    title={`Cooling off: nothing finished in ${card.daysSince} days`}
+                    title={`Cooling off: nothing finished in ${(card.daysSince ?? 0).toLocaleString()} days`}
                   >
-                    {card.daysSince}d quiet
+                    {(card.daysSince ?? 0).toLocaleString()}d quiet
                   </span>
                 ) : (
                   <span className="is-quiet">
@@ -400,7 +400,7 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
       <section className="gr-panel gr-balance">
         <PanelHead
           title="Balance"
-          hint="Five scores from 0 to 100, each on a fixed scale"
+          hint="Five scores, 0 to 100"
           note={chosen?.label}
         />
         {balance.length === 0 ? (
@@ -427,7 +427,7 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
                     <b>{axis.label}:</b> {axis.note}
                   </li>
                 ))}
-                <li>Each score is capped at 100.</li>
+                <li>Scores top out at 100.</li>
               </ul>
             </details>
           </>
@@ -557,7 +557,7 @@ export function SkillsChapter({ all, tasks, subjects, afterTrack }: SkillsChapte
               tone: 'good',
               icon: 'check',
               head: `${top.label} is your biggest at ${Math.round(top.xp).toLocaleString()} XP.`,
-              hint: `${Math.round((top.xp / Math.max(1, lifetime)) * 100)}% of your subject XP, from ${top.tasks} tasks.`,
+              hint: `${Math.round((top.xp / Math.max(1, lifetime)) * 100)}% of your subject XP, from ${top.tasks.toLocaleString()} tasks.`,
             },
           ]}
         />

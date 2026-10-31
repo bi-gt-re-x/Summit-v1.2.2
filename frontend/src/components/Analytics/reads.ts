@@ -48,7 +48,7 @@ export const FLOOR = { sittings: 3, events: 4, tasks: 3, rated: 3, tagged: 2 } a
 /** How many reads the panel shows. A list of twelve is a report, not a read. */
 export const SHOWN = 4;
 
-const plural = (count: number, word: string) => `${count} ${word}${count === 1 ? '' : 's'}`;
+const plural = (count: number, word: string) => `${count.toLocaleString()} ${word}${count === 1 ? '' : 's'}`;
 
 type Part = 'morning' | 'afternoon' | 'evening' | 'night';
 const PART_SPAN: Record<Part, string> = {
@@ -181,8 +181,8 @@ function deadlines(tasks: Task[]): Read | null {
     id: 'deadlines',
     label: 'Due dates',
     text: met === dated.length
-      ? `You've beaten every due date so far, all ${dated.length} of them.`
-      : `You've beaten ${met} of ${dated.length} due dates so far.`,
+      ? `You've beaten every due date so far, all ${dated.length.toLocaleString()} of them.`
+      : `You've beaten ${met.toLocaleString()} of ${dated.length.toLocaleString()} due dates so far.`,
     basis: `from ${plural(dated.length, 'dated task')}`,
     weight: dated.length * (met === dated.length ? 1.3 : 1),
   };
@@ -222,8 +222,8 @@ function rated(tasks: Task[]): Read | null {
       id: 'rated',
       label: 'Hard tasks',
       text: hardAvg >= 3.5
-        ? `Your hard tasks still went well: ${hardAvg.toFixed(1)} of 5 on the ${hard.length} you rated tough.`
-        : `Hard tasks are where it gets rough: ${hardAvg.toFixed(1)} of 5 on the ${hard.length} you rated tough.`,
+        ? `Your hard tasks still went well: ${hardAvg.toFixed(1)} of 5 on the ${hard.length.toLocaleString()} you rated tough.`
+        : `Hard tasks are where it gets rough: ${hardAvg.toFixed(1)} of 5 on the ${hard.length.toLocaleString()} you rated tough.`,
       basis: `from ${plural(rows.length, 'rated task')}`,
       weight: rows.length * 1.2,
     };

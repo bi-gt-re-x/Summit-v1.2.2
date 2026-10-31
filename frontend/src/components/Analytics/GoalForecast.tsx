@@ -4,7 +4,7 @@
  * The one card on this page that looks ahead. For every active goal with a
  * date, the server (backend/tracking/forecast.py) works out what's left, how
  * many sessions a week went into it lately, and so when it'd finish. It writes
- * the line too, so this only draws it: "Due Feb 5. At this pace you finish
+ * the line too, so this only draws it: "Due Feb 5. At this pace: done
  * Feb 19. 2 more sessions a week gets you there." When there's too little to
  * go on it says what's missing instead of a date.
  *
@@ -125,7 +125,7 @@ export function GoalForecast({ onBooked, reload = 0 }: { onBooked?: () => void; 
           <PanelNote label="How this works">
             <ul className="ax-tips">
               <li>
-                <b>What's left:</b> Steps you haven't ticked off, or how far to your number.
+                <b>What's left:</b> Steps not done yet, or the gap to your number.
               </li>
               <li>
                 <b>Your pace:</b> Sessions a week on the goal's subject over the last 4 weeks. Tasks and focus timers

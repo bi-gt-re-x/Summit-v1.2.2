@@ -27,7 +27,7 @@ export function WeekPanel({ week }: { week: WeekShape }) {
   }));
 
   return (
-    <Panel title="When you do your best work" note="Average XP per weekday">
+    <Panel title="Your best days of the week" note="Average XP per weekday">
       <Columns columns={columns} label="Average XP per weekday" />
       <p className="ax-prose">
         {week.best && week.worst && week.best.index !== week.worst.index ? (

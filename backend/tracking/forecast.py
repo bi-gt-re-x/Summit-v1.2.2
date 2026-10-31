@@ -3,7 +3,7 @@
 Everything else on the Analytics page looks back. This looks ahead, for every
 active goal with a date: how much is left, how fast the work on it has been
 going lately, and from those two the day it would finish. Then one plain line,
-"Due Feb 5. At this pace you finish Feb 19. 2 more sessions a week gets you
+"Due Feb 5. At this pace: done Feb 19. 2 more sessions a week gets you
 there.", and a count of sessions to book this week. The card is
 frontend/src/components/Analytics/GoalForecast.tsx; the endpoints are
 backend/api/forecast.py.
@@ -221,8 +221,8 @@ def forecast(goal, tasks, sittings, today, name_of=lambda key: key):
         finish_in = math.ceil(needed / per_week * 7)
         finish = today + timedelta(days=finish_in)
         out['finish'] = finish.isoformat()
-        pace = 'At this pace {}.'.format('it takes over {} years'.format(finish_in // 365)
-                                         if finish_in > FAR_DAYS else 'you finish {}'.format(say_day(finish, today)))
+        pace = ("Keep this pace and it'll take {}+ years.".format(finish_in // 365)
+                if finish_in > FAR_DAYS else 'At this pace: done {}.'.format(say_day(finish, today)))
         if finish <= ends:
             out['state'] = 'on_track'
             fix = "You're on track."

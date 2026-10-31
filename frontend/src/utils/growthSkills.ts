@@ -520,7 +520,7 @@ export function movers(cards: SkillCard[]): { rising: Mover[]; waiting: Mover[] 
       note:
         card.daysSince === null
           ? 'nothing finished in it yet'
-          : `nothing finished in ${card.daysSince} days`,
+          : `nothing finished in ${card.daysSince.toLocaleString()} days`,
     }));
 
   return {

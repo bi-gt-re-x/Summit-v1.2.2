@@ -462,7 +462,7 @@ export function TimelinePanel({
   return (
     <Panel
       title="How your habits changed"
-      note="Where each one started and how it's doing now"
+      note="Then vs. now"
       claim={
         withPhases.length === 0 ? undefined : (
           <>

@@ -33,6 +33,14 @@ import {
 // --------------------------------------------------------------------------
 // Shared furniture
 // --------------------------------------------------------------------------
+/** "Tasks planned and tasks done" → ["Tasks planned", "Tasks done"]. The pairs
+    used to be written with an arrow, and splitting on that alone left every
+    chart's y axis blank once they were renamed. */
+function axes(pair: string): [string, string] {
+  const [x = '', y = ''] = pair.split(/\s+(?:→|and)\s+/);
+  return [x.trim(), y.trim().replace(/^./, (c) => c.toUpperCase())];
+}
+
 function StrengthChip({ strength }: { strength: Finding['strength'] }) {
   const hue = STRENGTH_HUE[strength];
   return (
@@ -214,8 +222,8 @@ export function RelationshipsPanel({
             <Scatter
               points={active.points}
               tone={asTone(active.tone)}
-              xLabel={active.pair.split('→')[0]?.trim() ?? ''}
-              yLabel={active.pair.split('→')[1]?.trim() ?? ''}
+              xLabel={axes(active.pair)[0]}
+              yLabel={axes(active.pair)[1]}
               trend={active.strength !== 'weak' && active.r !== 0}
             />
             <div className="ax-relationship-read">

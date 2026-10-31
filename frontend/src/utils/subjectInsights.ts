@@ -604,8 +604,8 @@ export function subjectInsights(
         head: ratio > 1 ? 'Bigger tasks than usual' : 'Smaller tasks than usual',
         detail: `${Math.round(card.perTask)} XP a task here vs. ${Math.round(
           elsewhere,
-        )} across your other subjects. That's about ${
-          ratio > 1 ? `${ratio.toFixed(1)} times the size` : `${Math.round(ratio * 100)}% of the size`
+        )} across your other subjects. About ${
+          ratio > 1 ? `${ratio.toFixed(1)}x bigger` : `${Math.round(ratio * 100)}% of the size`
         }.${biggest ? ` Your biggest here was worth ${xpText(xpOf(biggest))} on ${when(dayOf(biggest))}.` : ''}`,
         bars: sizeBars,
         figures: sizeFigures,
@@ -877,8 +877,8 @@ export function subjectInsights(
     tone: 'note',
     head: `${plural(card.tasks, 'task')} on ${plural(days.length, 'day')}`,
     detail: firstDay
-      ? `Your first one here was on ${when(firstDay)}${
-          todayIso && daysBetween(firstDay, todayIso) > 0 ? `, ${plural(daysBetween(firstDay, todayIso), 'day')} ago` : ''
+      ? `Your first one here was ${when(firstDay)}${
+          todayIso && daysBetween(firstDay, todayIso) > 0 ? ` (${plural(daysBetween(firstDay, todayIso), 'day')} ago)` : ''
         }.${bestMonth && byMonth.size > 1 ? ` Your best month was ${monthText(bestMonth[0])} with ${xpText(bestMonth[1])}.` : ''}`
       : `${xpText(card.xp)} in all.`,
     figures: [

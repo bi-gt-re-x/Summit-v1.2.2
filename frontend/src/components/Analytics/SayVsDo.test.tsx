@@ -39,7 +39,7 @@ describe('What you say vs. what you do', () => {
     draw(mood());
     expect(screen.getByText('On good days you finish 7 tasks. On rough days, just 2.')).toBeInTheDocument();
     expect(screen.getByText(/Pattern · 18 days/)).toBeInTheDocument();
-    expect(screen.getByText(/10 you tapped, 8 from your words/)).toBeInTheDocument();
+    expect(screen.getByText(/10 tapped, 8 from your words/)).toBeInTheDocument();
   });
 
   it('compares each band with the usual day, and says when a band is short', () => {

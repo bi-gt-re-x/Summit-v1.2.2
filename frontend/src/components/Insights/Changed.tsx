@@ -43,7 +43,7 @@ export function ChangedPanel({ changes, window: days }: ChangedPanelProps) {
       title="What changed"
       note={
         changes.length > 0
-          ? `Against the ${days} days before this one.`
+          ? `Compared with the ${days} days before.`
           : undefined
       }
       className="ax-changed"
@@ -53,8 +53,7 @@ export function ChangedPanel({ changes, window: days }: ChangedPanelProps) {
             <li><b>Gains:</b> Your last {days} days vs. the {days} before.</li>
             <li><b>Problems:</b> Two numbers from the same days that don't line up.</li>
             <li><b>Patterns:</b> Two groups of your tasks, side by side.</li>
-            <li><b>Mixed on purpose:</b> Good news can't crowd out the one thing to fix.</li>
-            <li><b>What to do:</b> That's on the Recommendations tab.</li>
+                        <li><b>What to do:</b> That's on the Recommendations tab.</li>
           </ul>
         </PanelNote>
       }

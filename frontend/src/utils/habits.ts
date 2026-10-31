@@ -751,7 +751,7 @@ export function habitPatterns(tasks: Task[], habits: Habit[], fromIso: string, t
     out.push({
       id: `when-${habit.id}`,
       text: `${habit.name} happens in ${best[0]}`,
-      support: `${best[1]} of ${mine.length} sessions (${share}%)`,
+      support: `${best[1].toLocaleString()} of ${mine.length.toLocaleString()} sessions (${share}%)`,
       frequency: wordFor(share),
       tone: 'blue',
     });
@@ -838,8 +838,8 @@ export function habitPatterns(tasks: Task[], habits: Habit[], fromIso: string, t
     if (share >= 30) {
       out.push({
         id: 'second-session',
-        text: 'you often work again in the evening',
-        support: `${split} of ${workedDays.length} days had work before 5 PM and after 7 PM`,
+        text: 'you work again in the evening',
+        support: `${split.toLocaleString()} of ${workedDays.length.toLocaleString()} days had work before 5 PM and after 7 PM`,
         frequency: wordFor(share),
         tone: 'green',
       });

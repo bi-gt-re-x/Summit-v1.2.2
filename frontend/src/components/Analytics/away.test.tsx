@@ -60,7 +60,7 @@ describe('the notice', () => {
 
   it('speaks once the gap is long enough to explain the zeros', () => {
     draw(20, 47);
-    expect(screen.getByText(/You've been away for/)).toBeInTheDocument();
+    expect(screen.getByText(/Back after/)).toBeInTheDocument();
     expect(screen.getByText('47 days')).toBeInTheDocument();
   });
 

@@ -63,7 +63,7 @@ export type RecordsRead = UseApiResult<RecordAnalysis>;
 function hoursText(seconds: number): string {
   if (seconds < 3600) return `${Math.max(1, Math.round(seconds / 60))}m`;
   const value = seconds / 3600;
-  return `${value >= 10 ? Math.round(value) : Math.round(value * 10) / 10}h`;
+  return `${value >= 10 ? Math.round(value).toLocaleString() : Math.round(value * 10) / 10}h`;
 }
 
 /** One unit of a record in "about 2h per point" — PER in record_reads.py. */
@@ -147,7 +147,7 @@ export function RecordsBreakdownPanel({ read }: { read: RecordsRead }) {
   return (
     <Panel
       title="Records and improvement"
-      note={`Your personal bests by subject, over ${window}`}
+      note={`Bests by subject, ${window.replace(/^the /, '')}`}
       aside={<Link className="ax-link" to="/achievements">Your records</Link>}
       className="ax-rx"
     >
@@ -200,7 +200,7 @@ export function RecordsBreakdownPanel({ read }: { read: RecordsRead }) {
                   {!group.inferred && <em>your category</em>}
                   <span className="ax-rx-count">
                     {group.records} {group.records === 1 ? 'record' : 'records'}
-                    {group.new_bests > 0 && ` · ${group.new_bests} new ${group.new_bests === 1 ? 'best' : 'bests'}`}
+                    {group.new_bests > 0 && ` (${group.new_bests} new ${group.new_bests === 1 ? 'best' : 'bests'})`}
                   </span>
                 </div>
                 <div className="ax-rx-bar" role="presentation">
@@ -208,7 +208,7 @@ export function RecordsBreakdownPanel({ read }: { read: RecordsRead }) {
                 </div>
                 <p className="ax-rx-subject-foot">
                   {group.top
-                    ? <>Up {pct(group.median_percent)} typically. Biggest climb: <b>{group.top.name}</b>, {group.top.gain}.</>
+                    ? <>Usually up {pct(group.median_percent)}. Top climb: <b>{group.top.name}</b>, {group.top.gain}.</>
                     : `${group.improving} of ${group.records} improving so far.`}
                   {group.window_seconds > 0 && ` ${hoursText(group.window_seconds)} of related work in ${window}.`}
                 </p>
@@ -301,7 +301,7 @@ function WorkPanel({ data }: { data: RecordAnalysis }) {
   return (
     <Panel
       title="The work behind each record"
-      note="Hours of related tasks between each record's first entry and its best. We match them by name."
+      note="Hours on related tasks from each record's first entry to its best. Tasks match by name."
     >
       {rows.length === 0 ? (
         <p className="ax-empty">

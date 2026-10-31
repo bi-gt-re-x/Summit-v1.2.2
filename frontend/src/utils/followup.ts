@@ -769,10 +769,10 @@ function verdict(
 
   const note =
     outcome === 'held'
-      ? `${measure.label} hasn't changed much.`
+      ? `${measure.label}: about the same.`
       : outcome === 'improved'
-        ? `${measure.label} went ${direction} ${size}. That's a real improvement.`
-        : `${measure.label} went ${direction} ${size}, the wrong way.`;
+        ? `${measure.label}: ${direction} ${size}. Nice.`
+        : `${measure.label}: ${direction} ${size}, the wrong way.`;
 
   return { ...base, outcome, label: measure.label, unit: measure.unit, before, after, delta, pct, note, ...window };
 }

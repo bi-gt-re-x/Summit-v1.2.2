@@ -197,7 +197,7 @@ export function subjectVerdict(read: SubjectProgress, periodText: string): strin
   }
 
   const first = completion.den > 0
-    ? `You finished ${completion.num} of the ${completion.den} tasks you planned`
+    ? `You finished ${completion.num.toLocaleString()} of the ${completion.den.toLocaleString()} tasks you planned`
     : `You finished ${finished} ${finished === 1 ? 'task' : 'tasks'}`;
 
   let second = '';

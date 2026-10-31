@@ -68,13 +68,13 @@ export const GRADE_BANDS: ReadonlyArray<readonly [number, Grade]> =
  * "not enough yet" belongs and it is already said there.
  */
 export const GRADE_MEANING: Record<Grade, string> = {
-  S: 'all five parts maxed out',
-  'A+': 'just below perfect',
-  A: 'strong across the board',
-  B: 'solid, with one or two soft spots',
-  C: 'okay, with lots of room to grow',
-  D: 'two or three of the five are low',
-  F: 'every part is low',
+  S: 'All five parts maxed out.',
+  'A+': 'Almost perfect.',
+  A: 'Strong all around.',
+  B: 'Solid. One or two weak spots.',
+  C: 'Not bad. Room to grow.',
+  D: 'A few parts are low.',
+  F: 'Every part is low.',
 };
 
 export function gradeFor(score: number): Grade {

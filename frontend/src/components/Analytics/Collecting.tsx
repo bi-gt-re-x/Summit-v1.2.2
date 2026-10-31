@@ -107,11 +107,10 @@ export function AwayNotice({ maturity }: { maturity: Maturity }) {
   return (
     <section className="ax-away">
       <p className="ax-away-head">
-        You've been away for <strong>{quietDays} days</strong>
+        Back after <strong>{quietDays} days</strong>
       </p>
       <p className="ax-away-body">
-        Nothing's been reset. All your work is still here. The charts below cover the days
-        you were away, so most of them show zero until you start again.
+        Nothing's been reset. The charts show zeros for the days you were away.
       </p>
     </section>
   );

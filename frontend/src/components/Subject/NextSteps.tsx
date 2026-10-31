@@ -224,12 +224,12 @@ export function NextSteps({ steps, status, busy, onPlan, onDidIt, firstOpen = tr
                       named source as plain text. */}
                   {links.length === 1 ? (
                     <p className="sx-step-line">
-                      <b>Where to get it:</b>{' '}
+                      <b>Get it:</b>{' '}
                       <StepLink link={links[0]!} />
                     </p>
                   ) : links.length > 1 ? (
                     <div className="sx-step-line">
-                      <b>Where to get it:</b>
+                      <b>Get it:</b>
                       <ol className="sx-step-links">
                         {links.map((link) => (
                           <li key={link.url}><StepLink link={link} /></li>
@@ -237,7 +237,7 @@ export function NextSteps({ steps, status, busy, onPlan, onDidIt, firstOpen = tr
                       </ol>
                     </div>
                   ) : step.resource ? (
-                    <p className="sx-step-line"><b>Where to get it:</b> {step.resource}</p>
+                    <p className="sx-step-line"><b>Get it:</b> {step.resource}</p>
                   ) : null}
 
                   {step.equipment && (

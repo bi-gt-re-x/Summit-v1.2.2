@@ -177,7 +177,7 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
     found.push({
       key: 'record',
       heading: 'Record',
-      text: `You've used Summit for ${spanDays} days.`,
+      text: `You've used Summit for ${spanDays.toLocaleString()} days.`,
       /* An unbroken record is the one case where the useful advice is to stop
          protecting it: a reader who has not missed a day in three years is
          being held back by the safe day they take to keep the run alive, not
@@ -230,7 +230,7 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
         share >= DOMINANT_SHARE
           ? `Over half your work is ${top.name}. If that's the plan, great. If not, take an hour off it this week.`
           : share <= SCATTERED_SHARE && real.length >= 3
-            ? `Your time is spread out. Your top subject is only ${share}% of it. If one matters most, give it more of your week.`
+            ? `Your time is spread thin. Top subject: just ${share}%. Pick one and give it more hours.`
             : `One subject leads, but the others still get time. Keep the split and go deeper on ${top.name}.`,
     });
   }
