@@ -68,6 +68,15 @@ describe('Overview', () => {
     });
   });
 
+  it('opens every "how this works" note too, on this tab only', () => {
+    draw(
+      <OverviewTab model={matureOverview()} data={fakeData()} onEditBaseline={() => {}} />,
+    );
+    const notes = [...document.querySelectorAll<HTMLElement>('button.ax-link[aria-expanded]')];
+    expect(notes.length).toBeGreaterThan(0);
+    notes.forEach((note) => expect(note).toHaveAttribute('aria-expanded', 'true'));
+  });
+
   it('shuts a group on a click and opens it again on the next', async () => {
     draw(
       <OverviewTab model={matureOverview()} data={fakeData()} onEditBaseline={() => {}} />,

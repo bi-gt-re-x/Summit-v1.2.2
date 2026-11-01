@@ -67,6 +67,8 @@ import {
 } from '@/utils/analyticalScore';
 
 export interface SummaryProps {
+  /** Whether "How this works" starts open. Overview's opening says yes. */
+  howOpen?: boolean;
   /** The score, its letter and its five parts. */
   score: AnalyticalScore;
   /** What the score did, or null when there is nothing honest to compare to. */
@@ -123,6 +125,7 @@ export function Summary({
   movement,
   goals,
   basis = null,
+  howOpen = false,
 }: SummaryProps) {
   const { value, grade } = score;
 
@@ -286,7 +289,7 @@ export function Summary({
           how much is behind the number. */}
       {basis && <p className="ax-summary-basis">{basis}</p>}
 
-      <details className="ax-summary-how">
+      <details className="ax-summary-how" open={howOpen}>
         <summary>How this works</summary>
         <p>{howItIsCalculated(score)}</p>
       </details>

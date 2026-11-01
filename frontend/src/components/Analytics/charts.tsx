@@ -1174,9 +1174,16 @@ export function PanelGroup({
   );
 }
 
+/**
+ * Whether the `PanelNote`s under it start open. A context because the tab that
+ * wants this draws its panels through a dozen components, each with its own
+ * notes. Overview turns it on; everywhere else they start shut.
+ */
+export const NotesOpen = createContext(false);
+
 /** A footer that explains itself in place rather than sending the reader away. */
 export function PanelNote({ label, children }: { label: string; children: ReactNode }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(useContext(NotesOpen));
   return (
     <>
       <button

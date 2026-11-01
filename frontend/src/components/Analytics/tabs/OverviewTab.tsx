@@ -22,7 +22,7 @@
  * the page held the figures; the model holds them now, so the only thing left
  * to pass is the one callback that opens a screen the page owns.
  */
-import { PanelGroup } from '../charts';
+import { NotesOpen, PanelGroup } from '../charts';
 import {
   BaselinePanel,
   ActiveDayPrinciple,
@@ -163,6 +163,7 @@ export function OverviewTab({
     const basics = basicStats(figures, streak, tasks);
 
     return (
+      <NotesOpen.Provider value>
       <div className="ax-ov">
         {/* Before anything else, when there is a gap to explain. A reader
             coming back to a page of zeros is owed the reason before they are
@@ -224,6 +225,7 @@ export function OverviewTab({
 
         <ActiveDayPrinciple />
       </div>
+      </NotesOpen.Provider>
     );
   }
 
@@ -263,6 +265,7 @@ export function OverviewTab({
     : '';
 
   return (
+    <NotesOpen.Provider value>
     <div className="ax-ov">
       <AwayNotice maturity={maturity} />
 
@@ -468,6 +471,7 @@ export function OverviewTab({
 
       <ActiveDayPrinciple />
     </div>
+    </NotesOpen.Provider>
   );
 }
 

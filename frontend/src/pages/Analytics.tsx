@@ -568,7 +568,9 @@ export default function Analytics() {
            slot rather than inside `OverviewView`, which would need four more
            props to say the same thing. */
         return (
+          <div className="ax-ov">
           <Summary
+            howOpen
             score={analytical}
             movement={scoreMovement(recorded)}
             /* What it is read from, until "enough" is the honest answer. The
@@ -588,6 +590,7 @@ export default function Analytics() {
                 : null
             }
           />
+          </div>
         );
       case 'insights':
         /* What repeats. `state.sentence` used to lead once the tab had
