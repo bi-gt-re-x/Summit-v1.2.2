@@ -156,6 +156,7 @@ class Taxonomy:
             self.topics[topic_id] = {
                 'id': topic_id, 'tree': node['tree'], 'label': node['name'],
                 'under': '', 'aliases': aliases, 'hand': False,
+                'requires': node.get('requires', []),
             }
         for entry in taxonomy.get('topics', []):
             for tree in entry.get('trees') or [entry['tree']]:

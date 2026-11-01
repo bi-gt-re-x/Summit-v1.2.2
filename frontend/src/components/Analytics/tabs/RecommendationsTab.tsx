@@ -9,7 +9,6 @@
  * Overview, under the productivity chart.
  */
 import { NextSessionsPanel } from '@/components/NextSessions/NextSessions';
-import { WhatToReviewPanel } from '@/components/NextSessions/WhatToReview';
 import { SlumpAlert } from '../WeekTrend';
 import { NextActions } from '../NextActions';
 import { GoalForecast } from '../GoalForecast';
@@ -92,16 +91,11 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
       {/* "Five years, both ways", the XP projection, was here. Cut: a
           five-year XP forecast changes nothing about this week. */}
 
-      {/* Three exact sessions to plan, for every subject or one picked, where
-          the cards above are changes to habits. Drawn whether or not there is
-          advice yet — it is read from finished work, not from the weeks of
-          history the cards wait for. See components/NextSessions. */}
-      {/* What to review, right above: the same kind of sessions, pointed at
-          work already done so it sticks. See components/NextSessions/WhatToReview. */}
-      <section className="ax-section">
-        <WhatToReviewPanel />
-      </section>
-
+      {/* Three exact sessions to plan, where the cards above are changes to
+          habits: general, expansion, weakness, review or new topics. Drawn
+          whether or not there is advice yet — it is read from finished work,
+          not from the weeks of history the cards wait for. See
+          components/NextSessions. */}
       <section className="ax-section">
         <NextSessionsPanel where="analytics" />
       </section>

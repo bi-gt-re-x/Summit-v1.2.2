@@ -145,6 +145,37 @@ export interface MoodDay {
   focus_min: number;
 }
 
+/** One moment energy or output dropped. `time` is '' for a whole day. */
+export interface LowMark {
+  day: string;
+  time: string;
+  label: string;
+  detail: string;
+}
+
+/** When energy and output dropped: backend/tracking/mood.py, `low_times`. */
+export interface LowTimes {
+  energy: {
+    count: number;
+    parts: Array<{ name: string; count: number }>;
+    weekdays: Array<{ name: string; count: number }>;
+    worst_part: string | null;
+    worst_day: string | null;
+    latest: LowMark[];
+  };
+  output: {
+    count: number;
+    slow_days: number;
+    low_rated: number;
+    said: number;
+    parts: Array<{ name: string; rated: number; count: number; share: number }>;
+    weekdays: Array<{ name: string; count: number; of: number }>;
+    worst_part: string | null;
+    worst_day: string | null;
+    latest: LowMark[];
+  };
+}
+
 export interface MoodVsOutput {
   window_days: number;
   logged_days: number;
@@ -162,6 +193,8 @@ export interface MoodVsOutput {
   recovery: { days: number; lows: number } | null;
   weekdays: Array<{ day: string; mood: number; days: number }>;
   series: MoodDay[];
+  /** Absent on a reply from before this was added. */
+  low_times?: LowTimes;
   min_days: number;
   small_change: number;
   headline: { text: string; tone: 'insight' | 'steady' | 'building'; confidence: Confidence } | null;

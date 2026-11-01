@@ -1,27 +1,29 @@
 /**
- * Three next sessions — for every subject at once, or one picked from a list.
+ * Three next sessions, of whichever kind you pick.
  *
  * The subject page's Recommendations panel (components/Subject/NextSteps),
  * offered where there is no subject page behind it: at the foot of the
  * dashboard, above the quote, and on the analytics Recommendations tab, under
- * the projection chart. A model reads the finished work — every subject's,
- * or the one chosen — and suggests three exact sessions. Each can be planned
- * on its own ("Plan my next session") or all three at once ("Plan all 3"),
- * which books them one after another into the next free calendar slots.
+ * the projection chart. A model reads the finished work and suggests three
+ * exact sessions. Each can be planned on its own ("Plan my next session") or
+ * all three at once ("Plan all 3"), which books them one after another into
+ * the next free calendar slots.
+ *
+ * A row of pills says what the three are for: general, expansion (your
+ * strongest topics), weakness (your weakest topics), review, or new topics.
+ * Each kind keeps its own three (backend/tracking/session_kinds.py). Under the
+ * pills, the big row searches for subjects and topics, and a row of topic pills
+ * filters by topic. What's picked is remembered in this browser, per account.
  *
  * The brief is counted on the server from the tasks
  * (backend/tracking/next_sessions.py), since neither page has the figures the
- * subject page sends. The steps live in the same ledger as the subject
+ * subject page sends. General steps live in the same ledger as the subject
  * page's, so three suggested for Mathematics here are the three the
  * Mathematics page shows, and planning works the same way: the step is
  * locked to its task until the task is finished (done) or deleted (open).
  *
  * A booked session is written onto the shared task list at once
  * (utils/plannedTask), so the Tasks page and the calendar show it.
- *
- * Across every subject, a pill bar picks which subjects the three are drawn
- * from. It remembers the ones left out (in this browser, per account), so a
- * subject that gains work later is in by default.
  */
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { AuthContext, UserDataContext } from '@/context/contexts';
@@ -32,12 +34,15 @@ import {
   suggestNextSessions,
   takeRecommendation,
   type NextStep,
+  type SessionKind,
   type SessionSubject,
+  type SessionTopic,
   type SuggestedSession,
 } from '@/services/analytics';
 import { announceStatsChanged } from '@/utils/statsBus';
 import { withPlannedTask } from '@/utils/plannedTask';
 import { useSubjects } from '@/hooks/useSubjects';
+import { PickSearch, type PickOption } from './PickSearch';
 import '@/styles/subject-state.css';
 import '@/styles/next-sessions.css';
 
@@ -46,25 +51,79 @@ export interface NextSessionsPanelProps {
   where: 'dashboard' | 'analytics';
 }
 
-/** Where the subjects left out of "All subjects" are remembered. */
-const leftOutKey = (username: string) => `nsLeftOut:${username}`;
+const KINDS: Array<{ id: SessionKind; label: string; line: string; nothing: string }> = [
+  {
+    id: 'general',
+    label: 'General',
+    line: 'Three study sessions picked from your recent work',
+    nothing: '',
+  },
+  {
+    id: 'expansion',
+    label: 'Expansion',
+    line: 'Three sessions that push your strongest topics further',
+    nothing: 'No strong topics yet. Name the topic in your tasks and rate a few.',
+  },
+  {
+    id: 'weakness',
+    label: 'Weakness',
+    line: 'Three sessions on your weakest topics',
+    nothing: 'No weak topics yet. Name the topic in your tasks and rate a few.',
+  },
+  {
+    id: 'review',
+    label: 'Review',
+    line: 'Three sessions that go back over recent work, rough sessions and hard stuff you never redid',
+    nothing: "Nothing's due for another look right now.",
+  },
+  {
+    id: 'new',
+    label: 'New topics',
+    line: "Three sessions on topics you haven't touched yet",
+    nothing: 'No new topics to suggest here yet. Pick a subject with a skill tree.',
+  },
+];
 
-function readLeftOut(username: string | null): Set<string> {
-  if (!username) return new Set();
+/** Topics shown as pills. The rest are a search away. */
+const TOPIC_PILLS = 12;
+
+interface Picks {
+  kind: SessionKind;
+  subjects: PickOption[];
+  topics: PickOption[];
+}
+
+const NOTHING_PICKED: Picks = { kind: 'general', subjects: [], topics: [] };
+
+/** Where the kind, subjects and topics picked are remembered. */
+const picksKey = (username: string) => `nsPicks:${username}`;
+
+function readPicks(username: string | null): Picks {
+  if (!username) return NOTHING_PICKED;
   try {
-    const saved: unknown = JSON.parse(localStorage.getItem(leftOutKey(username)) || '[]');
-    return new Set(Array.isArray(saved) ? saved.filter((id): id is string => typeof id === 'string') : []);
+    const saved = JSON.parse(localStorage.getItem(picksKey(username)) || '{}') as Partial<Picks>;
+    return {
+      kind: KINDS.some((one) => one.id === saved.kind) ? saved.kind! : 'general',
+      subjects: Array.isArray(saved.subjects) ? saved.subjects : [],
+      topics: Array.isArray(saved.topics) ? saved.topics : [],
+    };
   } catch {
-    return new Set();
+    return NOTHING_PICKED;
   }
 }
 
-function writeLeftOut(username: string, ids: Set<string>) {
+function writePicks(username: string, picks: Picks) {
   try {
-    localStorage.setItem(leftOutKey(username), JSON.stringify([...ids]));
+    localStorage.setItem(picksKey(username), JSON.stringify(picks));
   } catch {
     /* Private window or blocked storage: the choice lasts the visit. */
   }
+}
+
+/** What the topic list says beside a name: where it sits, and how it's going. */
+function topicHint(topic: SessionTopic) {
+  const standing = topic.status === 'weak' ? 'weak' : topic.status === 'strong' ? 'strong' : '';
+  return [topic.area || topic.subject_label, standing].filter(Boolean).join(' · ');
 }
 
 export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
@@ -73,17 +132,15 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
      no panel. */
   const username = useContext(AuthContext)?.username ?? null;
   const shared = useContext(UserDataContext);
-  const [subjectId, setSubjectId] = useState('');
-  const [subjects, setSubjects] = useState<SessionSubject[]>([]);
-  /* Every subject in the catalog, so the picker can plan first sessions for
+  const [picks, setPicks] = useState<Picks>(() => readPicks(username));
+  const { kind } = picks;
+  const [worked, setWorked] = useState<SessionSubject[]>([]);
+  const [topics, setTopics] = useState<SessionTopic[]>([]);
+  /* Every subject in the catalog, so the search can plan first sessions for
      one with no work yet (the server writes starter sessions for those). */
   const catalog = useSubjects(username);
-  const others = useMemo(() => {
-    const listed = new Set(subjects.map((one) => one.id));
-    return catalog.filter((one) => !listed.has(one.id));
-  }, [catalog, subjects]);
-  const [leftOut, setLeftOut] = useState<Set<string>>(() => readLeftOut(username));
   const [steps, setSteps] = useState<SuggestedSession[]>([]);
+  const [due, setDue] = useState<number | null>(null);
   const [available, setAvailable] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
   const [asking, setAsking] = useState(false);
@@ -94,12 +151,28 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
   const working = asking || all || busy !== '';
   const [error, setError] = useState('');
 
+  const update = useCallback(
+    (change: (was: Picks) => Picks) => {
+      setPicks((was) => {
+        const next = change(was);
+        if (username) writePicks(username, next);
+        return next;
+      });
+    },
+    [username],
+  );
+
+  const subjectIds = useMemo(() => picks.subjects.map((one) => one.id), [picks.subjects]);
+  const scopeKey = subjectIds.join(',');
+  /** One subject has its own three. Several share the kind's across-all three. */
+  const subjectId = subjectIds.length === 1 ? subjectIds[0]! : '';
+
   useEffect(() => {
     if (!username) return undefined;
     let live = true;
     setLoading(true);
     setError('');
-    void nextSessions(subjectId).then((result) => {
+    void nextSessions(subjectId, kind, scopeKey ? scopeKey.split(',') : []).then((result) => {
       if (!live) return;
       setLoading(false);
       if (!result.success) {
@@ -109,45 +182,61 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
       }
       setSteps(result.steps);
       setAvailable(result.available);
-      // The picker keeps a subject it already lists even when this read is
-      // of that subject, so choosing one never empties the list around it.
-      if (result.subjects.length || !subjectId) setSubjects(result.subjects);
+      setDue(result.due ?? null);
+      if (result.subjects.length || !subjectId) setWorked(result.subjects);
+      const offered = result.topics ?? [];
+      setTopics(offered);
+      // A topic picked under another kind or subject that isn't on offer here
+      // would quietly plan from nothing, so it goes.
+      update((was) => {
+        const kept = was.topics.filter((one) => offered.some((topic) => topic.id === one.id));
+        return kept.length === was.topics.length ? was : { ...was, topics: kept };
+      });
     });
     return () => {
       live = false;
     };
-  }, [subjectId, username]);
+  }, [kind, scopeKey, subjectId, update, username]);
 
+  /** Subjects with work first, then the whole catalog. */
+  const subjectOptions = useMemo<PickOption[]>(() => {
+    const seen = new Set(worked.map((one) => one.id));
+    return [
+      ...worked.map((one) => ({ id: one.id, label: one.name, hint: `${one.count} done lately` })),
+      ...catalog.filter((one) => !seen.has(one.id)).map((one) => ({ id: one.id, label: one.name })),
+    ];
+  }, [catalog, worked]);
+
+  const topicOptions = useMemo<PickOption[]>(
+    () => topics.map((one) => ({ id: one.id, label: one.label, hint: topicHint(one) })),
+    [topics],
+  );
+
+  const topicIds = picks.topics.map((one) => one.id);
   const status = useMemo(
     () => new Map(steps.map((step) => [step.id, { state: step.state, task: step.task }])),
     [steps],
   );
   const open = steps.filter((step) => step.state === 'open');
-  const subjectName = subjectId
-    ? subjects.find((one) => one.id === subjectId)?.name
-      ?? catalog.find((one) => one.id === subjectId)?.name
-      ?? 'this subject'
-    : '';
-  /** Across every subject, the ones the pills have on. */
-  const included = subjects.filter((one) => !leftOut.has(one.id));
-  const narrowed = !subjectId && included.length < subjects.length;
+  const about = KINDS.find((one) => one.id === kind)!;
 
-  const toggle = (id: string) => {
-    setLeftOut((was) => {
-      const next = new Set(was);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      if (username) writeLeftOut(username, next);
-      return next;
-    });
-  };
+  const pickSubject = (option: PickOption) =>
+    update((was) => ({ ...was, subjects: [...was.subjects, { id: option.id, label: option.label }] }));
+  const dropSubject = (id: string) =>
+    update((was) => ({ ...was, subjects: was.subjects.filter((one) => one.id !== id) }));
+  const pickTopic = (option: PickOption) =>
+    update((was) => ({ ...was, topics: [...was.topics, { id: option.id, label: option.label }] }));
+  const dropTopic = (id: string) =>
+    update((was) => ({ ...was, topics: was.topics.filter((one) => one.id !== id) }));
 
   const suggest = async () => {
     setAsking(true);
     setError('');
-    const result = narrowed
-      ? await suggestNextSessions('', included.map((one) => one.id))
-      : await suggestNextSessions(subjectId);
+    const result = await suggestNextSessions(subjectId, {
+      kind,
+      subjects: subjectIds.length > 1 ? subjectIds : [],
+      topics: topicIds,
+    });
     setAsking(false);
     if (!result.success) {
       setError(result.message || "Couldn't suggest sessions. Try again.");
@@ -209,13 +298,20 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
   if (!username) return null;
 
   const heading = where === 'dashboard' ? 'Your next sessions' : 'Next sessions';
-  const scope = subjectId
-    ? subjectName
-    : narrowed
-      ? included.length === 1
-        ? included[0]!.name
-        : 'the subjects chosen below'
-      : 'all your subjects';
+  const scope =
+    picks.subjects.length === 0
+      ? 'all your subjects'
+      : picks.subjects.length === 1
+        ? picks.subjects[0]!.label
+        : picks.subjects.length === 2
+          ? `${picks.subjects[0]!.label} and ${picks.subjects[1]!.label}`
+          : `${picks.subjects.length} subjects`;
+  const nothingToDo = due === 0 && topicIds.length === 0;
+  const dueLine =
+    kind === 'review' && due
+      ? ` ${due} ${due === 1 ? 'piece of work is' : 'pieces of work are'} due for another look.`
+      : '';
+  const pills = topics.filter((one) => !topicIds.includes(one.id)).slice(0, TOPIC_PILLS);
 
   return (
     <section className={`ns-panel ns-on-${where}`} aria-label={heading}>
@@ -223,58 +319,95 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
         <div className="ns-title">
           <h2>{heading}</h2>
           <p>
-            Three study sessions picked from your recent work in {scope}. Each one tells you what to
-            do, how hard and for how long. Add one to your calendar or add all three.
+            {about.line} in {scope}.{dueLine} Add one to your calendar or add all three.
           </p>
         </div>
-        <label className="ns-pick">
-          <span>Plan for</span>
-          <select
-            value={subjectId}
-            onChange={(event) => setSubjectId(event.target.value)}
-            disabled={working}
-          >
-            <option value="">All subjects</option>
-            {subjects.length > 0 && (
-              <optgroup label="Subjects you've worked on">
-                {subjects.map((one) => (
-                  <option key={one.id} value={one.id}>
-                    {one.name}
-                  </option>
-                ))}
-              </optgroup>
-            )}
-            {others.length > 0 && (
-              <optgroup label={subjects.length ? 'Start something new' : 'Every subject'}>
-                {others.map((one) => (
-                  <option key={one.id} value={one.id}>
-                    {one.name}
-                  </option>
-                ))}
-              </optgroup>
-            )}
-          </select>
-        </label>
       </header>
 
-      {!subjectId && subjects.length > 1 && (
-        <div className="ns-pills" role="group" aria-label="Subjects to include">
-          {subjects.map((one) => {
-            const on = !leftOut.has(one.id);
-            return (
-              <button
-                key={one.id}
-                type="button"
-                className={`ns-pill${on ? ' is-on' : ''}`}
-                aria-pressed={on}
-                onClick={() => toggle(one.id)}
-                disabled={working}
-              >
-                <span className="ns-pill-mark" aria-hidden="true">{on ? '✓' : '+'}</span>
-                {one.name}
-              </button>
-            );
-          })}
+      <div className="ns-kinds" role="radiogroup" aria-label="Kind of session">
+        {KINDS.map((one) => (
+          <button
+            key={one.id}
+            type="button"
+            role="radio"
+            aria-checked={one.id === kind}
+            className={`ns-kind${one.id === kind ? ' is-on' : ''}`}
+            onClick={() => update((was) => ({ ...was, kind: one.id }))}
+            disabled={working}
+          >
+            {one.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="ns-finder">
+        <PickSearch
+          label="Subjects"
+          placeholder="Search subjects"
+          options={subjectOptions}
+          picked={subjectIds}
+          onPick={pickSubject}
+          disabled={working}
+          empty="No subject matches that."
+        />
+        <PickSearch
+          label="Topics"
+          placeholder="Search topics"
+          options={topicOptions}
+          picked={topicIds}
+          onPick={pickTopic}
+          disabled={working}
+          empty={topics.length ? 'No topic matches that.' : 'No topics here yet.'}
+        />
+      </div>
+
+      {(picks.subjects.length > 0 || picks.topics.length > 0) && (
+        <div className="ns-chips" role="group" aria-label="Picked">
+          {picks.subjects.map((one) => (
+            <button
+              key={one.id}
+              type="button"
+              className="ns-chip"
+              onClick={() => dropSubject(one.id)}
+              disabled={working}
+              aria-label={`Remove ${one.label}`}
+            >
+              {one.label}
+              <span className="ns-chip-x" aria-hidden="true">✕</span>
+            </button>
+          ))}
+          {picks.topics.map((one) => (
+            <button
+              key={one.id}
+              type="button"
+              className="ns-chip"
+              onClick={() => dropTopic(one.id)}
+              disabled={working}
+              aria-label={`Remove ${one.label}`}
+            >
+              {one.label}
+              <span className="ns-chip-x" aria-hidden="true">✕</span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {pills.length > 0 && (
+        <div className="ns-pills" role="group" aria-label="Filter by topic">
+          <span className="ns-pills-label">Filter by topic</span>
+          {pills.map((one) => (
+            <button
+              key={one.id}
+              type="button"
+              className="ns-pill"
+              onClick={() => pickTopic({ id: one.id, label: one.label })}
+              disabled={working}
+              title={topicHint(one)}
+            >
+              <span className="ns-pill-mark" aria-hidden="true">+</span>
+              {one.label}
+            </button>
+          ))}
         </div>
       )}
 
@@ -284,7 +417,12 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
         </p>
       ) : (
         <div className="ns-actions">
-          <button type="button" className="ns-btn is-primary" onClick={() => void suggest()} disabled={working || loading || (!subjectId && subjects.length > 0 && !included.length)}>
+          <button
+            type="button"
+            className="ns-btn is-primary"
+            onClick={() => void suggest()}
+            disabled={working || loading || nothingToDo}
+          >
             {asking ? 'Loading…' : steps.length ? `Suggest ${BATCH} different ones` : `Suggest ${BATCH} sessions`}
           </button>
           {open.length > 0 && (
@@ -315,7 +453,9 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
       ) : (
         available !== false && (
           <p className="ns-note">
-            Nothing suggested {subjectId ? `for ${subjectName} ` : ''}yet. Press Suggest {BATCH} sessions and you'll get three based on your recent work.
+            {nothingToDo
+              ? about.nothing
+              : `Nothing suggested ${subjectId ? `for ${scope} ` : ''}yet. Press Suggest ${BATCH} sessions and you'll get three based on your work.`}
           </p>
         )
       )}

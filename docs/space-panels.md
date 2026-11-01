@@ -48,7 +48,7 @@ controls, and every block has its own time range and subject instead.
 | What to do next (the plan) | `NextActions` | `plan` | minutes (15 to 120), how many rows |
 | What's going on (diagnosis) | `DiagnosisCards` / `DiagnosisEmpty` | `diagnosis` | how many |
 | Changes you're trying | `FollowupPanel` | `followup` | how many |
-| Sessions to plan | `NextSessionsPanel` | `sessions` | its own subject picker |
+| Sessions to plan | `NextSessionsPanel` | `sessions` | its own kind pills, subject search and topic filters |
 | What Summit knows (coach) | `Knows` | `coach` | how many |
 
 ### Overview (20 of 20)

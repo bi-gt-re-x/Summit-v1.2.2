@@ -1678,7 +1678,7 @@ use <about_the_reader> and <goals> for the level and the aim. Each `reason` \
 says why it's a good first step, without quoting any numbers."""
 
 
-#: Added to STEPS_SYSTEM for the "What to review" panel
+#: Added to STEPS_SYSTEM for Next sessions' Review pill
 #: (backend/tracking/review_sessions.py). Same sessions, pointed backwards.
 REVIEW_NOTE = """
 
@@ -1699,13 +1699,62 @@ minutes. The `reason` says when it was done and how it went, using the \
 figures in <review_due>, and why going back now helps."""
 
 
+#: Added to STEPS_SYSTEM for the other pills on Next sessions
+#: (backend/tracking/session_kinds.py), keyed by what `angle` is set to. Each
+#: goes with its own section of the brief.
+ANGLE_NOTES = {
+    'expansion': """
+
+THESE ARE EXPANSION SESSIONS
+The reader wants to build on what they're best at. <strongest_topics> lists \
+their strongest topics, each with its numbers. Each of the three sessions takes \
+one of those topics further: harder problems, the next stage or contest level, \
+a timed run, or using it on something new. Don't repeat what they've already \
+done at the same level. The three cover different topics when there are enough. \
+The `reason` says how the topic has gone, using the numbers in \
+<strongest_topics>, and why it's ready for more.""",
+    'weakness': """
+
+THESE ARE WEAKNESS SESSIONS
+The reader wants to fix what's going worst. <weakest_topics> lists their weakest \
+topics, each with its numbers. Each of the three sessions goes after one of those \
+topics: break it into smaller parts, say which part to drill, start a step easier \
+than where it went wrong and build back up. Never send them back to the same \
+material at the same level. The three cover different topics when there are \
+enough. The `reason` says how the topic has gone, using the numbers in \
+<weakest_topics>, and what this session changes.""",
+    'new': """
+
+THESE ARE NEW-TOPIC SESSIONS
+The reader wants to start something they haven't done. <new_topics> lists topics \
+with no finished work yet, the most useful first. Each of the three sessions \
+starts one of those topics, by its plain name, and only those. Start short and \
+approachable, say exactly what to read or try first, and end with a few problems \
+to see if it stuck. The three cover different topics. There are no numbers about \
+these topics to quote. The `reason` says why this topic is a good next step, using \
+what's next to it in <new_topics>.""",
+    'general': """
+
+THE READER PICKED THESE TOPICS
+<picked_topics> lists the topics they want to work on, each with its numbers. All \
+three sessions stay on those topics. The `reason` uses the numbers in \
+<picked_topics>.""",
+}
+
+#: What the plan's instruction calls the three.
+ANGLE_WORDS = {'expansion': 'expansion sessions', 'weakness': 'weakness sessions',
+               'new': 'new-topic sessions'}
+
+
 def plan(state: Dict[str, Any], model_id: str = '',
          overall: bool = False, starter: bool = False,
-         review: str = '') -> List[Dict[str, Any]]:
+         review: str = '', angle: str = '', focus: str = '') -> List[Dict[str, Any]]:
     """Three recommendations for this subject, and nothing else — or, with
     `overall`, three across every subject in the brief (OVERALL_NOTE), or with
     `starter`, three first sessions for a subject with no work yet, or with
-    `review` (a <review_due> block), three review sessions (REVIEW_NOTE).
+    `review` (a <review_due> block), three review sessions (REVIEW_NOTE), or
+    with `angle` and `focus` (its section of the brief), three of that kind
+    (ANGLE_NOTES).
 
     Raises `BriefUnavailable` for everything the page should say out loud, as
     `read` does.
@@ -1718,13 +1767,14 @@ def plan(state: Dict[str, Any], model_id: str = '',
     # Reference facts about the subject (backend/tracking/sources.py) go in
     # the brief itself, so the figure check below allows their numbers too.
     brief = (steps_brief_from(state) + sources.brief_block(str(state.get('subject') or ''))
-             + (review or ''))
-    what = 'review sessions' if review else 'sessions'
+             + (review or '') + (focus or ''))
+    what = 'review sessions' if review else ANGLE_WORDS.get(angle, 'sessions')
     try:
         text = planner.from_provider(
             brief,
             system=STEPS_SYSTEM + (OVERALL_NOTE if overall else '')
-            + (STARTER_NOTE if starter else '') + (REVIEW_NOTE if review else ''),
+            + (STARTER_NOTE if starter else '') + (REVIEW_NOTE if review else '')
+            + (ANGLE_NOTES.get(angle, '') if focus else ''),
             schema=STEPS_SCHEMA,
             instruction=('Plan the next three {} across these subjects '
                          'from the sections below.'.format(what) if overall else

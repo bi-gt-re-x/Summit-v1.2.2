@@ -33,6 +33,9 @@ tasks, focus minutes, and the execution rating of rated tasks. Then:
   "super productive") against how much the record says got done.
 - **Energy**, **recovery** after a rough day, and **mood by weekday**, each
   only once there are enough days.
+- **Low times.** Every moment energy or output dropped, with its date and, when
+  there is one, its time, and which parts of the day and which weekdays they
+  land on. See `low_times`.
 
 ## What it won't say
 
@@ -52,6 +55,8 @@ from datetime import date, timedelta
 from statistics import mean, median
 from typing import Dict, Iterable, List, Optional, Tuple
 
+from backend.tracking.review_sessions import reviewable
+
 #: How far back logged days are read.
 WINDOW_DAYS = 180
 #: The stretch the "usual day" is measured over.
@@ -64,6 +69,17 @@ SMALL_CHANGE = 15
 SERIES_DAYS = 60
 #: Perception checks shown.
 CHECKS_SHOWN = 6
+#: Low times listed per side.
+LOW_SHOWN = 8
+#: A day under this share of the usual day is a slow one.
+SLOW_SHARE = 0.5
+#: A rating at or below this is low.
+LOW_RATING = 2
+#: The reason a task was done on low energy (shared/rules.json).
+LOW_ENERGY_REASON = 'low-energy'
+#: The parts of the day, by the hour each starts. Same hours as `PART_OF_DAY`
+#: in frontend/src/utils/habits.ts.
+PARTS = (('Morning', 5), ('Afternoon', 12), ('Evening', 17), ('Late hours', 22))
 
 BANDS = (
     ('rough', 'Rough days', lambda mood: mood <= -1),
@@ -278,8 +294,147 @@ def _shift(day: str, by: int) -> str:
 # ---------------------------------------------------------------------------
 # The whole reading
 # ---------------------------------------------------------------------------
+def _part_of(stamp: str) -> Optional[str]:
+    """Which part of the day a timestamp falls in, or None with no time on it."""
+    try:
+        hour = int(str(stamp)[11:13])
+    except ValueError:
+        return None
+    named = [label for label, start in PARTS if hour >= start]
+    return named[-1] if named else PARTS[-1][0]
+
+
+def _weekday(day: str) -> str:
+    return WEEKDAYS[date.fromisoformat(day).weekday()]
+
+
+def _low_mark(stamp: str, label: str, detail: str) -> dict:
+    return {'day': str(stamp)[:10], 'time': str(stamp)[11:16], 'label': label, 'detail': detail}
+
+
+def _worst(rows: List[dict], field: str) -> Optional[str]:
+    """The one row with the most, or None on a tie or too few to tell."""
+    top = max((row[field] for row in rows), default=0)
+    leaders = [row for row in rows if row[field] == top]
+    return leaders[0]['name'] if top >= MIN_DAYS and len(leaders) == 1 else None
+
+
+def low_times(entries: Iterable[dict], tasks: Iterable[dict], output: Dict[str, dict],
+              usual_tasks: float, usual_focus: int, since: str, today_iso: str) -> dict:
+    """When energy and output dropped, as a record of moments.
+
+    **Low energy** is a Drained tap on the Log, a tired word in an entry with
+    no tap that says otherwise, or a task marked "Low energy" when it was
+    rated. **Low productivity** is a finished day under SLOW_SHARE of the usual
+    day (a day with deep focus doesn't count), a line like "got nothing done",
+    or a study task rated LOW_RATING or lower. Slow days have no time on them; the
+    parts of the day come from the rated tasks.
+    """
+    tired = LEXICON['tired'][2]
+    energy, said_low = [], []
+    for entry in entries:
+        stamp = str(entry.get('created_at') or '')
+        if not since <= stamp[:10] <= today_iso:
+            continue
+        text = '{} {}'.format(entry.get('title') or '', entry.get('body') or '')
+        # A check-in with no writing is only ever changed by tapping it, so its
+        # last edit is when the tap happened.
+        if entry.get('updated_at') and not text.strip():
+            stamp = str(entry['updated_at'])
+        if entry.get('energy') == 1:
+            energy.append(_low_mark(stamp, 'Drained', 'You tapped Drained on the Log.'))
+        elif not entry.get('energy'):
+            words = [word for word in read_words(text)['words']
+                     if any(re.fullmatch(pattern, word) for pattern in tired)]
+            if words:
+                energy.append(_low_mark(stamp, 'Tired', 'You wrote "{}".'.format(words[0])))
+        claim = claim_in(text)
+        if claim and claim[0] == 'low':
+            said_low.append(_low_mark(stamp, 'You said so', '"{}"'.format(claim[1])))
+
+    rated_by_part: Dict[str, List[int]] = {label: [0, 0] for label, _ in PARTS}
+    low_rated = []
+    for task in tasks:
+        stamp = str(task.get('completed_at') or '')
+        if task.get('status') != 'done' or not since <= stamp[:10] <= today_iso:
+            continue
+        title = str(task.get('title') or 'A task').strip()[:80]
+        if task.get('reason') == LOW_ENERGY_REASON:
+            energy.append(_low_mark(stamp, 'Low energy', '{} was done on low energy.'.format(title)))
+        execution = task.get('execution')
+        # A dinner that went badly isn't low productivity.
+        if isinstance(execution, (int, float)) and 1 <= execution <= 5 and reviewable(task.get('subject')):
+            part = _part_of(stamp)
+            if part:
+                rated_by_part[part][0] += 1
+            if execution <= LOW_RATING:
+                if part:
+                    rated_by_part[part][1] += 1
+                low_rated.append(_low_mark(stamp, 'Rated low', '{} was rated {:g} of 5.'.format(title, execution)))
+
+    # Slow days run from the first day with any work: the empty weeks before an
+    # account started aren't slow days.
+    started = min((day for day, row in output.items() if row['tasks'] or row['focus_min']), default=today_iso)
+    slow_days, day_total = [], defaultdict(int)
+    for back in range((date.fromisoformat(today_iso) - date.fromisoformat(max(since, started))).days, 0, -1):
+        day = _shift(today_iso, -back)
+        did = output.get(day) or _empty_day()
+        day_total[_weekday(day)] += 1
+        if usual_tasks and did['tasks'] < usual_tasks * SLOW_SHARE \
+                and not (usual_focus and did['focus_min'] >= usual_focus):
+            slow_days.append(_low_mark(day, 'Slow day', '{} vs. your usual {:g}.'.format(
+                '1 task' if did['tasks'] == 1 else '{} tasks'.format(did['tasks']), usual_tasks)))
+
+    def newest(marks: List[dict]) -> List[dict]:
+        return sorted(marks, key=lambda mark: (mark['day'], mark['time']), reverse=True)
+
+    energy_parts = [{'name': label, 'count': sum(1 for mark in energy if _part_of(mark['day'] + 'T' + mark['time']) == label)}
+                    for label, _ in PARTS]
+    energy_days = [{'name': name, 'count': sum(1 for mark in energy if _weekday(mark['day']) == name)}
+                   for name in WEEKDAYS]
+    slow_by_day = [{'name': name, 'count': sum(1 for mark in slow_days if _weekday(mark['day']) == name),
+                    'of': day_total[name]} for name in WEEKDAYS]
+    low_parts = [{'name': label, 'rated': rated_by_part[label][0], 'count': rated_by_part[label][1],
+                  'share': round(100 * rated_by_part[label][1] / rated_by_part[label][0])
+                  if rated_by_part[label][0] else 0}
+                 for label, _ in PARTS]
+    # Most low ratings would just be the part of the day with the most work, so
+    # the worst part is the one with the biggest share.
+    fair = [row for row in low_parts if row['rated'] >= MIN_DAYS and row['count']]
+    worst_rated = max(fair, key=lambda row: row['share'], default=None)
+    tied = worst_rated and sum(1 for row in fair if row['share'] == worst_rated['share']) > 1
+    # A couple of points over the rest isn't a finding, the same floor as
+    # every other comparison here.
+    rated_total = sum(row['rated'] for row in low_parts)
+    overall = 100 * len(low_rated) / rated_total if rated_total else 0
+    clear = worst_rated and worst_rated['share'] >= overall * (1 + SMALL_CHANGE / 100)
+    marks = said_low + low_rated + slow_days
+    return {
+        'energy': {
+            'count': len(energy),
+            'parts': energy_parts,
+            'weekdays': energy_days,
+            'worst_part': _worst(energy_parts, 'count'),
+            'worst_day': _worst(energy_days, 'count'),
+            'latest': newest(energy)[:LOW_SHOWN],
+        },
+        'output': {
+            'count': len(marks),
+            'slow_days': len(slow_days),
+            'low_rated': len(low_rated),
+            'said': len(said_low),
+            'parts': low_parts,
+            'weekdays': slow_by_day,
+            'worst_part': worst_rated['name'] if clear and not tied else None,
+            'worst_day': _worst(slow_by_day, 'count'),
+            'latest': newest(marks)[:LOW_SHOWN],
+        },
+    }
+
+
 def readings(entries: Iterable[dict], tasks: Iterable[dict], focus: Dict[str, dict],
              today: date = None) -> dict:
+    entries, tasks = list(entries), list(tasks)
     today = today or date.today()
     since = (today - timedelta(days=WINDOW_DAYS - 1)).isoformat()
     usual_since = (today - timedelta(days=USUAL_DAYS - 1)).isoformat()
@@ -428,6 +583,7 @@ def readings(entries: Iterable[dict], tasks: Iterable[dict], focus: Dict[str, di
         'recovery': recovery,
         'weekdays': weekdays,
         'series': series,
+        'low_times': low_times(entries, tasks, output, usual_tasks, usual_focus, since, today_iso),
         'min_days': MIN_DAYS,
         'small_change': SMALL_CHANGE,
     }
@@ -531,6 +687,6 @@ def brief_lines(found: dict) -> List[str]:
 
 def entry_rows(rows: Iterable[dict]) -> List[dict]:
     """Just the columns this module reads."""
-    return [{key: row.get(key) for key in ('title', 'body', 'mood', 'energy', 'created_at')}
+    return [{key: row.get(key) for key in ('title', 'body', 'mood', 'energy', 'created_at', 'updated_at')}
             for row in rows]
 

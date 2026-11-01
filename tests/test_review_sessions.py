@@ -1,6 +1,5 @@
-"""What to review: three review sessions above Next sessions —
-backend/tracking/review_sessions and /api/review_sessions in
-backend/api/subject_ai.py."""
+"""The Review pill on Next sessions — backend/tracking/review_sessions and
+/api/next_sessions in backend/api/subject_ai.py."""
 from datetime import date, datetime, timedelta
 
 from backend.database import connection as db
@@ -109,12 +108,12 @@ def test_three_review_sessions_are_kept_apart_from_next_sessions(client, monkeyp
     _seed()
     seen = {}
     _stub(monkeypatch, seen)
-    body = client.post('/api/review_sessions', json={}).json()
+    body = client.post('/api/next_sessions', json={'kind': 'review'}).json()
     assert body['success'] is True, body
     assert seen['overall'] is True and '<review_due>' in seen['review']
     assert [step['title'] for step in body['steps']] == [step['title'] for step in STEPS]
 
-    again = client.get('/api/review_sessions').json()
+    again = client.get('/api/next_sessions', params={'kind': 'review'}).json()
     assert [step['id'] for step in again['steps']] == [step['id'] for step in body['steps']]
     assert again['due'] >= 1
     assert client.get('/api/next_sessions').json()['steps'] == []
@@ -123,11 +122,11 @@ def test_three_review_sessions_are_kept_apart_from_next_sessions(client, monkeyp
 def test_planning_a_review_session_files_it_under_its_subject(client, monkeypatch):
     _seed()
     _stub(monkeypatch)
-    steps = client.post('/api/review_sessions', json={}).json()['steps']
+    steps = client.post('/api/next_sessions', json={'kind': 'review'}).json()['steps']
     booked = client.post('/api/subject_recommendation/plan', json={'id': steps[1]['id']}).json()
     assert booked['success'] is True, booked
     assert db.find_row('tasks', booked['task']['id'], user_id='tester')['subject'] == 'music'
-    states = [step['state'] for step in client.get('/api/review_sessions').json()['steps']]
+    states = [step['state'] for step in client.get('/api/next_sessions', params={'kind': 'review'}).json()['steps']]
     assert states == ['open', 'planned', 'open']
 
 
@@ -135,14 +134,14 @@ def test_one_subject_has_its_own_three(client, monkeypatch):
     _seed()
     seen = {}
     _stub(monkeypatch, seen)
-    body = client.post('/api/review_sessions', json={'subject_id': 'mathematics'}).json()
+    body = client.post('/api/next_sessions', json={'kind': 'review', 'subject_id': 'mathematics'}).json()
     assert body['subject'] == 'Review: Mathematics' and seen['overall'] is False
-    assert client.get('/api/review_sessions').json()['steps'] == []
+    assert client.get('/api/next_sessions', params={'kind': 'review'}).json()['steps'] == []
 
 
 def test_nothing_due_says_so(client, monkeypatch):
     _stub(monkeypatch)
-    body = client.post('/api/review_sessions', json={}).json()
+    body = client.post('/api/next_sessions', json={'kind': 'review'}).json()
     assert body['success'] is False and 'due for review' in body['message']
 
 

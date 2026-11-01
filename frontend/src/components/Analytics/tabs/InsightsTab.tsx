@@ -85,6 +85,7 @@ import { EarlyRead } from '../Upcoming';
 import type { AnalyticsModel } from '../useAnalyticsModel';
 import type { AnalyticsData } from '../useAnalyticsData';
 import { SayVsDo, sayVsDoHasNews } from '../SayVsDo';
+import { LowTimesPanel } from '../LowTimes';
 import type { SubjectIndex } from '@/hooks/useSubjects';
 
 export function InsightsTab({
@@ -256,6 +257,18 @@ export function InsightsTab({
             defaultOpen={sayVsDoHasNews(mood, said)}
           >
             <SayVsDo mood={mood} said={said} reloadSaid={() => data.said?.reload()} />
+          </PanelGroup>
+        )}
+
+        {/* When energy and output dropped, with the date and time of each. Waits
+            for no gate: one Drained tap is already worth keeping. */}
+        {data && mood?.low_times && (
+          <PanelGroup
+            title="Low productivity and low energy"
+            note="When your work or your energy dropped"
+            defaultOpen={mood.low_times.energy.count + mood.low_times.output.count > 0}
+          >
+            <LowTimesPanel low={mood.low_times} windowDays={mood.window_days} />
           </PanelGroup>
         )}
 

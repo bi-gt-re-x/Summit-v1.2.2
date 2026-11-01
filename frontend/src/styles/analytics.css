@@ -9583,3 +9583,18 @@ g:hover > .ax-sv-time-bar { filter: brightness(.9); }
 .ax-period-mark { font-weight: 700; color: var(--ax-faint); text-align: center; }
 .ax-period-list li.is-up .ax-period-mark { color: var(--ax-good); }
 .ax-period-list li.is-down .ax-period-mark { color: var(--ax-bad); }
+
+/* ---- Low productivity and low energy: components/Analytics/LowTimes ------ */
+.ax-low-bars { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 6px; }
+.ax-low-bars li { display: grid; grid-template-columns: 90px minmax(0, 1fr) 76px; align-items: center; gap: var(--space-2); font-size: var(--text-xs); color: var(--ax-muted); }
+.ax-low-bars b { text-align: right; font-weight: 600; color: var(--ax-text); }
+.ax-low-bar { height: 8px; border-radius: 999px; background: var(--ax-line-soft); overflow: hidden; }
+.ax-low-bar span { display: block; height: 100%; border-radius: inherit; background: var(--ax-violet); }
+.ax-low-bars li.is-worst > span:first-child { font-weight: 700; color: var(--ax-text); }
+.ax-low-part { margin-top: var(--space-4); }
+.ax-low-lead { margin: 0; font-size: var(--text-sm); color: var(--ax-text); }
+.ax-low-list { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: var(--space-2); }
+.ax-low-list li { display: grid; grid-template-columns: 148px minmax(0, 1fr); gap: var(--space-2); font-size: var(--text-xs); color: var(--ax-muted); }
+.ax-low-list time { font-weight: 600; color: var(--ax-text); }
+.ax-low-list b { font-weight: 600; color: var(--ax-text); }
+.ax-low-empty { margin: 0; font-size: var(--text-sm); color: var(--ax-muted); }

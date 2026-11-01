@@ -1,10 +1,9 @@
-"""What to review: the brief for three review sessions, counted from the tasks.
+"""The Review pill on Next sessions: the brief, counted from the tasks.
 
-The Recommendations tab's "What to review" panel sits above Next sessions and
-works the same way: a model reads the record and writes three exact sessions
-that can be booked onto the calendar (backend/tracking/subject_ai.plan, with
-`review` set). The difference is what the sessions are for. Next sessions move
-the reader forward; these go back over work already done so it sticks.
+A model reads the record and writes three exact sessions that can be booked
+onto the calendar (backend/tracking/subject_ai.plan, with `review` set), like
+every kind of next session (backend/tracking/session_kinds.py). The difference
+is what they're for: these go back over work already done so it sticks.
 
 So the brief adds one section, <review_due>, picked from finished tasks:
 
@@ -20,18 +19,14 @@ So the brief adds one section, <review_due>, picked from finished tasks:
 Each line names the task, how long ago it was, and how it went, so the model
 can quote the figure in its reason and the figure check lets it.
 
-The sessions go in the same ledger as Next sessions, under REVIEW (every
-subject) or `review_key(name)` (one subject), so planning and "I did this" are
-the same endpoints, and the two panels never show each other's sessions.
+The sessions go in the same ledger as the other kinds, under their own keys,
+so planning and "I did this" are the same endpoints.
 """
 from datetime import date, timedelta
 from typing import Dict, List, Optional
 
 from backend.config import subjects as subject_catalogue
 from backend.tracking import next_sessions
-
-#: What review sessions across every subject are filed under.
-REVIEW = 'Review: all subjects'
 
 #: Days after which going back over something does the most good, and how far
 #: either side of each still counts.
@@ -60,15 +55,6 @@ SKIPPED = {entry['id'] for entry in subject_catalogue.SUBJECTS
 def reviewable(subject_id) -> bool:
     """Whether work in this subject is study material worth reviewing."""
     return (subject_id or '') not in SKIPPED
-
-
-def review_key(subject: str) -> str:
-    """The ledger key for one subject's review sessions."""
-    return 'Review: {}'.format(subject)
-
-
-def is_review(key: str) -> bool:
-    return str(key or '').startswith('Review: ')
 
 
 def _ago(task: dict, today: date) -> Optional[int]:

@@ -76,7 +76,8 @@ def about_lines(username, subject=None):
 def mood_for(username):
     """How the days felt against what they did (tracking/mood.py)."""
     entries = mood.entry_rows(db.rows_for('log_entries', username))
-    tasks = db.columns_for('tasks', username, ('status', 'completed_at', 'xp_value', 'execution'))
+    tasks = db.columns_for('tasks', username, ('status', 'title', 'subject', 'completed_at',
+                                               'xp_value', 'execution', 'reason'))
     return mood.readings(entries, tasks, focus_tracking.history_for(username))
 
 

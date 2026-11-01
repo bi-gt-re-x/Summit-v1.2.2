@@ -1044,43 +1044,56 @@ export interface NextSessions {
   steps: SuggestedSession[];
 }
 
+/** What the three sessions are for: backend/tracking/session_kinds.py. */
+export type SessionKind = 'general' | 'expansion' | 'weakness' | 'review' | 'new';
+
+/** A topic the panel can filter by. */
+export interface SessionTopic {
+  id: string;
+  label: string;
+  /** The skill tree it sits in ("Competition Math"). */
+  area: string;
+  subject: string;
+  subject_label: string;
+  status: string;
+  tasks: number;
+  execution?: number | null;
+}
+
+export interface SessionsOnScreen extends NextSessions {
+  kind: SessionKind;
+  subjects: SessionSubject[];
+  topics: SessionTopic[];
+  /** How much this kind has to work from. Null for general, which reads everything. */
+  due: number | null;
+  available: boolean;
+}
+
 /**
- * The sessions already suggested for a subject — or across every subject,
- * with no id — the subjects to choose from, and whether a model is there to
- * suggest more. Backend: `/api/next_sessions` in backend/api/subject_ai.py.
+ * The sessions already suggested for one kind and a subject (or across every
+ * subject, with no id), the subjects and topics to choose from, and whether a
+ * model is there to suggest more. `picked` is every subject chosen, for the
+ * topics and the count. Backend: `/api/next_sessions` in backend/api/subject_ai.py.
  */
 export function nextSessions(
   subjectId = '',
-): Promise<ApiResult<NextSessions & { subjects: SessionSubject[]; available: boolean }>> {
-  return get<NextSessions & { subjects: SessionSubject[]; available: boolean }>(
-    `/api/next_sessions${subjectId ? `?subject_id=${encodeURIComponent(subjectId)}` : ''}`,
-  );
+  kind: SessionKind = 'general',
+  picked: string[] = [],
+): Promise<ApiResult<SessionsOnScreen>> {
+  return get<SessionsOnScreen>('/api/next_sessions', {
+    ...(subjectId ? { subject_id: subjectId } : {}),
+    ...(kind !== 'general' ? { kind } : {}),
+    ...(picked.length > 1 ? { subjects: picked.join(',') } : {}),
+  });
 }
 
 /**
  * Three new sessions in place of the ones on screen. Costs a model call.
- * Across every subject, `subjects` narrows the plan to those ids; left out,
- * it reads them all.
+ * `subjects` narrows it to several subjects, `topics` to those topics.
  */
-export function suggestNextSessions(subjectId = '', subjects?: string[]): Promise<ApiResult<NextSessions>> {
-  return post<NextSessions>('/api/next_sessions', subjects ? { subject_id: subjectId, subjects } : { subject_id: subjectId });
-}
-
-/**
- * What to review: the review sessions on screen for a subject (or every
- * subject, with no id), the subjects to pick from, and how much is due. The
- * steps are planned and marked done through the same endpoints as Next
- * sessions (backend/tracking/review_sessions.py).
- */
-export function reviewSessions(
+export function suggestNextSessions(
   subjectId = '',
-): Promise<ApiResult<NextSessions & { subjects: SessionSubject[]; available: boolean; due: number }>> {
-  return get<NextSessions & { subjects: SessionSubject[]; available: boolean; due: number }>(
-    `/api/review_sessions${subjectId ? `?subject_id=${encodeURIComponent(subjectId)}` : ''}`,
-  );
-}
-
-/** Three new review sessions in place of the ones on screen. Costs a model call. */
-export function suggestReviewSessions(subjectId = ''): Promise<ApiResult<NextSessions>> {
-  return post<NextSessions>('/api/review_sessions', { subject_id: subjectId });
+  { kind = 'general', subjects = [], topics = [] }: { kind?: SessionKind; subjects?: string[]; topics?: string[] } = {},
+): Promise<ApiResult<NextSessions>> {
+  return post<NextSessions>('/api/next_sessions', { subject_id: subjectId, kind, subjects, topics });
 }
