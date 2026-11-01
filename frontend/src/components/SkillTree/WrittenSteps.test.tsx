@@ -258,6 +258,15 @@ describe('the target problem', () => {
     const slot = screen.getByText(/will appear here/);
     expect(slot).toHaveTextContent('Recognize a Quadratic');
   });
+
+  it('is gone once the step has problems written', () => {
+    const problem = { slot: 1, weight: 'warmup', prompt: 'Factor x^2 - 1.', answer: '(x - 1)(x + 1)', hint: '' };
+    draw([written({ problems: [problem] as WrittenStep['problems'] }), ...PROGRAMME.slice(1)]);
+    // The step is open, with its reading still there and no promise of a problem.
+    expect(screen.getByText('Look for two numbers that multiply to c and add to b.')).toBeInTheDocument();
+    expect(screen.queryByText('Target problem to solve')).not.toBeInTheDocument();
+    expect(screen.queryByText(/will appear here/)).not.toBeInTheDocument();
+  });
 });
 
 describe('taking the section over', () => {

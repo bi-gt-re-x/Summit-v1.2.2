@@ -714,13 +714,17 @@ function WrittenProgramme({
                     do, and this is the actual worked item to sit down with.
                     It leads the body rather than following the method, because
                     a reader who already knows how does not want to scroll past
-                    an explanation to reach the question. */}
-                <div className="stx-ws-target">
-                  <p className="stx-ws-target-label">Target problem to solve</p>
-                  <p className="stx-ws-target-slot">
-                    A problem for <b>{step.title}</b> will appear here.
-                  </p>
-                </div>
+                    an explanation to reach the question. A step with problems
+                    already written skips this, since "will appear here" would
+                    be wrong: the full step list links to them. */}
+                {step.problems.length === 0 && (
+                  <div className="stx-ws-target">
+                    <p className="stx-ws-target-label">Target problem to solve</p>
+                    <p className="stx-ws-target-slot">
+                      A problem for <b>{step.title}</b> will appear here.
+                    </p>
+                  </div>
+                )}
                 <p className="stx-ws-detail"><MathText text={step.detail} /></p>
                 <dl className="stx-ws-facts">
                   <div>
