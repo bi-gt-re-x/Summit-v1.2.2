@@ -20222,7 +20222,7 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "At equilibrium in \\(\\mathrm{N_{2}} + 3\\mathrm{H_{2}}\\) <=> \\(2\\mathrm{NH_{3}}\\), are concentrations equal or constant?",
+              "prompt": "At equilibrium in \\(\\mathrm{N_{2}} + 3\\mathrm{H_{2}} \\rightleftharpoons 2\\mathrm{NH_{3}}\\), are concentrations equal or constant?",
               "answer": "Constant.",
               "answer_kind": "word"
             },
@@ -20254,7 +20254,7 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "K for \\(\\mathrm{H_{2}} + \\mathrm{I_{2}}\\) <=> 2HI?",
+              "prompt": "K for \\(\\mathrm{H_{2}} + \\mathrm{I_{2}} \\rightleftharpoons 2\\mathrm{HI}\\)?",
               "answer": "[HI]^2/([H2][I2]).",
               "answer_kind": "phrase"
             },
@@ -20300,7 +20300,7 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Raise pressure on \\(\\mathrm{H_{2}} + \\mathrm{I_{2}}\\) <=> 2HI. Which way?",
+              "prompt": "Raise pressure on \\(\\mathrm{H_{2}} + \\mathrm{I_{2}} \\rightleftharpoons 2\\mathrm{HI}\\). Which way?",
               "answer": "No shift, 2 gas moles each side.",
               "answer_kind": "phrase"
             }
@@ -21867,7 +21867,7 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Half equation for \\(2\\mathrm{I}^{-}\\) to \\(\\mathrm{I_{2}}\\)?",
-              "answer": "\\(2\\mathrm{I}^{-} \\to \\mathrm{I_{2}} + 2e-\\).",
+              "answer": "\\(2\\mathrm{I}^{-} \\to \\mathrm{I_{2}} + 2e^{-}\\).",
               "answer_kind": "phrase"
             }
           ]
@@ -75768,7 +75768,7 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Limit of \\(\\ln \\frac{x}{x}\\) at infinity?",
+              "prompt": "Limit of \\(\\ln x/x\\) at infinity?",
               "answer": "0.",
               "answer_kind": "integer"
             },
@@ -77078,7 +77078,7 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Derivative of \\(\\sin \\frac{x}{x}\\) at \\(x = \\pi\\)?",
+              "prompt": "Derivative of \\(\\sin x/x\\) at \\(x = \\pi\\)?",
               "answer": "\\(\\frac{\\pi (-1) - 0}{\\pi^{2}} = - \\frac{1}{\\pi}\\).",
               "answer_kind": "expression"
             }
@@ -92844,7 +92844,7 @@
               "weight": "stretch",
               "prompt": "Rewrite \\(9^{2} = 81\\) as a logarithm, then express 81 as \\(3^{k}\\).",
               "answer": "\\(\\log_{9} 81 = 2\\); \\(81 = 3^{4}\\).",
-              "hint": "First change to \\(a\\log\\), then write 81 as a power of 3.",
+              "hint": "First change to a log, then write 81 as a power of 3.",
               "answer_kind": "expression"
             },
             {
@@ -92897,7 +92897,7 @@
             {
               "slot": 5,
               "weight": "stretch",
-              "prompt": "Combine log base 10 of \\(8 + \\log\\) base 10 of \\(4 - 2\\log\\) base 10 of 2 into a single logarithm.",
+              "prompt": "Combine log base 10 of 8 + log base 10 of 4 - 2 log base 10 of 2 into a single logarithm.",
               "answer": "log_{10}8.",
               "answer_kind": "phrase"
             }
@@ -95450,7 +95450,7 @@
             {
               "slot": 3,
               "weight": "core",
-              "prompt": "A and B are independent with \\(P(A) = 0.4\\) and \\(P(B) = 0.5\\). What is \\(P(A\\text{ and}B)\\)?",
+              "prompt": "A and B are independent with \\(P(A) = 0.4\\) and \\(P(B) = 0.5\\). What is \\(P(A\\ \\text{and}\\ B)\\)?",
               "answer": "0.2",
               "answer_kind": "decimal"
             },
@@ -96261,7 +96261,7 @@
             {
               "slot": 4,
               "weight": "core",
-              "prompt": "\\(P(A\\text{ and}B) = 0.12\\) and \\(P(B) = 0.4\\). Find \\(P(A\\text{ given}B)\\).",
+              "prompt": "\\(P(A\\ \\text{and}\\ B) = 0.12\\) and \\(P(B) = 0.4\\). Find \\(P(A\\ \\text{given}\\ B)\\).",
               "answer": "0.3",
               "answer_kind": "decimal"
             },
@@ -125503,7 +125503,7 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "\\(P(B\\text{ given}A) = 0.5\\), \\(P(A) = 0.2\\), \\(P(B) = 0.25\\). \\(P(A\\text{ given}B)\\)?",
+              "prompt": "\\(P(B\\ \\text{given}\\ A) = 0.5\\), \\(P(A) = 0.2\\), \\(P(B) = 0.25\\). \\(P(A\\ \\text{given}\\ B)\\)?",
               "answer": "0.4.",
               "answer_kind": "decimal"
             },
@@ -126949,21 +126949,21 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "\\(P(A\\text{ and}B) = 0.2\\), \\(P(B) = 0.5\\). \\(P(A\\text{ given}B)\\)?",
+              "prompt": "\\(P(A\\ \\text{and}\\ B) = 0.2\\), \\(P(B) = 0.5\\). \\(P(A\\ \\text{given}\\ B)\\)?",
               "answer": "0.4.",
               "answer_kind": "decimal"
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "\\(P(B) = 0.6\\), \\(P(A\\text{ given}B) = 0.5\\). \\(P(A\\text{ and}B)\\)?",
+              "prompt": "\\(P(B) = 0.6\\), \\(P(A\\ \\text{given}\\ B) = 0.5\\). \\(P(A\\ \\text{and}\\ B)\\)?",
               "answer": "0.3.",
               "answer_kind": "decimal"
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "If A and B are independent, what is \\(P(A\\text{ given}B)\\) with \\(P(A) = 0.3\\)?",
+              "prompt": "If A and B are independent, what is \\(P(A\\ \\text{given}\\ B)\\) with \\(P(A) = 0.3\\)?",
               "answer": "0.3.",
               "answer_kind": "decimal"
             }
@@ -126981,21 +126981,21 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "\\(P(A) = 0.3\\) and \\(P(A\\text{ given}B) = 0.3\\). Independent?",
+              "prompt": "\\(P(A) = 0.3\\) and \\(P(A\\ \\text{given}\\ B) = 0.3\\). Independent?",
               "answer": "Yes.",
               "answer_kind": "yesno"
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "\\(P(A) = 0.3\\) and \\(P(A\\text{ given}B) = 0.6\\). Independent?",
+              "prompt": "\\(P(A) = 0.3\\) and \\(P(A\\ \\text{given}\\ B) = 0.6\\). Independent?",
               "answer": "No.",
               "answer_kind": "yesno"
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "\\(P(A) = 0.5\\), \\(P(B) = 0.4\\), \\(P(A\\text{ and}B) = 0.2\\). Independent?",
+              "prompt": "\\(P(A) = 0.5\\), \\(P(B) = 0.4\\), \\(P(A\\ \\text{and}\\ B) = 0.2\\). Independent?",
               "answer": "Yes, since \\(0.5 \\times 0.4 = 0.2\\).",
               "answer_kind": "yesno"
             }
@@ -128515,21 +128515,21 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "\\(P(A) = 0.5\\), \\(P(B) = 0.4\\), \\(P(A\\text{ and}B) = 0.2\\). \\(P(A\\text{ or}B)\\)?",
+              "prompt": "\\(P(A) = 0.5\\), \\(P(B) = 0.4\\), \\(P(A\\ \\text{and}\\ B) = 0.2\\). \\(P(A\\ \\text{or}\\ B)\\)?",
               "answer": "0.7.",
               "answer_kind": "decimal"
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Can \\(P(A\\text{ or}B)\\) be 1.3 for 2 events?",
+              "prompt": "Can \\(P(A\\ \\text{or}\\ B)\\) be 1.3 for 2 events?",
               "answer": "No.",
               "answer_kind": "yesno"
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Mutually exclusive A and B with \\(P = 0.3\\) and 0.25. \\(P(A\\text{ or}B)\\)?",
+              "prompt": "Mutually exclusive A and B with \\(P = 0.3\\) and 0.25. \\(P(A\\ \\text{or}\\ B)\\)?",
               "answer": "0.55.",
               "answer_kind": "decimal"
             }

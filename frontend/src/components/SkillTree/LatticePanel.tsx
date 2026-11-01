@@ -505,7 +505,7 @@ function StepWorkspace({
       <div className="stx-lp-body stx-lp-programme">
         {/* The step itself, restated in one line. Without it the problems are
             a list of questions with no statement of what they are for. */}
-        <p className="stx-work-brief">{step.mastery}</p>
+        <p className="stx-work-brief"><MathText text={step.mastery} /></p>
 
         {/* Where the reader stands on this step, above the problems that move
             it — so a mark below is seen to change the card above. */}
@@ -558,11 +558,11 @@ function StepWorkspace({
         <dl className="stx-ws-facts stx-work-facts">
           <div>
             <dt>Done when</dt>
-            <dd>{step.proof}</dd>
+            <dd><MathText text={step.proof} /></dd>
           </div>
           <div>
             <dt>Watch for</dt>
-            <dd>{step.pitfall}</dd>
+            <dd><MathText text={step.pitfall} /></dd>
           </div>
         </dl>
 
@@ -679,9 +679,9 @@ function WrittenProgramme({
                   {step.title}
                   {levels?.[step.ordinal] && <LevelChip read={levels[step.ordinal]!} />}
                 </span>
-                <span className="stx-ws-mastery">{step.mastery}</span>
+                <span className="stx-ws-mastery"><MathText text={step.mastery} /></span>
                 <span className="stx-ws-try">
-                  <b>Try:</b> {step.practice}
+                  <b>Try:</b> <MathText text={step.practice} />
                 </span>
               </span>
               <span className="stx-ws-mark" aria-hidden="true">
@@ -721,15 +721,15 @@ function WrittenProgramme({
                     A problem for <b>{step.title}</b> will appear here.
                   </p>
                 </div>
-                <p className="stx-ws-detail">{step.detail}</p>
+                <p className="stx-ws-detail"><MathText text={step.detail} /></p>
                 <dl className="stx-ws-facts">
                   <div>
                     <dt>Done when</dt>
-                    <dd>{step.proof}</dd>
+                    <dd><MathText text={step.proof} /></dd>
                   </div>
                   <div>
                     <dt>Watch for</dt>
-                    <dd>{step.pitfall}</dd>
+                    <dd><MathText text={step.pitfall} /></dd>
                   </div>
                   <div>
                     <dt>Roughly</dt>

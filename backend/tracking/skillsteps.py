@@ -48,6 +48,7 @@ Rules and a read, as everything in this package is. backend/api/skillsteps.py
 turns what `programmes_for` returns into JSON and decides nothing.
 """
 import re
+from functools import lru_cache
 
 from backend.config.shared import RULES
 from backend.database import connection
@@ -466,13 +467,30 @@ RULE_CHECKS = ('shape', 'not-generic', 'concrete', 'distinct', 'on-topic', 'ladd
 # ---------------------------------------------------------------------------
 # Reading them back
 # ---------------------------------------------------------------------------
-def programmes_for(node_ids):
+#: The step text the panel draws math in. The title isn't one of them: it also
+#: names tasks and plan rows, and is matched by its words.
+DRAWN_STEP_FIELDS = ('mastery', 'practice', 'detail', 'proof', 'pitfall')
+
+
+@lru_cache(maxsize=32768)
+def _drawn(text, tree):
+    """Cached because a tree's worth of steps goes through on each page open,
+    and the answer for a given string never changes while the server runs."""
+    return to_latex(text, tree)
+
+
+def programmes_for(node_ids, drawn=False):
     """Node id → its steps, shaped for the page.
 
     The provenance columns are folded into one `verified` object rather than
     spread across the step: the panel draws a step, and a reader who opens the
     provenance is asking a different question. A node with nothing written is
     absent, not empty — see the note on `skill_steps_for`.
+
+    `drawn` marks the math in the step text for a page that draws it with
+    MathText. Only that page asks. A problem stores its LaTeX, but step text
+    stays plain in the table, because task descriptions, plan rows, the rules
+    and the generator's prompts all read it as words.
     """
     stored = connection.skill_steps_for(node_ids)
     # Problems come back with the steps rather than behind a second request.
@@ -497,11 +515,8 @@ def programmes_for(node_ids):
         out[node_id] = [{
             'ordinal': row['ordinal'],
             'title': row['title'],
-            'mastery': row['mastery'],
-            'practice': row['practice'],
-            'detail': row['detail'],
-            'proof': row['proof'],
-            'pitfall': row['pitfall'],
+            **{name: _drawn(row[name], row['tree_id']) if drawn else row[name]
+               for name in DRAWN_STEP_FIELDS},
             'minutes': row['minutes'],
             # Absent rather than empty when nothing is written: the panel draws
             # a graded set of slots for a step with no problems, and an empty

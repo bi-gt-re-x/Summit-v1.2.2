@@ -360,3 +360,74 @@ def test_times_between_fractions_and_units_in_brackets(plain, latex):
 
 def test_a_function_stays_beside_its_slash():
     assert to_latex('Rewrite sin x/cos x.', 'precalculus') == r'Rewrite \(\sin x/\cos x\).'
+
+
+# ---------------------------------------------------------------------------
+# Step text: drawn on the way to the panel, plain everywhere else
+# ---------------------------------------------------------------------------
+@pytest.mark.parametrize('plain, tree, latex', [
+    # A function with nothing after it is a word.
+    ('Take a log of both sides.', 'algebra', 'Take a log of both sides.'),
+    ('A log asks what power.', 'algebra', 'A log asks what power.'),
+    ('Log the results.', 'algebra', 'Log the results.'),
+    ('Use y = a sin x here.', 'trigonometry', r'Use \(y = a\sin x\) here.'),
+    # A function under a slash still reads what comes next.
+    ('Use a/sin A = b/sin B.', 'trigonometry', r'Use \(a/\sin A = b/\sin B\).'),
+    ('So x = ln 20/ln 3.', 'algebra', r'So \(x = \ln 20/\ln 3\).'),
+    # "in" before a run is the word, not inches.
+    ('The 2 in 2ab cos C.', 'trigonometry', r'The 2 in \(2ab\cos C\).'),
+    # A stacked bar here would say something else.
+    ('Find sin x/x.', 'calculus', r'Find \(\sin x/x\).'),
+    ('Find sin pi/2.', 'trigonometry', r'Find \(\sin \frac{\pi}{2}\).'),
+    ('Use P(A)/P(B).', 'statistics', r'Use \(\frac{P(A)}{P(B)}\).'),
+    ('Run an A/B test.', 'statistics', 'Run an A/B test.'),
+    # Worded connectives keep their spaces.
+    ('P(A given B).', 'statistics', r'\(P(A\ \text{given}\ B)\).'),
+    # Times.
+    ('Here 6 x x = 12.', 'algebra', r'Here \(6 \times x = 12\).'),
+    ('Use PA x PB = PC x PD.', 'competition-math', 'Use PA × PB = PC × PD.'),
+    # Chemistry.
+    ('N2 + 3H2 <=> 2NH3.', 'chemistry',
+     r'\(\mathrm{N_{2}} + 3\mathrm{H_{2}} \rightleftharpoons 2\mathrm{NH_{3}}\).'),
+    ('Zn -> Zn2+ + 2e-.', 'chemistry', r'\(\mathrm{Zn} \to \mathrm{Zn}^{2+} + 2e^{-}\).'),
+    ('P <=> Q holds.', 'discrete', r'\(P \Leftrightarrow Q\) holds.'),
+])
+def test_step_wording_reads_right(plain, tree, latex):
+    assert to_latex(plain, tree) == latex
+
+
+def test_a_step_is_drawn_only_when_asked(monkeypatch):
+    """The panel gets LaTeX. Tasks and plan rows, which call it the plain way,
+    get the words the table holds."""
+    row = {
+        'ordinal': 1, 'title': 'Add 1/2 and 1/4', 'mastery': 'Add 1/2 and 1/4.',
+        'practice': 'Compute 2/3 + 1/4, then pay $5.', 'detail': 'Use a log here.',
+        'proof': 'You get 11/12.', 'pitfall': 'Adding 2 + 1.', 'minutes': 10,
+        'tree_id': 'algebra', 'verified_at': '', 'verifier': '', 'checks': [],
+        'model': '', 'attempts': 1,
+    }
+    monkeypatch.setattr(skillsteps.connection, 'skill_steps_for', lambda ids: {'n': [row]})
+    monkeypatch.setattr(skillsteps.connection, 'skill_problems_for', lambda ids: {})
+
+    plain = skillsteps.programmes_for(['n'])['n'][0]
+    assert plain['practice'] == row['practice']
+    assert plain['mastery'] == row['mastery']
+
+    drawn = skillsteps.programmes_for(['n'], drawn=True)['n'][0]
+    assert drawn['practice'] == r'Compute \(\frac{2}{3} + \frac{1}{4}\), then pay $5.'
+    assert drawn['detail'] == 'Use a log here.'
+    assert drawn['proof'] == r'You get \(\frac{11}{12}\).'
+    assert drawn['title'] == row['title']
+
+
+def test_step_text_outside_math_trees_is_left_alone(monkeypatch):
+    row = {
+        'ordinal': 1, 'title': 'T', 'mastery': 'Read 3/4 of it.', 'practice': 'x = 2 + 2',
+        'detail': 'd', 'proof': 'p', 'pitfall': 'q', 'minutes': 10, 'tree_id': 'cooking',
+        'verified_at': '', 'verifier': '', 'checks': [], 'model': '', 'attempts': 1,
+    }
+    monkeypatch.setattr(skillsteps.connection, 'skill_steps_for', lambda ids: {'n': [row]})
+    monkeypatch.setattr(skillsteps.connection, 'skill_problems_for', lambda ids: {})
+    drawn = skillsteps.programmes_for(['n'], drawn=True)['n'][0]
+    assert drawn['mastery'] == 'Read 3/4 of it.'
+    assert drawn['practice'] == 'x = 2 + 2'

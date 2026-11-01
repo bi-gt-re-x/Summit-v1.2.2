@@ -83,7 +83,7 @@ def read_steps(nodes: str = Query('', description='Comma-separated node ids')):
         return fail('Too many nodes: {} asked for, {} is the limit'.format(len(ids), MAX_NODES))
 
     # Dashes and curly quotes from older generated content never reach a page.
-    programmes = plain(skillsteps.programmes_for(ids), semicolons=False)
+    programmes = plain(skillsteps.programmes_for(ids, drawn=True), semicolons=False)
     return ok(
         steps=programmes,
         missing=[one for one in ids if one not in programmes],

@@ -29,6 +29,13 @@ in math italics is broken.
 
 `to_plain` goes the other way, for everything that reads the words rather than
 the drawing: the grader, the content rules and search.
+
+## Step text
+
+A step's practice line, detail, proof and pitfall stay plain in the table and go
+through `to_latex` on their way to the skill tree panel, in
+skillsteps.programmes_for. Tasks, plan rows and the generator read those fields
+as words, so nothing else has to know.
 """
 import re
 
@@ -61,7 +68,7 @@ _FUNCTIONS = {
     'min': r'\min',
 }
 #: A letter pair that reads as two variables multiplied, not as a word.
-_PAIRS = frozenset('''xy xz yz ab ac bc dx dy dt du dv dA dV mx ax bx cx kx mn pq Ax Ay Bx Ab
+_PAIRS = frozenset('''xy xz yz ab ac bc dx dy dt du dv dr dA dV mx ax bx cx kx mn pq Ax Ay Bx Ab
 mg mv ma vt ut gh mc IR kt rt'''.split())
 #: A pair that is only math right after an operator: "v = u + at".
 _AFTER_OP = frozenset('at'.split())
@@ -100,12 +107,12 @@ _MATH_CHARS = re.compile('[√²³⁴⁻₀₁₂₃₄×÷≤≥≠≈±→∞�
 #: grader still sees a number and a unit.
 _UNIT_POWER = re.compile(r'^[a-zA-Zµ]{1,4}(?:/[a-zA-Zµ]{1,4})?[²³]$')
 _ARROW_OPS = {'->': '→', '<=': '≤', '>=': '≥', '!=': '≠'}
-_OPS = frozenset('+ - − – = < > ≤ ≥ ≠ ≈ × ÷ * / ± → · <= >= != -> <-> ∈ ∪ ∩'.split())
+_OPS = frozenset('+ - − – = < > ≤ ≥ ≠ ≈ × ÷ * / ± → · <= >= != -> <-> <=> ∈ ∪ ∩'.split())
 _RELATIONS = frozenset('= < > ≤ ≥ ≠ ≈ <= >= != ∈'.split())
 _MATRIX = re.compile(r'\[\[[-\d\s,.\[\]a-z/]+\]\]')
 _FROZEN = re.compile(r'\\\(.*?\\\)|\\\[.*?\\\]|`[^`]*`')
 #: "1 hour 20/30" is rare; these slashes never mean a fraction.
-_NOT_FRACTIONS = frozenset(('24/7', '9/11', '50/50'))
+_NOT_FRACTIONS = frozenset(('24/7', '9/11', '50/50', 'A/B', 'I/O', 'P/E', 'N/A', 'T/F', 'R/C'))
 _FORMULA = re.compile(r'(?:\(?(?:[A-Z][a-z]?\d*)+\)?\d*)+')
 
 
@@ -113,7 +120,7 @@ def has_math(text):
     return bool(text) and '\\(' in text
 
 
-_CHEM_OPS = frozenset(('+', '->', '→', '<->', '⇌'))
+_CHEM_OPS = frozenset(('+', '->', '→', '<->', '<=>', '⇌'))
 _STATE = re.compile(r'\((?:s|l|g|aq)\)$')
 
 
@@ -184,12 +191,14 @@ def _chem_run(words):
         tail.insert(0, words.pop())
     parts = []
     for word in words:
-        if word in _OPS or word in _CHEM_OPS:
+        if word in ('<=>', '⇌'):
+            parts.append(r'\rightleftharpoons')
+        elif word in _OPS or word in _CHEM_OPS:
             parts.append(_OP_LATEX.get(word, word))
         elif _chem_parts(word):
             parts.append(_formula_latex(word))
-        elif word == 'e-':
-            parts.append('e^{-}')
+        elif re.fullmatch(r'\d*e-', word):
+            parts.append(word[:-1] + '^{-}')
         else:
             parts.append(word)
     return ' '.join(head + [r'\({}\)'.format(' '.join(parts))] + tail)
@@ -358,7 +367,8 @@ def _name(scan, word):
         return r'\bmod ', r'\bmod '
     if lower in _PROB_WORDS:
         scan.at += len(word)
-        return r'\text{{ {} }}'.format(lower), r'\text{{ {} }}'.format(lower)
+        # Spaced from outside the braces, since `_join` trims inside them.
+        return r'\ \text{{{}}}\ '.format(lower), r'\ \text{{{}}}\ '.format(lower)
     if lower in _FUNCTIONS:
         scan.at += len(word)
         out = _FUNCTIONS[lower]
@@ -382,11 +392,11 @@ def _name(scan, word):
 
 
 _OP_LATEX = {
-    '<=': r'\le', '>=': r'\ge', '!=': r'\ne', '<->': r'\leftrightarrow', '->': r'\to', '*': r'\cdot', '−': '-', '–': '-',
+    '<=>': r'\Leftrightarrow', '<=': r'\le', '>=': r'\ge', '!=': r'\ne', '<->': r'\leftrightarrow', '->': r'\to', '*': r'\cdot', '−': '-', '–': '-',
     '×': r'\times', '÷': r'\div', '≤': r'\le', '≥': r'\ge', '≠': r'\ne', '≈': r'\approx',
     '±': r'\pm', '→': r'\to', '·': r'\cdot', '∈': r'\in', '∪': r'\cup', '∩': r'\cap',
 }
-_OP = re.compile(r'<->|<=|>=|!=|->|[-+=<>*/−–×÷≤≥≠≈±→·∈∪∩,]')
+_OP = re.compile(r'<=>|<->|<=|>=|!=|->|[-+=<>*/−–×÷≤≥≠≈±→·∈∪∩,]')
 
 
 def _expression(text):
@@ -401,8 +411,8 @@ def _expression(text):
             scan.at += 1
             continue
         if char == 'x' and out and re.search(r'[\d)]\}?$', out[-1]) and re.match(
-                r'x\s+[\d(A-Z]', scan.text[scan.at:]) and scan.text[scan.at - 1:scan.at].isspace():
-            # "3 x 4" and "9x 10^9" are times. "4x - 9" isn't.
+                r'x\s+[\d(A-Zx]', scan.text[scan.at:]) and scan.text[scan.at - 1:scan.at].isspace():
+            # "3 x 4", "6 x x" and "9x 10^9" are times. "4x - 9" isn't.
             scan.at += 1
             out.append(r'\times')
             ends.append(scan.at)
@@ -430,10 +440,21 @@ def _expression(text):
             if scan.peek().isspace() or scan.done():
                 raise ValueError('a slash at the end')
             below, bare_below = _primary(scan)
+            # P(A)/P(B): a letter takes the bracket touching it.
+            if re.fullmatch(r'[a-zA-Z]', below) and scan.peek() == '(':
+                scan.at += 1
+                bare_below = _postfix(scan, '{}({})'.format(below, _expression(scan.group())))
             # Δx is one thing under the bar.
             if bare_below.startswith(r'\Delta') and re.match(r'[a-zA-Z]', scan.peek() or ' '):
                 extra, _ = _primary(scan)
                 bare_below = bare_below.rstrip() + ' ' + extra
+            # sin x/x is sin x over x, and a stacked bar would say sin(x/x). The
+            # same letter top and bottom is never a fraction anyone meant either.
+            if re.fullmatch(r'[a-zA-Z]', below) and (
+                    below == bare or (out and out[-1].rstrip().lstrip('\\') in _FUNCTIONS)):
+                out.append('{}/{}'.format(latex, below))
+                ends.append(scan.at)
+                continue
             # What's written tight against it goes on top too: 5pi/4 is one
             # fraction, not 5 next to pi/4.
             top = ''
@@ -452,7 +473,7 @@ def _join(parts):
         if part == '{,}':
             text = text.rstrip() + ', '
             continue
-        spaced = part in ('+', '-', '=', '<', '>') or part.startswith(('\\leftrightarrow', '\\le', '\\ge', '\\ne', '\\to', '\\times', '\\div', '\\cdot', '\\approx', '\\pm', '\\in', '\\cup', '\\cap'))
+        spaced = part in ('+', '-', '=', '<', '>') or part.startswith(('\\Leftrightarrow', '\\leftrightarrow', '\\le', '\\ge', '\\ne', '\\to', '\\times', '\\div', '\\cdot', '\\approx', '\\pm', '\\in', '\\cup', '\\cap'))
         if spaced and text:
             text = text.rstrip() + ' ' + part + ' '
         elif spaced:
@@ -544,7 +565,7 @@ def _strong(words, light):
         slash = re.fullmatch(r'\(?(-?\d+)/(\d+)\)?', word)
         if slash and word not in _NOT_FRACTIONS:
             return True
-        if re.fullmatch(r'-?[a-zA-Z0-9!]+/[a-zA-Z0-9(][a-zA-Z0-9()+\-]*', word) and re.search(r'[a-zA-Z]', word) and (
+        if word not in _NOT_FRACTIONS and re.fullmatch(r'-?[a-zA-Z0-9!]+/[a-zA-Z0-9(][a-zA-Z0-9()+\-]*', word) and re.search(r'[a-zA-Z]', word) and (
                 re.fullmatch(r'\(?-?\d*[a-zA-Z]{0,2}\)?/\(?\d*[a-zA-Z]{0,2}\)?', word) or '(' in word):
             return True
     if re.fullmatch(r'\d+[a-zA-Z]', joined) and joined[-1] in 'xyzn':
@@ -561,7 +582,8 @@ def _run(words, light):
     head, tail = [], []
     while trimmed and trimmed[0] in _OPS and trimmed[0] not in ('-', '−'):
         head.append(trimmed.pop(0))
-    while trimmed and trimmed[-1] in _OPS:
+    # A function with nothing after it is a word: "take a log of both sides".
+    while trimmed and (trimmed[-1] in _OPS or _BARE_FUNCTION.fullmatch(trimmed[-1])):
         tail.insert(0, trimmed.pop())
     if not trimmed or not _strong(trimmed, light):
         return original
@@ -638,7 +660,9 @@ def _sentence(text, tree, light):
                 kind = 'chem'
         if kind is None and core:
             depth = ' '.join(run + [core]).count('(') - ' '.join(run + [core]).count(')')
-            unit_side = (bool(kinds) and kinds[-1] == 'num') or bool(_AFTER_NUMBER.search(''.join(out)))
+            # With a run going, only the run says. "in" before one is usually the
+            # word, not inches: "the 2 in 2ab cos C".
+            unit_side = kinds[-1] == 'num' if kinds else bool(_AFTER_NUMBER.search(''.join(out)))
             if not light and core in _AFTER_OP and kinds and kinds[-1] == 'op':
                 kind = 'term'
             elif not light and core in _PROB_WORDS and depth > 0 and run and run[0].startswith('P('):
@@ -680,8 +704,11 @@ def _sentence(text, tree, light):
     return ''.join(out)
 
 
-_FUNCTION_NAME = re.compile(r'-?\d*(?:{}|log_?[\d₀-₉]+)(?:\^-?\d+)?(?:\(|$)'.format(
-    '|'.join(name for name in _FUNCTIONS if name not in _WORD_FUNCTIONS)), re.I)
+_FUNCTION_WORDS = '|'.join(name for name in _FUNCTIONS if name not in _WORD_FUNCTIONS)
+_FUNCTION_NAME = re.compile(r'-?\d*(?:{}|log_?[\d₀-₉]+)(?:\^-?\d+)?(?:\(|$)'.format(_FUNCTION_WORDS), re.I)
+_BARE_FUNCTION = re.compile(_FUNCTION_WORDS, re.I)
+#: "a/sin A" and "ln x/ln b": the function is still waiting for what it reads.
+_FUNCTION_TAIL = re.compile(r'/(?:{})$'.format(_FUNCTION_WORDS), re.I)
 
 
 def _joins(left_kind, right_kind, left, right):
@@ -689,11 +716,13 @@ def _joins(left_kind, right_kind, left, right):
     only join as a function and its argument, or "3 x 4"."""
     if left_kind == 'op' or right_kind == 'op':
         return True
-    if _FUNCTION_NAME.match(left) or _FUNCTION_NAME.match(right):
+    if _FUNCTION_NAME.match(left) or _FUNCTION_NAME.match(right) or _FUNCTION_TAIL.search(left):
         return True
     if right.lower().startswith('(') and left.endswith(')'):
         return True
     # "3 x 4" and "2/5 x 1/4" are times, and the scanner reads them that way.
+    if left == right == 'x':
+        return True
     if right == 'x':
         return left[-1:].isdigit() or left[-1:] == ')' or left_kind == 'term'
     if left == 'x':
@@ -714,6 +743,7 @@ def _joins(left_kind, right_kind, left, right):
     return left_kind == 'term' and right_kind == 'term'
 
 
+_NAMED_TIMES = re.compile(r'\b([A-Z][A-Za-z]?) x ([A-Z][A-Za-z]?)\b')
 _LOOSE_TEX = re.compile(r'\\(le|ge|ne|pm|times|cdot|div|approx|to|pi|theta|infty)(?![a-zA-Z])')
 _LOOSE_NAMES = {'le': '≤', 'ge': '≥', 'ne': '≠', 'pm': '±', 'times': '×', 'cdot': '·', 'div': '÷',
                 'approx': '≈', 'to': '→', 'pi': 'π', 'theta': 'θ', 'infty': '∞'}
@@ -739,6 +769,8 @@ def to_latex(text, tree=''):
     text = text.replace('\u2011', '-').replace('\u2010', '-')
     text = _untex(text)
     text = _MATRIX.sub(lambda match: _matrix(match.group(0)), text)
+    # "PA x PB" is times between two names, which read fine as they are.
+    text = _NAMED_TIMES.sub(r'\1 × \2', text)
     out = []
     at = 0
     for frozen in _FROZEN.finditer(text):
@@ -783,7 +815,7 @@ def _plain_math(math):
         out = out.replace(r'\bmod', ' mod ')
         if out == was:
             break
-    out = out.replace(r'\leftrightarrow', '<->').replace(r'^{\circ}', '°').replace(r'\%', '%').replace(r'{,}', ',').replace(r'\mid', '|')
+    out = out.replace('e^{-}', 'e-').replace(r'\Leftrightarrow', '<=>').replace(r'\rightleftharpoons', '<=>').replace(r'\leftrightarrow', '<->').replace(r'^{\circ}', '°').replace(r'\%', '%').replace(r'{,}', ',').replace(r'\mid', '|')
     out = re.sub(r'\^\{([^{}]*)\}', lambda m: '^' + (m.group(1) if re.fullmatch(r'-?(?:\d+|[a-zA-Z])', m.group(1)) else '({})'.format(m.group(1))), out)
     out = re.sub(r'_\{([^{}]*)\}', lambda m: '_' + m.group(1), out)
     for name, symbol in sorted(_BACK.items(), key=lambda item: -len(item[0])):
