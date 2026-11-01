@@ -11,7 +11,6 @@
 import { NextSessionsPanel } from '@/components/NextSessions/NextSessions';
 import { SlumpAlert } from '../WeekTrend';
 import { NextActions } from '../NextActions';
-import { GoalForecast } from '../GoalForecast';
 import { ReviewPanel } from '../ReviewPanel';
 import { SkillTreesPanel } from '../SkillTreesPanel';
 import { XpPulse } from '../XpPulse';
@@ -25,7 +24,7 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
     all, lens, plan, setBudget, setNudge, slice, slump,
     /* `rhythm` carries the reader's typical sitting, drawn from their logged
        focus time. It changes nothing about what the plan suggests. */
-    rhythm, nudge,
+    rhythm,
   } = model;
 
   const { refresh } = data;
@@ -46,10 +45,7 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
         </section>
       )}
 
-      {/* First, the one forward-looking number: will each dated goal finish in
-          time at this pace, and what gets it there. Draws nothing without a
-          dated goal, section and all. See ../GoalForecast. */}
-      <GoalForecast onBooked={refreshPlan} reload={nudge} />
+      {/* "Will you make it?" is on Overview now. See ../GoalForecast. */}
 
       {/* Above the plan, because it is the reason the plan is in this order.
           A reader who meets the ranking first and the explanation second has

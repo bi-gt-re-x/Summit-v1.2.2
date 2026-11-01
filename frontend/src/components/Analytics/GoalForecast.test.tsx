@@ -27,6 +27,13 @@ const row = (over: Partial<Forecast>): Forecast => ({
   finish: '2027-02-19',
   to_book: 3,
   booked_this_week: 0,
+  why: {
+    lead: "You'd finish 14 days late because most of your Mathematics time isn't going to this.",
+    points: [
+      { label: 'Direct work', tone: 'bad', text: 'Only 2 of your 9 Mathematics sessions lately went at this goal.' },
+      { label: 'Timing', tone: 'flat', text: 'You mostly do this in the evening (6 of 8).' },
+    ],
+  },
   ...over,
 });
 
@@ -38,16 +45,21 @@ describe('GoalForecast', () => {
     vi.mocked(bookForecast).mockReset();
   });
 
-  it('says when a goal finishes and what gets it there', async () => {
+  it('says why a goal is in its state, with what is behind it', async () => {
     serve([row({})]);
     render(<GoalForecast />);
     expect(await screen.findByText('Will you make it?')).toBeInTheDocument();
     expect(screen.getByText('AIME')).toBeInTheDocument();
     expect(screen.getByText('Behind')).toBeInTheDocument();
-    expect(
-      screen.getByText('Due Feb 5. At this pace: done Feb 19. 2 more sessions a week gets you there.'),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/You'd finish 14 days late because/)).toBeInTheDocument();
+    expect(screen.getByText('Direct work:')).toBeInTheDocument();
+    expect(screen.getByText(/Only 2 of your 9 Mathematics sessions/)).toBeInTheDocument();
+    expect(screen.getByText('Timing:')).toBeInTheDocument();
+    // The old line and the step count are gone from the card.
+    expect(screen.queryByText(/At this pace/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/steps done/)).not.toBeInTheDocument();
     expect(screen.getByText('30 days')).toBeInTheDocument();
+    expect(screen.getByText('Due Feb 5, 2027')).toBeInTheDocument();
   });
 
   it('books the missing sessions and reads the forecast again', async () => {
@@ -79,6 +91,7 @@ describe('GoalForecast', () => {
         facts: '0 of 10 steps done.',
         to_book: 0,
         finish: null,
+        why: { lead: 'We need two weeks of sessions on Math to tell your pace. You have 5 days so far.', points: [] },
       }),
     ]);
     render(<GoalForecast />);
@@ -101,10 +114,10 @@ describe('GoalForecast', () => {
     await waitFor(() => expect(goalForecast).toHaveBeenCalledTimes(2));
   });
 
-  it('folds goals past the first three', async () => {
+  it('groups goals past the first three, open by default', async () => {
     serve(['a', 'b', 'c', 'd'].map((id) => row({ goal_id: id, title: `Goal ${id}`, to_book: 0 })));
     render(<GoalForecast />);
-    expect(await screen.findByText('1 more goal')).toBeInTheDocument();
+    expect((await screen.findByText('1 more goal')).closest('details')).toHaveAttribute('open');
   });
 
   it('draws nothing without a dated goal', async () => {

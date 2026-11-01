@@ -3,10 +3,11 @@
  *
  * The one card on this page that looks ahead. For every active goal with a
  * date, the server (backend/tracking/forecast.py) works out what's left, how
- * many sessions a week went into it lately, and so when it'd finish. It writes
- * the line too, so this only draws it: "Due Feb 5. At this pace: done
- * Feb 19. 2 more sessions a week gets you there." When there's too little to
- * go on it says what's missing instead of a date.
+ * many sessions a week went into it lately, and so when it'd finish. Then it
+ * says why (backend/tracking/goal_why.py): the main cause, and what's behind
+ * it from the task names, the next step, any slump, when the work gets done and
+ * how it's going. This only draws that. When there's too little to go on it
+ * says what's missing instead.
  *
  * A goal that's short this week gets one button, which books the missing
  * sessions through the same booking as the plan's deadline row. The server
@@ -68,6 +69,13 @@ function BookButton({ row, onDone }: { row: Forecast; onDone: () => void }) {
   );
 }
 
+const DUE = new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+function dueLabel(iso: string) {
+  const day = new Date(`${iso}T12:00:00`);
+  return Number.isNaN(day.getTime()) ? '' : `Due ${DUE.format(day)}`;
+}
+
 function ForecastRow({ row, onBooked }: { row: Forecast; onBooked: () => void }) {
   const booked =
     row.to_book === 0 && row.booked_this_week > 0 && (row.state === 'behind' || row.state === 'stalled')
@@ -78,12 +86,22 @@ function ForecastRow({ row, onBooked }: { row: Forecast; onBooked: () => void })
       <span className={`ax-plan-tag is-${STATE_TONE[row.state]}`}>{STATE_LABEL[row.state]}</span>
       <div className="ax-plan-body">
         <p className="ax-plan-title">{row.title}</p>
-        <p className="ax-plan-why">{row.line}</p>
-        {(row.facts || booked) && <p className="ax-plan-why">{[row.facts, booked].filter(Boolean).join(' ')}</p>}
+        <p className="ax-plan-why ax-goal-lead">{row.why.lead}</p>
+        {row.why.points.length > 0 && (
+          <ul className="ax-tips ax-goal-points">
+            {row.why.points.map((point) => (
+              <li key={point.label}>
+                <b>{point.label}:</b> {point.text}
+              </li>
+            ))}
+          </ul>
+        )}
+        {booked && <p className="ax-plan-why">{booked}</p>}
         {row.to_book > 0 && <BookButton row={row} onDone={onBooked} />}
       </div>
       <span className="ax-plan-mins">
-        {row.days_left === 0 ? 'Today' : `${row.days_left} ${row.days_left === 1 ? 'day' : 'days'}`}
+        <span>{row.days_left === 0 ? 'Today' : `${row.days_left} ${row.days_left === 1 ? 'day' : 'days'}`}</span>
+        <small className="ax-goal-due">{dueLabel(row.deadline)}</small>
       </span>
     </li>
   );
@@ -128,13 +146,16 @@ export function GoalForecast({ onBooked, reload = 0 }: { onBooked?: () => void; 
                 <b>What's left:</b> Steps not done yet, or the gap to your number.
               </li>
               <li>
-                <b>Your pace:</b> Finished tasks a week on the goal's subject over the last 4 weeks.
+                <b>Your pace:</b> Finished tasks a week on this goal over the last 4 weeks. A task counts if it's linked or its name says so. Until there are 4 of those, the whole subject counts.
               </li>
               <li>
                 <b>Your finish:</b> The sessions a step has taken you so far, times the steps left, at your pace.
               </li>
               <li>
-                <b>No guessing:</b> With under 2 weeks of sessions, or no subject linked, we say what's missing.
+                <b>The why:</b> Task names, your next step, any slump, when you do the work and how it's going.
+              </li>
+              <li>
+                <b>No guessing:</b> With under 2 weeks of sessions, or nothing to go on, we say what's missing.
               </li>
             </ul>
           </PanelNote>
@@ -146,7 +167,7 @@ export function GoalForecast({ onBooked, reload = 0 }: { onBooked?: () => void; 
           ))}
         </ul>
         {more.length > 0 && (
-          <details className="ax-plan-more">
+          <details className="ax-plan-more" open>
             <summary>
               {more.length} more {more.length === 1 ? 'goal' : 'goals'}
             </summary>

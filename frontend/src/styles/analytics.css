@@ -9598,3 +9598,9 @@ g:hover > .ax-sv-time-bar { filter: brightness(.9); }
 .ax-low-list time { font-weight: 600; color: var(--ax-text); }
 .ax-low-list b { font-weight: 600; color: var(--ax-text); }
 .ax-low-empty { margin: 0; font-size: var(--text-sm); color: var(--ax-muted); }
+
+/* ---- Will you make it: components/Analytics/GoalForecast ----------------- */
+.ax-goal-lead { font-size: var(--text-sm); font-weight: 550; color: var(--ax-text); }
+.ax-goal-points { margin: var(--space-2) 0 0; font-size: var(--text-sm); line-height: 1.5; }
+.ax-plan-mins:has(.ax-goal-due) { display: grid; justify-items: end; gap: 2px; }
+.ax-goal-due { color: var(--ax-faint); font-size: var(--text-xs); white-space: nowrap; }

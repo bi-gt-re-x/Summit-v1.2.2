@@ -273,3 +273,35 @@ def test_without_a_pace_the_plan_keeps_its_rule_of_thumb():
     row = deadline_row(a_goal(due_in=30), sessions([1, 3, 6]))
     assert row['book']['count'] == 5
     assert 'At this pace' not in row['because']
+
+
+# ---- Task names count ---------------------------------------------------------
+def named(titles, days_ago, subject='cs', **extra):
+    return [{'id': 'n{}'.format(at), 'title': title, 'status': 'done', 'subject': subject,
+             'completed_at': ago(day), **extra}
+            for at, (title, day) in enumerate(zip(titles, days_ago))]
+
+
+def test_a_task_that_names_the_goal_counts_with_no_subject_or_link():
+    goal = a_goal(title='Reach USACO Gold', subject_ids='')
+    tasks = named(['USACO Gold DP', 'USACO Gold graphs', 'USACO Gold greedy', 'USACO Gold trees'], [3, 9, 15, 21])
+    found = fc.forecast(goal, tasks, [], TODAY)
+    assert found['missing'] != 'no_subject'
+    assert found['per_week'] == 1.3
+
+
+def test_with_enough_direct_work_other_subject_work_stops_setting_the_pace():
+    goal = a_goal(title='Violin ARCT', subject_ids='music')
+    tasks = named(['Violin lesson', 'Violin etudes', 'Violin scales', 'Violin lesson'], [3, 10, 17, 24], 'music') + [
+        {'id': 'o{}'.format(n), 'title': 'Theory homework', 'status': 'done', 'subject': 'music',
+         'completed_at': ago(n + 1)} for n in range(10)]
+    # 4 direct in 25 days. The 10 homeworks would make it over 3.
+    assert fc.forecast(goal, tasks, [], TODAY)['per_week'] == 1.1
+
+
+def test_a_few_named_tasks_still_lean_on_the_subject():
+    goal = a_goal(title='Violin ARCT', subject_ids='music')
+    tasks = named(['Violin lesson'], [3], 'music') + [
+        {'id': 'o{}'.format(n), 'title': 'Practice', 'status': 'done', 'subject': 'music',
+         'completed_at': ago(n * 3 + 1)} for n in range(8)]
+    assert fc.forecast(goal, tasks, [], TODAY)['per_week'] > 2

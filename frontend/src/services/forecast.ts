@@ -13,6 +13,13 @@ export type ForecastState = 'on_track' | 'behind' | 'stalled' | 'done' | 'missin
 
 export type ForecastMissing = 'no_subject' | 'no_steps' | 'too_new' | 'nothing_done' | 'no_sessions';
 
+/** One reason behind a goal's state. Backend: backend/tracking/goal_why.py. */
+export interface GoalWhyPoint {
+  label: string;
+  text: string;
+  tone: 'good' | 'bad' | 'flat';
+}
+
 export interface GoalForecast {
   goal_id: string;
   title: string;
@@ -34,6 +41,8 @@ export interface GoalForecast {
   /** Sessions to book this week. 0 means no button. */
   to_book: number;
   booked_this_week: number;
+  /** Why it's in this state: the main cause, then what's behind it. */
+  why: { lead: string; points: GoalWhyPoint[] };
 }
 
 export function goalForecast(): Promise<ApiResult<{ goals: GoalForecast[] }>> {

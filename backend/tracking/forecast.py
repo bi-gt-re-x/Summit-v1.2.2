@@ -4,7 +4,8 @@ Everything else on the Analytics page looks back. This looks ahead, for every
 active goal with a date: how much is left, how fast the work on it has been
 going lately, and from those two the day it would finish. Then one plain line,
 "Due Feb 5. At this pace: done Feb 19. 2 more sessions a week gets you
-there.", and a count of sessions to book this week. The card is
+there.", and a count of sessions to book this week. Why it's in that state is
+backend/tracking/goal_why.py. The card is
 frontend/src/components/Analytics/GoalForecast.tsx; the endpoints are
 backend/api/forecast.py.
 
@@ -18,9 +19,11 @@ focus counts) aren't about a subject, so they get no forecast.
 
 ## How fast
 
-A session is a finished task on the goal (linked to it, or in one of its
-subjects) or a focus timer of FOCUS_MINUTES or more on such a task, on a day
-that task wasn't also finished. The pace is sessions a week over the last
+A session is a finished task on the goal or a focus timer of FOCUS_MINUTES or
+more on such a task, on a day that task wasn't also finished. A task is on the
+goal when it's linked to it or its name says so (`goal_why.is_direct`). With
+fewer than MIN_DIRECT of those, every task in the goal's subjects counts too,
+since plenty of people don't name their tasks. The pace is sessions a week over the last
 WINDOW_DAYS, or over fewer when the first session was more recent than that.
 How much a session moves the goal is everything done on it since the goal
 started, divided by the sessions since then. So the finish date is:
@@ -37,12 +40,14 @@ sessions since it was set. Each says what's missing instead of a date.
 import math
 from datetime import date, timedelta
 
-from backend.tracking import record
+from backend.tracking import goal_why, record
 
 #: How far back the pace reads.
 WINDOW_DAYS = 28
 #: Less history than this and the pace is a guess, so there's no date.
 HISTORY_DAYS = 14
+#: Finished tasks on the goal itself before they alone set the pace.
+MIN_DIRECT = 4
 #: A focus timer shorter than this isn't a session.
 FOCUS_MINUTES = 10
 #: Past this many a week, the date is out of reach.
@@ -104,10 +109,14 @@ def session_days(goal, tasks, sittings):
     """The day of every session on this goal. See the module note."""
     goal_id, subjects = goal.get('id'), record.subject_ids(goal)
 
-    def counts(task):
+    def in_subject(task):
         return record._links(task, goal_id) or (task.get('subject') in subjects if subjects else False)
 
-    linked = {str(task.get('id')): task for task in tasks if counts(task)}
+    terms = goal_why.goal_terms(goal)
+    direct = {str(task.get('id')): task for task in tasks if goal_why.is_direct(task, goal, terms)}
+    done_direct = sum(1 for task in direct.values() if task.get('status') == 'done' and task.get('completed_at'))
+    linked = direct if done_direct >= MIN_DIRECT else {
+        **{str(task.get('id')): task for task in tasks if in_subject(task)}, **direct}
     days, finished = [], set()
     for task in linked.values():
         if task.get('status') == 'done' and task.get('completed_at'):
@@ -247,7 +256,8 @@ PACED = ('on_track', 'behind', 'stalled')
 
 
 def forecasts(goals, tasks, sittings, today, name_of=lambda key: key):
-    """A forecast for every active, dated goal it can count, nearest date first."""
+    """A forecast for every active, dated goal it can count, nearest date first,
+    each with why it's in that state."""
     rows = []
     for goal in goals:
         if goal.get('status') != 'active' or goal.get('measure') not in MEASURES:
@@ -257,4 +267,8 @@ def forecasts(goals, tasks, sittings, today, name_of=lambda key: key):
             continue
         rows.append((ends, str(goal.get('title') or ''), goal))
     rows.sort(key=lambda row: row[:2])
-    return [forecast(goal, tasks, sittings, today, name_of) for _, _, goal in rows]
+    out = []
+    for _, _, goal in rows:
+        row = forecast(goal, tasks, sittings, today, name_of)
+        out.append({**row, 'why': goal_why.read(goal, tasks, row, today, name_of)})
+    return out

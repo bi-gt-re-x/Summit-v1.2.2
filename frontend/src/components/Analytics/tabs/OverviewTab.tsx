@@ -55,6 +55,7 @@ import { WhatYouToldUs } from '../WhatYouToldUs';
 import { GoalsFinished } from '../GoalsFinished';
 import { RecordsBreakdownPanel, type RecordsRead } from '../RecordsAnalysis';
 import { FirstReads } from '../FirstReads';
+import { GoalForecast } from '../GoalForecast';
 import { SlumpAlert, WhatChangedPanel } from '../WeekTrend';
 import { PeriodSummary } from '../PeriodSummary';
 import { FollowupPanel } from '@/components/Recommendations';
@@ -123,6 +124,12 @@ export function OverviewTab({
   const { baseline, dropAdopted, dropping } = data;
   const aim = baseline.data?.baseline ?? null;
   const goalList = useMemo(() => data.goals.data?.goals ?? [], [data.goals.data]);
+  /* Booking from the goal card changes what's on the calendar, so the whole
+     account is read again. */
+  const refreshAfterBooking = () => {
+    data.refresh();
+    model.setNudge((at) => at + 1);
+  };
 
   /*
    * What the page has worked out about the reader, as opposed to about the
@@ -172,6 +179,9 @@ export function OverviewTab({
         <section id="summary" className="ax-section">
           <PeriodSummary all={all} tasks={tasks} nameOf={nameOf} />
         </section>
+
+        {/* A dated goal is a fact on day one. Draws nothing without one. */}
+        <GoalForecast onBooked={refreshAfterBooking} reload={model.nudge} />
 
         <section id="overview" className="ax-section">
           <Collecting maturity={maturity} stats={basics} />
@@ -281,6 +291,10 @@ export function OverviewTab({
           <SlumpAlert slump={slump} />
         </section>
       )}
+
+      {/* Will each dated goal finish in time, and why it's in that state. Draws
+          nothing without a dated goal. See ../GoalForecast. */}
+      <GoalForecast onBooked={refreshAfterBooking} reload={model.nudge} />
 
       {note && (
         <section className="ax-section">
