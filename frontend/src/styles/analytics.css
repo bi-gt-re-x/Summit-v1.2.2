@@ -9604,3 +9604,20 @@ g:hover > .ax-sv-time-bar { filter: brightness(.9); }
 .ax-goal-points { margin: var(--space-2) 0 0; font-size: var(--text-sm); line-height: 1.5; }
 .ax-plan-mins:has(.ax-goal-due) { display: grid; justify-items: end; gap: 2px; }
 .ax-goal-due { color: var(--ax-faint); font-size: var(--text-xs); white-space: nowrap; }
+
+/* ---- Overview: everything a step bigger and darker ------------------------
+   The wrapper adds no box. It only resets the sizes and greys for what's in
+   it, so every panel on the tab reads the same without its own rule. */
+.ax-ov {
+    display: contents;
+    --text-2xs: 12px;
+    --text-xs: 13px;
+    --text-sm: 15px;
+    --text-md: 16px;
+    --ax-muted: color-mix(in srgb, var(--ax-text) 82%, transparent);
+    --ax-faint: color-mix(in srgb, var(--ax-text) 62%, transparent);
+}
+.ax-ov .ax-period-list { font-size: var(--text-sm); line-height: 1.55; }
+.ax-ov .ax-period-groups { row-gap: var(--space-5); }
+.ax-ov .ax-plan-row { padding-block: var(--space-4); }
+.ax-ov .ax-group + .ax-group { margin-top: var(--space-4); }

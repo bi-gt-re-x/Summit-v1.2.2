@@ -51,7 +51,7 @@ function bodyOf(head: HTMLElement): HTMLElement {
 }
 
 describe('Overview', () => {
-  it('folds its follow-up into groups and leaves the answer above them open', () => {
+  it('keeps its follow-up in groups, all open on arrival', () => {
     draw(
       <OverviewTab model={matureOverview()} data={fakeData()} onEditBaseline={() => {}} />,
     );
@@ -61,26 +61,26 @@ describe('Overview', () => {
     // "Findings" went: every line in it was a figure another tab prints.
     expect(screen.queryByRole('button', { name: /^Findings/ })).not.toBeInTheDocument();
 
-    // All shut on arrival: the tab's answer is the screen above them.
+    // Nothing on this tab takes a click to read.
     groups().forEach((head) => {
-      expect(head).toHaveAttribute('aria-expanded', 'false');
-      expect(bodyOf(head)).toHaveAttribute('inert');
+      expect(head).toHaveAttribute('aria-expanded', 'true');
+      expect(bodyOf(head)).not.toHaveAttribute('inert');
     });
   });
 
-  it('opens a group on a click and shuts it again on the next', async () => {
+  it('shuts a group on a click and opens it again on the next', async () => {
     draw(
       <OverviewTab model={matureOverview()} data={fakeData()} onEditBaseline={() => {}} />,
     );
     const head = groupNamed(/^Consistency/);
 
     await userEvent.click(head);
-    expect(head).toHaveAttribute('aria-expanded', 'true');
-    expect(bodyOf(head)).not.toHaveAttribute('inert');
-
-    await userEvent.click(head);
     expect(head).toHaveAttribute('aria-expanded', 'false');
     expect(bodyOf(head)).toHaveAttribute('inert');
+
+    await userEvent.click(head);
+    expect(head).toHaveAttribute('aria-expanded', 'true');
+    expect(bodyOf(head)).not.toHaveAttribute('inert');
   });
 
   it('leaves the stand-in tallies to the Insights tab', () => {

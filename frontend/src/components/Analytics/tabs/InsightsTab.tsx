@@ -61,7 +61,9 @@
  *
  * It never says what to do. That is the Recommendations tab.
  */
+import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { FollowupPanel } from '@/components/Recommendations';
 import { ChangedPanel, ClockPanel, HowPanel, RelationshipsPanel, WeekPanel, WhyPanel } from '@/components/Insights';
 import {
   HabitCards,
@@ -86,6 +88,7 @@ import type { AnalyticsModel } from '../useAnalyticsModel';
 import type { AnalyticsData } from '../useAnalyticsData';
 import { SayVsDo, sayVsDoHasNews } from '../SayVsDo';
 import { LowTimesPanel } from '../LowTimes';
+import { FirstReads } from '../FirstReads';
 import type { SubjectIndex } from '@/hooks/useSubjects';
 
 export function InsightsTab({
@@ -95,6 +98,7 @@ export function InsightsTab({
 }: { model: AnalyticsModel; data?: AnalyticsData } & { subjects: SubjectIndex }) {
   const mood = data?.mood?.data ?? null;
   const said = data?.said?.data ?? null;
+  const goalList = useMemo(() => data?.goals?.data?.goals ?? [], [data?.goals?.data]);
   const {
     all, changes, changeWindow, clock, effects, fromIso, habits, historyDays, how,
     links, maturity, observed, patterns, qualitySummary, rated, ratingDepth, reasonRows, reasons,
@@ -103,6 +107,7 @@ export function InsightsTab({
        Neither moves a figure on either half: the habit counts and the findings
        are computed in full and ranked the same way at every setting. */
     detail, toneRules,
+    reviews, reviewSummary,
   } = model;
 
   /*
@@ -209,6 +214,27 @@ export function InsightsTab({
         <section className="ax-section">
           <EarlyRead days={historyDays} solidAt={SOLID_AT.insights} />
           <ChangedPanel changes={changes.slice(0, findings)} window={changeWindow} />
+        </section>
+      )}
+
+      {/* Whether the changes you made helped. Draws nothing until you've made one. */}
+      {reviews.length > 0 && data && (
+        <section className="ax-section">
+          <FollowupPanel
+            reviews={reviews.slice(0, detail.rows)}
+            summary={reviewSummary}
+            onDrop={data.dropAdopted}
+            dropping={data.dropping}
+          />
+        </section>
+      )}
+
+      {/* The quick reads off tasks and goals, each with the sample it came from.
+          It needs no gate: before there are any it says how many more it needs.
+          See ../reads. */}
+      {data && (
+        <section className="ax-section">
+          <FirstReads tasks={tasks} goals={goalList} />
         </section>
       )}
 

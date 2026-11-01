@@ -43,7 +43,7 @@ describe('Recommendations', () => {
     expect(screen.getByRole('heading', { name: /next/i })).toBeInTheDocument();
   });
 
-  it('leaves the follow-up to Overview, under the productivity chart', () => {
+  it('leaves the follow-up to Insights, off this tab and Overview', () => {
     // Built through the real `reviewAdopted`, so the fixture is an adoption
     // this account actually made rather than a hand-shaped Review.
     const reviews = reviewAdopted({
@@ -68,7 +68,8 @@ describe('Recommendations', () => {
         onEditBaseline={() => undefined}
       />,
     );
-    expect(screen.getByRole('heading', { name: /What happened after/i })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /What happened after/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /^So far/i })).not.toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /What changed/i })).toBeInTheDocument();
   });
 });

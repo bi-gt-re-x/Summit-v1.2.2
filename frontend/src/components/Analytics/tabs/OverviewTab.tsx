@@ -54,13 +54,10 @@ import type { AnalyticsModel } from '../useAnalyticsModel';
 import { WhatYouToldUs } from '../WhatYouToldUs';
 import { GoalsFinished } from '../GoalsFinished';
 import { RecordsBreakdownPanel, type RecordsRead } from '../RecordsAnalysis';
-import { FirstReads } from '../FirstReads';
 import { GoalForecast } from '../GoalForecast';
 import { SlumpAlert, WhatChangedPanel } from '../WeekTrend';
 import { PeriodSummary } from '../PeriodSummary';
-import { FollowupPanel } from '@/components/Recommendations';
 import { rangeLabel } from '@/utils/weekTrend';
-import { useMemo } from 'react';
 
 export function OverviewTab({
   model,
@@ -117,13 +114,10 @@ export function OverviewTab({
     moves,
     recent,
     shownDiagnoses,
-    reviews,
-    reviewSummary,
     reasons,
   } = model;
-  const { baseline, dropAdopted, dropping } = data;
+  const { baseline } = data;
   const aim = baseline.data?.baseline ?? null;
-  const goalList = useMemo(() => data.goals.data?.goals ?? [], [data.goals.data]);
   /* Booking from the goal card changes what's on the calendar, so the whole
      account is read again. */
   const refreshAfterBooking = () => {
@@ -169,7 +163,7 @@ export function OverviewTab({
     const basics = basicStats(figures, streak, tasks);
 
     return (
-      <>
+      <div className="ax-ov">
         {/* Before anything else, when there is a gap to explain. A reader
             coming back to a page of zeros is owed the reason before they are
             shown the zeros. */}
@@ -187,12 +181,7 @@ export function OverviewTab({
           <Collecting maturity={maturity} stats={basics} />
         </section>
 
-        {/* The first reads: facts about the person, off a handful of tasks and
-            sittings, each wearing its sample. See ../reads. */}
-        <section className="ax-section">
-          <FirstReads tasks={tasks} goals={goalList} />
-        </section>
-
+        {/* "So far" and "What happened after" are on Insights now. */}
         {/* A confirmed goal is a fact on day one: it does not wait for the
             record to fill the way the tallies do. */}
         <GoalsFinished />
@@ -234,7 +223,7 @@ export function OverviewTab({
         </section>
 
         <ActiveDayPrinciple />
-      </>
+      </div>
     );
   }
 
@@ -274,7 +263,7 @@ export function OverviewTab({
     : '';
 
   return (
-    <>
+    <div className="ax-ov">
       <AwayNotice maturity={maturity} />
 
       {/* The top of the tab: the last week (or month, or year) in a few short
@@ -338,9 +327,8 @@ export function OverviewTab({
         />
       </section>
 
-      {/* Right under the chart: whether this week is up or down, what moved
-          over the last two weeks, and whether the changes the reader made
-          helped. */}
+      {/* Right under the chart: whether this week is up or down, and what moved
+          over the last two weeks. */}
       <section id="changed" className="ax-section">
         <WhatChangedPanel
           move={thisWeek}
@@ -358,23 +346,7 @@ export function OverviewTab({
         />
       </section>
 
-      {reviews.length > 0 && (
-        <section className="ax-section">
-          <FollowupPanel
-            reviews={reviews.slice(0, detail.rows)}
-            summary={reviewSummary}
-            onDrop={dropAdopted}
-            dropping={dropping}
-          />
-        </section>
-      )}
-
-      {/* The quick reads off sittings, tasks and goals, beside the totals.
-          Past the first week they sit under the trend panels rather than
-          leading, but the sittings still feed nothing else on this tab. */}
-      <section className="ax-section">
-        <FirstReads tasks={tasks} goals={goalList} />
-      </section>
+      {/* "What happened after" and "So far" are on Insights now. */}
 
       {/* Goals the reader confirmed done. Draws nothing until there is one. */}
       <GoalsFinished />
@@ -415,23 +387,13 @@ export function OverviewTab({
       </section>
 
       {/*
-        The detail, in named groups the reader opens.
+        The detail, in named groups, all open on arrival.
 
         Everything above this point is the tab's answer to "how am I doing":
         what moved, the trajectory, the score, and the target all of it is
-        measured against. Everything below is the follow-up question, and there
-        were four rows of it — quality in two panels, consistency and streaks
-        and the percentile, the two tallies, and the extras an account asked to
-        have here — all at the same weight as the answer, all needing to be
-        scrolled past by a reader who only wanted the answer.
-
-        **All four start shut, which is not what Insights does.** There the
-        three groups *are* the tab, so one has to be open or the tab reads as
-        broken; here they sit under a screen of tiles, a chart and a baseline,
-        so a row of shut headings reads as what it is — more, if you want it.
-        Each states what it holds in a line that stays visible whether it is
-        open or not, which is the part that makes a closed group an offer
-        rather than a locked door.
+        measured against. Below is the follow-up. These used to start shut, and
+        that meant a click for every number on the tab, so now the whole page
+        reads straight down and a group can still be shut by hand.
 
         `#trajectory` deliberately stays outside: `Summary` links to it from
         three of its rows (see Summary.tsx), and an anchor that lands on a
@@ -447,6 +409,7 @@ export function OverviewTab({
           <PanelGroup
             title="Quality"
             note="How your rated tasks went"
+            defaultOpen
           >
             <div className="ax-grid ax-grid-halves-even">
               <QualityPanel
@@ -468,6 +431,7 @@ export function OverviewTab({
         <PanelGroup
           title="Consistency"
           note="Which days you worked"
+          defaultOpen
         >
           <ConsistencyPanel rows={heatRows} />
         </PanelGroup>
@@ -503,7 +467,7 @@ export function OverviewTab({
       )}
 
       <ActiveDayPrinciple />
-    </>
+    </div>
   );
 }
 
