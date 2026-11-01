@@ -12,12 +12,16 @@
  *
  * ## Two kinds of question
  *
- * The server grades an answer that is one number (backend/tracking/
- * skill_check.py), so those get a verdict the moment Check is pressed. An
- * answer that is a sentence cannot be marked by matching text, so Check shows
+ * The server grades an answer that is one number or a yes or no (backend/
+ * tracking/skill_check.py), so those get a verdict the moment Check is pressed.
+ * An answer that is a sentence cannot be marked by matching text, so Check shows
  * the worked answer and the reader says whether theirs matched. "Show me the
  * answer" is there for both and counts as missed, which is what lets a reader
  * be honest about not knowing instead of guessing.
+ *
+ * Every question says what shape its answer takes, next to the box. Type the
+ * wrong shape and the server says so without marking anything, and the message
+ * sits under the box until the answer changes.
  *
  * ## What the result does
  *
@@ -32,10 +36,15 @@ import * as skillProgress from '@/services/skillProgress';
 import type { CheckQuestion, SkillCheck as Check, SkillReading } from '@/services/skillProgress';
 import type { Figure } from '@/services/skillSteps';
 import { readingOf } from '@/hooks/useSkillReading';
+import { AnswerFormat } from './AnswerFormat';
 import { Calculator } from './Calculator';
 import { markCheckShown } from './checkShown';
+import { MathText } from './MathText';
 import { ProblemFigure } from './ProblemFigure';
 import '@/styles/skillcheck.css';
+
+/** Answers that take more than one line get a bigger box. */
+const LONG_FORMS = new Set(['paragraph', 'sentence', 'phrase', 'code', 'list']);
 
 /** What the problems' three grades are called on screen. */
 const LEVEL: Record<CheckQuestion['weight'], string> = {
@@ -78,6 +87,7 @@ export function SkillCheck({ nodeId, nodeName, onClose, onProgress }: SkillCheck
   const [calculator, setCalculator] = useState(false);
   const [busy, setBusy] = useState(false);
   const [phase, setPhase] = useState<Phase>({ kind: 'loading' });
+  const [invalid, setInvalid] = useState('');
   const [final, setFinal] = useState<Final | null>(null);
   const [resumed, setResumed] = useState(false);
   const field = useRef<HTMLInputElement & HTMLTextAreaElement>(null);
@@ -93,6 +103,7 @@ export function SkillCheck({ nodeId, nodeName, onClose, onProgress }: SkillCheck
     setPhase({ kind: 'loading' });
     setFinal(null);
     setGiven('');
+    setInvalid('');
     setHint(false);
     try {
       const reply = await skillProgress.startCheck(nodeId);
@@ -156,6 +167,12 @@ export function SkillCheck({ nodeId, nodeName, onClose, onProgress }: SkillCheck
           return;
         }
         setCheck(reply.check);
+        if (reply.invalid) {
+          setInvalid(reply.invalid.message);
+          field.current?.focus();
+          return;
+        }
+        setInvalid('');
         if (reply.reveal) {
           setPhase({ kind: 'revealed', answer: reply.reveal.answer, figure: reply.reveal.figure });
           return;
@@ -191,6 +208,7 @@ export function SkillCheck({ nodeId, nodeName, onClose, onProgress }: SkillCheck
     }
     setIndex(firstOpen(check));
     setGiven('');
+    setInvalid('');
     setHint(false);
     setCalculator(false);
     setPhase({ kind: 'asking' });
@@ -234,12 +252,14 @@ export function SkillCheck({ nodeId, nodeName, onClose, onProgress }: SkillCheck
           {question.step && <span className="skc-step">{question.step}</span>}
           <span className={`skc-level is-${question.weight}`}>{LEVEL[question.weight]}</span>
         </p>
-        <p className="skc-prompt">{question.prompt}</p>
+        <p className="skc-prompt">
+          <MathText text={question.prompt} />
+        </p>
         {question.figure && <ProblemFigure figure={question.figure} />}
 
         {question.hint && hint && (
           <p className="skc-hint">
-            <b>Hint</b> {question.hint}
+            <b>Hint</b> <MathText text={question.hint} />
           </p>
         )}
         {!locked && ((question.hint && !hint) || question.tools?.includes('calculator')) && (
@@ -262,10 +282,13 @@ export function SkillCheck({ nodeId, nodeName, onClose, onProgress }: SkillCheck
           </p>
         )}
 
-        <label className="skc-label" htmlFor={`${titleId}-answer`}>
-          Your answer
-        </label>
-        {question.auto ? (
+        <div className="skc-answer-head">
+          <label className="skc-label" htmlFor={`${titleId}-answer`}>
+            Your answer
+          </label>
+          <AnswerFormat format={question.format} />
+        </div>
+        {!LONG_FORMS.has(question.format?.kind ?? '') ? (
           <input
             id={`${titleId}-answer`}
             ref={field}
@@ -274,8 +297,13 @@ export function SkillCheck({ nodeId, nodeName, onClose, onProgress }: SkillCheck
             disabled={locked || busy}
             autoComplete="off"
             inputMode="text"
-            placeholder="Type a number"
-            onChange={(event) => setGiven(event.target.value)}
+            aria-invalid={Boolean(invalid)}
+            aria-describedby={invalid ? `${titleId}-invalid` : undefined}
+            placeholder={question.format?.label ?? 'Type your answer'}
+            onChange={(event) => {
+              setGiven(event.target.value);
+              setInvalid('');
+            }}
           />
         ) : (
           <textarea
@@ -283,10 +311,15 @@ export function SkillCheck({ nodeId, nodeName, onClose, onProgress }: SkillCheck
             ref={field}
             className="skc-input skc-input--long"
             value={given}
-            rows={3}
+            rows={question.format?.kind === 'paragraph' ? 6 : 3}
             disabled={locked || busy}
+            aria-invalid={Boolean(invalid)}
+            aria-describedby={invalid ? `${titleId}-invalid` : undefined}
             placeholder="Write it out, then check it against the worked answer"
-            onChange={(event) => setGiven(event.target.value)}
+            onChange={(event) => {
+              setGiven(event.target.value);
+              setInvalid('');
+            }}
             onKeyDown={(event) => {
               if (event.key === 'Enter' && (event.metaKey || event.ctrlKey) && given.trim()) {
                 event.preventDefault();
@@ -295,11 +328,17 @@ export function SkillCheck({ nodeId, nodeName, onClose, onProgress }: SkillCheck
             }}
           />
         )}
+        {invalid && (
+          <p className="skc-invalid" id={`${titleId}-invalid`} role="alert">
+            {invalid}
+          </p>
+        )}
         {calculator && !locked && question.tools?.includes('calculator') && (
           <Calculator
             onClose={() => setCalculator(false)}
             onUse={(value) => {
               setGiven(value);
+              setInvalid('');
               field.current?.focus();
             }}
           />
@@ -336,7 +375,9 @@ export function SkillCheck({ nodeId, nodeName, onClose, onProgress }: SkillCheck
       <div className="skc-bar is-reveal">
         <div className="skc-verdict">
           <strong>Here's the worked answer</strong>
-          <p className="skc-answer">{phase.answer}</p>
+          <p className="skc-answer">
+            <MathText text={phase.answer} />
+          </p>
           {phase.figure && <ProblemFigure figure={phase.figure} answer />}
           <span>Did yours match?</span>
         </div>
@@ -367,7 +408,7 @@ export function SkillCheck({ nodeId, nodeName, onClose, onProgress }: SkillCheck
           {(!phase.right || phase.how === 'auto') && (
             <p className="skc-answer">
               {phase.right ? 'The answer is ' : 'The answer: '}
-              {phase.answer}
+              <MathText text={phase.answer} />
             </p>
           )}
           {phase.figure && (!phase.right || phase.how !== 'self') && <ProblemFigure figure={phase.figure} answer />}
@@ -477,7 +518,9 @@ function Results({
               {question.result?.right ? '✓' : '✗'}
             </span>
             <div>
-              <p className="skc-review-prompt">{question.prompt}</p>
+              <p className="skc-review-prompt">
+                <MathText text={question.prompt} />
+              </p>
               {question.figure && <ProblemFigure figure={question.figure} />}
               {question.result && (
                 <p className="skc-review-answer">
@@ -486,7 +529,7 @@ function Results({
                       You said <i>{question.result.given}</i>.{' '}
                     </>
                   ) : null}
-                  Answer: {question.result.answer}
+                  Answer: <MathText text={question.result.answer} />
                 </p>
               )}
               {question.result?.figure && <ProblemFigure figure={question.result.figure} answer />}

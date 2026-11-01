@@ -51,6 +51,8 @@ import re
 
 from backend.config.shared import RULES
 from backend.database import connection
+from backend.tracking import skill_check
+from backend.tracking.mathtext import to_latex, to_plain
 
 # ---------------------------------------------------------------------------
 # What a step is
@@ -488,6 +490,8 @@ def programmes_for(node_ids):
                 'prompt': problem['prompt'],
                 'answer': problem['answer'],
                 'hint': problem['hint'],
+                'format': skill_check.format_of(problem.get('answer_kind') or skill_check.classify(
+                    problem['prompt'], problem['answer'], problem.get('tree_id') or '')),
                 **({'aids': problem['aids']} if problem.get('aids') else {}),
             })
         out[node_id] = [{
@@ -531,7 +535,7 @@ PROBLEM_BOUNDS = {
 WEIGHTS = ('warmup', 'core', 'stretch')
 
 #: The named checks a problem is credited with when it passes.
-PROBLEM_CHECKS = ('shape', 'concrete', 'distinct', 'graded', 'answered')
+PROBLEM_CHECKS = ('shape', 'concrete', 'distinct', 'graded', 'answered', 'format')
 
 #: How many problems a step is owed, and the share of them that open light.
 #: These mirror frontend/src/utils/problemSet, which drew the graded slots
@@ -606,6 +610,10 @@ def problem_failures(problem, step, others=()):
     shares no vocabulary with it at all.
     """
     bad = []
+    # The rules read words, so LaTeX reads as what it stands for.
+    written = problem
+    problem = {**problem, **{name: to_plain(str(problem.get(name) or ''))
+                             for name in ('prompt', 'answer', 'hint')}}
     missing = [name for name in PROBLEM_FIELDS
                if not str(problem.get(name) or '').strip()]
     if missing:
@@ -658,13 +666,19 @@ def problem_failures(problem, step, others=()):
         bad.append('answered:the answer restates the question')
 
     for other in others:
-        if other is problem:
+        if other is written:
             continue
-        if (comparable(prompt) and comparable(other.get('prompt', ''))
-                and overlap(other.get('prompt', ''), prompt) > 0.8):
-            bad.append('distinct:repeats {!r}'.format(
-                str(other.get('prompt', ''))[:60]))
+        said = to_plain(str(other.get('prompt', '')))
+        if comparable(prompt) and comparable(said) and overlap(said, prompt) > 0.8:
+            bad.append('distinct:repeats {!r}'.format(said[:60]))
             break
+
+    kind = written.get('answer_kind')
+    if kind:
+        if kind not in skill_check.KINDS:
+            bad.append('format:answer_kind {!r} is not a known shape'.format(kind))
+        elif not skill_check.fits(kind, problem['answer']):
+            bad.append('format:the answer does not fit its own shape, {}'.format(kind))
 
     return bad
 
@@ -835,6 +849,20 @@ def aid_failures(aids):
     return bad
 
 
+def finish_problem(problem, tree):
+    """A problem as it's stored: its math in LaTeX and its answer's shape set.
+    Safe to run twice. Written plain, by a model or by hand, it all comes through
+    here on the way into the table."""
+    kind = problem.get('answer_kind')
+    if kind not in skill_check.KINDS:
+        kind = skill_check.classify(problem.get('prompt', ''), to_latex(problem.get('answer', ''), tree), tree)
+    return {**problem,
+            'prompt': to_latex(problem.get('prompt', ''), tree),
+            'answer': to_latex(problem.get('answer', ''), tree),
+            'hint': to_latex(problem.get('hint', '') or '', tree),
+            'answer_kind': kind}
+
+
 def review_problems(problems, step):
     """Check a whole set. Returns (per-problem failures, set-wide failures).
 
@@ -865,7 +893,7 @@ def review_problems(problems, step):
     # show. Only the second is refused.
     practice = (step or {}).get('practice', '')
     if practice and problems and all(
-            overlap(problem.get('prompt', ''), practice) > 0.9 for problem in problems):
+            overlap(to_plain(str(problem.get('prompt', ''))), practice) > 0.9 for problem in problems):
         whole.append('distinct:the set only restates the step')
 
     per = [problem_failures(problem, step, problems) for problem in problems]

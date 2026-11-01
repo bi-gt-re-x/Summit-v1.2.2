@@ -13,7 +13,7 @@
  */
 import { get, post } from './api';
 import type { ApiResult } from '@/types';
-import type { Figure, ProblemTool } from './skillSteps';
+import type { AnswerFormat, Figure, ProblemTool } from './skillSteps';
 
 /** Work that counted toward a node, newest first, one row per name: a
  *  routine that repeats its name is one row with a count. `id` and `day` are
@@ -122,9 +122,11 @@ export interface CheckQuestion {
   weight: 'warmup' | 'core' | 'stretch';
   prompt: string;
   hint: string;
-  /** Graded on the number typed. Otherwise the reader compares with the
+  /** Graded on what's typed. Otherwise the reader compares with the
    *  worked answer and says whether theirs matched. */
   auto: boolean;
+  /** What shape the answer has to take. */
+  format?: AnswerFormat;
   /** Drawn under the question. */
   figure?: Figure;
   /** What the reader may open while working it. */
@@ -152,6 +154,8 @@ export function startCheck(
 
 export interface AnswerReply {
   check: SkillCheck;
+  /** The answer isn't the shape asked for. Nothing was recorded. */
+  invalid?: { index: number; message: string };
   /** A sentence answer, shown before anything is recorded. */
   reveal?: { index: number; answer: string; given: string; figure?: Figure };
   result?: { index: number; right: boolean; how: string; answer: string; figure?: Figure };

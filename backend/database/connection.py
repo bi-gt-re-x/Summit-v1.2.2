@@ -239,6 +239,7 @@ ADDED_COLUMNS = (
     # get NULL, which reads as a problem that is words alone, which is what
     # every one of them was. See data/sql/skillsteps.sql.
     ('skill_problems', 'aids', 'TEXT'),
+    ('skill_problems', 'answer_kind', 'TEXT'),
 )
 
 # Indexes on columns that ADDED_COLUMNS supplies. Their own list, applied after
@@ -3763,7 +3764,7 @@ def step_audit_summary(run_id=None):
 SKILL_PROBLEM_COLUMNS = (
     'node_id', 'ordinal', 'slot', 'weight', 'prompt', 'answer', 'hint',
     'tree_id', 'model', 'generated_at', 'verified_at', 'verifier', 'checks',
-    'aids',
+    'aids', 'answer_kind',
 )
 
 

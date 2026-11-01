@@ -4327,6 +4327,8 @@ html[data-theme="dark"] .stx-region {
     color: var(--lat-text);
 }
 
+.stx-problem-format { margin: 0; color: var(--lat-text); }
+
 .stx-problem-hint,
 .stx-problem-answer {
     margin: 0;

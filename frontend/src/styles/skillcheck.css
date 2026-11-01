@@ -168,9 +168,22 @@
 .skc-hint b { margin-right: var(--space-2); }
 .skc-label {
     display: block;
-    margin: var(--space-2) 0 var(--space-2);
     font-size: var(--text-sm);
     font-weight: var(--weight-semibold);
+}
+.skc-answer-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-2) var(--space-3);
+    margin: var(--space-2) 0 var(--space-2);
+    color: var(--color-ink);
+}
+.skc-invalid {
+    margin: var(--space-2) 0 0;
+    font-size: var(--text-sm);
+    font-weight: var(--weight-semibold);
+    color: var(--skc-wrong);
 }
 .skc-input {
     width: 100%;
@@ -187,6 +200,7 @@
 .skc-input--long { max-width: none; resize: vertical; line-height: 1.5; }
 .skc-input:focus { outline: none; border-color: var(--skc-accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--skc-accent) 22%, transparent); }
 .skc-input:disabled { opacity: .75; }
+.skc-input[aria-invalid="true"] { border-color: var(--skc-wrong); }
 .skc-quiet { margin: var(--space-3) 0 0; font-size: var(--text-sm); color: var(--color-ink-muted); text-align: center; }
 .skc-card .skc-quiet { text-align: left; }
 

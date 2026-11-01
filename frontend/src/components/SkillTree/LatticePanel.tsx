@@ -110,7 +110,9 @@ import {
   type StepPlan,
 } from '@/utils/skillSteps';
 import type { Problem as ProblemRow, WrittenStep } from '@/services/skillSteps';
+import { AnswerFormat } from './AnswerFormat';
 import { Calculator } from './Calculator';
+import { MathText } from './MathText';
 import { ProblemFigure } from './ProblemFigure';
 import {
   WEIGHT_BLURB,
@@ -306,10 +308,23 @@ function Problem({ problem, mark }: { problem: ProblemRow; mark?: React.ReactNod
 
   return (
     <div className="stx-problem">
-      <p className="stx-problem-prompt">{problem.prompt}</p>
+      <p className="stx-problem-prompt">
+        <MathText text={problem.prompt} />
+      </p>
       {aids.figure && <ProblemFigure figure={aids.figure} />}
-      {showHint && problem.hint && <p className="stx-problem-hint">{problem.hint}</p>}
-      {showAnswer && <p className="stx-problem-answer">{problem.answer}</p>}
+      {showHint && problem.hint && (
+        <p className="stx-problem-hint">
+          <MathText text={problem.hint} />
+        </p>
+      )}
+      <p className="stx-problem-format">
+        <AnswerFormat format={problem.format} withNote={false} />
+      </p>
+      {showAnswer && (
+        <p className="stx-problem-answer">
+          <MathText text={problem.answer} />
+        </p>
+      )}
       {showAnswer && aids.answer_figure && <ProblemFigure figure={aids.answer_figure} answer />}
       {showCalc && <Calculator onClose={() => setShowCalc(false)} />}
       <p className="stx-problem-acts">

@@ -13,7 +13,8 @@ pass is the server's word rather than the page's.
 A question goes out without its answer. Grading a number needs nothing from
 the reader but what they typed; an answer that is a sentence is sent back only
 once they have tried it (or asked to see it), and then they say whether theirs
-matched. Every graded answer is also a `skill_attempts` row, which is what
+matched. Each question states the shape its answer takes, and an answer of the
+wrong shape comes back with `invalid` and isn't recorded. Every graded answer is also a `skill_attempts` row, which is what
 moves the step's level on the panel.
 
 ## Leaving does not reroll
@@ -44,8 +45,8 @@ router = APIRouter(tags=['skillchecks'])
 #: How long a check stays open to come back to.
 RESUME = timedelta(days=1)
 
-#: How much of a typed answer is kept.
-GIVEN_MAX = 300
+#: How much of a typed answer is kept. A paragraph has to fit.
+GIVEN_MAX = 2000
 
 
 def _known(username):
@@ -71,6 +72,10 @@ def _answers(row):
     answers = list(row.get('answers') or [])
     asked = len(row.get('questions') or [])
     return answers + [None] * (asked - len(answers))
+
+
+def _kind(problem):
+    return (problem.get('format') or {}).get('kind') or 'phrase'
 
 
 def _aids(problem):
@@ -105,7 +110,8 @@ def _public(row, problems):
             'weight': question.get('weight') or problem.get('weight') or 'core',
             'prompt': problem.get('prompt', ''),
             'hint': problem.get('hint', ''),
-            'auto': skill_check.gradable(problem.get('answer', '')),
+            'auto': skill_check.auto_graded(_kind(problem), problem.get('answer', '')),
+            'format': skill_check.format_of(_kind(problem)),
             **_aids(problem),
             'result': None,
         }
@@ -236,7 +242,13 @@ def answer(body: Answer, username: str = Depends(current_username)):
     if body.skip:
         right, how = False, 'skipped'
     else:
-        auto = skill_check.grade(problem['answer'], given)
+        kind = _kind(problem)
+        # The wrong shape isn't a miss. Nothing is recorded, and they try again.
+        if given:
+            refused = skill_check.refusal(kind, given)
+            if refused:
+                return ok(check=_public(row, problems), invalid={'index': body.index, 'message': refused})
+        auto = skill_check.grade_as(kind, problem['answer'], given)
         if auto is not None:
             if not given:
                 return fail('Type an answer first, or show the answer.')

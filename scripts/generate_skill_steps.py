@@ -1232,19 +1232,23 @@ def store(out, node, model_id, run_id, sets=None, steps=True):
     elif steps:
         out.log('store', 'drop', out.note or 'did not pass review')
     for ordinal, problems in sorted((sets or {}).items()):
+        # Plain math comes back from the model and LaTeX goes in the table.
+        # See backend/tracking/mathtext.py for why the model doesn't write it.
+        finished = [skillsteps.finish_problem(problem, node['tree']) for problem in problems]
         connection.save_step_problems(node['id'], ordinal, [{
             'slot': problem['slot'],
             'weight': problem['weight'],
             'prompt': problem['prompt'],
             'answer': problem['answer'],
             'hint': problem['hint'],
+            'answer_kind': problem['answer_kind'],
             'tree_id': node['tree'],
             'model': model_id,
             'generated_at': stamp,
             'verified_at': stamp,
             'verifier': 'rules+{}'.format(model_id),
             'checks': list(skillsteps.PROBLEM_CHECKS) + ['reviewed'],
-        } for problem in problems])
+        } for problem in finished])
         out.log('store', 'pass', 'problem: {} for step {}'.format(
             len(problems), ordinal), ordinal=ordinal)
     for row in out.audit:

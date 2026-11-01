@@ -14884,6 +14884,9 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-problem-prompt {
     color: var(--lat-text)
 }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-problem-format {
+    color: var(--lat-text)
+}
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-problem-hint {
     border-left: 3px solid var(--lat-amber);
     background: color-mix(in srgb, var(--lat-amber-soft) 50%, transparent);

@@ -20,8 +20,10 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { skillAttempts } from '@/services';
 import { after, markReview, type ReviewItem, type ReviewProblem } from '@/services/review';
-import type { ProblemAids } from '@/services/skillSteps';
+import type { AnswerFormat as AnswerFormatWords, ProblemAids } from '@/services/skillSteps';
+import { AnswerFormat } from '@/components/SkillTree/AnswerFormat';
 import { Calculator } from '@/components/SkillTree/Calculator';
+import { MathText } from '@/components/SkillTree/MathText';
 import { ProblemFigure } from '@/components/SkillTree/ProblemFigure';
 import '@/styles/review.css';
 
@@ -46,7 +48,7 @@ function Question({
   busy,
   done,
 }: {
-  problem: { prompt: string; answer: string; hint: string; aids?: ProblemAids };
+  problem: { prompt: string; answer: string; hint: string; format?: AnswerFormatWords | null; aids?: ProblemAids };
   onMark: (right: boolean) => void;
   busy: boolean;
   done: boolean | null;
@@ -57,10 +59,23 @@ function Question({
   const aids = problem.aids ?? {};
   return (
     <div className="rq-q">
-      <p className="rq-q-prompt">{problem.prompt}</p>
+      <p className="rq-q-prompt">
+        <MathText text={problem.prompt} />
+      </p>
       {aids.figure && <ProblemFigure figure={aids.figure} />}
-      {hint && problem.hint && <p className="rq-q-hint">{problem.hint}</p>}
-      {answer && <p className="rq-q-answer">{problem.answer}</p>}
+      {hint && problem.hint && (
+        <p className="rq-q-hint">
+          <MathText text={problem.hint} />
+        </p>
+      )}
+      <p className="rq-q-format">
+        <AnswerFormat format={problem.format} withNote={false} />
+      </p>
+      {answer && (
+        <p className="rq-q-answer">
+          <MathText text={problem.answer} />
+        </p>
+      )}
       {answer && aids.answer_figure && <ProblemFigure figure={aids.answer_figure} answer />}
       {calc && !answer && <Calculator onClose={() => setCalc(false)} />}
       <div className="rq-q-acts">
@@ -212,7 +227,7 @@ function Row({
           {item.kind === 'problem' &&
             (item.prompt && item.answer ? (
               <Question
-                problem={{ prompt: item.prompt, answer: item.answer, hint: item.hint, aids: item.aids }}
+                problem={{ prompt: item.prompt, answer: item.answer, hint: item.hint, format: item.format, aids: item.aids }}
                 busy={busy}
                 done={null}
                 onMark={(right) => void answerProblem(right)}

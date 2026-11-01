@@ -3,6 +3,7 @@
     .venv-fastapi/bin/python scripts/seed_skill_steps.py            # load it
     .venv-fastapi/bin/python scripts/seed_skill_steps.py --check    # just check it
     .venv-fastapi/bin/python scripts/seed_skill_steps.py --export   # table -> file
+    .venv-fastapi/bin/python scripts/seed_skill_steps.py --finish   # math + shapes, in the table
 
 ## The file is the artefact, not the table
 
@@ -91,7 +92,7 @@ def _unpack(entry):
     }
 
 
-def _problems_of(raw_step, ordinal):
+def _problems_of(raw_step, ordinal, tree=''):
     """One step's problem set out of the seed file, numbered and banded.
 
     `slot` and `weight` may be stated, and are filled in when they are not:
@@ -113,14 +114,15 @@ def _problems_of(raw_step, ordinal):
         if weight not in skillsteps.WEIGHTS:
             weight = ('warmup' if at <= warm
                       else 'stretch' if at > total - stretch else 'core')
-        out.append({
+        out.append(skillsteps.finish_problem({
             'slot': problem.get('slot') or at,
             'weight': weight,
             'prompt': str(problem.get('prompt', '')).strip(),
             'answer': str(problem.get('answer', '')).strip(),
             'hint': str(problem.get('hint', '') or '').strip(),
+            **({'answer_kind': problem['answer_kind']} if problem.get('answer_kind') else {}),
             **({'aids': problem['aids']} if problem.get('aids') else {}),
-        })
+        }, tree))
     return out
 
 
@@ -155,6 +157,7 @@ def export():
                     {'slot': one['slot'], 'weight': one['weight'],
                      'prompt': one['prompt'], 'answer': one['answer'],
                      **({'hint': one['hint']} if one['hint'] else {}),
+                     **({'answer_kind': one['answer_kind']} if one.get('answer_kind') else {}),
                      **({'aids': one['aids']} if one.get('aids') else {})}
                     for one in sets.get(row['ordinal'], [])]}
                    if sets.get(row['ordinal']) else {}),
@@ -170,18 +173,50 @@ def export():
     return 0
 
 
+def finish():
+    """Run every stored problem through `skillsteps.finish_problem`: its math
+    becomes LaTeX and its answer gets a shape. Touches nothing else on the row,
+    and running it again changes nothing."""
+    con = connection.connect()
+    changed = total = 0
+    try:
+        rows = con.execute('SELECT node_id, ordinal, slot, tree_id, prompt, answer, hint, answer_kind '
+                           'FROM skill_problems').fetchall()
+        with con:
+            for row in rows:
+                node_id, ordinal, slot, tree, prompt, answer, hint, kind = (row[i] for i in range(8))
+                total += 1
+                done = skillsteps.finish_problem(
+                    {'prompt': prompt, 'answer': answer, 'hint': hint, 'answer_kind': kind}, tree)
+                if (done['prompt'], done['answer'], done['hint'], done['answer_kind']) == (prompt, answer, hint, kind):
+                    continue
+                changed += 1
+                con.execute('UPDATE skill_problems SET prompt = ?, answer = ?, hint = ?, answer_kind = ? '
+                            'WHERE node_id = ? AND ordinal = ? AND slot = ?',
+                            (done['prompt'], done['answer'], done['hint'], done['answer_kind'],
+                             node_id, ordinal, slot))
+    finally:
+        con.close()
+    print('{} of {} problems changed.'.format(changed, total))
+    return 0
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     parser.add_argument('--check', action='store_true',
                         help='Run the checks and report. Writes nothing.')
     parser.add_argument('--export', action='store_true',
                         help='Write the database back out to the seed file.')
+    parser.add_argument('--finish', action='store_true',
+                        help='Put every stored problem through the LaTeX and answer-shape pass.')
     parser.add_argument('--node', action='append', default=[],
                         help='Only this node id. Repeatable.')
     args = parser.parse_args()
 
     if args.export:
         return export()
+    if args.finish:
+        return finish()
 
     nodes = {node['id']: node for node in load(NODES_PATH, 'nodes') or []}
     seed = load(SEED_PATH, 'programmes') or {}
@@ -256,7 +291,7 @@ def main():
         # step is what they hang off — a set for an ordinal with no step would
         # be unreachable content.
         for step, raw_step in zip(steps, raw):
-            problems = _problems_of(raw_step, step['ordinal'])
+            problems = _problems_of(raw_step, step['ordinal'], node['tree'])
             if not problems:
                 continue
             per_problem, whole_set = skillsteps.review_problems(problems, step)

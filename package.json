@@ -17,6 +17,7 @@
     "check:docs": "node scripts/check_docs.mjs"
   },
   "dependencies": {
+    "katex": "^0.19.1",
     "lucide-react": "^1.47.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

@@ -42,8 +42,17 @@ export interface Problem {
   prompt: string;
   answer: string;
   hint: string;
+  /** What shape the answer takes. Set by the server, for every problem. */
+  format?: AnswerFormat;
   /** A figure, an answer figure, tools. Absent on a problem that is words alone. */
   aids?: ProblemAids;
+}
+
+/** The shape an answer takes, and the words for it. See backend/tracking/skill_check.py. */
+export interface AnswerFormat {
+  kind: string;
+  label: string;
+  note: string;
 }
 
 /**

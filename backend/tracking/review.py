@@ -228,6 +228,7 @@ def queue(attempts, tasks, marks, today, library=None, nodes=None, name_of=lambd
             level=_WEIGHT_WORD.get(weight, 'Medium'),
             prompt=(problem or {}).get('prompt'), answer=(problem or {}).get('answer'),
             hint=(problem or {}).get('hint') or '', aids=(problem or {}).get('aids') or {},
+            format=(problem or {}).get('format'),
             minutes=PROBLEM_MINUTES))
 
     for (node_id, ordinal), history in step_histories(attempts, marks).items():
