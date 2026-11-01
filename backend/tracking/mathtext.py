@@ -62,7 +62,7 @@ _FUNCTIONS = {
 }
 #: A letter pair that reads as two variables multiplied, not as a word.
 _PAIRS = frozenset('''xy xz yz ab ac bc dx dy dt du dv dA dV mx ax bx cx kx mn pq Ax Ay Bx Ab
-mg mv ma vt ut gh mc IR'''.split())
+mg mv ma vt ut gh mc IR kt rt'''.split())
 #: A pair that is only math right after an operator: "v = u + at".
 _AFTER_OP = frozenset('at'.split())
 #: Words a probability may hold: P(A and B).
@@ -74,6 +74,8 @@ _GREEK = {'lambda': r'\lambda', 'theta': r'\theta', 'alpha': r'\alpha', 'beta': 
 _UNIT_NAME = (r'(?:m|s|h|g|L|N|J|W|V|A|K|C|kg|km|cm|mm|nm|mg|ml|mL|kJ|kW|kN|kPa|Pa|Hz|min|mol|rad|'
               r'ft|in|mi|lb|oz|yd|gal|hr|sec|deg)')
 _UNIT = re.compile(r'{0}(?:[\^]?[²³23])?(?:/{0}(?:[\^]?[²³23])?)?$'.format(_UNIT_NAME))
+#: These are English words too, so they only count with a bracket: max(a, b).
+_WORD_FUNCTIONS = frozenset(('max', 'min'))
 #: A lone letter that's a variable when it stands by itself in a sentence.
 _LONE = frozenset('xyzn')
 
@@ -82,7 +84,7 @@ _SYMBOLS = {
     '≈': r'\approx', '±': r'\pm', '→': r'\to', '∞': r'\infty', '∫': r'\int', '∑': r'\sum',
     'Σ': r'\Sigma', '∂': r'\partial', '∈': r'\in', '∪': r'\cup', '∩': r'\cap', '∅': r'\emptyset',
     'π': r'\pi', 'θ': r'\theta', 'α': r'\alpha', 'β': r'\beta', 'γ': r'\gamma', 'δ': r'\delta',
-    'Δ': r'\Delta', 'λ': r'\lambda', 'μ': r'\mu', 'σ': r'\sigma', 'φ': r'\phi', 'ω': r'\omega',
+    'Δ': r'\Delta', 'Γ': r'\Gamma', 'λ': r'\lambda', 'μ': r'\mu', 'σ': r'\sigma', 'φ': r'\phi', 'ω': r'\omega',
     'ρ': r'\rho', 'ε': r'\varepsilon', 'τ': r'\tau', '…': r'\dots', '−': '-', '–': '-',
 }
 _BACK = {value: key for key, value in _SYMBOLS.items() if value.startswith('\\')}
@@ -93,15 +95,15 @@ _SUB = str.maketrans('₀₁₂₃₄₅₆₇₈₉ₙ', '0123456789n')
 _SUPER_RUN = re.compile('[⁰¹²³⁴⁵⁶⁷⁸⁹⁻ⁿ]+')
 _SUB_RUN = re.compile('[₀₁₂₃₄₅₆₇₈₉ₙ]+')
 
-_MATH_CHARS = re.compile('[√²³⁴⁻₀₁₂₃₄×÷≤≥≠≈±→∞∫∑Σ∂∈∪∩πθαβγδΔλμσφωρε^]')
+_MATH_CHARS = re.compile('[√²³⁴⁻₀₁₂₃₄×÷≤≥≠≈±→∞∫∑Σ∂∈∪∩πθαβγδΔΓλμσφωρε^]')
 #: A unit that already reads right: "6 m/s²", "4 cm²". Left alone, so the
 #: grader still sees a number and a unit.
 _UNIT_POWER = re.compile(r'^[a-zA-Zµ]{1,4}(?:/[a-zA-Zµ]{1,4})?[²³]$')
 _ARROW_OPS = {'->': '→', '<=': '≤', '>=': '≥', '!=': '≠'}
-_OPS = frozenset('+ - − – = < > ≤ ≥ ≠ ≈ × ÷ * / ± → · <= >= != -> ∈ ∪ ∩'.split())
+_OPS = frozenset('+ - − – = < > ≤ ≥ ≠ ≈ × ÷ * / ± → · <= >= != -> <-> ∈ ∪ ∩'.split())
 _RELATIONS = frozenset('= < > ≤ ≥ ≠ ≈ <= >= != ∈'.split())
 _MATRIX = re.compile(r'\[\[[-\d\s,.\[\]a-z/]+\]\]')
-_FROZEN = re.compile(r'\\\(.*?\\\)|\\\[.*?\\\]|"[^"]*"|`[^`]*`')
+_FROZEN = re.compile(r'\\\(.*?\\\)|\\\[.*?\\\]|`[^`]*`')
 #: "1 hour 20/30" is rare; these slashes never mean a fraction.
 _NOT_FRACTIONS = frozenset(('24/7', '9/11', '50/50'))
 _FORMULA = re.compile(r'(?:\(?(?:[A-Z][a-z]?\d*)+\)?\d*)+')
@@ -344,7 +346,12 @@ def _name(scan, word):
         return out, out
     if lower in _GREEK:
         scan.at += len(word)
-        out = _postfix(scan, _GREEK[lower]) + ' '
+        # Gamma(2) is the function and gamma is the letter. Delta U is the one
+        # exception: written either way, it means the capital.
+        name = _GREEK[lower]
+        if word[0].isupper() and name[1].islower():
+            name = '\\' + name[1].upper() + name[2:]
+        out = _postfix(scan, name) + ' '
         return out, out
     if lower == 'mod':
         scan.at += 3
@@ -375,11 +382,11 @@ def _name(scan, word):
 
 
 _OP_LATEX = {
-    '<=': r'\le', '>=': r'\ge', '!=': r'\ne', '->': r'\to', '*': r'\cdot', '−': '-', '–': '-',
+    '<=': r'\le', '>=': r'\ge', '!=': r'\ne', '<->': r'\leftrightarrow', '->': r'\to', '*': r'\cdot', '−': '-', '–': '-',
     '×': r'\times', '÷': r'\div', '≤': r'\le', '≥': r'\ge', '≠': r'\ne', '≈': r'\approx',
     '±': r'\pm', '→': r'\to', '·': r'\cdot', '∈': r'\in', '∪': r'\cup', '∩': r'\cap',
 }
-_OP = re.compile(r'<=|>=|!=|->|[-+=<>*−–×÷≤≥≠≈±→·∈∪∩,]')
+_OP = re.compile(r'<->|<=|>=|!=|->|[-+=<>*/−–×÷≤≥≠≈±→·∈∪∩,]')
 
 
 def _expression(text):
@@ -387,34 +394,55 @@ def _expression(text):
     caller leaves that text alone."""
     scan = _Scan(text.strip())
     out = []
+    ends = []
     while not scan.done():
         char = scan.peek()
         if char.isspace():
             scan.at += 1
             continue
-        if char == 'x' and out and re.search(r'\d\}?$', out[-1]) and re.match(
-                r'x\s+[\d(]', scan.text[scan.at:]):
+        if char == 'x' and out and re.search(r'[\d)]\}?$', out[-1]) and re.match(
+                r'x\s+[\d(A-Z]', scan.text[scan.at:]) and scan.text[scan.at - 1:scan.at].isspace():
             # "3 x 4" and "9x 10^9" are times. "4x - 9" isn't.
             scan.at += 1
             out.append(r'\times')
+            ends.append(scan.at)
             continue
         op = _OP.match(scan.text, scan.at)
         if op:
             scan.at = op.end()
             token = op.group(0)
             out.append(_OP_LATEX.get(token, '{,}' if token == ',' else token))
+            ends.append(-1)
+            continue
+        start = scan.at
+        if char == 'x' and out and re.search(r'\d$', out[-1]) and re.match(r'x\s+\d', scan.text[scan.at:]):
+            scan.at += 1
+            out.append(r'\times')
+            ends.append(scan.at)
             continue
         latex, bare = _primary(scan)
         # A division written tight is a fraction: 3/4, 1/(x + 4), dy/dx.
         # "8 / 2" keeps its slash, because it reads as a step of working.
-        if scan.peek() == '/':
+        # sin x/cos x keeps its slash: a function can't sit alone under a bar.
+        if scan.peek() == '/' and not _FUNCTION_NAME.match(
+                re.match(r'[a-zA-Z]*', scan.text[scan.at + 1:]).group(0) or '0'):
             scan.at += 1
             if scan.peek().isspace() or scan.done():
                 raise ValueError('a slash at the end')
             below, bare_below = _primary(scan)
-            # A run of letters and digits belongs together under the bar.
-            latex = r'\frac{{{}}}{{{}}}'.format(bare, bare_below)
+            # Δx is one thing under the bar.
+            if bare_below.startswith(r'\Delta') and re.match(r'[a-zA-Z]', scan.peek() or ' '):
+                extra, _ = _primary(scan)
+                bare_below = bare_below.rstrip() + ' ' + extra
+            # What's written tight against it goes on top too: 5pi/4 is one
+            # fraction, not 5 next to pi/4.
+            top = ''
+            if ends and ends[-1] == start:
+                top = out.pop() + top
+                ends.pop()
+            latex = r'\frac{{{}}}{{{}}}'.format(top + (latex if top else bare), bare_below)
         out.append(latex)
+        ends.append(scan.at)
     return _join(out)
 
 
@@ -424,14 +452,14 @@ def _join(parts):
         if part == '{,}':
             text = text.rstrip() + ', '
             continue
-        spaced = part in ('+', '-', '=', '<', '>') or part.startswith(('\\le', '\\ge', '\\ne', '\\to', '\\times', '\\div', '\\cdot', '\\approx', '\\pm', '\\in', '\\cup', '\\cap'))
+        spaced = part in ('+', '-', '=', '<', '>') or part.startswith(('\\leftrightarrow', '\\le', '\\ge', '\\ne', '\\to', '\\times', '\\div', '\\cdot', '\\approx', '\\pm', '\\in', '\\cup', '\\cap'))
         if spaced and text:
             text = text.rstrip() + ' ' + part + ' '
         elif spaced:
             text = part + ('' if part in '+-' else ' ')
         else:
             text += part
-    return re.sub(r'\s+', ' ', text).strip()
+    return re.sub(r'\s+', ' ', text).replace(' }', '}').strip()
 
 
 def _matrix(raw):
@@ -458,11 +486,11 @@ def _atom_kind(core, light):
         return 'var'
     if core.lower() in _GREEK or core == 'mod':
         return 'term' if not light else None
-    if _UNIT.match(core):
+    if _UNIT.match(core.strip('()')):
         return None
-    if not re.search(r'[0-9a-zA-Z√πθαβγδΔλμσφωΣ∑∫∞]', core):
+    if not re.search(r'[0-9a-zA-Z√πθαβγδΔΓλμσφωΣ∑∫∞]', core):
         return None
-    if re.search(r'[^0-9a-zA-Z.(){}^/_!\'|²³⁴⁵⁶⁷⁸⁹⁰¹⁻ⁿ₀₁₂₃₄₅₆₇₈₉ₙ°%√πθαβγδΔλμσφωρεΣ∑∫∞∂+\-−=<>≤≥≠≈×÷·,*]', core):
+    if re.search(r'[^0-9a-zA-Z.(){}^/_!\'|²³⁴⁵⁶⁷⁸⁹⁰¹⁻ⁿ₀₁₂₃₄₅₆₇₈₉ₙ°%√πθαβγδΔΓλμσφωρεΣ∑∫∞∂+\-−=<>≤≥≠≈×÷·,*]', core):
         return None
     if core.endswith(('/', '^', '_')) or core.startswith(('/', '^')):
         return None
@@ -471,6 +499,8 @@ def _atom_kind(core, light):
     # Every run of letters has to be a known name, a variable, or capitals.
     for run in re.findall(r'[a-zA-Z]+', core):
         lower = run.lower()
+        if lower in _WORD_FUNCTIONS and f'{lower}(' not in core.lower():
+            return None
         if lower in _FUNCTIONS or lower in ('sqrt', 'pi') or lower in _GREEK:
             continue
         if len(run) == 1:
@@ -551,11 +581,11 @@ def _run(words, light):
 _AFTER_NUMBER = re.compile(r'(?:\d|\b{})\s*$'.format(_UNIT_NAME))
 
 
-def _peel(piece):
+def _peel(piece, quoted=False):
     """A word and the punctuation after it. "x!" keeps a factorial's bang only
     in a short tight token like "5!"."""
     core, tail = piece, ''
-    while core and core[-1] in _EDGE:
+    while core and (core[-1] in _EDGE or core[-1] == '"' or (core[-1] == "'" and quoted)):
         if core[-1] == '!' and re.fullmatch(r'[a-z0-9]{1,3}!', core):
             break
         tail = core[-1] + tail
@@ -569,6 +599,7 @@ def _sentence(text, tree, light):
     tokens = re.findall(r'\S+|\s+', text)
     out, run, kinds = [], [], []
     gap = ''
+    quoted = False
 
     def flush():
         if not run:
@@ -585,7 +616,18 @@ def _sentence(text, tree, light):
             else:
                 out.append(piece)
             continue
-        core, tail = _peel(piece)
+        # An opening quote stays text, so that the math after it still reads.
+        head = re.match(r"['\"]*", piece).group(0)
+        if head:
+            flush()
+            out.append(gap)
+            gap = ''
+            out.append(head)
+            piece = piece[len(head):]
+            quoted = quoted or "'" in head
+        core, tail = _peel(piece, quoted)
+        if "'" in tail:
+            quoted = False
         kind = None
         if chem and core:
             before = run[-1] if run else ''
@@ -601,7 +643,7 @@ def _sentence(text, tree, light):
                 kind = 'term'
             elif not light and core in _PROB_WORDS and depth > 0 and run and run[0].startswith('P('):
                 kind = 'term'
-            elif core.lower() in _FUNCTIONS:
+            elif core.lower() in _FUNCTIONS and core.lower() not in _WORD_FUNCTIONS:
                 kind = 'term'
             elif _UNIT.match(core) and '/' not in core and unit_side:
                 kind = None
@@ -638,7 +680,8 @@ def _sentence(text, tree, light):
     return ''.join(out)
 
 
-_FUNCTION_NAME = re.compile(r'(?:{}|log_?[\d₀-₉]+)(?:\(|$)'.format('|'.join(_FUNCTIONS)), re.I)
+_FUNCTION_NAME = re.compile(r'-?\d*(?:{}|log_?[\d₀-₉]+)(?:\^-?\d+)?(?:\(|$)'.format(
+    '|'.join(name for name in _FUNCTIONS if name not in _WORD_FUNCTIONS)), re.I)
 
 
 def _joins(left_kind, right_kind, left, right):
@@ -650,8 +693,13 @@ def _joins(left_kind, right_kind, left, right):
         return True
     if right.lower().startswith('(') and left.endswith(')'):
         return True
-    if left == 'x' or right == 'x':
-        return left_kind == 'num' or right[:1].isdigit() or right[:1] == '('
+    # "3 x 4" and "2/5 x 1/4" are times, and the scanner reads them that way.
+    if right == 'x':
+        return left[-1:].isdigit() or left[-1:] == ')' or left_kind == 'term'
+    if left == 'x':
+        return right[:1].isdigit() or right[:1] == '(' or right_kind == 'term'
+    if left[-1:] == ')' and right_kind == 'term':
+        return True
     if left.lower() in _GREEK and right_kind == 'var':
         return True
     if left == 'mod' or right == 'mod':
@@ -676,7 +724,7 @@ def _untex(text):
     what they stand for, so the one path below writes them out properly."""
     if '\\' not in text or '\\(' in text:
         return text
-    text = re.sub(r'\\d?frac\{([^{}]*)\}\{([^{}]*)\}', r'(\1)/(\2)', text)
+    text = re.sub(r'\\d?frac' + _BRACED + _BRACED, r'(\1)/(\2)', text)
     text = re.sub(r'\\sqrt\{([^{}]*)\}', r'√(\1)', text)
     return _LOOSE_TEX.sub(lambda m: _LOOSE_NAMES[m.group(1)], text)
 
@@ -732,10 +780,10 @@ def _plain_math(math):
         out = re.sub(r'\\mathrm' + _BRACED + r'(?:\^\{([^{}]*)\})?', lambda m: (
             re.sub(r'_\{(\d+)\}', r'\1', m.group(1)) + (m.group(2) or '')), out)
         out = re.sub(r'\\text' + _BRACED, r'\1', out)
-        out = out.replace(r'\bmod', 'mod')
+        out = out.replace(r'\bmod', ' mod ')
         if out == was:
             break
-    out = out.replace(r'^{\circ}', '°').replace(r'\%', '%').replace(r'{,}', ',').replace(r'\mid', '|')
+    out = out.replace(r'\leftrightarrow', '<->').replace(r'^{\circ}', '°').replace(r'\%', '%').replace(r'{,}', ',').replace(r'\mid', '|')
     out = re.sub(r'\^\{([^{}]*)\}', lambda m: '^' + (m.group(1) if re.fullmatch(r'-?(?:\d+|[a-zA-Z])', m.group(1)) else '({})'.format(m.group(1))), out)
     out = re.sub(r'_\{([^{}]*)\}', lambda m: '_' + m.group(1), out)
     for name, symbol in sorted(_BACK.items(), key=lambda item: -len(item[0])):

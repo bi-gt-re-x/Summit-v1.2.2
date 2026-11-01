@@ -338,3 +338,25 @@ def test_the_panel_gets_the_shape_with_each_problem(client):
     steps = reply.get('programmes', reply.get('steps', reply))
     text = json.dumps(steps)
     assert '"label": "Fraction"' in text
+
+
+def test_a_tight_coefficient_goes_on_top_of_its_fraction():
+    assert to_latex('Convert to 5pi/4.', 'trigonometry').replace(' ', '') == r'Convertto\(\frac{5\pi}{4}\).'
+    assert r'\frac{2x}{3}' in to_latex('Simplify 2x/3.', 'algebra')
+    # With a space it's a mixed number, and stays apart.
+    assert to_latex('Add 1 1/2.', 'algebra').endswith(r'\(\frac{1}{2}\).')
+
+
+@pytest.mark.parametrize('plain, latex', [
+    ('Compute 2/3 x 3/5.', r'Compute \(\frac{2}{3} \times \frac{3}{5}\).'),
+    ('Use (g = 9.8 m/s^2) here.', '(g = 9.8 m/s² here.'),
+])
+def test_times_between_fractions_and_units_in_brackets(plain, latex):
+    if '²' in latex:
+        assert r'\frac{m}' not in to_latex(plain, 'physics')
+    else:
+        assert to_latex(plain, 'mathematics') == latex
+
+
+def test_a_function_stays_beside_its_slash():
+    assert to_latex('Rewrite sin x/cos x.', 'precalculus') == r'Rewrite \(\sin x/\cos x\).'

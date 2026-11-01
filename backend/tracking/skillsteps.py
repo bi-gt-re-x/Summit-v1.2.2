@@ -210,7 +210,7 @@ then using when while with without working
 """.split())
 
 #: Characters that mark a specific object: maths, code, units, money, ranges.
-SPECIFIC_CHARS = re.compile(r'[0-9=+×÷^√∫∑≤≥<>%$£€°/\\|]')
+SPECIFIC_CHARS = re.compile(r'[0-9=+×÷^√∫∑≤≥<>→∪∩%$£€°/\\|]')
 
 #: A token that reads as notation or an identifier rather than English —
 #: `x^2`, `snake_case`, `camelCase`, `O(n log n)`, `C#`, `pH`.

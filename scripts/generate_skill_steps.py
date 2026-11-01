@@ -486,6 +486,7 @@ More rules, all of them things that get this rejected:
 #: Length bounds for a problem, stated for the same reason the step's are —
 #: see `_bounds_note`.
 PROBLEMS_SYSTEM = PROBLEMS_SYSTEM + """
+Write math in plain text, like x^2 - 3x and 1/2. Never write LaTeX or backslashes.
 LENGTHS, in characters: prompt {}-{}, answer {}-{}, hint 0-{} ("" for none).
 """.format(*skillsteps.PROBLEM_BOUNDS['prompt'],
            *skillsteps.PROBLEM_BOUNDS['answer'],
