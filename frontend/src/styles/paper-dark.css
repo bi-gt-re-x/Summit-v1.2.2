@@ -4926,6 +4926,33 @@ html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-pag
     border-right: 1px solid var(--color-line);
     background: var(--color-surface)
 }
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .mango-nudge {
+    border: 1px solid var(--color-line);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+    color: var(--color-ink)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .mango-nudge-why {
+    color: var(--color-ink-muted)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .mango-nudge-go {
+    border: 0;
+    background: var(--pref-accent, var(--color-accent));
+    color: #252522;
+    text-decoration: none
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .mango-nudge-later {
+    border: 0;
+    background: none;
+    color: var(--color-ink-muted)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .mango-nudge-later:hover {
+    color: var(--color-ink)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .mango-nudge-go:focus-visible,
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .mango-nudge-later:focus-visible {
+    outline: 2px solid var(--pref-accent, var(--color-accent))
+}
 html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .gx-page {
     --gx-card: var(--color-surface);
     --gx-card-2: var(--color-surface-2);

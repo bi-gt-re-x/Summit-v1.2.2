@@ -192,6 +192,10 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
         const kept = was.topics.filter((one) => offered.some((topic) => topic.id === one.id));
         return kept.length === was.topics.length ? was : { ...was, topics: kept };
       });
+    }).catch(() => {
+      if (!live) return;
+      setLoading(false);
+      setError("Couldn't load your suggested sessions.");
     });
     return () => {
       live = false;

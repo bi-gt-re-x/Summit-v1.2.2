@@ -376,6 +376,8 @@ FIELDS: Dict[str, Any] = {
     #: How often the resting Mango does something. Calm is the default: it is
     #: company on a page somebody works on, not a show.
     'mango_energy':      ('calm', _one_of('calm', 'lively', 'still')),
+    #: The day's note: the one thing that matters most, once a day.
+    'mango_nudge':       (True, _boolean),
     'tours_seen':        ([], _id_list(32)),
 
     # Analytics.

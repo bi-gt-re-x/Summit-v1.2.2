@@ -987,6 +987,19 @@ export default function Settings() {
             ),
           },
           {
+            id: 'mango-nudge',
+            label: 'Daily note',
+            hint: "Once a day, Mango tells you the one thing that matters most. Click Mango to see it again.",
+            control: (
+              <Toggle
+                on={prefs.mango_nudge}
+                busy={busy || !prefs.mango_rest}
+                label="Daily note"
+                onFlip={() => void savePref({ mango_nudge: !prefs.mango_nudge }, 'Daily note')}
+              />
+            ),
+          },
+          {
             id: 'mango-tours',
             label: 'Page guides',
             hint: 'A short guide from Mango the first time you open each page.',

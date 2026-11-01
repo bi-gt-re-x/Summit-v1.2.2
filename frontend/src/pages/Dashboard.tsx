@@ -61,6 +61,7 @@ import {
   useUserData,
 } from '@/hooks';
 import { MangoPet } from '@/components/Tutorial/MangoPet';
+import { useStarter } from '@/hooks/useStarter';
 import { useTourShowing } from '@/components/Tutorial/Tutorial';
 import {
   goals as goalService,
@@ -137,6 +138,7 @@ export default function Dashboard() {
      (it's the same Mango, and two on screen would be one too many). See
      components/Tutorial/MangoPet and Settings, Mango. */
   const touring = useTourShowing();
+  const starter = useStarter();
 
   /* ---- The first week ------------------------------------------------------
    *
@@ -466,7 +468,16 @@ export default function Dashboard() {
         prefs.mango_rest ? ' has-mango' : ''
       }`}
     >
-      {prefs.mango_rest && !touring && <MangoPet anchor=".dash-hero" energy={prefs.mango_energy} />}
+      {prefs.mango_rest && !touring && (
+        <MangoPet
+          anchor=".dash-hero"
+          energy={prefs.mango_energy}
+          username={username}
+          /* Its button often leads to the plan, which is on Analytics, and an
+             unlock card is already Mango talking. */
+          nudges={prefs.mango_nudge && starter.ready && !starter.isLocked('analytics') && starter.unannounced.length === 0}
+        />
+      )}
 
       {/* Indigo, and first in the rail: the sky you land on when you sign in. */}
       <PageHero variant="dashboard" tone="indigo" className="dash-hero">

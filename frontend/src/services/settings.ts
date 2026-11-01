@@ -146,6 +146,7 @@ export interface Prefs {
   mango_rest: boolean;
   mango_tours: boolean;
   mango_energy: 'calm' | 'lively' | 'still';
+  mango_nudge: boolean;
   tours_seen: string[];
   analytics_window: AnalyticsWindow;
   analytics_setup_done: boolean;
@@ -311,6 +312,7 @@ export const DEFAULTS: Prefs = {
   mango_rest: true,
   mango_tours: true,
   mango_energy: 'calm',
+  mango_nudge: true,
   tours_seen: [],
   analytics_window: '1y',
   /* False is the first-run state, and it is what puts the question phase in

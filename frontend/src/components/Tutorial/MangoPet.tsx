@@ -11,17 +11,23 @@
  * every 9 to 16 seconds, lively every 4 to 8, still never moves on its own.
  * Reduced motion is treated as still.
  *
+ * It also has a real job: the one thing that matters most today, as a short
+ * note with a button (./MangoNudge). While the note is open it stays put.
+ *
  * Timers, not animation frames, drive the routine, so it costs nothing while
  * it sits, and CSS (styles/tutorial.css, "Mango at rest") does the moving.
  */
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { reduced } from '@/utils/homePlay';
 import { MangoFigure } from './Mango';
+import { NudgeCard, useMangoNudge } from './MangoNudge';
 import '@/styles/tutorial.css';
 
 type Act = 'sit' | 'look' | 'walk' | 'jump' | 'sleep' | 'wave' | 'stretch' | 'spin' | 'bubble';
 
 const SIZE = 46;
+/** The note's width, for keeping it on the card. Matches `.mango-nudge`. */
+const NOTE_WIDTH = 320;
 
 const LINES = [
   "Start with the smallest task.",
@@ -56,10 +62,15 @@ export interface MangoPetProps {
   /** The card to sit on. */
   anchor: string;
   energy: 'calm' | 'lively' | 'still';
+  /** Whose note it is. */
+  username?: string | null;
+  /** Whether Mango brings up the day's note at all. */
+  nudges?: boolean;
 }
 
-export function MangoPet({ anchor, energy }: MangoPetProps) {
+export function MangoPet({ anchor, energy, username = null, nudges = false }: MangoPetProps) {
   const still = energy === 'still' || reduced;
+  const nudge = useMangoNudge(username, nudges);
   const perch = useRef<HTMLDivElement | null>(null);
   const [spot, setSpot] = useState<{ left: number; top: number; width: number } | null>(null);
   const [x, setXState] = useState(0);
@@ -150,7 +161,7 @@ export function MangoPet({ anchor, energy }: MangoPetProps) {
 
   // ---- The routine ----------------------------------------------------------
   useEffect(() => {
-    if (still || !spot) return undefined;
+    if (still || !spot || nudge.open) return undefined;
     let timer = 0;
     const rest = () => (energy === 'lively' ? between(4000, 8000) : between(9000, 16000));
     const go = () => {
@@ -184,16 +195,30 @@ export function MangoPet({ anchor, energy }: MangoPetProps) {
     };
     timer = window.setTimeout(go, rest());
     return () => window.clearTimeout(timer);
-  }, [still, spot, energy, room, setX]);
+  }, [still, spot, energy, room, setX, nudge.open]);
+
+  // ---- Speaking up -----------------------------------------------------------
+  useEffect(() => {
+    if (!nudge.open) return undefined;
+    setAct(still ? 'sit' : 'wave');
+    const timer = window.setTimeout(() => setAct('sit'), LENGTH.wave);
+    return () => window.clearTimeout(timer);
+  }, [nudge.open, still]);
 
   // ---- Clicking it -----------------------------------------------------------
   const poke = useCallback(() => {
     const woke = act === 'sleep';
     setAct(still ? 'sit' : 'jump');
-    setLine(woke ? 'Huh? Oh, hi!' : pick(LINES));
     window.setTimeout(() => setAct('sit'), LENGTH.jump);
+    // With something to say, that's what a click brings up.
+    if (nudge.item) {
+      if (nudge.open) nudge.hide();
+      else nudge.show();
+      return;
+    }
+    setLine(woke ? 'Huh? Oh, hi!' : pick(LINES));
     window.setTimeout(() => setLine(null), 2600);
-  }, [act, still]);
+  }, [act, still, nudge]);
 
   const sleeping = act === 'sleep';
   const arm = act === 'wave' ? -55 : null;
@@ -235,6 +260,14 @@ export function MangoPet({ anchor, energy }: MangoPetProps) {
         {act === 'bubble' && <span className="mango-bubble" aria-hidden="true" />}
         {line && <span className={`mango-say${x < 200 ? ' is-right' : ''}`} role="status">{line}</span>}
       </button>
+      {nudge.open && nudge.item && (
+        <NudgeCard
+          item={nudge.item}
+          left={Math.max(0, Math.min(x + SIZE - NOTE_WIDTH, (spot?.width ?? 0) - NOTE_WIDTH))}
+          onClose={nudge.hide}
+          onDone={nudge.clear}
+        />
+      )}
     </div>
   );
 }

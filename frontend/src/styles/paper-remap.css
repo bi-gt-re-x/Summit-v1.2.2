@@ -2613,6 +2613,33 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
     border-right: 1px solid var(--color-line);
     background: var(--color-surface)
 }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .mango-nudge {
+    border: 1px solid var(--color-line);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+    color: var(--color-ink)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .mango-nudge-why {
+    color: var(--color-ink-muted)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .mango-nudge-go {
+    border: 0;
+    background: var(--pref-accent, var(--color-accent));
+    color: #FFFFFF;
+    text-decoration: none
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .mango-nudge-later {
+    border: 0;
+    background: none;
+    color: var(--color-ink-muted)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .mango-nudge-later:hover {
+    color: var(--color-ink)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .mango-nudge-go:focus-visible,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .mango-nudge-later:focus-visible {
+    outline: 2px solid var(--pref-accent, var(--color-accent))
+}
 
 /* ---- goals.css (every paper page) ---- */
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .gx-page {

@@ -421,3 +421,48 @@
 @media (max-width: 640px) {
     .tut-unlocked .tut-card { left: var(--space-3); right: var(--space-3); top: 76px; bottom: auto; width: auto; }
 }
+
+/* Mango's note for the day (components/Tutorial/MangoNudge). Hangs down from
+   Mango over the top card's right side, where it covers the least. */
+.mango-nudge {
+    position: absolute;
+    top: 8px;
+    box-sizing: border-box;
+    width: min(320px, 100%);
+    padding: 12px 14px;
+    border: 1px solid var(--color-line);
+    border-radius: 14px;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    pointer-events: auto;
+    animation: mpSay .25s ease-out;
+}
+.mango-nudge-title { margin: 0; font-size: 14px; font-weight: 650; line-height: 1.35; }
+.mango-nudge-why { margin: 4px 0 0; font-size: 13px; line-height: 1.45; color: var(--color-ink-muted); }
+.mango-nudge-note { margin: 6px 0 0; font-size: 13px; font-weight: 600; line-height: 1.4; }
+.mango-nudge-acts { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.mango-nudge-go {
+    display: inline-block;
+    padding: 6px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--pref-accent, var(--color-accent));
+    color: #fff;
+    font: 600 13px/1.3 var(--font-sans);
+    text-decoration: none;
+    cursor: pointer;
+}
+.mango-nudge-go:disabled { opacity: .6; cursor: default; }
+.mango-nudge-later {
+    padding: 6px 8px;
+    border: 0;
+    border-radius: 8px;
+    background: none;
+    color: var(--color-ink-muted);
+    font: 600 13px/1.3 var(--font-sans);
+    cursor: pointer;
+}
+.mango-nudge-later:hover { color: var(--color-ink); }
+.mango-nudge-go:focus-visible, .mango-nudge-later:focus-visible { outline: 2px solid var(--pref-accent, var(--color-accent)); outline-offset: 2px; }
