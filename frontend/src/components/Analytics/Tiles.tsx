@@ -44,23 +44,6 @@ export interface TilesProps {
    */
   logStyle?: LogStyle;
   /**
-   * The chosen subject's name, when one is chosen — and the reason this row
-   * has to mention it.
-   *
-   * Every figure here is read off the day series, where XP and focus minutes
-   * are stored per day and not per subject. So the subject filter cannot reach
-   * any of them, and choosing one used to leave all six sitting unchanged
-   * beside panels that *had* narrowed — the quality tile reading 13.8 with the
-   * quality panel below it reading 14.2 for the same account on the same
-   * screen. Two answers to one question, with nothing on the page admitting
-   * it.
-   *
-   * Saying so is the honest fix rather than the small one. The alternative is
-   * to stop offering a filter these figures cannot honour, and that would cost
-   * the reader the panels it genuinely does narrow.
-   */
-  scopedOut?: string | null;
-  /**
    * Which tiles to draw, by key, when somebody chose. A panel on a space's
    * page (components/Spaces/PanelBlock) lets the reader pick; given, it
    * replaces what `logStyle` would have decided.
@@ -73,7 +56,6 @@ export function Tiles({
   sparks,
   compareLabel,
   logStyle,
-  scopedOut = null,
   only,
 }: TilesProps) {
   const stats: Stat[] = [
@@ -153,14 +135,6 @@ export function Tiles({
   return (
     <>
       <StatRow stats={shown} compare={compareLabel} />
-      {scopedOut && (
-        /* Under the row rather than on each tile: it is one fact about all of
-           them, and a copy on each would be louder than the figures. */
-        <p className="ax-tiles-scope">
-          These count <strong>every subject</strong> . XP and focus time are saved per day, so the subject filter on{' '}
-          <strong>{scopedOut}</strong> doesn't change them. The panels below do follow it.
-        </p>
-      )}
     </>
   );
 }

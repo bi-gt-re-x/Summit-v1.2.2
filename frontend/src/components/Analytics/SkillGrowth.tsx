@@ -838,7 +838,7 @@ function AbilityLine({ tracks }: { tracks: SkillTrack[] }) {
     [tracks, drawn],
   );
 
-  const scale = useMemo(() => fitScale(series.flatMap((line) => line.values)), [series]);
+  const scale = useMemo(() => fitScale(series.flatMap((line) => line.values).filter((value) => value !== null)), [series]);
 
   const marks: LineMark[] = useMemo(
     () => bandCrossings(drawn).map((cross) => ({ ...cross, glyph: '▲' })),

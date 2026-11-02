@@ -351,13 +351,13 @@ describe('then and now', () => {
 
   it('says which basis a quality score came from rather than assuming ratings', async () => {
     const unrated = side(scores(), 50);
-    unrated.figures.quality = { basis: 'xp', avg_task_xp: 30, rated_tasks: 0, total_tasks: 12 };
+    unrated.figures.quality = { basis: 'unrated', avg_task_xp: 30, rated_tasks: 0, total_tasks: 12 };
     serve(payload({ current: unrated, previous: null, change: {
       overall: null, productivity: null, quality: null,
       consistency: null, efficiency: null, focus: null,
     } }));
     draw(<GrowthTab model={fakeModel()} />);
-    expect(await screen.findByText(/no ratings yet, so this uses task XP/)).toBeInTheDocument();
+    expect(await screen.findByText(/not enough rated tasks to score yet/)).toBeInTheDocument();
   });
 });
 

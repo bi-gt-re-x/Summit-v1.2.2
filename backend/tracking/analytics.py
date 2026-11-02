@@ -34,10 +34,12 @@ excellently.
 after a completed task can be skipped, and about half of them are. An account
 that never answers it must not be graded 0 for quality — that would turn an
 optional question into a mandatory one by way of the scoreboard, and would drop
-its Growth Score by up to two points for declining to answer. So quality falls
-back to the old XP-per-task proxy when there is nothing rated, and `basis` says
-which of the two the reader is looking at. Every surface that prints the figure
-prints the basis with it; see `metricLines` on the client.
+its Growth Score by up to two points for declining to answer. It can't fall back
+on XP per task either: that's a different scale, so the score jumped the moment
+somebody rated their first task. So under QUALITY_MIN_RATED rated tasks there's
+no quality score at all, `basis` says 'unrated', and the overall averages the
+four parts it could measure. Every surface that prints the figure says so; see
+`metricLines` on the client.
 """
 from datetime import date, timedelta
 
@@ -74,7 +76,9 @@ GRADE_BANDS = tuple((floor, letter) for floor, letter in RULES['grade_bands'])
 
 
 def grade_for_score(score):
-    """Map a 0-100 score to the global letter grade."""
+    """Map a 0-100 score to the global letter grade, or None if it wasn't scored."""
+    if score is None:
+        return None
     for floor, letter in GRADE_BANDS:
         if score >= floor:
             return letter
@@ -103,6 +107,15 @@ def _clamp(value, low=0, high=100):
 # --------------------------------------------------------------------------
 #: The best a single task can score: 5 for difficulty times 5 for execution.
 QUALITY_MAX = 25
+
+#: Rated tasks a window needs before Quality counts toward the score. There's no
+#: stand-in below this: an XP proxy sits on a different scale, so the score used
+#: to jump the moment somebody rated their first task, and one rating is too thin
+#: to grade anyone on. The overall score averages the parts it could measure.
+QUALITY_MIN_RATED = 5
+
+#: The focus goal a logged day is measured against when its own goal is missing.
+DEFAULT_FOCUS_GOAL_HOURS = 2.0
 
 #: How far back the report card looks.
 #:
@@ -189,6 +202,7 @@ def _message(metric_scores):
     }
     if not metric_scores:
         return "Complete tasks to build your rating."
+    metric_scores = {name: score for name, score in metric_scores.items() if score is not None}
     best = max(metric_scores, key=metric_scores.get)
     worst = min(metric_scores, key=metric_scores.get)
     if metric_scores[worst] >= 85:
@@ -329,7 +343,10 @@ def _daily_rollup(username, tasks=None, events=None, focus_history=None):
     for day_iso, record_row in focus_history.items():
         try:
             seconds = float(record_row.get('seconds', 0) or 0)
-            goal = float(record_row.get('goal_hours', 0) or 0) * 3600.0
+            # A goal of 0 can't be met or missed, so it reads as the default
+            # rather than scoring a day of real focus as nothing.
+            goal = (float(record_row.get('goal_hours', 0) or 0)
+                    or DEFAULT_FOCUS_GOAL_HOURS) * 3600.0
         except (TypeError, ValueError, AttributeError):
             continue
         if seconds <= 0:
@@ -373,6 +390,19 @@ def _daily_rollup(username, tasks=None, events=None, focus_history=None):
                 row['on_time'] += 1
 
     return days
+
+
+def daily_goal_of(value):
+    """The daily XP goal to divide by: a positive number, or the default.
+
+    It's the divisor of the Productivity score, so 0, a negative or anything
+    that isn't a number can't reach the division.
+    """
+    try:
+        goal = float(value)
+    except (TypeError, ValueError):
+        return DEFAULT_DAILY_GOAL
+    return goal if goal > 0 else DEFAULT_DAILY_GOAL
 
 
 def scoring_window(user, today=None):
@@ -458,12 +488,14 @@ def score_window(rollup, start, end, daily_goal):
     # 1. Productivity — a day's work against the day's goal the account set
     #    itself. The divisor was a flat 3, which is 300 XP a day for full
     #    marks: a number nobody chose, applied to everybody.
-    productivity_score = round(_clamp(avg_daily_xp / (daily_goal or DEFAULT_DAILY_GOAL) * 100))
+    daily_goal = daily_goal_of(daily_goal)
+    productivity_score = round(_clamp(avg_daily_xp / daily_goal * 100))
 
     # 2. Quality — how well the work went, times how hard it was, over the
-    #    tasks that were rated. Falls back to the XP proxy when none were; see
-    #    the module docstring for why an unrated account is not graded zero.
-    quality_basis = 'ratings' if rated else 'xp'
+    #    tasks that were rated. Unscored under QUALITY_MIN_RATED, so it stays
+    #    out of the overall rather than being graded zero or guessed.
+    quality_basis = 'ratings' if rated >= QUALITY_MIN_RATED else 'unrated'
+    quality_score = None
     if quality_basis == 'ratings':
         # The geometric mean of the two answers, on their own 1-5 scale, as a
         # percentage of 5. `avg_quality` is the mean of difficulty x execution,
@@ -472,8 +504,6 @@ def score_window(rollup, start, end, daily_goal):
         # midpoint is not the scale's midpoint, and reading it as one is what
         # made ordinary good work look like a failure.
         quality_score = round(_clamp((avg_quality ** 0.5) / 5 * 100))
-    else:
-        quality_score = round(_clamp(avg_task_xp * 1.75))
 
     # 3. Consistency — share of the window's days the account showed up on, on
     #    any of the three counts: a finished task, a logged focus session, or
@@ -508,9 +538,10 @@ def score_window(rollup, start, end, daily_goal):
         'focus': focus_score,
     }
 
+    measured = [score for score in parts.values() if score is not None]
     return {
         'parts': parts,
-        'overall': round(_clamp(sum(parts.values()) / len(parts))),
+        'overall': round(_clamp(sum(measured) / len(measured))),
         'figures': {
             # More than the one figure the score divides. The Growth tab prints
             # these under the score as the evidence for it, and a metric that
@@ -521,7 +552,7 @@ def score_window(rollup, start, end, daily_goal):
                 'total_xp': total_xp,
                 'earning_days': earning_days,
                 'tasks': total_tasks,
-                'daily_goal': daily_goal or DEFAULT_DAILY_GOAL,
+                'daily_goal': daily_goal,
             },
             'quality': {
                 'avg_task_xp': round(avg_task_xp),
@@ -532,6 +563,7 @@ def score_window(rollup, start, end, daily_goal):
                 'avg_difficulty': round(avg_difficulty, 1),
                 'avg_execution': round(avg_execution, 1),
                 'max_quality': QUALITY_MAX,
+                'min_rated': QUALITY_MIN_RATED,
             },
             'consistency': {
                 'active_days': active_days,
@@ -737,15 +769,12 @@ def ratings(username, record=True, tasks=None, events=None, focus_history=None):
     prev_w = window_stats(7, 13)
 
     # The trend has to be measured on the same basis as the score, or the arrow
-    # beside the figure is about a different quantity than the figure — an
-    # account whose ratings improved while its XP-per-task fell would read
-    # "16.2 / 25 ↓". Both halves fall back together.
+    # beside the figure is about a different quantity than the figure. With no
+    # score there's nothing for an arrow to be about.
+    this_quality = prev_quality = 0
     if quality_basis == 'ratings':
         this_quality = rating_summary(window_tasks(0, 6))['avg_quality']
         prev_quality = rating_summary(window_tasks(7, 13))['avg_quality']
-    else:
-        this_quality = (this_w['xp'] / this_w['tasks']) if this_w['tasks'] else 0
-        prev_quality = (prev_w['xp'] / prev_w['tasks']) if prev_w['tasks'] else 0
 
     productivity_trend = _trend(this_w['xp'], prev_w['xp'])
     quality_trend = _trend(this_quality, prev_quality)
@@ -793,6 +822,7 @@ def ratings(username, record=True, tasks=None, events=None, focus_history=None):
                 "avg_difficulty": round(rated['avg_difficulty'], 1),
                 "avg_execution": round(rated['avg_execution'], 1),
                 "max_quality": QUALITY_MAX,
+                "min_rated": QUALITY_MIN_RATED,
                 "trend": quality_trend,
             },
             "consistency": {
@@ -856,8 +886,10 @@ def save_snapshot(username, card, day=None):
             'detail': {k: v for k, v in block.items() if k not in ('score', 'grade')},
         }
 
+    # A part with no score has nothing to file, and the column can't hold nothing.
     db.record_metric_snapshots(username, day, (
-        [snapshot(name, card['metrics'][name]) for name in METRICS]
+        [snapshot(name, card['metrics'][name]) for name in METRICS
+         if card['metrics'][name]['score'] is not None]
         + [snapshot('overall', card['overall'])]))
 
 
@@ -953,7 +985,7 @@ def _growth_pct(current, previous):
     figure, and printing one anyway is how "+100%" comes to mean "we had no
     idea". The client draws a dash.
     """
-    if previous is None or previous <= 0:
+    if current is None or previous is None or previous <= 0:
         return None
     return round((current - previous) / previous * 100, 1)
 

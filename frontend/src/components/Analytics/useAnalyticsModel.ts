@@ -29,21 +29,15 @@
  *
  * Measured rather than estimated, because "seventy-nine memos" is the sort of
  * number that invites a rewrite on principle. Over the largest account in the
- * database — 8,268 tasks, 1,100 days — the two things a reader can press:
+ * database — 8,268 tasks, 1,100 days — the one thing a reader can press:
  *
  *     window picker moves    ~9 ms    (the slice, and everything keyed on it)
- *     subject picker moves  ~10 ms    (the twelve memos keyed on `bySubject`)
  *
- * Both are inside a frame, and both happen on a click rather than on a render.
- * Two of the nineteen calls behind those totals account for half of each —
+ * That is inside a frame, and it happens on a click rather than on a render.
+ * Two of the nineteen calls behind that total account for half of it —
  * `relationships` and `subjectQuality`, which are the two that walk the tasks
  * and the days together — so the shape of any future work here is those two
  * functions, not the memo boundaries.
- *
- * The subject axis is worth naming because it is not obvious: `subject` narrows
- * `bySubject`, and only what reads `bySubject` recomputes when it moves. The
- * goal panels, the clock's own rhythm, the day-series figures and everything
- * keyed on `tasks` directly are all untouched by it.
  *
  * ## Two windows, on purpose
  *
@@ -209,8 +203,7 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
   // a year is scatter. See METRICS in components/Analytics/data.
   const [metric, setMetric] = useState<MetricKey>('productivity');
   const [grain, setGrain] = useState<Grain>('weekly');
-  const [picked, setSubject] = useState('');
-  const subject = pinned.subject ?? picked;
+  const subject = pinned.subject ?? '';
   const [category, setCategory] = useState('');
 
   const all = useMemo(
@@ -235,33 +228,8 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
 
   const nameOf = useCallback((id: string) => subjects.get(id)?.name ?? id, [subjects]);
 
-  /* `custom` rides along because one consumer has to tell an account's own
-     subject from a catalogue one: the setup wizard, whose answers decide which
-     subjects get a skill tree and a page, and there is no tree behind an
-     invented name. Everything else here keeps them — a label to file work
-     under is all the filters need. See `latticeSubjects` in skills/subjectMap. */
-  const subjectOptions = useMemo(
-    () =>
-      [...subjects.values()]
-        .filter((entry) => entry.used > 0)
-        .map((entry) => ({ id: entry.id, label: entry.name, custom: entry.custom })),
-    [subjects],
-  );
-
-  /** The chosen subject's own name, or null when the filter is off.
-   *
-   *  The id is what the panels filter on; this is what the page is allowed to
-   *  say out loud. A panel that cannot honour the filter has to name the
-   *  subject it is *not* narrowed to, and printing the raw id there —
-   *  `computer_science` — would be the page talking to itself. */
-  const subjectLabel = useMemo(
-    () => (subject ? subjects.get(subject)?.name ?? subject : null),
-    [subject, subjects],
-  );
-
-  /** The subject filter narrows the tasks a panel counts, nothing else — XP and
-   *  focus minutes are recorded per day, not per subject, so the tiles and the
-   *  day-series charts cannot honour it and do not pretend to. */
+  /** The tasks a space's panel is pinned to, or all of them. The analytics page
+   *  itself has no subject filter. */
   const bySubject = useMemo(
     () => (subject ? tasks.filter((task) => task.subject === subject) : tasks),
     [subject, tasks],
@@ -955,9 +923,6 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
     grain,
     setGrain,
     subject,
-    setSubject,
-    subjectOptions,
-    subjectLabel,
     category,
     setCategory,
 

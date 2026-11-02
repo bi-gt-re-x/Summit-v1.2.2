@@ -55,14 +55,6 @@ const analytics: Step[] = [
     body: 'Look at the last week, month, three months or longer. Every chart on the page follows this.',
   },
   {
-    id: 'ax-subject-pick',
-    kind: 'next',
-    target: ['.ax-select-wrap'],
-    skipIfMissing: true,
-    title: 'All subjects or one',
-    body: 'Narrow the whole page down to a single subject from here.',
-  },
-  {
     id: 'ax-recs',
     kind: 'next',
     target: ['[data-tour="ax-tab-recommendations"]'],

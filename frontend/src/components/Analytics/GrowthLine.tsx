@@ -54,7 +54,8 @@ export interface LineSeries {
    */
   color?: string;
   /** One value per point, 0-100. Same length as `marks`. */
-  values: number[];
+  /** Null where a window has no score, which the line skips rather than draws as 0. */
+  values: Array<number | null>;
 }
 
 /** A moment worth marking on the line, placed at the point it happened on. */
@@ -112,22 +113,25 @@ function yAt(value: number, height: number, scale: LineScale): number {
   return PAD + inner - share * inner;
 }
 
-function pathFor(values: number[], height: number, scale: LineScale): string {
+function pathFor(values: Array<number | null>, height: number, scale: LineScale): string {
   const steps = Math.max(1, values.length - 1);
   return values
     .map((value, index) => {
+      if (value === null) return '';
       const x = (index / steps) * WIDTH;
       const y = yAt(value, height, scale);
-      return `${index === 0 ? 'M' : 'L'}${x.toFixed(2)},${y.toFixed(2)}`;
+      return `${values[index - 1] == null ? 'M' : 'L'}${x.toFixed(2)},${y.toFixed(2)}`;
     })
+    .filter(Boolean)
     .join(' ');
 }
 
 /** The same points as zero-length subpaths, which a round cap draws as dots. */
-function dotsFor(values: number[], height: number, scale: LineScale): string {
+function dotsFor(values: Array<number | null>, height: number, scale: LineScale): string {
   const steps = Math.max(1, values.length - 1);
   return values
     .map((value, index) => {
+      if (value === null) return '';
       const x = ((index / steps) * WIDTH).toFixed(2);
       const y = yAt(value, height, scale).toFixed(2);
       return `M${x},${y}L${x},${y}`;
@@ -331,7 +335,7 @@ export function GrowthLine({
                 over each other leave four bands belonging to nobody, and the
                 reader is comparing slopes at that point rather than levels. */}
             {series.length === 1 &&
-              series.map((line) => (
+              series.filter((line) => !line.values.includes(null)).map((line) => (
                 <path
                   key={`${line.key}-fill`}
                   className="ax-gp-area"
@@ -407,7 +411,7 @@ export function GrowthLine({
               reader look away and back for every one of them; the value at the
               right-hand end is both the label and the reading. */}
           <div className="ax-gp-ends" aria-hidden="true">
-            {series.map((line) => (
+            {series.filter((line) => line.values[count - 1] != null).map((line) => (
               <span
                 key={line.key}
                 className="ax-gp-end"
@@ -429,7 +433,7 @@ export function GrowthLine({
               style={{ left: `${ratioAt(shown, count) * 100}%` }}
               aria-hidden="true"
             >
-              {series.map((line) => (
+              {series.filter((line) => line.values[shown] != null).map((line) => (
                 <span
                   key={line.key}
                   className="ax-gp-pin"
@@ -460,7 +464,7 @@ export function GrowthLine({
           >
             <p className="ax-gp-tip-date">{labels[shown]}</p>
             <ul>
-              {series.map((line) => (
+              {series.filter((line) => line.values[shown] != null).map((line) => (
                 <li key={line.key}>
                   <span className="ax-gp-tip-key" style={{ background: (line.color ?? toneVar(line.tone)) }} />
                   <span>{line.label}</span>

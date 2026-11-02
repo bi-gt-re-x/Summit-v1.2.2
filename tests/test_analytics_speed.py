@@ -29,7 +29,8 @@ def _overall(client, period='30d'):
 
 def test_a_rating_edit_rebuilds_the_cached_rollup(client):
     task_id = finish(client, when=ago(3), difficulty=3, execution=3)
-    finish(client, when=ago(5), difficulty=3, execution=3)
+    for day in range(4, analytics.QUALITY_MIN_RATED + 3):
+        finish(client, when=ago(day), difficulty=3, execution=3)
     before = _overall(client)
     # Served from the cache the second time, and unchanged.
     assert _overall(client) == before

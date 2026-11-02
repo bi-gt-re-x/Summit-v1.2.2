@@ -161,7 +161,6 @@ export type { Tone, PanelProps, AreaSeries, Column, RadarAxis, ScatterProps } fr
  */
 export {
   SCORE_SCALE,
-  WEIGHT as SCORE_WEIGHT,
   growthScore,
 } from './score';
 export type { GrowthScore, ScoreFactor } from './score';

@@ -8,8 +8,8 @@ import { FEATURES } from '@/utils/starter';
 import { PAGE_TOURS } from './pageTours';
 
 describe('page guides', () => {
-  it('Analytics has fifteen steps', () => {
-    expect(PAGE_TOURS.analytics).toHaveLength(15);
+  it('Analytics has fourteen steps', () => {
+    expect(PAGE_TOURS.analytics).toHaveLength(14);
   });
 
   it('every other unlockable page has five to ten', () => {

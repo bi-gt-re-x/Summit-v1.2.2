@@ -265,14 +265,12 @@ export default function Analytics() {
   /* The page reads a dozen of the model's eighty figures — the gates, the
      opening sentence and the export. Everything else goes to a tab whole. */
   const {
-    span, chooseSpan, option, spanText, subject, setSubject, subjectOptions, waitFor,
+    span, chooseSpan, option, spanText, waitFor,
     habits, summary, maturity, streak, analytical, hasReportCard, figures, insights, breakdown, banked, recentSubjects,
     discovered, diagnoses, advice, plan, recorded, goalSet,
   } = model;
 
-  /* Every subject in the catalog, for the pickers that should reach any of
-     them: the subject filter lists the ones with work first and these under
-     them, and setup offers all of them with a search. */
+  /* Every subject in the catalog, which setup offers with a search. */
   const allSubjects = useMemo(
     () =>
       [...subjects.values()].map((entry) => ({
@@ -280,7 +278,6 @@ export default function Analytics() {
       })),
     [subjects],
   );
-  const otherSubjects = useMemo(() => allSubjects.filter((entry) => !(entry.used > 0)), [allSubjects]);
   // ---- The shell ----------------------------------------------------------
 
   /**
@@ -682,10 +679,6 @@ export default function Analytics() {
             <Controls
               chosen={span}
               onWindow={chooseSpan}
-              subject={subject}
-              onSubject={setSubject}
-              subjects={subjectOptions}
-              others={otherSubjects}
               compareLabel={option.compare}
             />
           )}

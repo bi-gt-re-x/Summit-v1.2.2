@@ -506,18 +506,19 @@ export interface Ratings {
   overall: MetricBase & { message: string };
   metrics: {
     productivity: MetricBase & { avg_daily_xp: number };
-    quality: MetricBase & {
+    quality: Omit<MetricBase, 'score' | 'grade'> & {
+      /** Null until `min_rated` tasks are rated. It isn't counted in the overall then. */
+      score: number | null;
+      grade: Grade | null;
       avg_task_xp: number;
       /**
-       * Which measurement the score came from.
-       *
        * `ratings` is difficulty × execution over the tasks the reader rated.
-       * `xp` is the old XP-per-task proxy, used only while nothing has been
-       * rated — the prompt is optional and an account that skips it is not
-       * graded zero for quality. Every surface that prints the figure prints
-       * the basis with it.
+       * `unrated` means too few are rated to score. The prompt is optional, so
+       * an account that skips it isn't graded on it, and there's no stand-in on
+       * another scale. Every surface that prints the figure says which it is.
        */
-      basis: 'ratings' | 'xp';
+      basis: 'ratings' | 'unrated';
+      min_rated: number;
       rated_tasks: number;
       total_tasks: number;
       /** Mean of difficulty × execution, out of `max_quality`. */

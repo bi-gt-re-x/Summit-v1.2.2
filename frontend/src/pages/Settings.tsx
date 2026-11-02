@@ -113,7 +113,7 @@ const HOME_PAGES: { key: Prefs['home_page']; label: string }[] = [
 
 /** What each of the three levels actually does, said in full under the seg. */
 const RATING_DEPTHS: Record<Prefs['rating_depth'], string> = {
-  none: 'No questions after a task. Analytics uses XP per task for quality instead.',
+  none: "No questions after a task. Quality just won't count toward your growth score.",
   ratings: 'Rate difficulty and how well it went after each task. Analytics uses these for '
     + 'quality.',
   reasons: 'Both ratings, plus what made the difference. This lets Analytics explain why a '

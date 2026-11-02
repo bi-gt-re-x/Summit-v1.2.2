@@ -2681,17 +2681,7 @@ html[data-theme="dark"] .ax-page .peak-hero,
 /* The note under the tile row when a subject filter is on — see `scopedOut`
    in components/Analytics/Tiles.tsx. Quiet, because it is a caveat rather than
    a finding, and full width because it is about the whole row. */
-.ax-tiles-scope {
-    margin: var(--space-2) 2px 0;
-    font-size: var(--text-sm);
-    line-height: 1.5;
-    color: var(--ax-muted);
-}
 
-.ax-tiles-scope strong {
-    color: var(--ax-text);
-    font-weight: 600;
-}
 
 .ax-tiles {
     display: grid;

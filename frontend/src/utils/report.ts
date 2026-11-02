@@ -205,7 +205,7 @@ function overviewSection(input: ReportInput): string {
   } else if (f.finishedTasks > 0) {
     lines.push(
       wrap(
-        `You didn't rate any of your ${f.finishedTasks} finished tasks here, so quality uses XP per task instead.`,
+        `You didn't rate any of your ${f.finishedTasks} finished tasks here, so quality isn't part of your score yet.`,
       ),
       '',
     );

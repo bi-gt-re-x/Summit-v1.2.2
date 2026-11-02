@@ -267,6 +267,13 @@ export function Summary({
               </li>
             );
           })}
+          {score.unscored.map((part) => (
+            <li key={part.name} className={gradeClass(null)} title={part.raw}>
+              <span className="ax-summary-part-name">{part.label}</span>
+              <span className="ax-summary-part-grade">-</span>
+              <span className="ax-summary-part-score">Not rated</span>
+            </li>
+          ))}
         </ul>
       )}
 

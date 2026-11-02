@@ -208,6 +208,7 @@ export function seedRatings(): Ratings {
         score: 68,
         avg_task_xp: 60,
         basis: 'ratings',
+        min_rated: 5,
         rated_tasks: 300,
         total_tasks: FINISHED,
         avg_quality: 12,

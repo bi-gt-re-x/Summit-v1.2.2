@@ -17,30 +17,19 @@
  * construction. `assertsOverall` exists so the two can be checked against each
  * other in a test if the backend's weighting ever stops being a flat mean.
  *
- * The five are equally weighted because the backend weights them equally. If a
- * weighting lands there, `WEIGHT` is the one line here that changes.
+ * The parts are equally weighted because the backend weights them equally.
  */
 import type { MetricName, Ratings } from '@/types';
 
 /** The score is stated out of ten; the report card is scored out of a hundred. */
 export const SCORE_SCALE = 10;
 
-/**
- * How much of the score each metric is worth, as a share of 1.
- *
- * A flat fifth each, mirroring `sum(parts.values()) / len(parts)` in
- * backend/tracking/analytics.py. Written as a table anyway so the panel can
- * print the share, and so a change to the backend's weighting has an obvious
- * home rather than being spread through the component that draws it.
- */
-export const WEIGHT = 1 / 5;
-
 export interface ScoreFactor {
   name: MetricName;
   label: string;
   /** The backend's 0-100 score for this metric. */
   score: number;
-  /** What it contributes to the score out of ten — `score * WEIGHT / 10`. */
+  /** What it contributes to the score out of ten — its share of the parts, out of 10. */
   contribution: number;
   /** The measured quantity behind the score, in its own units. */
   raw: string;
@@ -73,17 +62,14 @@ export function growthScore(ratings: Ratings | null): GrowthScore {
       score: m.productivity.score,
       raw: `${Math.round(m.productivity.avg_daily_xp).toLocaleString()} XP/day`,
     },
-    {
-      name: 'quality',
-      label: 'Quality',
-      score: m.quality.score,
-      // Difficulty × execution, or the XP proxy while nothing is rated. Same
-      // rule as ./metrics: the basis is printed, never assumed.
-      raw:
-        m.quality.basis === 'ratings'
-          ? `${m.quality.avg_quality.toFixed(1)}/${m.quality.max_quality} rated`
-          : 'no ratings yet',
-    },
+    ...(m.quality.score === null
+      ? []
+      : [{
+          name: 'quality' as const,
+          label: 'Quality',
+          score: m.quality.score,
+          raw: `${m.quality.avg_quality.toFixed(1)}/${m.quality.max_quality} rated`,
+        }]),
     {
       name: 'consistency',
       label: 'Consistency',
@@ -108,7 +94,7 @@ export function growthScore(ratings: Ratings | null): GrowthScore {
 
   const factors: ScoreFactor[] = measured.map((factor) => ({
     ...factor,
-    contribution: (factor.score * WEIGHT) / SCORE_SCALE,
+    contribution: factor.score / measured.length / SCORE_SCALE,
   }));
 
   const total = factors.reduce((sum, factor) => sum + factor.contribution, 0);

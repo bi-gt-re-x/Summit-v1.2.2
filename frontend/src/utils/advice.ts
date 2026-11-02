@@ -536,7 +536,8 @@ export function recommendations(input: AdviceInput): Advice[] {
 
   // ---- quality: the weakest graded metric --------------------------------
   if (ratings) {
-    const metrics = Object.entries(ratings.metrics) as Array<[string, { score: number }]>;
+    const metrics = (Object.entries(ratings.metrics) as Array<[string, { score: number | null }]>)
+      .filter((entry): entry is [string, { score: number }] => entry[1].score !== null);
     const weakest = metrics.reduce((a, b) => (b[1].score < a[1].score ? b : a));
     const [name, metric] = weakest;
     if (metric.score < 60) {

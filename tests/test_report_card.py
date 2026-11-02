@@ -106,12 +106,14 @@ def test_an_ordinary_good_rating_is_not_a_failing_quality_score(client):
     ordinary good task, and the scale it is read on has to say so: the
     geometric mean is 3, and 3 out of 5 is 60.
     """
-    finish(client, xp=10, difficulty=3, execution=3)
+    for _ in range(analytics.QUALITY_MIN_RATED):
+        finish(client, xp=10, difficulty=3, execution=3)
     assert card(client)['metrics']['quality']['score'] == 60
 
 
 def test_full_marks_still_need_full_marks(client):
-    finish(client, xp=10, difficulty=5, execution=5)
+    for _ in range(analytics.QUALITY_MIN_RATED):
+        finish(client, xp=10, difficulty=5, execution=5)
     assert card(client)['metrics']['quality']['score'] == 100
 
 
@@ -447,7 +449,8 @@ def test_the_history_is_one_account_s_oldest_first(client, stranger):
 def test_reading_the_report_card_reads_each_table_once(client):
     """The endpoint as a whole: four reads and six writes, whatever is stored.
     A `SELECT *` creeping back onto it shows up as the column list changing."""
-    finish(client, xp=40)
+    for _ in range(analytics.QUALITY_MIN_RATED):
+        finish(client, xp=40, difficulty=3, execution=3)
     client.post('/api/get_growth_ratings')
 
     statements = _statements(lambda: client.post('/api/get_growth_ratings'))

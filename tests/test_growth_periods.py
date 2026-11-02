@@ -13,6 +13,8 @@ reading the same scorer rather than a second one that happens to agree today.
 """
 from datetime import date, timedelta
 
+import pytest
+
 from backend.database import connection as db
 from backend.tracking import analytics
 
@@ -231,3 +233,104 @@ def test_an_unknown_period_falls_back_rather_than_failing(client):
 
 def test_the_periods_need_a_session(anon):
     assert anon.get('/api/growth_periods').status_code == 401
+
+
+# --------------------------------------------------------------------------
+# Quality, and goals with nothing to divide by
+# --------------------------------------------------------------------------
+def _day(**figures):
+    return {**analytics.empty_day(), 'xp': 100, 'earned': True, 'worked': True, **figures}
+
+
+def _rated(count, difficulty=3, execution=3):
+    return _day(tasks=count, task_xp=count * 40, rated=count,
+                quality_sum=count * difficulty * execution,
+                difficulty_sum=count * difficulty, execution_sum=count * execution)
+
+
+def _scored(row, goal=100):
+    today = date.today()
+    return analytics.score_window({today.isoformat(): row}, today, today, goal)
+
+
+def test_quality_has_no_score_until_enough_tasks_are_rated():
+    """No XP stand-in: it's a different scale, so the score jumped on the first rating."""
+    for rated in range(0, analytics.QUALITY_MIN_RATED):
+        scored = _scored(_rated(rated) if rated else _day(tasks=4, task_xp=400))
+        assert scored['parts']['quality'] is None
+        assert scored['figures']['quality']['basis'] == 'unrated'
+
+    scored = _scored(_rated(analytics.QUALITY_MIN_RATED))
+    assert scored['parts']['quality'] == 60
+    assert scored['figures']['quality']['basis'] == 'ratings'
+
+
+def test_xp_per_task_never_moves_the_quality_score_or_the_overall():
+    small, huge = _scored(_day(tasks=1, task_xp=5)), _scored(_day(tasks=1, task_xp=500))
+    assert small['parts'] == huge['parts']
+    assert small['overall'] == huge['overall']
+
+
+def test_the_overall_averages_only_the_parts_it_could_measure():
+    scored = _scored(_day(tasks=1, task_xp=10))
+    parts = scored['parts']
+    measured = [parts[name] for name in analytics.METRICS if name != 'quality']
+    assert scored['overall'] == round(sum(measured) / len(measured))
+
+
+def test_a_first_rating_does_not_move_the_score():
+    unrated = _scored(_day(tasks=2, task_xp=80))
+    first = _scored(_rated(1, difficulty=1, execution=1))
+    assert first['overall'] == unrated['overall']
+
+
+def test_the_report_card_files_no_quality_row_with_nothing_to_score(client):
+    finish(client, xp=40)
+    card = client.post('/api/get_growth_ratings').json()
+    assert card['metrics']['quality']['score'] is None
+    assert card['metrics']['quality']['grade'] is None
+    assert card['metrics']['quality']['basis'] == 'unrated'
+    assert card['overall']['score'] is not None
+    assert not [row for row in analytics.history('tester', 'quality')]
+    assert analytics.history('tester', 'overall')
+
+
+def test_the_growth_tab_reads_an_account_with_nothing_rated(client):
+    finish(client, xp=40)
+    data = periods(client, '30d')
+    assert data['current']['parts']['quality'] is None
+    assert data['current']['grades']['quality'] is None
+    assert data['change']['quality'] is None
+    assert all(point['quality'] is None for point in data['series'])
+
+
+@pytest.mark.parametrize('goal', [0, 0.0, None, -5, '0', 'abc', ''])
+def test_a_daily_goal_with_nothing_to_divide_by_reads_as_the_default(goal):
+    scored = _scored(_day(), goal)
+    assert scored['parts']['productivity'] == 100
+    assert scored['figures']['productivity']['daily_goal'] == analytics.DEFAULT_DAILY_GOAL
+
+
+def test_focus_logged_on_a_day_with_a_goal_of_zero_still_scores():
+    """Two hours against no goal used to score 0, as if nothing was logged."""
+    today = date.today().isoformat()
+    rollup = analytics._daily_rollup('nobody', tasks=[], events=[],
+                                     focus_history={today: {'seconds': 3600, 'goal_hours': 0}})
+    scored = analytics.score_window(rollup, date.today(), date.today(), 100)
+    assert scored['parts']['focus'] == 50
+
+
+def test_every_analytics_read_works_with_no_goals_and_with_zero_targets(client):
+    finish(client, xp=40)
+    def reads():
+        for path in ('/api/goal_forecast', '/api/next_actions', '/api/get_growth_ratings',
+                     '/api/growth_periods', '/api/get_goals', '/api/metric_histories'):
+            reply = client.get(path)
+            assert reply.status_code == 200, path
+            assert reply.json().get('success') is not False, path
+
+    reads()
+    for measure in ('number', 'milestones'):
+        client.post('/api/add_goal', json={'title': 'Zero ' + measure, 'measure': measure,
+                                           'target_number': 0, 'deadline': ago(-30)})
+    reads()

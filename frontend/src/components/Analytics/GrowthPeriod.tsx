@@ -161,12 +161,11 @@ export function measuredAs(metric: PeriodMetric, side: PeriodSide | null): strin
     case 'productivity':
       return `${fmtNumber(Number(figures.avg_daily_xp) || 0)} XP a working day`;
     case 'quality':
-      // The basis is printed, never assumed — an account that has rated
-      // nothing is graded on an XP proxy and has to be told so.
+      // The basis is printed, never assumed: too few ratings means no score.
       return figures.basis === 'ratings'
         ? `${Number(figures.avg_quality).toFixed(1)} of ${figures.max_quality}, `
           + `over ${fmtNumber(Number(figures.rated_tasks) || 0)} rated`
-        : 'no ratings yet, so this uses task XP';
+        : 'not enough rated tasks to score yet';
     case 'consistency':
       return `${fmtNumber(Number(figures.active_days) || 0)} of `
         + `${fmtNumber(Number(figures.total_days) || 0)} days worked`;
@@ -502,8 +501,8 @@ export function MetricStrip({ data }: { data: GrowthPeriods }) {
         </p>
       </section>
 
-      {METRIC_ORDER.map((metric) => {
-        const to = now.parts[metric];
+      {scoredMetrics(now).map((metric) => {
+        const to = now.parts[metric]!;
         const from = then ? then.parts[metric] : null;
         const moved = from === null ? 'held' : direction(from, to);
         const meta = METRIC_META[metric];
@@ -539,6 +538,11 @@ export function MetricStrip({ data }: { data: GrowthPeriods }) {
 // --------------------------------------------------------------------------
 // The two movers
 // --------------------------------------------------------------------------
+/** The metrics this window has a score for. Quality needs enough rated tasks. */
+function scoredMetrics(side: GrowthPeriods['current']): PeriodMetric[] {
+  return METRIC_ORDER.filter((metric) => side.parts[metric] !== null);
+}
+
 export interface Mover {
   metric: PeriodMetric;
   from: number;
@@ -563,12 +567,12 @@ export function movers(data: GrowthPeriods): { best: Mover | null; worst: Mover 
   if (!data.previous) return { best: null, worst: null };
   const then = data.previous;
 
-  const moves: Mover[] = METRIC_ORDER.map((metric) => ({
-    metric,
-    from: then.parts[metric],
-    to: data.current.parts[metric],
-    change: data.change[metric],
-  }));
+  const moves: Mover[] = scoredMetrics(data.current).flatMap((metric) => {
+    const from = then.parts[metric];
+    return from === null
+      ? []
+      : [{ metric, from, to: data.current.parts[metric]!, change: data.change[metric] }];
+  });
 
   const risen = moves.filter((move) => move.to - move.from >= HELD);
   const fallen = moves.filter((move) => move.from - move.to >= HELD);
@@ -721,11 +725,11 @@ export function MoverPanel({
   /* Nothing moved far enough to name, so the panel answers the nearest
      question it can. See the note above. */
   const shown = mover ?? (() => {
-    const ranked = METRIC_ORDER
+    const ranked = scoredMetrics(data.current)
       .map((metric) => ({
         metric,
-        from: then ? then.parts[metric] : data.current.parts[metric],
-        to: data.current.parts[metric],
+        from: then?.parts[metric] ?? data.current.parts[metric]!,
+        to: data.current.parts[metric]!,
         change: data.change[metric],
       }))
       .sort((a, b) => a.to - b.to);
@@ -854,8 +858,8 @@ export function ThenNow({ data }: { data: GrowthPeriods }) {
       </p>
 
       <ul className="ax-gp-rows">
-      {METRIC_ORDER.map((metric) => {
-        const to = data.current.parts[metric];
+      {scoredMetrics(data.current).map((metric) => {
+        const to = data.current.parts[metric]!;
         const from = then ? then.parts[metric] : null;
         const way = from === null ? 'held' : direction(from, to);
         const meta = METRIC_META[metric];

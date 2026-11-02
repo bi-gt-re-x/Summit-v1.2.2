@@ -41,6 +41,7 @@ function scoreOf(value: number | null, grade: Grade | null): AnalyticalScore {
     parts: [strongest, weakest],
     weakest: value === null ? null : weakest,
     strongest: value === null ? null : strongest,
+    unscored: [],
   };
 }
 
@@ -150,6 +151,7 @@ describe('the five measures on the grade card', () => {
     ],
     weakest: part('quality', 'Quality', 76),
     strongest: part('productivity', 'Productivity', 100),
+    unscored: [],
   };
 
   /** The rows of the measures list, as "name letter score" strings. */

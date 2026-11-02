@@ -82,7 +82,6 @@ export function OverviewTab({
     observed,
     compareLabel,
     figures,
-    subjectLabel,
     maturity,
     streak,
     tasks,
@@ -311,7 +310,6 @@ export function OverviewTab({
           sparks={sparks}
           compareLabel={compareLabel}
           logStyle={logStyle}
-          scopedOut={subjectLabel}
         />
       </section>
 

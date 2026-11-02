@@ -189,36 +189,6 @@ describe('the figures', () => {
   });
 });
 
-describe('the subject filter', () => {
-  it('narrows what counts tasks', () => {
-    const { result } = drive();
-    const all = result.current.breakdown.rows.reduce((sum, row) => sum + row.xp, 0);
-
-    act(() => result.current.setSubject('maths'));
-
-    const one = result.current.breakdown.rows.reduce((sum, row) => sum + row.xp, 0);
-    expect(one).toBeGreaterThan(0);
-    expect(one).toBeLessThan(all);
-    // Four subjects, round robin over an even number of tasks a day.
-    expect(one).toBeCloseTo(all / SUBJECTS.length, -1);
-  });
-
-  it('leaves the day-series figures alone, because XP is not recorded per subject', () => {
-    const { result } = drive();
-    const xp = result.current.figures.xp.value;
-    const days = result.current.rhythmRate.rate;
-
-    act(() => result.current.setSubject('maths'));
-
-    /* The comment on `bySubject` promises exactly this: the filter narrows the
-       tasks a panel counts and nothing else, because XP and focus minutes are
-       recorded per day. A model that quietly filtered the series here would
-       show a quarter of the XP under a filter the reader thinks is cosmetic. */
-    expect(result.current.figures.xp.value).toBe(xp);
-    expect(result.current.rhythmRate.rate).toBe(days);
-  });
-});
-
 describe('the two windows', () => {
   it('keeps the advice window off the picker', () => {
     const { result } = drive();

@@ -121,6 +121,8 @@ export interface AnalyticalScore {
   weakest: ScorePart | null;
   /** The strongest, for the sentence that says what is carrying the score. */
   strongest: ScorePart | null;
+  /** What's left out of the average for now, and what it takes to count. */
+  unscored: Array<{ name: MetricName; label: string; raw: string }>;
 }
 
 const LABELS: Record<MetricName, string> = {
@@ -138,11 +140,18 @@ const LABELS: Record<MetricName, string> = {
  * because "Focus 34" tells a reader nothing they can act on and "2h 10m of a 6h
  * goal" tells them what to do about it.
  */
+/** What Quality needs before it counts, in the reader's terms. */
+function toRate(quality: Ratings['metrics']['quality']): string {
+  const left = Math.max(1, quality.min_rated - quality.rated_tasks);
+  return `Not counted yet. Rate ${left} more ${left === 1 ? 'task' : 'tasks'} to add it.`;
+}
+
 export function analyticalScore(ratings: Ratings | null): AnalyticalScore {
   if (!ratings) {
-    return { value: null, grade: null, parts: [], weakest: null, strongest: null };
+    return { value: null, grade: null, parts: [], weakest: null, strongest: null, unscored: [] };
   }
   const m = ratings.metrics;
+  const quality = m.quality;
 
   const measured: Array<Omit<ScorePart, 'contribution'>> = [
     {
@@ -151,18 +160,14 @@ export function analyticalScore(ratings: Ratings | null): AnalyticalScore {
       score: m.productivity.score,
       raw: `${Math.round(m.productivity.avg_daily_xp).toLocaleString()} XP a day`,
     },
-    {
-      name: 'quality',
-      label: LABELS.quality,
-      score: m.quality.score,
-      // The basis is printed, never assumed: an account that has never rated a
-      // task is scored on the XP proxy and should be told so rather than left
-      // to read a quality figure it did not produce.
-      raw:
-        m.quality.basis === 'ratings'
-          ? `${m.quality.avg_quality.toFixed(1)} of ${m.quality.max_quality} across ${m.quality.rated_tasks} rated tasks`
-          : 'nothing rated yet, so this uses XP per task',
-    },
+    ...(quality.score === null
+      ? []
+      : [{
+          name: 'quality' as const,
+          label: LABELS.quality,
+          score: quality.score,
+          raw: `${quality.avg_quality.toFixed(1)} of ${quality.max_quality} across ${quality.rated_tasks} rated tasks`,
+        }]),
     {
       name: 'consistency',
       label: LABELS.consistency,
@@ -200,6 +205,7 @@ export function analyticalScore(ratings: Ratings | null): AnalyticalScore {
     parts,
     weakest: ranked[0] ?? null,
     strongest: ranked[ranked.length - 1] ?? null,
+    unscored: quality.score === null ? [{ name: 'quality', label: LABELS.quality, raw: toRate(quality) }] : [],
   };
 }
 
@@ -225,9 +231,11 @@ export function agreesWithBackend(ratings: Ratings | null): boolean {
 export function howItIsCalculated(score: AnalyticalScore): string {
   if (score.value === null) return 'Not enough work to score yet.';
   const { weakest, strongest } = score;
+  const names = score.parts.map((part) => part.label.toLowerCase());
+  const list = `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`;
   const base =
-    'The average of five parts over the last 90 days: productivity, quality, consistency, '
-        + 'efficiency and focus. Each is out of 100.';
+    `The average of ${names.length === 5 ? 'five' : 'four'} parts over the last 90 days: ${list}. Each is out of 100.`
+    + (score.unscored.length ? ` ${score.unscored[0]!.label} joins once you've rated enough tasks.` : '');
   if (!weakest || !strongest || weakest.name === strongest.name) return base;
   /* Naming a best and a worst only says something when they differ. Five
      metrics all at 100 would otherwise produce "Focus is carrying it at 100;

@@ -272,15 +272,16 @@ export const PERIOD_METRICS = [
 export type PeriodMetric = (typeof PERIOD_METRICS)[number];
 
 /** Every metric's 0-100 score for one window. */
-export type MetricScores = Record<PeriodMetric, number>;
+/** Quality is null over a window with too few rated tasks to score. */
+export type MetricScores = Record<Exclude<PeriodMetric, 'quality'>, number> & { quality: number | null };
 
 /** One window, scored, with the measured figures the scores came from. */
 export interface PeriodSide {
-  /** The mean of the five, 0-100. */
+  /** The mean of the parts it could measure, 0-100. */
   overall: number;
   grade: string;
   parts: MetricScores;
-  grades: Record<PeriodMetric, string>;
+  grades: Record<PeriodMetric, string | null>;
   /** The quantities behind each score, in their own units. Shapes vary. */
   figures: Record<PeriodMetric, Record<string, unknown>>;
   /** Only on `previous`: which days it covered. */
