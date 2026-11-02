@@ -6018,9 +6018,9 @@
         {
           "title": "Apply Factoring in Word Problems",
           "mastery": "Translate a real-world scenario into a quadratic equation and solve it by factoring.",
-          "practice": "A rectangular garden has area 60 m² and its length is 5 m more than its width. Find the dimensions.",
-          "detail": "Let width = w. Then length = w + 5. Write the area equation: w(w + 5) = 60 → w^2 + 5w - 60 = 0. Factor the quadratic: (w + 12)(w - 5) = 0. Discard the negative solution, so w = 5 m and length = 10 m.",
-          "proof": "You get width = 5 m, length = 10 m; checking 5 × 10 = 60 m².",
+          "practice": "A rectangular garden has area 50 m² and its length is 5 m more than its width. Find the dimensions.",
+          "detail": "Let width = w. Then length = w + 5. Write the area equation: w(w + 5) = 50 → w^2 + 5w - 50 = 0. Factor the quadratic: (w + 10)(w - 5) = 0. Discard the negative solution, so w = 5 m and length = 10 m.",
+          "proof": "You get width = 5 m, length = 10 m; checking 5 × 10 = 50 m².",
           "pitfall": "Setting up the equation with the wrong sign for the constant term.",
           "minutes": 18,
           "problems": [
@@ -85607,9 +85607,9 @@
         {
           "title": "Identify Claim Language",
           "mastery": "Spot the central claim in a paragraph and state it in your own words.",
-          "practice": "Read paragraph 3 on page 27 of your textbook and write the claim you think the author is making in one sentence.",
-          "detail": "Read the paragraph slowly, underline any verbs of assertion (e.g., argues, suggests, claims). Circle the clause that contains the verb. Restate that clause in a single sentence, keeping the original meaning but using your own wording. Check that your restatement includes the same subject and verb as the original claim.",
-          "proof": "Your sentence matches the author's main point as shown in the teacher's answer key.",
+          "practice": "Pick 1 paragraph from a novel you're reading and write the claim you think it supports in one sentence.",
+          "detail": "Read the paragraph slowly and ask what it wants you to believe about a character or idea. Novels rarely say this outright, so look at what the details add up to. Write that as a single sentence in your own words. Check that someone could reasonably disagree with it, because a claim has to be arguable.",
+          "proof": "Your sentence makes an arguable point, and you can point to words in the paragraph behind it.",
           "pitfall": "Mistaking a descriptive detail for the claim; the claim is argumentative, not merely factual.",
           "minutes": 12,
           "problems": [
@@ -85638,9 +85638,9 @@
         },
         {
           "title": "Quote Claim Exactly",
-          "mastery": "Transcribe the claim word-for-word, preserving punctuation and capitalization.",
-          "practice": "Copy the exact claim \"The protagonist feels isolated.\" from page 45, line 12 of the novel into your notebook, including the final period.",
-          "detail": "Open the book to the indicated page and line. Use a ruler to isolate the line. Write the claim on a fresh line in your notebook, copying each letter, space, and punctuation mark exactly as it appears. After writing, compare your copy to the source line to confirm a perfect match.",
+          "mastery": "Transcribe a key sentence word-for-word, preserving punctuation and capitalization.",
+          "practice": "Copy the 1 sentence from your paragraph that comes closest to your claim, word for word, including its final punctuation.",
+          "detail": "Find the sentence on the page and use a ruler to isolate the line. Write it on a fresh line in your notebook, copying each letter, space, and punctuation mark exactly as it appears. After writing, compare your copy to the source line to confirm a perfect match.",
           "proof": "The copied sentence matches the text character for character.",
           "pitfall": "Omitting the period or changing a word; even a small change makes the quote inaccurate.",
           "minutes": 8,
@@ -85655,15 +85655,15 @@
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Copy the exact claim \"The protagonist feels isolated.\" from page 45, line 12 of the novel.",
-              "answer": "The protagonist feels isolated.",
-              "answer_kind": "phrase"
+              "prompt": "Which copy of \"Alone again; she didn't mind.\" is exact? A: \"alone again, she didn't mind.\" B: \"Alone again; she didn't mind.\"",
+              "answer": "B",
+              "answer_kind": "word"
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Copy the claim from page 45, line 12, ensuring you include the final period and capitalization exactly.",
-              "answer": "The protagonist feels isolated.",
+              "prompt": "A student quotes \"The room was cold.\" as \"the room was cold\". Name the 2 things that changed.",
+              "answer": "The capital T and the final period.",
               "hint": "Check the period at the end.",
               "answer_kind": "phrase"
             }
@@ -85672,8 +85672,8 @@
         {
           "title": "Locate Supporting Words",
           "mastery": "Find three distinct words in the paragraph that directly support the claim.",
-          "practice": "From the same paragraph, underline three words that the author uses to back the claim \"The protagonist feels isolated.\".",
-          "detail": "Read the paragraph again, looking for adjectives, verbs, or nouns that describe the protagonist's situation. Highlight three that explain why the protagonist feels isolated, e.g., \"alone,\" \"ignored,\" \"distant.\" Write a brief note beside each word explaining its relevance to the claim.",
+          "practice": "From the same paragraph, underline 3 words that the author uses to back your claim.",
+          "detail": "Read the paragraph again, looking for adjectives, verbs, or nouns that carry your claim. Highlight three that explain why it holds. If your claim were that a character feels isolated, you might pick \"alone,\" \"ignored\" and \"distant.\" Write a brief note beside each word explaining its relevance to the claim.",
           "proof": "Your three underlined words appear in the paragraph and each can be linked to the claim in a sentence.",
           "pitfall": "Choosing generic words like \"very\" or \"often\" that do not specifically support the claim.",
           "minutes": 10,
@@ -85807,10 +85807,10 @@
         {
           "title": "Independent Close Reading",
           "mastery": "Apply the full close-reading process to a new paragraph without prompts.",
-          "practice": "From page 112 of 'To Kill a Mockingbird', identify the claim, list three supporting words, write a two-sentence argument, and add a one-sentence significance statement.",
-          "detail": "Open the novel to the specified page and locate a paragraph that makes an argument about a character or theme. Follow steps 1-5: locate the claim, copy it exactly, underline three supporting words, annotate each word, and then compose the argument and significance. Review to ensure each part is present and logically linked.",
+          "practice": "From the opening paragraph of 'Pride and Prejudice', identify the claim, list three supporting words, write a two-sentence argument, and add a one-sentence significance statement.",
+          "detail": "Open the novel to its first sentence, which states a claim about rich single men and marriage. Follow steps 1-5: locate the claim, copy it exactly, underline three supporting words, annotate each word, and then compose the argument and significance. Review to ensure each part is present and logically linked.",
           "proof": "Your work contains a verbatim claim, three correctly chosen words, a logical two-sentence argument, and a significance sentence that connects the argument to the larger text.",
-          "pitfall": "Skipping any of the required components or choosing a paragraph without a clear claim.",
+          "pitfall": "Skipping any of the required components, or missing that Austen's narrator is being ironic.",
           "minutes": 20,
           "problems": [
             {
@@ -86131,9 +86131,9 @@
         {
           "title": "Analyze Critical Reception",
           "mastery": "Summarize how the work's first readers interpreted it and which assumptions they took for granted.",
-          "practice": "Quote two 1819 review excerpts (one positive, one negative) about *Frankenstein* and identify the underlying assumption in each.",
-          "detail": "Search a scholarly database for early reviews (e.g., *The Literary Gazette* 1819). Copy the exact sentences, include the publication name and date, then write a one-sentence analysis of the assumption each reviewer makes about the text's purpose.",
-          "proof": "You provide two quotations with citations and note assumptions such as \"the novel warns against scientific hubris\" and \"the creature is a moral allegory.\".",
+          "practice": "Quote two 1818 review excerpts (one positive, one negative) about *Frankenstein* and identify the underlying assumption in each.",
+          "detail": "Start with Walter Scott's review in *Blackwood's* and John Croker's in the *Quarterly Review*, both reprinted online. Copy the exact sentences, include the publication name and date, then write a one-sentence analysis of the assumption each reviewer makes about what a novel is for.",
+          "proof": "You provide two quotations with citations and name an assumption for each, such as that a novel should teach a clear moral.",
           "pitfall": "Paraphrasing reviews instead of providing exact quotations.",
           "minutes": 18,
           "problems": [
@@ -86243,9 +86243,9 @@
         {
           "title": "Synthesize Contextual Essay",
           "mastery": "Compose a short essay that integrates authorial purpose, historical events, and ideological influences into a coherent argument.",
-          "practice": "Write a 250-word paragraph that explains how the 1818 scientific climate shapes the novel's warning about creation.",
-          "detail": "Begin with a topic sentence linking the scientific breakthrough to the novel's theme. Insert two supporting sentences that cite the preface and a contemporary scientific article. Conclude with a sentence that ties the historical context back to the author's purpose. Count words using any word-processor to stay within 250.",
-          "proof": "Your paragraph references the 1818 discovery of galvanic electricity, the preface's purpose, and the Romantic critique of industrial progress.",
+          "practice": "Write a 250-word paragraph that explains how the science of Shelley's time shapes the novel's warning about creation.",
+          "detail": "Begin with a topic sentence linking the science of the period to the novel's theme. Insert two supporting sentences that cite the preface and an experiment such as Galvani's on frogs or Aldini's on an executed man. Conclude with a sentence that ties the historical context back to the author's purpose. Count words using any word-processor to stay within 250.",
+          "proof": "Your paragraph references Galvani or Aldini, the preface's purpose, and Romantic doubts about what science should do.",
           "pitfall": "Drifting into plot summary instead of focusing on contextual analysis.",
           "minutes": 25,
           "problems": [
@@ -86338,7 +86338,7 @@
           "mastery": "Spot and interpret stage directions that indicate character movement and setting.",
           "practice": "Read Act 1, Scene 2 of Shakespeare's *Macbeth* and list all stage directions.",
           "detail": "Open the text and scan each line for brackets or italics that signal stage directions. Write them in a separate notebook, noting the line number. If a direction is described in the dialogue, underline it and add a brief note of its visual implication. This helps you separate spoken words from visual cues.",
-          "proof": "You list at least five directions, e.g., \"Enter Lady Macbeth\", \"Thunder and lightning. Exeunt\".",
+          "proof": "You list the scene's directions, such as \"Alarum within\" and \"Exit Captain,\" and they match your edition.",
           "pitfall": "Missing implicit directions embedded in dialogue, like \"She looks away\".",
           "minutes": 15,
           "problems": [
@@ -86368,9 +86368,9 @@
         {
           "title": "Map Character Objectives",
           "mastery": "Determine what each character wants in a scene and how they try to achieve it.",
-          "practice": "In *Macbeth* Act 1, Scene 2, write the objective of Macbeth in one sentence.",
+          "practice": "In *Macbeth* Act 1, Scene 7, write the objective of Macbeth in one sentence.",
           "detail": "Read the scene slowly, noting each line spoken by Macbeth. Ask, \"What does Macbeth hope to accomplish here?\" Look for clues in his words and actions. Summarize the goal in a clear, specific phrase, then underline any lines that support it. This practice trains you to see hidden motives behind dialogue.",
-          "proof": "Your sentence states Macbeth seeks to prove his bravery and earn the king's favor.",
+          "proof": "Your sentence states Macbeth wants to back out of killing Duncan and hold on to the honor he's just won.",
           "pitfall": "Writing a vague objective like \"Macbeth wants something\" without specifying the concrete goal.",
           "minutes": 12,
           "problems": [
