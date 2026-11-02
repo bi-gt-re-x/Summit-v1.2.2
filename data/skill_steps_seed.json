@@ -6022,7 +6022,39 @@
           "detail": "Let width = w. Then length = w + 5. Write the area equation: w(w + 5) = 60 → w^2 + 5w - 60 = 0. Factor the quadratic: (w + 12)(w - 5) = 0. Discard the negative solution, so w = 5 m and length = 10 m.",
           "proof": "You get width = 5 m, length = 10 m; checking 5 × 10 = 60 m².",
           "pitfall": "Setting up the equation with the wrong sign for the constant term.",
-          "minutes": 18
+          "minutes": 18,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A rectangle has width w and length \\(w + 3\\), and its area is 40 cm². Write the equation with everything on one side, equal to 0.",
+              "answer": "\\(w^{2} + 3w - 40 = 0\\)",
+              "answer_kind": "expression"
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "A rectangle's length is 2 m more than its width, and its area is 48 m². Find the width.",
+              "answer": "6 m",
+              "hint": "Factor \\(w^{2} + 2w - 48\\) and throw out the negative root.",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "The product of 2 consecutive positive integers is 132. Find the smaller one.",
+              "answer": "11",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "A ball's height after t seconds is \\(h = - 5t^{2} + 20t + 25\\) meters. Factor it to find when the ball hits the ground.",
+              "answer": "5 seconds",
+              "hint": "Pull out -5 first, then set \\(h = 0\\).",
+              "answer_kind": "integer"
+            }
+          ]
         }
       ]
     },
@@ -7855,7 +7887,31 @@
           "detail": "Write the radicand as a product of two numbers. Test each divisor from 2 upward to see if it is a perfect square. When you find the largest perfect-square factor, pull its root out front and keep the remaining factor under the radical. If none exists, the radicand is already simplified.",
           "proof": "The factors are 36 and 4, giving √72 = √(36·2) = 6√2.",
           "pitfall": "Missing a larger square factor and stopping at the smallest one.",
-          "minutes": 12
+          "minutes": 12,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What's the largest perfect-square factor of 50?",
+              "answer": "25",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Find the largest perfect-square factor of 48.",
+              "answer": "16",
+              "hint": "4 works, but there's a bigger one.",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name the largest perfect-square factor of 180, then write \\(\\sqrt{180}\\) in simplest form.",
+              "answer": "36, so \\(\\sqrt{180} = 6\\sqrt{5}\\).",
+              "answer_kind": "phrase"
+            }
+          ]
         },
         {
           "title": "Simplify Single Radicals",
@@ -7996,7 +8052,30 @@
           "detail": "Identify the radical in the denominator. Multiply numerator and denominator by the same radical so the denominator becomes a perfect square. Simplify the resulting numerator and denominator, reducing any common factors.",
           "proof": "7 / √3 × √3/√3 = 7√3 / 3.",
           "pitfall": "Multiplying only the numerator by √3 and forgetting to do the same to the denominator.",
-          "minutes": 10
+          "minutes": 10,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Rationalize \\(\\frac{1}{\\sqrt{5}}\\).",
+              "answer": "\\(\\frac{\\sqrt{5}}{5}\\)",
+              "answer_kind": "expression"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Rationalize \\(\\frac{6}{\\sqrt{3}}\\) and simplify.",
+              "answer": "\\(2\\sqrt{3}\\)",
+              "answer_kind": "expression"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Rationalize \\(\\frac{5}{2\\sqrt{10}}\\) and simplify.",
+              "answer": "\\(\\frac{\\sqrt{10}}{4}\\)",
+              "answer_kind": "expression"
+            }
+          ]
         },
         {
           "title": "Rationalize Binomial Denominators",
@@ -8005,7 +8084,30 @@
           "detail": "Write the conjugate by changing the sign between the two terms. Multiply numerator and denominator by this conjugate; the denominator becomes a difference of squares, eliminating the radical. Expand the numerator, then simplify any common factors and sign.",
           "proof": "5 / (2+√7) × (2-√7)/(2-√7) = 5(2-√7) / (4-7) = 5(2-√7) / -3 = -(10-5√7)/3.",
           "pitfall": "Multiplying by the same binomial (2+√7) instead of its conjugate (2-√7).",
-          "minutes": 12
+          "minutes": 12,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What's the conjugate of \\(3 - \\sqrt{2}\\)?",
+              "answer": "\\(3 + \\sqrt{2}\\)",
+              "answer_kind": "expression"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Rationalize \\(\\frac{1}{1 + \\sqrt{2}}\\) and simplify.",
+              "answer": "\\(\\sqrt{2} - 1\\)",
+              "answer_kind": "expression"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Rationalize \\(\\frac{4}{3 - \\sqrt{5}}\\) and simplify.",
+              "answer": "\\(3 + \\sqrt{5}\\)",
+              "answer_kind": "expression"
+            }
+          ]
         },
         {
           "title": "Apply Radicals in Algebraic Expressions",
@@ -8014,7 +8116,30 @@
           "detail": "Isolate the radical term on one side. Divide or multiply to clear any coefficients. Square both sides, then simplify the resulting linear or quadratic equation. Solve for the variable and substitute back into the original equation to verify it does not produce a negative radicand or false statement.",
           "proof": "3√(2x + 5) = 15 → √(2x + 5) = 5 → 2x + 5 = 25 → 2x = 20 → x = 10.",
           "pitfall": "Forgetting to check the solution in the original equation, leading to an extraneous root.",
-          "minutes": 14
+          "minutes": 14,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Solve \\(\\sqrt{x} + 2 = 7\\).",
+              "answer": "\\(x = 25\\)",
+              "answer_kind": "expression"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Solve \\(2\\sqrt{x - 1} = 6\\).",
+              "answer": "\\(x = 10\\)",
+              "answer_kind": "expression"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Solve \\(\\sqrt{x + 6} = x\\) and check each root.",
+              "answer": "\\(x = 3\\). Squaring also gives \\(x = - 2\\), but that fails the check since \\(\\sqrt{4} = 2\\), which isn't -2.",
+              "answer_kind": "sentence"
+            }
+          ]
         }
       ]
     },
@@ -13180,7 +13305,37 @@
           "detail": "Define def is_even(n): return n % 2 == 0. Then def sum_evens(limit): total = 0; for i in range(1, limit+1): if is_even(i): total += i; return total. Finally, print(sum_evens(20)). Run to see 110.",
           "proof": "The program prints 110 (the sum of even numbers 2 through 20).",
           "pitfall": "Using the wrong comparison operator (e.g., = instead of ==) inside is_even, or forgetting to return a value.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Given def double(n): return n * 2 and def add_one(n): return n + 1, what does print(add_one(double(5))) show?",
+              "answer": "11",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Write a function is_odd(n) that returns True when n is odd.",
+              "answer": "def is_odd(n):\n    return n % 2 == 1",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write count_odds(limit), which calls is_odd(n) from a loop and counts the odd numbers from 1 to limit. count_odds(9) should return 5.",
+              "answer": "def count_odds(limit):\n    count = 0\n    for n in range(1, limit + 1):\n        if is_odd(n):\n            count += 1\n    return count",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Given def square(n): return n * n and def total(a, b): return square(a) + square(b), what does print(total(3, 4)) show?",
+              "answer": "25",
+              "answer_kind": "integer"
+            }
+          ]
         }
       ]
     },
@@ -13378,7 +13533,31 @@
           "detail": "Call input() with a prompt argument and assign the result to age_str. Remember input() always returns a string, even when the user types numbers. Test by typing a number and then printing age_str to see the captured value.",
           "proof": "If the user types 27, age_str will contain the string \"27\".",
           "pitfall": "Forgetting to include the prompt string inside input(), which results in a blank line before the user can type.",
-          "minutes": 10
+          "minutes": 10,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "After name = input('Name: ') and typing Ana, what does print(name) show?",
+              "answer": "Ana",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "After x = input() and typing 7, what type does x hold?",
+              "answer": "str",
+              "hint": "input() hands back the same type no matter what you type.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write 1 line that shows the prompt 'City: ' and stores the reply in a variable called city.",
+              "answer": "city = input('City: ')",
+              "answer_kind": "code"
+            }
+          ]
         },
         {
           "title": "Convert input to integer",
@@ -13453,7 +13632,30 @@
           "detail": "Use a with‑statement: with open('data.txt','r') as f: file_number_str = f.readline().strip(). The with‑statement ensures the file is closed automatically. Print file_number_str to confirm the value.",
           "proof": "After the code runs, file_number_str will be the string \"42\".",
           "pitfall": "Forgetting to close the file or using the wrong mode, which can leave the file open or return an empty string.",
-          "minutes": 12
+          "minutes": 12,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A file notes.txt holds one line, hello. What does open('notes.txt').read().strip() give you?",
+              "answer": "hello",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write code with a with statement that opens 'data.txt' and reads its first line into a variable called first.",
+              "answer": "with open('data.txt', 'r') as f:\n    first = f.readline()",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write code that reads scores.txt, which has 3 lines holding 10, 20 and 30, and prints their total of 60.",
+              "answer": "with open('scores.txt') as f:\n    print(sum(int(line) for line in f))",
+              "answer_kind": "code"
+            }
+          ]
         },
         {
           "title": "Write output to a file",
@@ -13750,7 +13952,30 @@
           "detail": "Assign the list to a variable, then use for item in list: print(item * 2). The loop automatically fetches each element in order. Run it and check that the doubled values appear correctly.",
           "proof": "The program prints: 4 8 12 16, each on its own line.",
           "pitfall": "Modifying the list while iterating can cause missing or duplicated values.",
-          "minutes": 12
+          "minutes": 12,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does for n in [1, 2, 3]: print(n + 10) print?",
+              "answer": "11, 12, 13",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write a for loop that adds up the list [5, 10, 15] in a variable called total.",
+              "answer": "total = 0\nfor n in [5, 10, 15]:\n    total += n",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Given words = ['a', 'bb', 'ccc'], write a for loop that prints the length of each word.",
+              "answer": "for word in words:\n    print(len(word))",
+              "answer_kind": "code"
+            }
+          ]
         },
         {
           "title": "Loop Control Statements",
@@ -13759,7 +13984,30 @@
           "detail": "Iterate with for i in range(1,6): if i == 3: continue to skip it; if i == 5: break to stop after 4. The continue jumps to the next iteration, while break exits the loop entirely. Test the program to see the three expected numbers.",
           "proof": "The output is: 1 2 4, each on its own line.",
           "pitfall": "Placing break before continue can prevent the continue clause from ever executing.",
-          "minutes": 10
+          "minutes": 10,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Trace this loop: for i in range(1, 6), break when i == 3, with print(i) after that check. What prints?",
+              "answer": "1, 2",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Now use continue at i == 3 in place of the break. Which numbers show up?",
+              "answer": "1, 2, 4, 5",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write a loop over [4, 7, 12, 9] that prints the first number above 10 and then stops.",
+              "answer": "for n in [4, 7, 12, 9]:\n    if n > 10:\n        print(n)\n        break",
+              "answer_kind": "code"
+            }
+          ]
         },
         {
           "title": "Nested Loops",
@@ -13768,7 +14016,30 @@
           "detail": "Use for i in range(1,4): for j in range(1,4): compute i*j and print on the same line, adding a space between values. After the inner loop finishes, print a newline to start the next row. Verify the three rows match the table.",
           "proof": "The output lines are: 1 2 3\n2 4 6\n3 6 9.",
           "pitfall": "Reusing the same loop variable name for both loops overwrites the outer counter.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many times does print run in for i in range(2): for j in range(3): print(i, j)?",
+              "answer": "6",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does for i in range(1, 3): for j in range(1, 3): print(i * j) print, in order?",
+              "answer": "1, 2, 2, 4",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write nested for loops that print a grid of * characters with 2 rows and 4 stars in each row.",
+              "answer": "for row in range(2):\n    line = ''\n    for col in range(4):\n        line += '*'\n    print(line)",
+              "answer_kind": "code"
+            }
+          ]
         },
         {
           "title": "Unaided Loop Creation",
@@ -13777,7 +14048,30 @@
           "detail": "Read N with input(), set result = 1 and counter = N. While counter > 0: result *= counter; counter -= 1. After the loop, print result. Test with several values (e.g., 3 → 6, 5 → 120) to confirm correctness.",
           "proof": "For input 5 the program prints 120.",
           "pitfall": "Forgetting to initialize the accumulator to 1 or not decrementing the counter yields an incorrect factorial.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "After n = 4 and total = 1, a loop runs while n > 1: total *= n, then n -= 1. What's total at the end?",
+              "answer": "24",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write a while loop that prints 5, 4, 3, 2, 1, one number per line.",
+              "answer": "n = 5\nwhile n >= 1:\n    print(n)\n    n -= 1",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write a program that reads N with input() and uses a while loop to print the sum from 1 to N. For 4 it prints 10.",
+              "answer": "n = int(input())\ntotal = 0\ni = 1\nwhile i <= n:\n    total += i\n    i += 1\nprint(total)",
+              "answer_kind": "code"
+            }
+          ]
         }
       ]
     },
@@ -14704,7 +14998,31 @@
           "detail": "Strings are sequences; index starts at 0. Use square brackets after the variable name, e.g., s[2]. Combine with print() to display.",
           "proof": "The output is t.",
           "pitfall": "Using 1‑based indexing; Python uses 0‑based, so index 2 gives the third character.",
-          "minutes": 5
+          "minutes": 5,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "If word = 'summit', what's word[0]?",
+              "answer": "s",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "If word = 'summit', what's word[-1]?",
+              "answer": "t",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write 1 line that prints the 4th character of the string 'planet'.",
+              "answer": "print('planet'[3])",
+              "hint": "The first character sits at index 0.",
+              "answer_kind": "code"
+            }
+          ]
         },
         {
           "title": "Slice substrings",
@@ -14746,7 +15064,30 @@
           "detail": "The str.find(sub) returns the lowest index or -1. Call result = s.find('cat') and print(result). Check the value before using it.",
           "proof": "The output is 3.",
           "pitfall": "Assuming find returns -1 when not found; forgetting to handle the case where the substring is absent.",
-          "minutes": 6
+          "minutes": 6,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does 'banana'.find('nan') return?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does 'banana'.find('x') return?",
+              "answer": "-1",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write code that uses find() to check whether 'dog' is in a string called sentence, and prints Found or Missing.",
+              "answer": "if sentence.find('dog') != -1:\n    print('Found')\nelse:\n    print('Missing')",
+              "answer_kind": "code"
+            }
+          ]
         },
         {
           "title": "Split and join strings",
@@ -15463,7 +15804,31 @@
           "detail": "In Python, the condition follows `if` with a colon, and the block must be indented. Use `>=` to check if age is at least 18. The `else` clause also ends with a colon and its block is indented.",
           "proof": "The program prints `Minor`.",
           "pitfall": "Using incorrect indentation or the wrong comparison operator.",
-          "minutes": 8
+          "minutes": 8,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "With temp = 30, what does if temp > 25: print('Hot') else: print('Cool') show?",
+              "answer": "Hot",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "With score = 70, what does if score > 70: print('Pass') else: print('Retry') show?",
+              "answer": "Retry",
+              "hint": "Check what > does when the two sides are equal.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write an if/else on a variable called points that prints 'Win' at 100 or more and 'Keep going' otherwise.",
+              "answer": "if points >= 100:\n    print('Win')\nelse:\n    print('Keep going')",
+              "answer_kind": "code"
+            }
+          ]
         },
         {
           "title": "Combine variables and input",
@@ -33557,7 +33922,30 @@
           "detail": "Read the statement carefully, underline the part that contains dy/dx = 2x, and circle the part that says y(1)=5. Write them on separate lines so you see the ODE and the starting condition clearly.",
           "proof": "You can point to dy/dx = 2x as the ODE and y(1)=5 as the initial condition.",
           "pitfall": "Missing the parentheses around the initial condition or mixing up the variable and the point.",
-          "minutes": 10
+          "minutes": 10,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In \\(\\frac{dy}{dx} = 3x\\) with \\(y(0) = 2\\), which part is the initial condition?",
+              "answer": "\\(y(0) = 2\\)",
+              "answer_kind": "expression"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In \\(\\frac{dy}{dt} = - 2y\\) with \\(y(0) = 8\\), what's \\(y\\) when \\(t = 0\\)?",
+              "answer": "8",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A tank holds 50 L at \\(t = 0\\) and drains at 3 L per minute. Write the IVP for the volume \\(V(t)\\).",
+              "answer": "\\(\\frac{dV}{dt} = - 3\\), \\(V(0) = 50\\)",
+              "answer_kind": "expression"
+            }
+          ]
         },
         {
           "title": "Separate and Integrate",
@@ -33566,7 +33954,30 @@
           "detail": "Treat dy/dx as derivative of y, integrate the right-hand side with respect to x: ∫2x dx = x^2 + C. Write the result as y = x^2 + C and keep the constant symbol.",
           "proof": "Differentiating y = x^2 + C gives dy/dx = 2x, confirming the integration.",
           "pitfall": "Forgetting the constant of integration.",
-          "minutes": 12
+          "minutes": 12,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Find the general solution of \\(\\frac{dy}{dx} = 4x\\).",
+              "answer": "\\(y = 2x^{2} + C\\)",
+              "answer_kind": "expression"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Find the general solution of \\(\\frac{dy}{dx} = 6x^{2} - 1\\).",
+              "answer": "\\(y = 2x^{3} - x + C\\)",
+              "answer_kind": "expression"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Find the general solution of \\(\\frac{dy}{dx} = \\cos x + 2\\).",
+              "answer": "\\(y = \\sin x + 2x + C\\)",
+              "answer_kind": "expression"
+            }
+          ]
         },
         {
           "title": "Apply Initial Condition",
@@ -33575,7 +33986,30 @@
           "detail": "Replace x with 1 in the general solution: y = 1^2 + C = 1 + C. Set this equal to the given y-value 5 and solve: 5 = 1 + C ⇒ C = 4. Write the constant clearly.",
           "proof": "Plugging x=1 gives 5 = 1^2 + C, so C = 4.",
           "pitfall": "Plugging the wrong x-value or forgetting to evaluate the constant.",
-          "minutes": 8
+          "minutes": 8,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "For \\(y = x^{2} + C\\) with \\(y(0) = 3\\), find C.",
+              "answer": "\\(C = 3\\)",
+              "answer_kind": "expression"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "For \\(y = 2x^{3} + C\\) with \\(y(1) = 7\\), find C.",
+              "answer": "\\(C = 5\\)",
+              "answer_kind": "expression"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "For \\(y = 3x^{2} - x + C\\) with \\(y(2) = 6\\), find C.",
+              "answer": "\\(C = - 4\\)",
+              "answer_kind": "expression"
+            }
+          ]
         },
         {
           "title": "Write Particular Solution",
@@ -33584,7 +34018,30 @@
           "detail": "Insert the found constant C = 4 back into the general solution: y = x^2 + 4. This is the specific function that meets both the differential equation and the initial condition.",
           "proof": "Checking at x=1 gives y=1+4=5, matching the condition.",
           "pitfall": "Leaving the constant symbol C in the final answer.",
-          "minutes": 7
+          "minutes": 7,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write the particular solution of \\(\\frac{dy}{dx} = 2x\\) with \\(y(0) = 1\\).",
+              "answer": "\\(y = x^{2} + 1\\)",
+              "answer_kind": "expression"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write the particular solution of \\(\\frac{dy}{dx} = 3x^{2}\\) with \\(y(1) = 4\\).",
+              "answer": "\\(y = x^{3} + 3\\)",
+              "answer_kind": "expression"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write the particular solution of \\(\\frac{dy}{dx} = 4x - 1\\) with \\(y(2) = 9\\).",
+              "answer": "\\(y = 2x^{2} - x + 3\\)",
+              "answer_kind": "expression"
+            }
+          ]
         },
         {
           "title": "Verify Solution by Differentiation",
@@ -33593,7 +34050,30 @@
           "detail": "Compute dy/dx of y = x^2 + 4: dy/dx = 2x, which matches the original ODE. Then evaluate y at x=1: y(1)=1+4=5, confirming the initial condition.",
           "proof": "Derivative is 2x, and substitution x=1 gives y=5.",
           "pitfall": "Skipping the verification step and assuming correctness.",
-          "minutes": 8
+          "minutes": 8,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Does \\(y = x^{2} + 3\\) solve \\(\\frac{dy}{dx} = 2x\\) with \\(y(0) = 3\\)?",
+              "answer": "Yes. The derivative is \\(2x\\), and \\(y(0) = 3\\).",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Does \\(y = x^{3} + 1\\) solve \\(\\frac{dy}{dx} = 3x^{2}\\) with \\(y(1) = 3\\)?",
+              "answer": "No. The derivative matches, but \\(y(1) = 2\\).",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Does \\(y = e^{2x} + 1\\) solve \\(\\frac{dy}{dx} = 2y - 2\\) with \\(y(0) = 2\\)?",
+              "answer": "Yes. Both sides equal \\(2e^{2x}\\), and \\(y(0) = 1 + 1 = 2\\).",
+              "answer_kind": "yesno"
+            }
+          ]
         },
         {
           "title": "Solve a New IVP Independently",
@@ -33602,7 +34082,31 @@
           "detail": "Integrate: ∫3x^2 dx = x^3 + C, so y = x^3 + C. Apply the condition y(2)=10: 10 = 2^3 + C ⇒ C = 2. Write the particular solution y = x^3 + 2. Verify by differentiating (dy/dx = 3x^2) and plugging x=2 into the solution (y=10).",
           "proof": "Integration gives y = x^3 + C; using y(2)=10 gives C = 2, so y = x^3 + 2, which checks.",
           "pitfall": "Mixing up x and y when applying the condition or forgetting to add C.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Solve \\(\\frac{dy}{dx} = 2x + 1\\) with \\(y(0) = 4\\).",
+              "answer": "\\(y = x^{2} + x + 4\\)",
+              "answer_kind": "expression"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Solve \\(\\frac{dy}{dx} = 6x^{2}\\) with \\(y(1) = 5\\).",
+              "answer": "\\(y = 2x^{3} + 3\\)",
+              "answer_kind": "expression"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Solve \\(\\frac{dy}{dx} = 2y\\) with \\(y(0) = 3\\).",
+              "answer": "\\(y = 3e^{2x}\\)",
+              "hint": "Separate first: \\(\\frac{dy}{y} = 2\\) dx.",
+              "answer_kind": "expression"
+            }
+          ]
         }
       ]
     },
@@ -33791,7 +34295,30 @@
           "detail": "Treat the implicit equation as a quadratic in y: y^2 + 2y, 2[(x-1)e^x + 5] = 0. Use the quadratic formula to obtain y = -1 ± √[1 + 2((x-1)e^x + 5)]. Choose the branch that matches the initial condition y(0)=2. Finally, differentiate this explicit expression and verify that it simplifies to the original dy/dx form, confirming correctness.",
           "proof": "The differentiated explicit y(x) satisfies dy/dx = (x e^x)/(y+1).",
           "pitfall": "Ignoring extraneous branches when taking the square root, which can produce invalid solutions.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Solve \\(\\frac{dy}{dx} = \\frac{x}{y}\\) with \\(y(0) = 2\\). Take the positive root and write \\(y\\) explicitly.",
+              "answer": "\\(y = \\sqrt{x^{2} + 4}\\)",
+              "answer_kind": "expression"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Solve \\(\\frac{dy}{dx} = 2xy\\) with \\(y(0) = 3\\) and write \\(y\\) explicitly.",
+              "answer": "\\(y = 3e^{x^{2}}\\)",
+              "answer_kind": "expression"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Starting from \\(y(0) = 2\\), find the positive solution of \\(\\frac{dy}{dx} = \\frac{e^{x}}{y}\\) as an explicit formula.",
+              "answer": "\\(y = \\sqrt{2e^{x} + 2}\\)",
+              "answer_kind": "expression"
+            }
+          ]
         }
       ]
     },
@@ -84895,7 +85422,37 @@
           "detail": "For each trait, think of a moment where that quality would drive a decision. Use strong verbs and specific details (setting, objects, other characters) so the reader instantly sees the trait in motion. Keep each sentence under 25 words.",
           "proof": "Each sentence clearly depicts the named trait in action, e.g., \"Alice stepped into the dark cellar without hesitation.\".",
           "pitfall": "Writing generic actions that could apply to any trait, like \"Alice walked forward,\" which does not illustrate the specific quality.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In Carroll's 'Alice's Adventures in Wonderland', Alice follows the White Rabbit down a hole without once wondering how she'll get back out. Name the trait this shows.",
+              "answer": "Curiosity",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Which line shows stubbornness through action? A: 'Tom was very stubborn.' B: 'Tom said no for the third time and crossed his arms.'",
+              "answer": "B",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write 1 sentence showing a character named Maya being generous, without using the word 'generous'.",
+              "answer": "Maya split her last sandwich and handed Ben the bigger half.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "At the trial in Carroll's last chapter, Alice tells the Queen's court, \"You're nothing but a pack of cards!\" Name 2 traits this shows and say how.",
+              "answer": "Courage and defiance. She stands up to rulers who've been threatening everyone, and she says out loud that they have no real power over her.",
+              "answer_kind": "paragraph"
+            }
+          ]
         },
         {
           "title": "Show Trait Evolution",
@@ -84950,7 +85507,30 @@
           "detail": "Create a short exchange: one line from the other character presenting an alternative, and Alice's reply that stubbornly rejects it. Keep each line under 15 words and include the name \"Alice\" to anchor the trait.",
           "proof": "The dialogue includes Alice refusing to change her plan despite logical arguments, e.g., \"I'm not backing down, Tom.\".",
           "pitfall": "Having the other character state the trait instead of showing it through Alice's words.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Who comes across as stubborn here? Tom: \"The bridge is closed, Alice.\" Alice: \"Then I'll swim.\"",
+              "answer": "Alice",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Rewrite 'Alice was stubborn and wouldn't sell the house' as 2 lines of dialogue with a character named Ben.",
+              "answer": "Ben: \"They're offering double, Alice.\" Alice: \"They can offer triple. I'm staying.\"",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Priya is cautious and Sam is reckless, and both want to leave town. Write 2 lines of dialogue that show the difference without naming either trait.",
+              "answer": "Priya: \"Let's check the forecast and leave at first light.\" Sam: \"Forecast? The keys are in the truck. Get in.\"",
+              "answer_kind": "sentence"
+            }
+          ]
         },
         {
           "title": "Integrate Trait into Plot",
@@ -85031,7 +85611,30 @@
           "detail": "Read the paragraph slowly, underline any verbs of assertion (e.g., argues, suggests, claims). Circle the clause that contains the verb. Restate that clause in a single sentence, keeping the original meaning but using your own wording. Check that your restatement includes the same subject and verb as the original claim.",
           "proof": "Your sentence matches the author's main point as shown in the teacher's answer key.",
           "pitfall": "Mistaking a descriptive detail for the claim; the claim is argumentative, not merely factual.",
-          "minutes": 12
+          "minutes": 12,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A passage says: \"Libraries cost little and return a lot. Every town that cut theirs saw fewer children reading.\" Write the claim in 1 sentence.",
+              "answer": "Towns should keep their libraries because they give a lot back for very little money.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which sentence makes a claim, 1 or 2? 1: 'The novel has 300 pages.' 2: 'The novel treats silence as a form of cruelty.'",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A passage says: \"Mr. Hale never raised his voice. He simply stopped setting a place for his son at dinner.\" Write 1 sentence stating a claim a reader could make about Mr. Hale.",
+              "answer": "Mr. Hale punishes his son through quiet rejection instead of open anger.",
+              "answer_kind": "sentence"
+            }
+          ]
         },
         {
           "title": "Quote Claim Exactly",
@@ -85073,7 +85676,30 @@
           "detail": "Read the paragraph again, looking for adjectives, verbs, or nouns that describe the protagonist's situation. Highlight three that explain why the protagonist feels isolated, e.g., \"alone,\" \"ignored,\" \"distant.\" Write a brief note beside each word explaining its relevance to the claim.",
           "proof": "Your three underlined words appear in the paragraph and each can be linked to the claim in a sentence.",
           "pitfall": "Choosing generic words like \"very\" or \"often\" that do not specifically support the claim.",
-          "minutes": 10
+          "minutes": 10,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Claim: \"Mara feels isolated.\" Passage: \"Mara ate alone, her phone silent, the other chair empty.\" Name the 3 words that back the claim best.",
+              "answer": "alone, silent, empty",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Claim: \"The house frightens Jude.\" Passage: \"Jude crept past the groaning stairs, his breath shallow, his hands shaking.\" Name 3 words that back it.",
+              "answer": "crept, shallow, shaking",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Claim: \"Nell is proud of her work.\" Passage: \"Nell polished the table twice, stepped back and smiled.\" Which backs the claim better, \"smiled\" or \"table\", and why?",
+              "answer": "\"Smiled,\" because it shows how she feels about what she made. \"Table\" only names the object.",
+              "answer_kind": "sentence"
+            }
+          ]
         },
         {
           "title": "Annotate Text with Evidence",
@@ -85082,7 +85708,30 @@
           "detail": "For each underlined word, think of the logical step that connects it to the claim. Keep the note brief but explicit. Use arrows (→) or colons to show the direction of support. Review the notes to ensure each one makes the support obvious.",
           "proof": "Each marginal note clearly explains the connection, e.g., \"alone → feels cut off.\".",
           "pitfall": "Writing vague notes like \"important\" that do not explain the link.",
-          "minutes": 12
+          "minutes": 12,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Claim: \"Mara feels isolated.\" The evidence word is \"alone\". Write a margin note of 5 to 7 words on how it backs the claim.",
+              "answer": "Nobody chooses to sit with her.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Claim: \"The storm scares Theo.\" The evidence word is \"trembled\". Write a 5 to 7 word note connecting them.",
+              "answer": "His body shows fear he won't admit.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Passage: \"The Reeds' house glittered, every guest laughing too loudly.\" Claim: \"The party hides unhappiness.\" Pick 1 word and write a 5 to 7 word note on it.",
+              "answer": "\"Loudly\": forced noise covers something wrong.",
+              "answer_kind": "phrase"
+            }
+          ]
         },
         {
           "title": "Build Mini Argument",
@@ -85091,7 +85740,30 @@
           "detail": "Start with the exact claim as a topic sentence. For each supporting word, add a sentence that mentions the word, its location (page number), and explains its relevance. Keep each sentence focused on one piece of evidence. End with a concluding sentence that ties the evidence back to the claim.",
           "proof": "Your paragraph follows the pattern: claim → evidence 1 → evidence 2 → evidence 3.",
           "pitfall": "Listing evidence without explaining how each supports the claim.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Put these in argument order. A: \"Alone\" shows she has no company. B: Mara feels isolated. C: \"Silent\" shows nobody's reaching out.",
+              "answer": "B, A, C",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Using the claim \"Jude fears the house\" and the words \"crept\" and \"shaking\" from page 12, write a 3-sentence mini argument.",
+              "answer": "Jude fears the house. He \"crept\" through it instead of walking, as if it might notice him (12). His hands are \"shaking,\" so his body gives away what he won't say (12).",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Using the claim \"Nell is proud of her work\" and \"polished,\" \"smiled\" and \"signed\" from page 40, write a 4-sentence paragraph.",
+              "answer": "Nell is proud of her work. She \"polished\" the table twice, more than the job needed (40). She \"smiled\" when she stepped back to look at it (40). She \"signed\" her name under it, so everyone would know who made it (40).",
+              "answer_kind": "paragraph"
+            }
+          ]
         },
         {
           "title": "Draft Paragraph with Citations",
@@ -85100,7 +85772,37 @@
           "detail": "Begin with the claim as a clear thesis. Follow with three sentences, each introducing a supporting word, quoting it, and adding an MLA citation like (Author 45). After each citation, add a sentence that analyzes why that word supports the claim. Conclude with a sentence that summarizes the argument's significance. Proofread for citation accuracy.",
           "proof": "Your paragraph contains three parenthetical citations matching the page numbers of the supporting words.",
           "pitfall": "Forgetting to include citations or using an incorrect citation format.",
-          "minutes": 18
+          "minutes": 18,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Fix this MLA citation: (page 27, Shelley).",
+              "answer": "(Shelley 27)",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Where does the period go in this sentence, under MLA? The room was \"cold and silent.\" (Lee 12)",
+              "answer": "After the citation: The room was \"cold and silent\" (Lee 12).",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write 1 sentence that quotes \"groaning stairs\" from page 9 of a novel by Ward, with an MLA citation.",
+              "answer": "Jude fears the house, where even the \"groaning stairs\" seem alive (Ward 9).",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Write a 6-sentence paragraph for the claim \"Jude fears the house,\" citing \"crept\" (Ward 9), \"shallow\" (Ward 10) and \"shaking\" (Ward 12).",
+              "answer": "Jude fears the house. He \"crept\" past the stairs (Ward 9). Nobody creeps through a place they trust. His breath turns \"shallow\" (Ward 10). By the landing, his hands are \"shaking\" (Ward 12). Each detail shows more fear than the last.",
+              "answer_kind": "paragraph"
+            }
+          ]
         },
         {
           "title": "Independent Close Reading",
@@ -85109,7 +85811,37 @@
           "detail": "Open the novel to the specified page and locate a paragraph that makes an argument about a character or theme. Follow steps 1-5: locate the claim, copy it exactly, underline three supporting words, annotate each word, and then compose the argument and significance. Review to ensure each part is present and logically linked.",
           "proof": "Your work contains a verbatim claim, three correctly chosen words, a logical two-sentence argument, and a significance sentence that connects the argument to the larger text.",
           "pitfall": "Skipping any of the required components or choosing a paragraph without a clear claim.",
-          "minutes": 20
+          "minutes": 20,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Victor Frankenstein says, \"It was on a dreary night of November that I beheld the accomplishment of my toils.\" Name 2 words that make the moment feel joyless.",
+              "answer": "dreary, toils",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Read Victor's line again: \"It was on a dreary night of November that I beheld the accomplishment of my toils.\" Write 1 sentence stating a claim about how he feels.",
+              "answer": "Victor feels more dread than triumph at the moment he finishes his work.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Using \"dreary\" and \"toils\" from Shelley's line about the night Victor finishes, write a 2-sentence argument.",
+              "answer": "Victor should be celebrating, but he calls the night \"dreary,\" which drains the moment of any joy. He also calls his work \"toils,\" so even his great discovery sounds like a burden.",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Shelley sets Victor's success on a \"dreary night.\" Add 1 sentence on how that gloom connects to the novel's warning about ambition.",
+              "answer": "The gloom hints from the very start that getting what he wanted will bring Victor misery.",
+              "answer_kind": "sentence"
+            }
+          ]
         }
       ]
     },
@@ -85339,7 +86071,30 @@
           "detail": "Search a reliable timeline (e.g., Wikipedia's \"1818\") for notable events. Choose the Congress of Aix-la-Chapelle (political) and the publication of *The Life of a Man of Science* (scientific). For each, write a brief note (no more than 20 words) explaining a possible influence on Shelley's concerns about unchecked scientific progress or societal change.",
           "proof": "You produce three bullet points, each linking an event to a theme such as ambition, fear of technology, or social upheaval.",
           "pitfall": "Choosing events unrelated to the work's cultural climate or giving vague connections.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Mary Shelley began 'Frankenstein' in 1816, the \"year without a summer.\" Which volcano's 1815 eruption caused that weather?",
+              "answer": "Tambora",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Captain John Ross sailed for the Arctic in 1818, the year 'Frankenstein' appeared. Which character's voyage in the novel echoes this kind of exploration?",
+              "answer": "Robert Walton",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "English Luddites smashed weaving machines from 1811 to 1816. Write 1 sentence linking that unrest to 'Frankenstein'.",
+              "answer": "Like the Luddites, the novel asks what happens when people build powerful new things without thinking about who they'll hurt.",
+              "answer_kind": "sentence"
+            }
+          ]
         },
         {
           "title": "Examine Publication Context",
@@ -85380,7 +86135,37 @@
           "detail": "Search a scholarly database for early reviews (e.g., *The Literary Gazette* 1819). Copy the exact sentences, include the publication name and date, then write a one-sentence analysis of the assumption each reviewer makes about the text's purpose.",
           "proof": "You provide two quotations with citations and note assumptions such as \"the novel warns against scientific hubris\" and \"the creature is a moral allegory.\".",
           "pitfall": "Paraphrasing reviews instead of providing exact quotations.",
-          "minutes": 18
+          "minutes": 18,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "John Croker's 1818 review in the Quarterly Review called 'Frankenstein' a \"tissue of horrible and disgusting absurdity.\" Was that positive or negative?",
+              "answer": "Negative",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Walter Scott praised 'Frankenstein' in Blackwood's in 1818. Which poet did he assume had written it?",
+              "answer": "Percy Shelley",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "The 1818 edition of 'Frankenstein' came out without Mary Shelley's name on it. Write 1 sentence on how that could've shaped its reviews.",
+              "answer": "With no name to go on, reviewers guessed at a male author and judged the book without any of the bias they might've brought to a young woman's novel.",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Croker called the book an \"absurdity,\" while Scott admired it. State the assumption behind each view.",
+              "answer": "Croker assumes a novel should be believable and morally improving. Scott assumes a strange premise is fair as long as the author handles its effects with skill.",
+              "answer_kind": "paragraph"
+            }
+          ]
         },
         {
           "title": "Compare Genre Conventions",
@@ -85389,7 +86174,30 @@
           "detail": "Consult a standard reference on Gothic literature (e.g., a textbook chapter). Write the three conventions as bullet points, then place a single letter \"C\" or \"S\" after each, based on evidence from the text. Keep each line under 30 characters.",
           "proof": "Your list shows, for example, \"Remote castle, C, Supernatural terror, S, Moral didacticism, C.\".",
           "pitfall": "Using vague descriptors like \"somewhat\" without a clear C/S label.",
-          "minutes": 14
+          "minutes": 14,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "'Frankenstein' ends on Arctic ice. Does that conform to or subvert the Gothic love of wild, remote settings?",
+              "answer": "Conforms",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Walpole's 1764 'The Castle of Otranto' frightens readers with a giant ghostly helmet. Does Victor's creature conform to or subvert that kind of terror? Say why.",
+              "answer": "Subverts. The creature comes out of a laboratory, so science takes the place of the supernatural.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Mark each C or S for 'Frankenstein': a wild setting, a supernatural cause of terror, a story nested inside letters.",
+              "answer": "C, S, C",
+              "answer_kind": "list"
+            }
+          ]
         },
         {
           "title": "Trace Ideological Influences",
@@ -85439,7 +86247,44 @@
           "detail": "Begin with a topic sentence linking the scientific breakthrough to the novel's theme. Insert two supporting sentences that cite the preface and a contemporary scientific article. Conclude with a sentence that ties the historical context back to the author's purpose. Count words using any word-processor to stay within 250.",
           "proof": "Your paragraph references the 1818 discovery of galvanic electricity, the preface's purpose, and the Romantic critique of industrial progress.",
           "pitfall": "Drifting into plot summary instead of focusing on contextual analysis.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In the 1780s Luigi Galvani made dead frogs' legs twitch. What force did he apply?",
+              "answer": "Electricity",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Shelley's 1831 introduction says \"galvanism had given token of such things.\" What did it seem to promise?",
+              "answer": "Bringing a corpse back to life",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "In 1803 Giovanni Aldini ran current through an executed man's body in London. Write 1 sentence on how this could've shaped how readers took Victor's experiment.",
+              "answer": "It made Victor's experiment feel close to real science, so the horror of it was harder to wave away as pure fantasy.",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "M. Waldman says modern chemists \"penetrate into the recesses of nature.\" In 2 sentences, explain how the line carries both excitement and danger.",
+              "answer": "Waldman means it as praise, and it fires Victor up about what science can do. But \"penetrate\" also sounds like forcing a way into something that was hidden, which is the trespass the novel punishes.",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Write a paragraph of about 60 words on how the science of Shelley's time, like Galvani's work, shapes the warning in 'Frankenstein'.",
+              "answer": "Galvani and Aldini had made dead bodies move, so creating life seemed almost within reach. Shelley takes that hope seriously, which is why her warning lands. Victor's science works, and that's the problem. He never asks what he owes the life he makes, and everyone he loves pays for it. The novel fears what science can do without responsibility.",
+              "answer_kind": "paragraph"
+            }
+          ]
         },
         {
           "title": "Create Independent Contextual Guide",
@@ -85448,7 +86293,30 @@
           "detail": "Write each item on a separate line, using no more than eight words per item. Verify that the list covers the six categories mentioned in the mastery statement. Keep the total character count under 150.",
           "proof": "Your checklist reads: 1) Author's stated aim, 2) Year-specific events, 3) Original edition data, 4) First-reader reactions, 5) Genre conventions, 6) Dominant philosophies.",
           "pitfall": "Including more than six items or writing long explanatory sentences instead of brief prompts.",
-          "minutes": 12
+          "minutes": 12,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A 6-item context checklist covers purpose, events, publication, reception, genre and ideology. Which item does \"printed anonymously in 1818\" belong under?",
+              "answer": "Publication",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "On that same 6-item checklist, which item does \"Croker called it absurd\" belong under?",
+              "answer": "Reception",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write 1 short phrase for each checklist item on 'Frankenstein': purpose, events, publication, reception, genre, ideology.",
+              "answer": "Purpose: stir deep fears. Events: Luddite unrest. Publication: anonymous, 1818. Reception: Scott's praise, Croker's scorn. Genre: Gothic. Ideology: Romantic doubts about science.",
+              "answer_kind": "paragraph"
+            }
+          ]
         }
       ]
     },
@@ -85472,7 +86340,30 @@
           "detail": "Open the text and scan each line for brackets or italics that signal stage directions. Write them in a separate notebook, noting the line number. If a direction is described in the dialogue, underline it and add a brief note of its visual implication. This helps you separate spoken words from visual cues.",
           "proof": "You list at least five directions, e.g., \"Enter Lady Macbeth\", \"Thunder and lightning. Exeunt\".",
           "pitfall": "Missing implicit directions embedded in dialogue, like \"She looks away\".",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "'Macbeth' opens with \"Thunder and lightning. Enter three Witches.\" What does the first part tell the crew to create?",
+              "answer": "A storm",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In Shakespeare's plays, what does the stage direction \"Exeunt\" tell the actors to do?",
+              "answer": "Leave the stage",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Act 1, Scene 2 of 'Macbeth' starts with \"Alarum within.\" What's that telling the audience is going on offstage?",
+              "answer": "A battle",
+              "answer_kind": "word"
+            }
+          ]
         },
         {
           "title": "Map Character Objectives",
@@ -85481,7 +86372,30 @@
           "detail": "Read the scene slowly, noting each line spoken by Macbeth. Ask, \"What does Macbeth hope to accomplish here?\" Look for clues in his words and actions. Summarize the goal in a clear, specific phrase, then underline any lines that support it. This practice trains you to see hidden motives behind dialogue.",
           "proof": "Your sentence states Macbeth seeks to prove his bravery and earn the king's favor.",
           "pitfall": "Writing a vague objective like \"Macbeth wants something\" without specifying the concrete goal.",
-          "minutes": 12
+          "minutes": 12,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In Act 1, Scene 7 of 'Macbeth', Lady Macbeth calls her husband a coward. What's her objective at that moment?",
+              "answer": "To push him into going through with killing Duncan.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In Act 1, Scene 2 of 'Macbeth', what's the bleeding Captain trying to get across to King Duncan?",
+              "answer": "That Macbeth fought with amazing bravery and turned the battle.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In Act 3, Scene 1 of 'Macbeth', Macbeth talks with 2 Murderers. Write his objective in 1 sentence.",
+              "answer": "He wants to convince them that Banquo is their enemy so they'll kill him.",
+              "answer_kind": "sentence"
+            }
+          ]
         },
         {
           "title": "Analyze Subtext in Dialogue",
@@ -85646,7 +86560,51 @@
           "detail": "Choose a simple conflict (e.g., hidden love, stolen item). Draft each line, alternating speakers, and insert stage directions in brackets to indicate movement or facial expression. Ensure the audience can infer the secret from what is said and shown. Review to confirm no narrator voice appears. This final step proves you can use drama unaided.",
           "proof": "Your scene includes at least two stage directions and reveals the secret through implication, not explicit statement.",
           "pitfall": "Including a narrator line or stating the secret outright, which removes the dramatic tension.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A script reads: DANA (hiding the letter): Nothing. What does the stage direction tell you that the word \"Nothing\" doesn't?",
+              "answer": "That she's lying and there's something she doesn't want seen.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Replace the line \"I'm so angry I could walk out right now\" with a stage direction and a line of 1 word.",
+              "answer": "(She picks up her coat.) Fine.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "2 siblings argue about a secret. Write 2 lines of dialogue that hint it's about money, without using the word \"money\".",
+              "answer": "Kim: \"Mom's card got declined again.\" Lee: \"Weird. Maybe check who's been at the ATM on Fifth.\"",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "Which line reveals more by implication, and why? A: \"I know you stole Dad's watch.\" B: \"Dad's still looking for his watch. Nice new coat, by the way.\"",
+              "answer": "B, because it never makes the accusation and leaves the audience to connect the watch and the coat.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Write a stage direction for a silent moment where Sam has just guessed the secret.",
+              "answer": "(Sam stops stirring. The spoon rests against the cup. He doesn't look up.)",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "Write a 5-line scene where Ana and Joe argue about a secret, with at least 2 stage directions and nothing stated outright.",
+              "answer": "ANA (setting a key on the table): It was in your jacket.\nJOE: That's for work.\nANA: You work downtown. This says Harbor Street.\nJOE (not touching it): Who else knows?\nANA: So there is something to know.",
+              "answer_kind": "paragraph"
+            }
+          ]
         }
       ]
     },
@@ -92064,7 +93022,52 @@
           "detail": "'At least one' is nearly always easier as everything minus none. Count the whole space, count the cases you do not want, subtract. Direct counting here means splitting into exactly-one, exactly-two and so on, and adding overlaps you will get wrong.",
           "proof": "26^5 - 21^5, which is 11881376 - 4084101 = 7797275.",
           "pitfall": "Trying to count 'at least one' directly and double-counting strings with two.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Flip 3 coins. How many of the outcomes have at least 1 head?",
+              "answer": "7",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Roll 2 dice. How many of the 36 outcomes have at least one 6?",
+              "answer": "11",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "How many 4-digit PINs, with digits 0 to 9, contain at least one 7?",
+              "answer": "3439",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "How many 3-letter strings from A to Z contain at least 1 vowel, counting A, E, I, O and U as vowels?",
+              "answer": "8315",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "A club has 5 seniors and 4 juniors. How many 3-person committees include at least 1 junior?",
+              "answer": "74",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "How many 6-bit strings contain at least two 1s?",
+              "answer": "57",
+              "hint": "Take out the strings with no 1s and the strings with exactly one.",
+              "answer_kind": "integer"
+            }
+          ]
         },
         {
           "title": "Overlapping Sets",
@@ -93768,7 +94771,51 @@
           "detail": "Draw a line through one vertex parallel to the opposite side. The two outer angles at that vertex equal two of the triangle's angles by alternate angles, and the three together lie on a straight line. Give a reason for every step; a diagram shows one case and a proof covers all of them.",
           "proof": "The two alternate-angle pairs at the parallel line place all three angles on a straight line, which is 180.",
           "pitfall": "Measuring the drawing and calling the measurement a proof.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "True or false: measuring the angles of 3 triangles and getting 180 each time proves the angle sum for all triangles.",
+              "answer": "False",
+              "answer_kind": "truefalse"
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Lines AB and CD cross at O. Prove angle AOC equals angle BOD, with a reason for each step.",
+              "answer": "Angles AOC and AOD lie on a straight line, so they add to 180. Angles BOD and AOD also lie on a straight line, so they add to 180. Subtracting angle AOD from both gives angle AOC = angle BOD.",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Prove that an exterior angle of a triangle equals the sum of the 2 remote interior angles.",
+              "answer": "Let the interior angles be A, B and C, with exterior angle E next to C. E and C lie on a straight line, so \\(E = 180 - C\\). The triangle's angles add to 180, so \\(A + B = 180 - C\\). So \\(E = A + B\\).",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "In triangle ABC, AB = AC, and M is the midpoint of BC. Prove angle B equals angle C.",
+              "answer": "AB = AC is given, BM = CM because M is the midpoint, and AM is shared. So triangles ABM and ACM are congruent by SSS. Matching angles are equal, so angle B = angle C.",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Prove that the angles of any convex quadrilateral ABCD sum to 360, using diagonal AC.",
+              "answer": "AC splits ABCD into triangles ABC and ACD. Each triangle's angles sum to 180. Together those angles make up exactly the angles of ABCD, because the angles at A and C split along the diagonal. So the sum is \\(180 + 180 = 360\\).",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "In parallelogram ABCD, the diagonals meet at O. Prove that O is the midpoint of each diagonal.",
+              "answer": "AB is parallel to CD, so angle OAB = angle OCD and angle OBA = angle ODC as alternate angles. Opposite sides give AB = CD. So triangles OAB and OCD are congruent by ASA. Matching sides give OA = OC and OB = OD.",
+              "answer_kind": "paragraph"
+            }
+          ]
         }
       ]
     },
@@ -94886,7 +95933,53 @@
           "detail": "Isolate the ratio, take the inverse for the first solution, then use the symmetry of the circle for the rest in range. Cosine is positive in the first and fourth quadrants, so a positive cosine has two answers in a full turn.",
           "proof": "x = 60 and x = 300.",
           "pitfall": "Reporting the single value the calculator gives and missing the reflection.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Solve \\(\\sin x = \\frac{1}{2}\\) for \\(0^{\\circ} \\le x < 360^{\\circ}\\).",
+              "answer": "30°, 150°",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Solve \\(\\cos x = - \\frac{1}{2}\\) for \\(0^{\\circ} \\le x < 360^{\\circ}\\).",
+              "answer": "120°, 240°",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Solve \\(\\tan x = 1\\) for \\(0^{\\circ} \\le x < 360^{\\circ}\\).",
+              "answer": "45°, 225°",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "Solve \\(2\\sin x + \\sqrt{3} = 0\\) for \\(0^{\\circ} \\le x < 360^{\\circ}\\).",
+              "answer": "240°, 300°",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Solve \\(\\cos 2x = \\frac{1}{2}\\) for \\(0^{\\circ} \\le x < 180^{\\circ}\\).",
+              "answer": "30°, 150°",
+              "hint": "Find \\(2x\\) first, over the range 0° to 360°.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "Solve \\(2\\sin^{2} x = \\sin x\\) for \\(0^{\\circ} \\le x < 360^{\\circ}\\).",
+              "answer": "0°, 30°, 150°, 180°",
+              "hint": "Factor out \\(\\sin x\\). Dividing by it loses answers.",
+              "answer_kind": "list"
+            }
+          ]
         },
         {
           "title": "Transform Any Function",
@@ -96711,7 +97804,51 @@
           "detail": "Assume the opposite, reason correctly, and arrive at a statement that cannot be true. The contradiction must be flat, a thing both true and false, not just unexpected. State the assumption explicitly at the top so the reader knows what is being discharged.",
           "proof": "Assuming it is p/q in lowest terms forces both p and q even, contradicting lowest terms.",
           "pitfall": "Deriving something merely surprising and calling it a contradiction.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "To prove \"there's no largest integer\" by contradiction, what do you assume at the top?",
+              "answer": "That there is a largest integer, N.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "You've assumed N is the largest integer. Which number gives the contradiction, and why?",
+              "answer": "\\(N + 1\\), because it's an integer bigger than N.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Prove by contradiction that no integer can be written both as 2a and as \\(2b + 1\\).",
+              "answer": "Suppose \\(n\\) is both, so \\(n = 2a\\) and \\(n = 2b + 1\\) for integers a and b. Then \\(2(a - b) = 1\\), so 1 is even. It isn't, which is a contradiction.",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "Prove by contradiction: if \\(n^{2}\\) is even, then \\(n\\) is even.",
+              "answer": "Suppose \\(n^{2}\\) is even and \\(n\\) is odd, so \\(n = 2k + 1\\). Then \\(n^{2} = 4k^{2} + 4k + 1 = 2(2k^{2} + 2k) + 1\\), which is odd. That contradicts \\(n^{2}\\) being even, so \\(n\\) is even.",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Prove that the square root of 3 is irrational.",
+              "answer": "Suppose it equals \\(\\frac{p}{q}\\) in lowest terms. Then \\(p^{2} = 3q^{2}\\), so 3 divides p. Write \\(p = 3r\\). Then \\(9r^{2} = 3q^{2}\\), so \\(q^{2} = 3r^{2}\\), and 3 divides q too. So p and q share the factor 3, which contradicts lowest terms.",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "Prove that log base 2 of 3 is irrational.",
+              "answer": "It's positive, so suppose it equals \\(\\frac{p}{q}\\) with p and q positive integers. Then \\(2^{\\frac{p}{q}} = 3\\), so \\(2^{p} = 3^{q}\\). The left side is even and the right side is odd, which is a contradiction.",
+              "answer_kind": "paragraph"
+            }
+          ]
         },
         {
           "title": "Proof by Induction",
@@ -96720,7 +97857,51 @@
           "detail": "Base case, assumption at k, then the claim at k+1 derived from that assumption. Write the assumption as an inequality or equation you can substitute. If the step would work without it, the proof is wrong somewhere.",
           "proof": "n = 1 gives 2 > 1; and if 2^k > k then 2^(k+1) = 2 x 2^k > 2k >= k+1.",
           "pitfall": "Never actually using the assumption in the inductive step, which proves nothing.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You're proving \\(1 + 3\\) + ... + \\((2n - 1) = n^{2}\\). Write out the base case.",
+              "answer": "At \\(n = 1\\) the left side is 1 and the right side is \\(1^{2} = 1\\).",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "You're proving \\(3^{n} \\ge 1 + 2n\\). Write the inductive assumption at k.",
+              "answer": "\\(3^{k} \\ge 1 + 2k\\)",
+              "answer_kind": "expression"
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Prove by induction that the first \\(n\\) odd numbers, \\(1 + 3\\) + ... + \\((2n - 1)\\), add up to \\(n^{2}\\).",
+              "answer": "\\(n = 1\\) gives \\(1 = 1^{2}\\). Assume \\(1 + 3\\) + ... + \\((2k - 1) = k^{2}\\). Adding the next odd number, \\(2k + 1\\), gives \\(k^{2} + 2k + 1 = (k + 1)^{2}\\), which is the formula at \\(k + 1\\).",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "Use induction on \\(n \\ge 1\\) to show \\(3^{n} \\ge 1 + 2n\\).",
+              "answer": "\\(n = 1\\) gives \\(3 \\ge 3\\). Assume \\(3^{k} \\ge 1 + 2k\\). Then \\(3^{k + 1} = 3 \\times 3^{k} \\ge 3 + 6k\\), and \\(3 + 6k \\ge 3 + 2k = 1 + 2(k + 1)\\). That's the claim at \\(k + 1\\).",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Show by induction that 3 divides \\(4^{n} - 1\\) whenever \\(n \\ge 1\\).",
+              "answer": "\\(n = 1\\) gives 3, which works. Assume 3 divides \\(4^{k} - 1\\). Then \\(4^{k + 1} - 1 = 4(4^{k} - 1) + 3\\). Both terms are multiples of 3, so 3 divides the sum.",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "Induct on \\(n\\) to show that \\(n^{3} - n\\) is always a multiple of 3 for \\(n \\ge 1\\).",
+              "answer": "\\(n = 1\\) gives 0, which works. Assume 3 divides \\(k^{3} - k\\). Then \\((k + 1)^{3} - (k + 1) = (k^{3} - k) + 3k^{2} + 3k\\). The first part is a multiple of 3 by assumption, and the rest has a factor of 3.",
+              "answer_kind": "paragraph"
+            }
+          ]
         },
         {
           "title": "Construction and Existence",
@@ -96729,7 +97910,51 @@
           "detail": "An existence claim can be settled by exhibiting an example. Euclid's argument is subtler: it shows any finite list is incomplete without naming the missing prime. Note what it does and does not produce, that distinction is the whole interest of it.",
           "proof": "Any finite list multiplied together plus 1 has a prime factor on no such list.",
           "pitfall": "Claiming the new number is itself prime, which it need not be.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Prove that there's at least 1 even prime.",
+              "answer": "2 is even, and its only positive divisors are 1 and 2, so it's prime.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Show that there's a rational number strictly between \\(\\frac{1}{3}\\) and \\(\\frac{1}{2}\\).",
+              "answer": "\\(\\frac{5}{12}\\) works, since \\(\\frac{1}{3} = \\frac{4}{12}\\) and \\(\\frac{1}{2} = \\frac{6}{12}\\).",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Take the primes 2, 3 and 5. Compute Euclid's new number, the product plus 1, and say whether it's prime.",
+              "answer": "31, and it's prime.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "For the primes 2, 3, 5, 7, 11 and 13, Euclid's number is \\(30031 = 59 \\times 509\\). Is it prime? What does the argument still give you?",
+              "answer": "No, it isn't prime. It still has prime factors missing from the list, 59 and 509, so the list wasn't complete.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Prove that between any 2 rational numbers \\(a < b\\) there's another rational number.",
+              "answer": "Take \\(\\frac{a + b}{2}\\). It's rational because rationals are closed under adding and dividing by 2. Since \\(a < b\\), we get \\(a < \\frac{a + b}{2} < b\\).",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "Prove there are irrational a and b with \\(a^{b}\\) rational, by looking at \\(\\sqrt{2}\\) raised to the power \\(\\sqrt{2}\\).",
+              "answer": "Let c be \\(\\sqrt{2}\\) raised to the power \\(\\sqrt{2}\\). If c is rational, take \\(a = b = \\sqrt{2}\\). If c is irrational, take \\(a = c\\) and \\(b = \\sqrt{2}\\), and then \\(a^{b} = \\sqrt{2}^{2} = 2\\). One case must hold, though the proof doesn't say which.",
+              "answer_kind": "paragraph"
+            }
+          ]
         },
         {
           "title": "Find the Broken Step",
@@ -96738,7 +97963,51 @@
           "detail": "Work down the argument and test each line for the operation it performs and whether that operation is always allowed. Division by a quantity that could be zero, taking a square root and keeping one sign, and squaring both sides all hide here.",
           "proof": "Dividing by a - b is dividing by zero, which is not a permitted operation.",
           "pitfall": "Rejecting the conclusion without being able to say which line failed.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "An argument says: \\(x^{2} = 4\\), so \\(x = 2\\). Name what went wrong.",
+              "answer": "It dropped a solution: \\(x = - 2\\) also works.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Find the broken step: \\(3x = 6x\\), so dividing by \\(x\\) gives \\(3 = 6\\).",
+              "answer": "Dividing by \\(x\\), because the equation forces \\(x = 0\\), and you can't divide by zero.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Find the invalid step: \\(1 = \\sqrt{1} = \\sqrt{(-1)(-1)} = \\sqrt{-1}\\sqrt{-1} = - 1\\).",
+              "answer": "Splitting \\(\\sqrt{(-1)(-1)}\\) into \\(\\sqrt{-1}\\sqrt{-1}\\). The rule \\(\\sqrt{ab} = \\sqrt{a}\\sqrt{b}\\) only holds when a and b aren't negative.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "Someone solves \\(\\sqrt{x} = - 2\\) by squaring and gets \\(x = 4\\). What's wrong?",
+              "answer": "Squaring brought in a false solution. \\(\\sqrt{4} = 2\\), which isn't -2, so the equation has no solution.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "A student checks \\(n^{2} + n + 41\\) for \\(n = 1\\), 2, 3, 4, 5, gets primes, and concludes it's always prime. Where does this fail, and at which \\(n\\) does it break?",
+              "answer": "Checking cases doesn't prove all cases. At \\(n = 40\\) it gives \\(40^{2} + 40 + 41 = 1681 = 41^{2}\\), which isn't prime.",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "The \"all horses are the same color\" proof removes 1 horse from a group of \\(k + 1\\), then another, and compares the overlap. Which step fails?",
+              "answer": "The step from 1 horse to 2. With \\(k + 1 = 2\\) the two smaller groups have no horse in common, so nothing links their colors.",
+              "answer_kind": "paragraph"
+            }
+          ]
         },
         {
           "title": "Write One Up",
@@ -96747,7 +98016,51 @@
           "detail": "Say what you are proving, what you assume, then each step with its reason, then the conclusion. Read it back as somebody who does not already believe it. A proof only you can follow has not done its job.",
           "proof": "(2m+1)(2n+1) = 2(2mn + m + n) + 1, which is odd by definition.",
           "pitfall": "Leaving the algebra to speak for itself, so the reader has to reconstruct the reasoning.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write a proof that the sum of 2 even integers is even.",
+              "answer": "Let the integers be 2a and 2b, by the definition of even. Their sum is \\(2a + 2b = 2(a + b)\\). Since \\(a + b\\) is an integer, the sum is even.",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Write a proof that the sum of 3 consecutive integers is divisible by 3.",
+              "answer": "Call them \\(n\\), \\(n + 1\\) and \\(n + 2\\). Their sum is \\(3n + 3 = 3(n + 1)\\). Since \\(n + 1\\) is an integer, the sum is divisible by 3.",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Write a proof: if 3 divides a and 3 divides b, then 3 divides \\(a + b\\).",
+              "answer": "By definition, \\(a = 3r\\) and \\(b = 3s\\) for integers r and s. So \\(a + b = 3r + 3s = 3(r + s)\\). Since \\(r + s\\) is an integer, 3 divides \\(a + b\\).",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "Write a proof that the product of 2 rational numbers is rational.",
+              "answer": "Write them as \\(\\frac{a}{b}\\) and \\(\\frac{c}{d}\\), with a, b, c and d integers and b and d nonzero. Their product is ac/(bd). Here ac and bd are integers and bd is nonzero, so the product is rational.",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Write a proof that the square of any odd integer is 1 more than a multiple of 8.",
+              "answer": "Let \\(n = 2k + 1\\). Then \\(n^{2} = 4k^{2} + 4k + 1 = 4k(k + 1) + 1\\). One of k and \\(k + 1\\) is even, so \\(k(k + 1) = 2m\\) for an integer m. So \\(n^{2} = 8m + 1\\).",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "Write a proof: if 3 doesn't divide \\(n\\), then \\(n^{2}\\) leaves remainder 1 when divided by 3.",
+              "answer": "If 3 doesn't divide \\(n\\), then \\(n = 3k + 1\\) or \\(n = 3k - 1\\) for an integer k. Squaring gives \\(9k^{2} + 6k + 1\\) or \\(9k^{2} - 6k + 1\\). Each equals 3 times an integer, plus 1, so the remainder is 1.",
+              "answer_kind": "paragraph"
+            }
+          ]
         }
       ]
     },
@@ -97135,7 +98448,45 @@
           "detail": "The nth term is a times r to the power n-1, and the sum is a(r^n - 1)/(r - 1). Note the n-1: the first term has been multiplied by r zero times. Check the ratio is genuinely constant across every pair before using either formula.",
           "proof": "1536, and 3069.",
           "pitfall": "Using the arithmetic sum formula on a geometric sequence.",
-          "minutes": 25
+          "minutes": 25,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What's the next term of 2, 6, 18?",
+              "answer": "54",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Find the 6th term of 5, 10, 20, ...",
+              "answer": "160",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Find the 6th term of 81, 27, 9, ...",
+              "answer": "\\(\\frac{1}{3}\\)",
+              "answer_kind": "fraction"
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "Find the sum of the first 8 terms of 1, 2, 4, ...",
+              "answer": "255",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Find the sum of the first 6 terms of 3, -6, 12, ...",
+              "answer": "-63",
+              "hint": "The ratio is negative, so watch the signs in the formula.",
+              "answer_kind": "integer"
+            }
+          ]
         },
         {
           "title": "Infinite Sums",
@@ -97246,7 +98597,58 @@
           "detail": "Three parts, all required: check n = 1, assume it holds at n = k, then derive it at n = k+1 using that assumption. Write the assumption out as a line of algebra. A step that never uses it has proved nothing.",
           "proof": "n = 1 gives 1; assuming it for k, adding k+1 gives (k+1)(k+2)/2, which is the formula at k+1.",
           "pitfall": "Proving the base case and the step and never stating the assumption being used.",
-          "minutes": 35
+          "minutes": 35,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Add \\(1 + 2 + 3 + 4\\) by hand, and use the result to test the formula \\(\\frac{n(n + 1)}{2}\\) at \\(n = 4\\).",
+              "answer": "10, and \\(4 \\times \\frac{5}{2} = 10\\) too.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "Going from k to \\(k + 1\\) in the sum \\(2 + 4\\) + ... + \\(2n\\), which term gets added?",
+              "answer": "\\(2(k + 1)\\)",
+              "answer_kind": "expression"
+            },
+            {
+              "slot": 3,
+              "weight": "warmup",
+              "prompt": "Prove by induction that the first \\(n\\) even numbers, \\(2 + 4\\) + ... + \\(2n\\), add up to \\(n(n + 1)\\).",
+              "answer": "\\(n = 1\\) gives \\(2 = 1 \\times 2\\). Assume the sum to 2k is \\(k(k + 1)\\). Adding \\(2(k + 1)\\) gives \\(k(k + 1) + 2(k + 1) = (k + 1)(k + 2)\\), which is the formula at \\(k + 1\\).",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "Use induction on \\(n \\ge 1\\) to show that \\(1 + 2 + 4\\) + ... + \\(2^{n - 1} = 2^{n} - 1\\).",
+              "answer": "\\(n = 1\\) gives \\(1 = 2 - 1\\). Assume the sum up to \\(2^{k - 1}\\) is \\(2^{k} - 1\\). Adding \\(2^{k}\\) gives \\(2 \\times 2^{k} - 1 = 2^{k + 1} - 1\\), which is the formula at \\(k + 1\\).",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Prove \\(\\frac{1}{1 \\times 2} + \\frac{1}{2 \\times 3}\\) + ... + \\(\\frac{1}{n(n + 1)} = \\frac{n}{n + 1}\\) for every positive integer \\(n\\).",
+              "answer": "\\(n = 1\\) gives \\(\\frac{1}{2} = \\frac{1}{2}\\). Assume the sum to k is \\(\\frac{k}{k + 1}\\). Adding \\(\\frac{1}{(k + 1)(k + 2)}\\) gives \\(\\frac{k(k + 2) + 1}{(k + 1)(k + 2)} = \\frac{(k + 1)^{2}}{(k + 1)(k + 2)} = \\frac{k + 1}{k + 2}\\).",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "Prove \\(1^{2} + 2^{2}\\) + ... + \\(n^{2} = \\frac{n(n + 1)(2n + 1)}{6}\\) for every positive integer \\(n\\).",
+              "answer": "\\(n = 1\\) gives \\(1 = 1\\). Assume it at k. Adding \\((k + 1)^{2}\\) gives \\(\\frac{(k + 1)(k(2k + 1) + 6(k + 1))}{6} = \\frac{(k + 1)(2k^{2} + 7k + 6)}{6} = (k + 1)\\frac{(k + 2)(2k + 3)}{6}\\), which is the formula at \\(k + 1\\).",
+              "answer_kind": "paragraph"
+            },
+            {
+              "slot": 7,
+              "weight": "stretch",
+              "prompt": "Prove \\(1^{3} + 2^{3}\\) + ... + \\(n^{3} = (\\frac{n(n + 1)}{2})^{2}\\) for every positive integer \\(n\\).",
+              "answer": "\\(n = 1\\) gives \\(1 = 1\\). Assume it at k. Adding \\((k + 1)^{3}\\) gives \\((k + 1)^{2}(\\frac{k^{2}}{4} + k + 1) = (k + 1)^{2}\\) \\(\\frac{(k + 2)^{2}}{4} = (\\frac{(k + 1)(k + 2)}{2})^{2}\\), which is the formula at \\(k + 1\\).",
+              "answer_kind": "paragraph"
+            }
+          ]
         },
         {
           "title": "Where Series Appear",
@@ -97255,7 +98657,52 @@
           "detail": "Repeated proportional change is geometric; repeated fixed change is arithmetic. Decide which before writing anything. Compound interest, population growth and depreciation are all the same geometric sequence wearing different words.",
           "proof": "1000 x 1.05^n, which passes 2000 during year 15.",
           "pitfall": "Adding 5% of the original each year, which is arithmetic rather than geometric.",
-          "minutes": 30
+          "minutes": 30,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Put 500 dollars in savings at 3% a year with no deposits. What's the balance after 2 years, in dollars?",
+              "answer": "530.45",
+              "answer_kind": "decimal"
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "A debt of 1000 dollars grows 5% a year with no repayments. What's the balance after 10 years, to the nearest dollar?",
+              "answer": "1629",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "core",
+              "prompt": "Deposit 200 dollars at the end of each year for 3 years at 10% a year. What's the total right after the third deposit, in dollars?",
+              "answer": "662",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 4,
+              "weight": "core",
+              "prompt": "A colony of 50 bacteria doubles every hour. After how many whole hours does it first pass 1000?",
+              "answer": "5",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 5,
+              "weight": "stretch",
+              "prompt": "Each day you take a 100 mg dose, and half of what's in your body clears by the next day. Right after a dose, what level does this settle toward, in mg?",
+              "answer": "200",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 6,
+              "weight": "stretch",
+              "prompt": "A ball drops from 10 m and each bounce reaches 60% of the height before. What total distance does it travel, in meters, before it stops?",
+              "answer": "40",
+              "hint": "After the first drop, each rebound height gets traveled twice.",
+              "answer_kind": "integer"
+            }
+          ]
         }
       ]
     },
@@ -104918,7 +106365,37 @@
           "detail": "Use TensorFlow or PyTorch, define a simple feed-forward net, compile with mean_squared_error, and add an EarlyStopping callback (monitor='val_loss', patience=10, restore_best_weights=True). Log the epoch at which training stops and the corresponding validation loss.",
           "proof": "Training will halt before 200 epochs, and the final validation MSE will be close to the lowest observed value.",
           "pitfall": "Forgetting to reset the best-model weights after early stopping, so the saved model is over-trained.",
-          "minutes": 18
+          "minutes": 18,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Validation MSE by epoch is 5.0, 4.0, 3.5, 3.6, 3.7, 3.8. With patience=2, at which epoch does early stopping halt training?",
+              "answer": "5",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "warmup",
+              "prompt": "With patience=10, validation MSE last improves at epoch 40. At which epoch does training stop?",
+              "answer": "50",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In Keras EarlyStopping, which argument puts the weights from the best epoch back when training stops?",
+              "answer": "restore_best_weights=True",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 4,
+              "weight": "stretch",
+              "prompt": "After epoch 30, training MSE keeps falling from 2.0 to 0.5 while validation MSE climbs from 3.0 to 4.5. Say what's going on and what early stopping does about it.",
+              "answer": "The model is overfitting: it's memorizing the training data and getting worse on new data. Early stopping ends the run soon after validation MSE stops improving, so you keep the model from around epoch 30.",
+              "answer_kind": "paragraph"
+            }
+          ]
         },
         {
           "title": "Report Overfitting Transparently",
@@ -104927,7 +106404,30 @@
           "detail": "Structure the paragraph: state the original gap, describe the regularization step and its effect, mention cross-validation results, and conclude with the early-stopping outcome. Ensure each metric is presented with its exact numeric value.",
           "proof": "The paragraph will list numbers such as training R² = 0.85, validation R² = 0.55, Ridge validation R² = 0.70, CV mean = 0.71 ± 0.03, stopped at epoch = 73, showing clear improvement.",
           "pitfall": "Omitting any quantitative comparison, which makes the claim of reduced overfitting unverifiable.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A model has training \\(R^{2} = 0.92\\) and validation \\(R^{2} = 0.55\\). What's the gap?",
+              "answer": "0.37",
+              "answer_kind": "decimal"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "5-fold CV gives \\(R^{2}\\) scores of 0.70, 0.72, 0.68, 0.74 and 0.66. What's the mean?",
+              "answer": "0.70",
+              "answer_kind": "decimal"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Report this in 2 sentences: training \\(R^{2} = 0.85\\), validation \\(R^{2} = 0.55\\), then Ridge validation \\(R^{2} = 0.70\\) and CV mean \\(0.71 \\pm 0.03\\).",
+              "answer": "The first model overfit, scoring \\(R^{2} = 0.85\\) on training data but only 0.55 on validation data. Ridge raised validation \\(R^{2}\\) to 0.70, and a CV mean of \\(0.71 \\pm 0.03\\) suggests that gain is real.",
+              "answer_kind": "paragraph"
+            }
+          ]
         }
       ]
     },
@@ -105332,7 +106832,30 @@
           "detail": "Import LogisticRegression, instantiate with default parameters, call model.fit(X_train, y_train). Keep X_val, y_val untouched for later.",
           "proof": "model.predict on training data returns predictions without error.",
           "pitfall": "Accidentally calling .fit on validation or test data.",
-          "minutes": 12
+          "minutes": 12,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In scikit-learn's LogisticRegression, which method trains the model?",
+              "answer": "fit",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write the 2 lines that create a LogisticRegression and train it on X_train and y_train.",
+              "answer": "model = LogisticRegression()\nmodel.fit(X_train, y_train)",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Should you pass X_val to fit() while you're tuning C? Say why.",
+              "answer": "No. The validation rows have to stay unseen, or their score stops telling you how the model does on new data.",
+              "answer_kind": "yesno"
+            }
+          ]
         },
         {
           "title": "Evaluate on Validation",
@@ -105341,7 +106864,30 @@
           "detail": "Import accuracy_score, predict on X_val, compare to y_val, record the metric. Try changing C=0.5 and observe new accuracy.",
           "proof": "accuracy_score(y_val, model.predict(X_val)) equals the reported number (e.g., 0.93).",
           "pitfall": "Adjusting the model after looking at test-set results instead of validation.",
-          "minutes": 10
+          "minutes": 10,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A model gets 27 of 30 validation rows right. What's its accuracy?",
+              "answer": "0.9",
+              "answer_kind": "decimal"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write the line that computes accuracy on X_val and y_val with accuracy_score.",
+              "answer": "accuracy_score(y_val, model.predict(X_val))",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A model scores 0.99 on training rows and 0.80 on validation rows. Which number should you trust, and what does the gap suggest?",
+              "answer": "Trust 0.80, since it comes from rows the model never saw. The gap suggests the model is overfitting.",
+              "answer_kind": "sentence"
+            }
+          ]
         },
         {
           "title": "Select Hyperparameter",
@@ -105350,7 +106896,30 @@
           "detail": "For each C, instantiate LogisticRegression(C=...), fit on training data, compute validation accuracy, store best. After loop, refit model on training data with best C.",
           "proof": "The loop prints the best C (e.g., 1) and its validation accuracy.",
           "pitfall": "Choosing the hyperparameter based on test-set performance.",
-          "minutes": 12
+          "minutes": 12,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Validation accuracy for C = 0.1, 1 and 10 is 0.85, 0.93 and 0.90. Which C do you keep?",
+              "answer": "1",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write a loop over C values [0.1, 1, 10] that keeps the model with the highest validation accuracy.",
+              "answer": "best, best_score = None, 0\nfor c in [0.1, 1, 10]:\n    model = LogisticRegression(C=c).fit(X_train, y_train)\n    score = model.score(X_val, y_val)\n    if score > best_score:\n        best, best_score = model, score",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why do you pick C with the validation rows instead of the 30-row test set?",
+              "answer": "If the test set helps choose the model, its score stops being a fair estimate. Keeping it untouched leaves you one honest number at the end.",
+              "answer_kind": "paragraph"
+            }
+          ]
         },
         {
           "title": "Final Test Evaluation",
@@ -105359,7 +106928,30 @@
           "detail": "Load X_test, y_test, predict, compute accuracy, and record it as the final result. Do not modify the model afterwards.",
           "proof": "accuracy_score(y_test, final_model.predict(X_test)) matches the printed test accuracy (e.g., 0.90).",
           "pitfall": "Re-training or tweaking the model after seeing this test accuracy.",
-          "minutes": 10
+          "minutes": 10,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A final model gets 26 of 30 test rows right. What's its accuracy, to 2 decimal places?",
+              "answer": "0.87",
+              "answer_kind": "decimal"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "With 30 test rows set aside, how many times should a clean run score them?",
+              "answer": "1",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Validation accuracy was 0.93 and test accuracy is 0.90. A teammate wants to keep trying C values until the test score hits 0.93. Why is that a mistake?",
+              "answer": "That turns the test set into a second validation set, so its score gets inflated by the tuning. A small drop from 0.93 to 0.90 is normal, so report 0.90.",
+              "answer_kind": "paragraph"
+            }
+          ]
         }
       ]
     },
@@ -119910,7 +121502,30 @@
           "detail": "Plug the given numbers into the formula step by step: multiply v₀ by t, compute a·t², halve it, then add all terms to x₀. Verify each arithmetic step before writing the final position.",
           "proof": "x = 5 + 2·3 + 0.5·4·9 = 5 + 6 + 18 = 29 m.",
           "pitfall": "Omitting the ½ factor on the acceleration term, which halves the contribution of the a t² part.",
-          "minutes": 15
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Find the position after 2 s for \\(x_{0} = 0\\) m, \\(v_{0} = 3\\) m/s and \\(a = 2\\) m/s².",
+              "answer": "10 m",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Find the position after 6 s for \\(x_{0} = 10\\) m, \\(v_{0} = - 4\\) m/s and \\(a = 1\\) m/s².",
+              "answer": "4 m",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A stone drops from rest at a height of 45 m. Using \\(g = 10\\) m/s², how long does it take to reach the ground?",
+              "answer": "3 s",
+              "answer_kind": "integer"
+            }
+          ]
         },
         {
           "title": "Solve Multi-Stage Motion Problem",
