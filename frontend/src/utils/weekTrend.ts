@@ -161,8 +161,10 @@ export interface SlumpStep {
 export interface Slump {
   /** XP in the last 7 days. */
   now: number;
-  /** The median week of the four before it. */
+  /** The median week of up to four before it. */
   usual: number;
+  /** How many of those had any XP. With one, `usual` is that single week. */
+  workedWeeks: number;
   /** How far under usual, 0-100. */
   drop: number;
   /** Days since the last day with any work, 0 if today. */
@@ -182,23 +184,25 @@ export interface SlumpInput {
 /**
  * Whether the reader is in a slump, and what to do about it.
  *
- * "Usual" is the median of the four weeks before this one, so one huge week
- * doesn't make every normal week after it look like a slump. It needs at least
- * two of those four to have had work in them: an account that has never had
- * a usual week can't fall below it.
+ * "Usual" is the median of up to four weeks before this one, so one huge week
+ * doesn't make every normal week after it look like a slump. One week with work
+ * is enough to go on, or a bad second week could never be called one, and it's
+ * read on its own so a week off doesn't halve it. Under WEEK_FLOOR it's noise
+ * rather than a usual: an account that never had one can't fall below it.
  */
 export function findSlump({ blocks, all, tasks, nameOf, today }: SlumpInput): Slump | null {
-  if (blocks.length < 3) return null;
+  if (blocks.length < 2) return null;
   const now = blocks[blocks.length - 1]!;
   const prior = blocks.slice(-5, -1);
-  if (prior.filter((block) => block.xp > 0).length < 2) return null;
+  const worked = prior.filter((block) => block.xp > 0);
 
-  const usual = median(prior.map((block) => block.xp));
-  if (usual <= 0) return null;
+  const usual = median((worked.length >= 2 ? prior : worked).map((block) => block.xp));
+  if (usual < WEEK_FLOOR) return null;
 
   const was = blocks[blocks.length - 2]!;
-  const before = blocks[blocks.length - 3]!;
+  const before = blocks[blocks.length - 3];
   const sliding =
+    before !== undefined &&
     directionOf(now.xp, was.xp) === 'down' &&
     directionOf(was.xp, before.xp) === 'down' &&
     now.xp <= usual * SLIDE_SHARE;
@@ -213,6 +217,7 @@ export function findSlump({ blocks, all, tasks, nameOf, today }: SlumpInput): Sl
   return {
     now: now.xp,
     usual,
+    workedWeeks: worked.length,
     drop: Math.round(Math.max(0, (1 - now.xp / usual) * 100)),
     idle,
     steps,
@@ -272,7 +277,7 @@ function slumpSteps({
     steps.push({
       id: 'best-subject',
       title: `Start with ${nameOf(top[0])}`,
-      detail: `It was your biggest subject before the dip, with ${top[1]} tasks done in the 4 weeks before this one. Going back to what you already do well is the quickest way back in.`,
+      detail: `It was your biggest subject before the dip, with ${top[1]} tasks done in the ${prior.length === 1 ? 'week' : `${prior.length} weeks`} before this one. Going back to what you already do well is the quickest way back in.`,
       to: '/tasks',
       link: 'Pick a task',
     });

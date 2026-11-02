@@ -176,6 +176,7 @@ def _build_series(username, user, today):
     totals = xp_tracking.daily_totals(username)
     history = focus_tracking.history_for(username)
     rated = _ratings_by_day(username)
+    done_days = db.done_days_for(username)
 
     # Start at the first recorded day when it's earlier than created_at. Alpha's
     # record starts eleven months before its stored creation date, and walking
@@ -197,9 +198,10 @@ def _build_series(username, user, today):
 
         record = history.get(iso) or {}
         try:
-            focus_minutes = round(float(record.get('seconds', 0) or 0) / 60)
+            seconds = float(record.get('seconds', 0) or 0)
         except (TypeError, ValueError, AttributeError):
-            focus_minutes = 0
+            seconds = 0
+        focus_minutes = round(seconds / 60)
         cumulative_focus_min += focus_minutes
 
         # Zeros rather than absent keys on an unrated day, so every row has the
@@ -225,6 +227,9 @@ def _build_series(username, user, today):
             'quality_score': say['quality_score'],
             'avg_difficulty': say['avg_difficulty'],
             'avg_execution': say['avg_execution'],
+            # The same days the Consistency score counts (`_daily_rollup`), so
+            # the tile, the chart and the score can't disagree about a day.
+            'worked': iso in totals or seconds > 0 or iso in done_days,
         })
         day += timedelta(days=1)
         day_number += 1

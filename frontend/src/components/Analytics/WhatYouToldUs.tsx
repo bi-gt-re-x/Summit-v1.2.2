@@ -54,8 +54,8 @@ export function WhatYouToldUs({
   const note =
     headStart > 0
       ? credit > 0
-        ? `From your sign-up answers. They cover ${credit} of the days Analytics needs, up to ${headStart} as you keep logging.`
-        : `From your sign-up answers. They count for up to ${headStart} days toward Analytics as you log.`
+        ? `From your sign-up answers. They cover ${credit} of the days Analytics needs.`
+        : `From your sign-up answers. They count for ${headStart} days toward Analytics once you log your first day.`
       : 'From your sign-up answers. Add more detail to open Analytics sooner.';
 
   return (

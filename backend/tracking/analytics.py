@@ -401,6 +401,18 @@ def _daily_rollup(username, tasks=None, events=None, focus_history=None):
             if task.get('met_deadline'):
                 row['on_time'] += 1
 
+    # Focus is measured against the goal on every day worked, from the first day
+    # focus was logged, at the last goal set. Counting only the days logged meant
+    # a short session lowered the score and not logging at all left it alone, and
+    # an account that hasn't started logging has nothing to be behind on.
+    goal = None
+    for day_iso in sorted(days):
+        row = days[day_iso]
+        if row['focus_seconds'] > 0:
+            goal = row['focus_goal_seconds']
+        elif goal is not None and row['worked']:
+            row['focus_goal_seconds'] += goal
+
     return days
 
 
@@ -537,9 +549,9 @@ def score_window(rollup, start, end, daily_goal):
     efficiency_score = (round(_clamp(deadline_score))
                         if deadline_tracked >= EFFICIENCY_MIN_DEADLINES else None)
 
-    # 5. Focus — tracked focus time against the daily focus goal, counted over
-    #    the days focus was actually tracked. See `_daily_rollup`, which is
-    #    where a day with a row and no seconds is dropped.
+    # 5. Focus — tracked focus time against the daily focus goal, over the days
+    #    logged and the days worked without logging. A day off is Consistency's
+    #    to count. See the end of `_daily_rollup`.
     focus_ratio = (focused_sec / focus_goal_sec) if focus_goal_sec > 0 else 0.0
     focus_score = round(_clamp(focus_ratio * 100)) if focus_days >= FOCUS_MIN_DAYS else None
 

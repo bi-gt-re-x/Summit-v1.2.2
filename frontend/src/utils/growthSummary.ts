@@ -164,7 +164,7 @@ function rollingRate(days: GrowthDay[], window = 7): number[] {
   return days.map((_, index) => {
     const from = Math.max(0, index - window + 1);
     const slice = days.slice(from, index + 1);
-    const active = slice.filter((day) => (Number(day.xp_earned) || 0) > 0).length;
+    const active = slice.filter(isActiveDay).length;
     return slice.length ? (active / slice.length) * 100 : 0;
   });
 }
@@ -238,7 +238,7 @@ export function summaryFigures(slice: RangeSlice): GrowthSummaryFigures {
   // off would raise the figure it ought to lower.
   const rate = (days: GrowthDay[]) =>
     days.length
-      ? (days.filter((day) => (Number(day.xp_earned) || 0) > 0).length / days.length) * 100
+      ? (days.filter(isActiveDay).length / days.length) * 100
       : 0;
 
   // Quality is what the reader said about the work: how hard it was times how
@@ -372,6 +372,7 @@ export function heatmapGrid(all: GrowthDay[], window: HeatWindowKey): HeatRow[] 
 
   const byDate = new Map<string, number>();
   days.forEach((day) => byDate.set(day.date, Number(day.xp_earned) || 0));
+  const active = new Set(days.filter(isActiveDay).map((day) => day.date));
 
   // Back from the Saturday of the newest week, so the last row is the week the
   // reader is living in and the newest day sits where the eye already is.
@@ -392,9 +393,11 @@ export function heatmapGrid(all: GrowthDay[], window: HeatWindowKey): HeatRow[] 
         cells.push({ date: null, xp: 0, level: 0 });
         continue;
       }
-      // Anything above zero gets at least the faintest band, so a 5 XP day is
-      // never indistinguishable from a day off.
-      const level = xp <= 0 || peak <= 0 ? 0 : Math.max(1, Math.ceil((xp / peak) * 4));
+      // Any work gets at least the faintest band, so a 5 XP day or a day of
+      // focus with no XP is never indistinguishable from a day off.
+      const level = !active.has(date)
+        ? 0
+        : xp <= 0 || peak <= 0 ? 1 : Math.max(1, Math.ceil((xp / peak) * 4));
       cells.push({ date, xp, level });
 
       // The month is named once, on the week it opens in — the first week of
@@ -1108,7 +1111,7 @@ export function growthInsights(slice: RangeSlice): Insight[] {
   // Always sayable, and the one every other rule can fall back on: how much of
   // the range had anything on it at all.
   const worked = current.filter((day) => (Number(day.xp_earned) || 0) > 0);
-  const active = worked.length;
+  const active = current.filter(isActiveDay).length;
   if (active > 0) {
     const share = Math.round((active / current.length) * 100);
     out.push(

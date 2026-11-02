@@ -33,10 +33,11 @@ const fmt = (value: number) => Math.round(value).toLocaleString('en-US');
 // The slump alert
 // --------------------------------------------------------------------------
 export function SlumpAlert({ slump }: { slump: Slump }) {
+  const one = slump.workedWeeks === 1;
   const lead =
     slump.now === 0
-      ? `No XP in the last 7 days. Your usual week is about ${fmt(slump.usual)} XP.`
-      : `You earned ${fmt(slump.now)} XP in the last 7 days, ${slump.drop}% under your usual ${fmt(slump.usual)}.`;
+      ? `No XP in the last 7 days. ${one ? 'Your last working week was' : 'Your usual week is'} about ${fmt(slump.usual)} XP.`
+      : `You earned ${fmt(slump.now)} XP in the last 7 days, ${slump.drop}% under ${one ? 'your last working week of' : 'your usual'} ${fmt(slump.usual)}.`;
 
   return (
     <section className="ax-slump" role="alert" aria-labelledby="ax-slump-title">

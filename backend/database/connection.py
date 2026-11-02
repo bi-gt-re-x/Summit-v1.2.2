@@ -1736,6 +1736,11 @@ def series_signature(user_id):
         for table, expression, clause in (
             ('xp_events', 'COUNT(*) || \'/\' || CAST(COALESCE(SUM(amount), 0) AS INTEGER)', 'TRUE'),
             ('focus_days', 'COUNT(*) || \'/\' || CAST(COALESCE(SUM(seconds), 0) AS INTEGER)', 'TRUE'),
+            # A finished task is what makes a day count as worked, whether or
+            # not the ledger has an event for it.
+            ('tasks',
+             'COUNT(*) || \'/\' || COALESCE(SUM(julianday(substr(completed_at, 1, 19))), 0)',
+             "status = 'done' AND completed_at IS NOT NULL"),
             # Only the rated, finished rows reach the series, so only their
             # count and the sum of what they are rated matter here.
             ('tasks',
@@ -1799,6 +1804,21 @@ def rollup_signature(user_id):
                 (user_id,)).fetchone()
             parts.append(str(row['sig'] if row else ''))
         return ':'.join(parts)
+    finally:
+        con.close()
+
+
+def done_days_for(user_id):
+    """Every day this account finished a task, for the days worked in the series."""
+    con = connect()
+    try:
+        if not _schema(con, 'tasks'):
+            return set()
+        rows = con.execute(
+            'SELECT DISTINCT substr(completed_at, 1, 10) AS day FROM "tasks" '
+            "WHERE user_id = ? AND status = 'done' AND completed_at IS NOT NULL",
+            (user_id,)).fetchall()
+        return {row['day'] for row in rows if row['day']}
     finally:
         con.close()
 

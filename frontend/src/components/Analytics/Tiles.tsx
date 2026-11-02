@@ -79,7 +79,7 @@ export function Tiles({
       series: sparks.consistency,
       tone: 'amber',
       hint:
-        'How many days you did any work.',
+        'How many days in this window you did any work. Your growth score always reads the last 90 days.',
     },
     {
       key: 'quality',

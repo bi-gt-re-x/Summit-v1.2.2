@@ -71,6 +71,36 @@ describe('findSlump', () => {
     expect(findSlump({ blocks: weekBlocks(all), all, tasks: [], nameOf })).toBeNull();
   });
 
+  it('can call a bad second week a slump, with one week to go on', () => {
+    const all = [...series('2026-09-01', 7, 50), ...series('2026-09-08', 0, 0, 7)];
+    const slump = findSlump({ blocks: weekBlocks(all), all, tasks: [], nameOf });
+    expect(slump?.usual).toBe(350);
+    expect(slump?.workedWeeks).toBe(1);
+    expect(slump?.drop).toBe(100);
+  });
+
+  it('still reads the third week after a good first and an empty second', () => {
+    const all = [...series('2026-09-01', 7, 50), ...series('2026-09-08', 0, 0, 14)];
+    const slump = findSlump({ blocks: weekBlocks(all), all, tasks: [], nameOf });
+    expect(slump?.usual).toBe(350);
+    expect(slump?.workedWeeks).toBe(1);
+  });
+
+  it('stays quiet when the first week was too small to be a usual', () => {
+    const all = [...series('2026-09-01', 2, 10, 5), ...series('2026-09-08', 0, 0, 7)];
+    expect(findSlump({ blocks: weekBlocks(all), all, tasks: [], nameOf })).toBeNull();
+  });
+
+  it('stays quiet on a second week about like the first', () => {
+    const all = series('2026-09-01', 14, 50);
+    expect(findSlump({ blocks: weekBlocks(all), all, tasks: [], nameOf })).toBeNull();
+  });
+
+  it('needs at least one finished week to compare against', () => {
+    const all = series('2026-09-01', 2, 50, 11);
+    expect(findSlump({ blocks: weekBlocks(all), all, tasks: [], nameOf })).toBeNull();
+  });
+
   it('needs a usual week before it can call one a slump', () => {
     const all = [...series('2026-09-01', 0, 0, 28), ...series('2026-09-29', 1, 10, 6)];
     expect(findSlump({ blocks: weekBlocks(all), all, tasks: [], nameOf })).toBeNull();

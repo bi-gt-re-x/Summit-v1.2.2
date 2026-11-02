@@ -266,17 +266,16 @@ export function Building({
           {remaining === 1 ? 'One more day' : `${remaining} more days`} with work on{' '}
           {remaining === 1 ? 'it' : 'them'}, whenever you do them.
         </p>
-        {/* The head start from the About you answers. Each day recorded also
-            counts one of its days until it is spent, which is why the count
-            above and the days left do not add up to the total. */}
+        {/* The head start from the About you answers. All of it counts from the
+            first day recorded, which is why the count above and the days left
+            do not add up to the total. */}
         {headStart > 0 && (
           <p className="ax-building-credit">
             {credit > 0
               ? `${credit} of these ${credit === 1 ? 'day comes' : 'days come'} from what you told us at sign-up.`
               : 'What you told us at sign-up gives you a head start.'}{' '}
             {credit < headStart
-              ? `Until ${headStart} are in, each day you log counts twice.`
-              : 'No head start left.'}
+              && `Log your first day and the ${headStart} from your sign-up answers count right away.`}
           </p>
         )}
         {/* What "with work on them" means, spelled out. The count above is the

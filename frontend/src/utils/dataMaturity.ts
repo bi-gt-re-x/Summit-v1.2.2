@@ -208,10 +208,10 @@ export interface Maturity {
    * Days counted toward the stages from what the account said about itself
    * at sign-up (utils/background), on top of `activeDays`.
    *
-   * Never more than `activeDays`: a description of where somebody stands is
-   * context the first weeks cannot give, but it is not a record, so it can at
-   * most halve a wait and never open a stage on its own. Absent on a maturity
-   * built without one, which reads as 0.
+   * All of it from the first day recorded, so it really does skip the early
+   * days. None before that: a description of where somebody stands isn't a
+   * record, and with nothing recorded every panel it opened would be empty.
+   * Absent on a maturity built without one, which reads as 0.
    */
   credit?: number;
 }
@@ -247,16 +247,14 @@ function daysBetween(from: string, to: string): number {
 export function dataMaturity(days: GrowthDay[], headStart = 0): Maturity {
   const active = days.filter(isActiveDay);
   const activeDays = countActiveDays(days);
-  /* The head start counts for at most as many days as are actually recorded.
-     See `credit` on Maturity. */
-  const credit = Math.max(0, Math.min(headStart, activeDays));
+  /* See `credit` on Maturity. */
+  const credit = activeDays > 0 ? Math.max(0, headStart) : 0;
   const counted = activeDays + credit;
   const stage = stageFor(counted);
 
   const at = STAGES.indexOf(stage);
   const next = at < STAGES.length - 1 ? STAGES[at + 1]! : null;
-  /* Real days still to record. Each one also earns a day of head start until
-     the head start runs out, which is why the gap is halved while it lasts. */
+  /* Real days still to record. The first one also brings in the head start. */
   const toNext = next ? realDaysTo(STAGE_FLOOR[next], activeDays, headStart) : null;
 
   /* Through the current stage, not through the whole ladder. A bar that
@@ -288,12 +286,12 @@ export function dataMaturity(days: GrowthDay[], headStart = 0): Maturity {
 }
 
 /**
- * Real active days still needed to count `target`, when each day recorded
- * also earns a day of head start until `headStart` is spent.
+ * Real active days still needed to count `target`, when the first day recorded
+ * brings in the whole of `headStart`.
  */
 export function realDaysTo(target: number, activeDays: number, headStart = 0): number {
   for (let more = 0; ; more += 1) {
     const days = activeDays + more;
-    if (days + Math.min(headStart, days) >= target) return more;
+    if (days + (days > 0 ? headStart : 0) >= target) return more;
   }
 }

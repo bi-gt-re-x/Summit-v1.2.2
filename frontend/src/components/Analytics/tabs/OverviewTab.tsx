@@ -174,6 +174,13 @@ export function OverviewTab({
           <PeriodSummary all={all} tasks={tasks} nameOf={nameOf} />
         </section>
 
+        {/* A new account can be in a slump too, and it outranks every chart. */}
+        {slump && slump.steps.length > 0 && (
+          <section className="ax-section">
+            <SlumpAlert slump={slump} />
+          </section>
+        )}
+
         {/* A dated goal is a fact on day one. Draws nothing without one. */}
         <GoalForecast onBooked={refreshAfterBooking} reload={model.nudge} />
 

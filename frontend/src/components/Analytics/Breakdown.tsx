@@ -187,7 +187,7 @@ export function ConsistencyPanel({ rows }: ConsistencyPanelProps) {
         <PanelNote label="How this works">
           <ul className="ax-tips">
             <li><b>Any work counts:</b> Do anything at all and the day counts.</li>
-            <li><b>Size doesn't matter:</b> 15 minutes counts the same as 6 hours.</li>
+            <li><b>Darker means more XP:</b> Compared with your best day this year.</li>
           </ul>
         </PanelNote>
       }
@@ -241,11 +241,11 @@ export function ConsistencyPanel({ rows }: ConsistencyPanelProps) {
       </div>
 
       <div className="ax-heat-key">
-        <span>Less consistent</span>
+        <span>Day off</span>
         {[0, 1, 2, 3, 4].map((level) => (
           <i key={level} className="ax-heat-cell" data-level={level} />
         ))}
-        <span>More consistent</span>
+        <span>Most XP</span>
       </div>
     </Panel>
   );

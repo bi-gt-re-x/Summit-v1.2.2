@@ -197,7 +197,7 @@ export function useQuestTarget(to: string | null): { to: string | null; wait: st
   const starter = useStarter();
   const feature = to ? featureForPath(to) : undefined;
   if (!feature || !starter.isLocked(feature.id)) return { to, wait: null };
-  return { to: null, wait: `${feature.name} opens after ${daysOfTasks(feature.after - starter.taskDays)}.` };
+  return { to: null, wait: `${feature.name} opens after ${daysOfTasks(starter.opensAfter(feature.id) - starter.taskDays)}.` };
 }
 
 function QuestRow({ quest, busy, popped, onClaim }: {

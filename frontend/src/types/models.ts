@@ -38,6 +38,8 @@ export interface UserStats {
   tasks_completed: number;
   /** Days with at least one finished task, up to 30. What unlocks pages (utils/starter). */
   task_days?: number;
+  /** Days off the wait for Analytics, from the About you answers. */
+  head_start?: number;
   current_streak: number;
   best_streak: number;
   charge: number;
@@ -473,6 +475,11 @@ export interface GrowthDay {
    * "the work was bad", and the two must never be drawn as the same thing.
    */
   rated_tasks: number;
+  /**
+   * Whether the server counts this as a day worked: a ledger event, focus time
+   * or a finished task. The Consistency score reads the same days.
+   */
+  worked?: boolean;
   /** Mean of difficulty × execution over that day's rated tasks, 1-25. */
   quality_score: number;
   avg_difficulty: number;

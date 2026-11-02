@@ -390,3 +390,93 @@ def test_an_unmeasured_part_files_no_row_and_reads_on_the_growth_tab(client):
         assert not analytics.history('tester', name)
     parts = periods(client, '30d')['current']['parts']
     assert parts['efficiency'] is None and parts['focus'] is None
+
+
+# --------------------------------------------------------------------------
+# Focus: what isn't logged still counts
+# --------------------------------------------------------------------------
+def _focus_score(logged, worked_only, length=10):
+    """`logged` and `worked_only` are how many days back each kind of day was."""
+    today = date.today()
+    iso = lambda back: (today - timedelta(days=back)).isoformat()
+    rollup = analytics._daily_rollup(
+        'nobody',
+        tasks=[{'status': 'done', 'completed_at': iso(back) + 'T12:00:00', 'xp_value': 10}
+               for back in worked_only],
+        events=[],
+        focus_history={iso(back): {'seconds': 7200, 'goal_hours': 2} for back in logged})
+    return analytics.score_window(rollup, today - timedelta(days=length - 1), today, 100)
+
+
+def test_skipping_the_log_on_a_day_worked_lowers_focus():
+    """Hitting the goal on three days and logging nothing on three more was 100%."""
+    assert _focus_score((5, 6, 7), ())['parts']['focus'] == 100
+    scored = _focus_score((5, 6, 7), (2, 3, 4))
+    assert scored['parts']['focus'] == 50
+    assert scored['figures']['focus']['goal_minutes'] == 720
+
+
+def test_work_before_the_first_session_isnt_a_skipped_log():
+    """Starting to use the timer can't punish the months before it."""
+    assert _focus_score((0, 1, 2), (5, 6, 7))['parts']['focus'] == 100
+
+
+def test_never_logging_is_left_out_rather_than_counted_against():
+    assert _focus_score((), (0, 1, 2))['parts']['focus'] is None
+
+
+def test_a_later_goal_is_the_one_a_skipped_day_is_held_to():
+    today = date.today()
+    iso = lambda back: (today - timedelta(days=back)).isoformat()
+    rollup = analytics._daily_rollup(
+        'nobody',
+        tasks=[{'status': 'done', 'completed_at': iso(0) + 'T12:00:00', 'xp_value': 10}],
+        events=[],
+        focus_history={iso(3): {'seconds': 3600, 'goal_hours': 2},
+                       iso(1): {'seconds': 3600, 'goal_hours': 4}})
+    assert rollup[iso(0)]['focus_goal_seconds'] == 4 * 3600
+
+
+# --------------------------------------------------------------------------
+# Consistency: one set of days
+# --------------------------------------------------------------------------
+def _series(client):
+    return client.get('/api/get_growth_data', params={'days': 0}).json()['growth_data']
+
+
+def _worked_days(client):
+    return {row['date'] for row in _series(client) if row['worked']}
+
+
+def test_the_series_and_the_score_count_the_same_days_worked(client):
+    """A finished task with no ledger event was a day for the score and not the tile."""
+    finish(client, xp=40)
+    made = client.post('/api/tasks', json={'name': 'unledgered', 'xp_reward': 10,
+                                           'due_date': ''}).json()
+    db.update_row('tasks', made['task_id'],
+                  {'status': 'done', 'completed_at': ago(3) + 'T12:00:00'}, user_id='tester')
+    client.post('/api/focus_sync', json={'date': ago(5), 'focused_seconds': 10, 'goal_hours': 2})
+
+    worked = _worked_days(client)
+    assert worked == {day for day, row in analytics._daily_rollup('tester').items() if row['worked']}
+    assert ago(3) in worked and ago(5) in worked
+
+    last = _series(client)[-90:]
+    rate = sum(1 for row in last if row['worked']) / len(last) * 100
+    card = client.post('/api/get_growth_ratings').json()
+    assert card['metrics']['consistency']['score'] == round(rate)
+
+
+def test_a_task_finished_later_reaches_the_cached_series(client):
+    finish(client, xp=40)
+    assert ago(4) not in _worked_days(client)
+    made = client.post('/api/tasks', json={'name': 'later', 'xp_reward': 10, 'due_date': ''}).json()
+    db.update_row('tasks', made['task_id'],
+                  {'status': 'done', 'completed_at': ago(4) + 'T12:00:00'}, user_id='tester')
+    assert ago(4) in _worked_days(client)
+
+
+def test_the_stats_say_how_much_head_start_the_account_has(client):
+    assert client.get('/api/stats').json()['stats']['head_start'] == 0
+    db.insert_row('user_background', {'user_id': 'tester', 'head_start': 7, 'detail': 'detailed'})
+    assert client.get('/api/stats').json()['stats']['head_start'] == 7

@@ -68,6 +68,7 @@ export const ACTIVE_DAY_MEANS = 'finish a task, log focus time or earn XP';
  */
 export function isActiveDay(day: GrowthDay): boolean {
   return (
+    day.worked === true ||
     (Number(day.tasks_completed) || 0) > 0 ||
     (Number(day.focus_minutes) || 0) > 0 ||
     (Number(day.xp_earned) || 0) > 0

@@ -116,10 +116,9 @@ describe('the countdown', () => {
   });
 
   it('counts the head start the way Analytics does', () => {
-    // 3 real days and a head start of 6: 3 of it counts so far, so 6 counted
-    // and 4 to go for Performance. Each new day earns one more of head start,
-    // so that's 2 real days.
-    expect(stageCountdown(dataMaturity(record(5, 3), 6))).toBe(
+    // 2 real days and a head start of 6: all of it counts from the first day,
+    // so 8 counted and 2 to go for Performance.
+    expect(stageCountdown(dataMaturity(record(5, 2), 6))).toBe(
       '2 more active days and Analytics opens Performance.',
     );
   });

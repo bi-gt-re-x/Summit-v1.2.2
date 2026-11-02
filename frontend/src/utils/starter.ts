@@ -149,12 +149,22 @@ export interface StarterInput {
   /** Days with at least one finished task. */
   taskDays: number;
   prefs: Pick<Prefs, 'features_open'>;
+  headStart?: number;
 }
 
 /** Whether this feature is still locked. */
-export function isLocked({ createdAt, taskDays, prefs }: StarterInput, id: FeatureId): boolean {
+/**
+ * Days of tasks a feature waits for. The About you answers take days off
+ * Analytics, the one page they promise to open sooner, down to one day of work.
+ */
+export function opensAfter(id: FeatureId, headStart = 0): number {
+  const after = BY_ID.get(id)?.after ?? 0;
+  return id === 'analytics' ? Math.max(1, after - headStart) : after;
+}
+
+export function isLocked({ createdAt, taskDays, prefs, headStart }: StarterInput, id: FeatureId): boolean {
   if (!isNewAccount(createdAt) || prefs.features_open.includes(id)) return false;
-  return taskDays < (BY_ID.get(id)?.after ?? 0);
+  return taskDays < opensAfter(id, headStart);
 }
 
 export function stageOf(input: StarterInput): Stage {
@@ -163,9 +173,9 @@ export function stageOf(input: StarterInput): Stage {
 
 /** The next page to open, and how many more days of tasks it takes. */
 export function nextUnlock(input: StarterInput): { feature: Feature; days: number } | null {
-  const waiting = FEATURES.filter((feature) => isLocked(input, feature.id)).sort((a, b) => a.after - b.after);
+  const waiting = FEATURES.filter((feature) => isLocked(input, feature.id)).sort((a, b) => opensAfter(a.id, input.headStart) - opensAfter(b.id, input.headStart));
   const feature = waiting[0];
-  return feature ? { feature, days: feature.after - input.taskDays } : null;
+  return feature ? { feature, days: opensAfter(feature.id, input.headStart) - input.taskDays } : null;
 }
 
 /**
@@ -175,8 +185,8 @@ export function nextUnlock(input: StarterInput): { feature: Feature; days: numbe
 export function newlyOpened(input: StarterInput): Feature[] {
   if (!isNewAccount(input.createdAt)) return [];
   return FEATURES.filter(
-    (feature) => !input.prefs.features_open.includes(feature.id) && input.taskDays >= feature.after,
-  ).sort((a, b) => a.after - b.after);
+    (feature) => !input.prefs.features_open.includes(feature.id) && input.taskDays >= opensAfter(feature.id, input.headStart),
+  ).sort((a, b) => opensAfter(a.id, input.headStart) - opensAfter(b.id, input.headStart));
 }
 
 /** "1 more day of tasks", "3 more days of tasks". */

@@ -44,6 +44,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
+from backend.api import background as background_api
 from backend.api.guard import current_username
 from backend.api.reply import fail, ok
 from backend.database import connection as db
@@ -79,6 +80,8 @@ def _stats_of(user):
         "tasks_completed": user.get('tasks_completed', 0),
         # What unlocks pages for a new account (frontend/src/utils/starter.ts).
         "task_days": db.task_days(user.get('username')),
+        # Days off the wait for Analytics, from the About you answers.
+        "head_start": background_api.head_start(user.get('username')),
         "charge": user.get('charge', 0),
         **xp_tracking.streak_fields(user),
     }

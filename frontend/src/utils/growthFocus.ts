@@ -41,7 +41,7 @@
  * hour is stated on the card rather than passed off as the reader's own target.
  */
 import type { GrowthDay, Task } from '@/types';
-import { activeRate, countActiveDays } from './activeDay';
+import { activeRate, countActiveDays, isActiveDay } from './activeDay';
 import { gradeFor as letterFor } from './analyticalScore';
 import type { Subject } from '@/services/subjects';
 
@@ -620,14 +620,14 @@ export function classifyDays(all: GrowthDay[], tasks: Task[]): Map<string, DayKi
   const kinds = new Map<string, DayKind>();
   all.forEach((day) => {
     const xp = num(day.xp_earned);
-    if (xp <= 0) {
+    if (!isActiveDay(day)) {
       kinds.set(day.date, 'missed');
       return;
     }
     const plan = plans.get(day.date);
     const kept = plan && plan.planned > 0 ? plan.met >= plan.planned : true;
-    if (xp >= median && kept) kinds.set(day.date, 'perfect');
-    else if (xp >= median / 2) kinds.set(day.date, 'strong');
+    if (xp > 0 && xp >= median && kept) kinds.set(day.date, 'perfect');
+    else if (xp > 0 && xp >= median / 2) kinds.set(day.date, 'strong');
     else kinds.set(day.date, 'partial');
   });
 
@@ -646,7 +646,7 @@ export function recoveryProfile(all: GrowthDay[], tasks: Task[]): RecoveryProfil
   let gap = 0;
   let longestGap = 0;
   all.forEach((day) => {
-    if (num(day.xp_earned) <= 0) {
+    if (!isActiveDay(day)) {
       gap += 1;
       return;
     }

@@ -8,6 +8,7 @@ import { useStats } from '@/hooks/useStats';
 import {
   FEATURES,
   isLocked as lockedFor,
+  opensAfter as waitFor,
   isNewAccount,
   newlyOpened,
   nextUnlock,
@@ -26,6 +27,8 @@ export interface Starter {
   /** Days with at least one finished task. */
   taskDays: number;
   isLocked: (id: FeatureId) => boolean;
+  /** Days of tasks a page waits for, with any head start taken off. */
+  opensAfter: (id: FeatureId) => number;
   /** The next page to open and how many more days of tasks it takes, or null. */
   next: { feature: Feature; days: number } | null;
   /** Pages the task days have opened that Mango hasn't announced yet. */
@@ -42,10 +45,11 @@ export function useStarter(): Starter {
   const { prefs, createdAt, ready: settingsReady, update } = useSettings();
   const { stats } = useStats();
   const taskDays = stats?.task_days ?? 0;
+  const headStart = stats?.head_start ?? 0;
   const opened = prefs.features_open;
   const ready = settingsReady && stats !== null;
 
-  const input = useMemo(() => ({ createdAt, taskDays, prefs: { features_open: opened } }), [createdAt, taskDays, opened]);
+  const input = useMemo(() => ({ createdAt, taskDays, headStart, prefs: { features_open: opened } }), [createdAt, taskDays, opened]);
   const stage: Stage = ready ? stageOf(input) : 'open';
 
   const isLocked = useCallback((id: FeatureId) => ready && lockedFor(input, id), [ready, input]);
@@ -73,12 +77,13 @@ export function useStarter(): Starter {
       fresh: isNewAccount(createdAt),
       taskDays,
       isLocked,
+      opensAfter: (id: FeatureId) => waitFor(id, headStart),
       next: ready ? nextUnlock(input) : null,
       unannounced: ready ? newlyOpened(input) : [],
       open,
       unlockAll,
       restart,
     }),
-    [ready, stage, createdAt, taskDays, isLocked, input, open, unlockAll, restart],
+    [ready, stage, createdAt, taskDays, headStart, isLocked, input, open, unlockAll, restart],
   );
 }

@@ -17,6 +17,28 @@ const joined = '2026-11-10T09:00:00';
 const none = { features_open: [] as string[] };
 const at = (taskDays: number, prefs = none, createdAt = joined) => ({ createdAt, taskDays, prefs });
 
+describe('the head start from the About you answers', () => {
+  const withStart = (taskDays: number, headStart: number) => ({ ...at(taskDays), headStart });
+
+  it('takes days off the wait for Analytics', () => {
+    expect(isLocked(withStart(2, 0), 'analytics')).toBe(true);
+    expect(isLocked(withStart(2, 4), 'analytics')).toBe(true);
+    expect(isLocked(withStart(3, 4), 'analytics')).toBe(false);
+    expect(nextUnlock(withStart(2, 4))?.days).toBeGreaterThan(0);
+  });
+
+  it('still needs one day of work', () => {
+    expect(isLocked(withStart(0, 7), 'analytics')).toBe(true);
+    expect(isLocked(withStart(1, 7), 'analytics')).toBe(false);
+    expect(newlyOpened(withStart(1, 7)).map((feature) => feature.id)).toEqual(['analytics']);
+  });
+
+  it('leaves every other page where it was', () => {
+    expect(isLocked(withStart(2, 7), 'goals')).toBe(true);
+    expect(isLocked(withStart(2, 7), 'spaces')).toBe(true);
+  });
+});
+
 describe('the ladder', () => {
   it('opens nothing on day one, however many tasks get done', () => {
     expect(FEATURES.every((feature) => isLocked(at(1), feature.id))).toBe(true);

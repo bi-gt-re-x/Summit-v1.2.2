@@ -199,20 +199,24 @@ describe('the hand-off to the gated tabs', () => {
 
 
 describe('the head start from the About you answers', () => {
-  it('counts for no more days than are actually recorded', () => {
+  it('counts in full from the first day recorded, and not before', () => {
     expect(dataMaturity(series(10, 0), 7).credit).toBe(0);
     expect(dataMaturity(series(10, 0), 7).stage).toBe('new');
-    expect(dataMaturity(series(10, 3), 7).credit).toBe(3);
+    expect(dataMaturity(series(10, 1), 7).credit).toBe(7);
+    expect(dataMaturity(series(10, 1), 7).stage).toBe('weekly');
+    expect(dataMaturity(series(10, 3), 7).credit).toBe(7);
+    expect(dataMaturity(series(10, 3), 7).stage).toBe('developing');
     expect(dataMaturity(series(20, 10), 7).credit).toBe(7);
   });
 
   it('moves the stage on by what it counts for', () => {
-    // 4 recorded + 4 counted = 8, past the weekly floor of 7.
-    expect(dataMaturity(series(10, 4)).stage).toBe('early');
-    expect(dataMaturity(series(10, 4), 7).stage).toBe('weekly');
+    // 2 recorded + 4 counted = 6, past the weekly floor of 5.
+    expect(dataMaturity(series(10, 2)).stage).toBe('early');
+    expect(dataMaturity(series(10, 2), 4).stage).toBe('weekly');
   });
 
-  it('says how many real days are left, with each one counting twice while it lasts', () => {
+  it('says how many real days are left, with the head start taken off', () => {
+    expect(realDaysTo(5, 0, 7)).toBe(1);
     expect(realDaysTo(14, 0, 0)).toBe(14);
     expect(realDaysTo(14, 4, 7)).toBe(3);
     expect(realDaysTo(14, 0, 7)).toBe(7);

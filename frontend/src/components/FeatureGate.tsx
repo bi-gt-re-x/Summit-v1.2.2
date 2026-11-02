@@ -63,7 +63,7 @@ export function FeatureGate() {
         </div>
 
         <p className="gs-when">
-          {feature.name} opens after {daysOfTasks(feature.after - starter.taskDays)}. Any day you finish a task
+          {feature.name} opens after {daysOfTasks(starter.opensAfter(feature.id) - starter.taskDays)}. Any day you finish a task
           counts. Until then, Dashboard, Calendar and Log are all you need.
         </p>
 
