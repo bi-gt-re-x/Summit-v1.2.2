@@ -85385,24 +85385,24 @@
         {
           "title": "Name Core Traits",
           "mastery": "Identify three distinct personality traits of a specific character.",
-          "practice": "Write 3 adjectives that describe the protagonist Alice in the opening paragraph.",
-          "detail": "Read the opening paragraph, pause after each sentence, and ask yourself what you notice about Alice's behavior. Choose adjectives that are concrete, oppositional, and each captures a different facet of her personality. Write the three words on a line, then double-check that none repeat the same idea.",
-          "proof": "You list exactly three adjectives, for example: brave, curious, stubborn.",
+          "practice": "Write 3 adjectives that describe Alice in the opening paragraph of Lewis Carroll's *Alice's Adventures in Wonderland*.",
+          "detail": "Read the opening paragraph, pause at each clause, and ask yourself what you notice about Alice's behavior. Choose adjectives that are concrete and that each capture a different side of her. Write the three words on a line, then double-check that none repeat the same idea.",
+          "proof": "You list exactly three adjectives the paragraph backs up, for example: bored, curious, opinionated.",
           "pitfall": "Choosing vague or overlapping adjectives such as \"nice\" and \"good\" that do not differentiate the traits.",
           "minutes": 15,
           "problems": [
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Give one adjective that could describe Alice's personality in the opening paragraph.",
+              "prompt": "In Carroll's opening paragraph, Alice peeps into the book her sister is reading. Give one adjective this shows.",
               "answer": "curious.",
               "answer_kind": "word"
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "List three distinct personality adjectives for the protagonist Alice.",
-              "answer": "brave, curious, stubborn.",
+              "prompt": "In Carroll's opening paragraph, Alice is tired of doing nothing, peeps at her sister's book and calls a book with no pictures useless. List 3 adjectives for her.",
+              "answer": "bored, curious, opinionated.",
               "answer_kind": "list"
             },
             {
@@ -85457,7 +85457,7 @@
         {
           "title": "Show Trait Evolution",
           "mastery": "Demonstrate how a trait changes over two scenes.",
-          "practice": "Write two brief scenes (2-3 sentences each) where Alice's curiosity shifts from naive to investigative.",
+          "practice": "Write two brief scenes of your own (2-3 sentences each) where Alice's curiosity shifts from naive to investigative.",
           "detail": "Start with a scene where Alice asks a basic \"what is that?\" and ends with a scene where she gathers clues, notes observations, and forms a hypothesis. Use different verbs (\"asks\" vs. \"examines\") and note the stakes rising.",
           "proof": "The first scene shows simple wonder, the second shows purposeful questioning, and the contrast is evident.",
           "pitfall": "Repeating the same level of curiosity in both scenes, making the change invisible.",
@@ -85481,21 +85481,21 @@
               "slot": 3,
               "weight": "core",
               "prompt": "Write two brief scenes (2-3 sentences each) showing Alice's curiosity shifting from naive wonder to focused investigation.",
-              "answer": "Scene 1: Alice stared at the glittering artifact, marveling at its colors and whispering, \"What could this be?\"\nScene 2: Later, she opened a notebook, listed possible explanations, and set out to test each theory, turning wonder into methodical inquiry.",
+              "answer": "Scene 1: Alice stared at the glittering artifact, marveling at its colors and whispering, \"What could this be?\"\nScene 2: Later, she opened a notebook, listed possible explanations, and set out to test each theory, turning wonder into methodical inquiry.",
               "answer_kind": "paragraph"
             },
             {
               "slot": 4,
               "weight": "stretch",
               "prompt": "Write a pair of scenes where Alice's curiosity appears to change, but the change is so subtle that a reader might miss it; explain why the shift is barely perceptible.",
-              "answer": "Scene 1: Alice glanced at the locked drawer and asked herself, \"What's inside?\"\nScene 2: She later touched the knob again, lingering a fraction longer before walking away. The pause is only a slight lengthening of attention, making the evolution easy to overlook.",
+              "answer": "Scene 1: Alice glanced at the locked drawer and asked herself, \"What's inside?\"\nScene 2: She later touched the knob again, lingering a fraction longer before walking away. The pause is only a slight lengthening of attention, making the evolution easy to overlook.",
               "answer_kind": "paragraph"
             },
             {
               "slot": 5,
               "weight": "stretch",
               "prompt": "Write two scenes where Alice's curiosity does not change at all, and state why this fails the step's goal.",
-              "answer": "Scene 1: Alice peered at the ancient map and said, \"So many symbols!\"\nScene 2: She later stared at the same map, again saying, \"So many symbols!\" The lack of any shift in questioning or action shows no evolution, violating the requirement to demonstrate trait change.",
+              "answer": "Scene 1: Alice peered at the ancient map and said, \"So many symbols!\"\nScene 2: She later stared at the same map, again saying, \"So many symbols!\" The lack of any shift in questioning or action shows no evolution, violating the requirement to demonstrate trait change.",
               "answer_kind": "paragraph"
             }
           ]
@@ -85535,7 +85535,7 @@
         {
           "title": "Integrate Trait into Plot",
           "mastery": "Weave the character's trait-driven choices into the story's conflict.",
-          "practice": "Write a 150-word paragraph where Alice's bravery drives the climax of a conflict with the antagonist Victor.",
+          "practice": "Write a 150-word story paragraph of your own where Alice's bravery drives the climax of a conflict with an invented antagonist, Victor.",
           "detail": "Outline the conflict briefly (Victor threatens the village). Then describe Alice's decisive, brave act (e.g., charging into the burning building). Highlight the cause-effect link: her bravery creates the climax, not an external event. Count words to stay within 150.",
           "proof": "The paragraph shows Alice choosing a risky action because of her bravery, leading to a turning point in the plot.",
           "pitfall": "Letting the climax happen without Alice's trait influencing the decision, making the trait feel decorative.",
@@ -85737,7 +85737,7 @@
           "title": "Build Mini Argument",
           "mastery": "Combine the claim and its three pieces of evidence into a coherent short argument.",
           "practice": "Write a 4-sentence paragraph that states the claim and then cites the three supporting words with page references.",
-          "detail": "Start with the exact claim as a topic sentence. For each supporting word, add a sentence that mentions the word, its location (page number), and explains its relevance. Keep each sentence focused on one piece of evidence. End with a concluding sentence that ties the evidence back to the claim.",
+          "detail": "Start with the exact claim as a topic sentence. For each supporting word, add one sentence that mentions the word, its location (page number), and why it matters. Keep each sentence on one piece of evidence, so the claim and the three words make exactly four sentences.",
           "proof": "Your paragraph follows the pattern: claim → evidence 1 → evidence 2 → evidence 3.",
           "pitfall": "Listing evidence without explaining how each supports the claim.",
           "minutes": 15,
@@ -85769,7 +85769,7 @@
           "title": "Draft Paragraph with Citations",
           "mastery": "Produce a polished paragraph that integrates claim, evidence, and analysis with proper citations.",
           "practice": "Using the same claim, write a 6-sentence paragraph that includes MLA-style in-text citations for each piece of evidence.",
-          "detail": "Begin with the claim as a clear thesis. Follow with three sentences, each introducing a supporting word, quoting it, and adding an MLA citation like (Author 45). After each citation, add a sentence that analyzes why that word supports the claim. Conclude with a sentence that summarizes the argument's significance. Proofread for citation accuracy.",
+          "detail": "Begin with the claim as a clear thesis. Follow with three sentences, each quoting a supporting word with an MLA citation like (Author 45). Add one sentence that analyzes how a word supports the claim. End with one sentence on why the argument matters, which makes six. Proofread for citation accuracy.",
           "proof": "Your paragraph contains three parenthetical citations matching the page numbers of the supporting words.",
           "pitfall": "Forgetting to include citations or using an incorrect citation format.",
           "minutes": 18,
@@ -86035,42 +86035,42 @@
         {
           "title": "Identify Authorial Purpose",
           "mastery": "Explain why the author wrote the work and what problem it intended to address.",
-          "practice": "Read the preface of Mary Shelley's *Frankenstein* and write one sentence stating the author's stated purpose.",
-          "detail": "Open the edition that includes the original 1818 preface. Highlight any sentences that mention the author's intent. Paraphrase that sentence in your own words, keeping it to one concise statement. Verify that you have not introduced plot details or themes that are not explicitly mentioned by the author.",
-          "proof": "The sentence matches the preface's claim that the novel explores \"the dangerous pursuit of knowledge.\".",
+          "practice": "Read the 1818 preface of Mary Shelley's *Frankenstein* and write one sentence stating the aim it gives for the novel.",
+          "detail": "Open an edition that prints the 1818 preface. Find the words \"my chief concern\" and highlight what the sentence says the book tries to avoid and to show. Paraphrase that in one concise statement, leaving out plot details and themes the preface does not mention. Then note who wrote it: in 1831 Mary Shelley said the preface was her husband's work.",
+          "proof": "Your sentence says the book means to avoid enervating novels and to show the worth of domestic affection and universal virtue.",
           "pitfall": "Summarizing the plot instead of focusing on the author's stated aim.",
           "minutes": 12,
           "problems": [
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "In the preface of *Frankenstein*, Mary Shelley describes the main danger of unchecked ambition with a single adjective. What is that adjective?",
-              "answer": "dangerous.",
+              "prompt": "The 1818 preface of 'Frankenstein' says it wants to show \"the amiableness of\" what kind of affection?",
+              "answer": "Domestic",
               "answer_kind": "word"
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Write one sentence that states the author's stated purpose in the preface of *Frankenstein*.",
-              "answer": "Mary Shelley states that she wrote *Frankenstein* to explore the dangerous pursuit of knowledge.",
+              "prompt": "In 1 sentence, state the aim the 1818 preface gives for 'Frankenstein'.",
+              "answer": "It says the book means to avoid the weakening effects of the novels of its day and to show the worth of family love and universal virtue.",
               "answer_kind": "sentence"
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Explain why summarizing the plot of *Frankenstein* would not satisfy the mastery goal of identifying authorial purpose.",
-              "answer": "Because the mastery requires stating the author's own declared aim, not retelling events; a plot summary ignores the preface's explicit purpose.",
+              "prompt": "In her 1831 introduction, Mary Shelley says of the 1818 preface, \"As far as I can recollect, it was entirely written by him.\" She means Percy Shelley. In 2 sentences, say why that matters when you call its aim hers.",
+              "answer": "The preface speaks as the author, but the words are probably Percy's, so it may be his account of the book more than hers. It's safer to say the preface states this aim, and to check it against what she says in 1831.",
               "answer_kind": "paragraph"
             }
           ]
         },
         {
           "title": "Map Contemporary Events",
-          "mastery": "Connect major historical events of the work's publication year to its themes and concerns.",
-          "practice": "List two political events from 1818 and one scientific breakthrough from the same year, then note one way each could influence *Frankenstein*.",
-          "detail": "Search a reliable timeline (e.g., Wikipedia's \"1818\") for notable events. Choose the Congress of Aix-la-Chapelle (political) and the publication of *The Life of a Man of Science* (scientific). For each, write a brief note (no more than 20 words) explaining a possible influence on Shelley's concerns about unchecked scientific progress or societal change.",
+          "mastery": "Connect major historical events from the years the work was written to its themes and concerns.",
+          "practice": "List two political events and one scientific debate from 1815 to 1817, then note one way each could influence *Frankenstein*.",
+          "detail": "Shelley began the book in 1816 and it came out in January 1818, so look at the years before that. You could choose the Spa Fields riots of 1816 and the Pentrich rising of 1817 (political) and the Abernethy-Lawrence debate over what life is (scientific). For each, write a brief note (no more than 20 words) explaining a possible influence on Shelley's concerns about unchecked science or social change.",
           "proof": "You produce three bullet points, each linking an event to a theme such as ambition, fear of technology, or social upheaval.",
-          "pitfall": "Choosing events unrelated to the work's cultural climate or giving vague connections.",
+          "pitfall": "Choosing events from after January 1818, which came too late to shape the book, or giving vague connections.",
           "minutes": 15,
           "problems": [
             {
@@ -86090,7 +86090,7 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "English Luddites smashed weaving machines from 1811 to 1816. Write 1 sentence linking that unrest to 'Frankenstein'.",
+              "prompt": "English Luddites smashed textile machines from 1811 to 1816. Write 1 sentence linking that unrest to 'Frankenstein'.",
               "answer": "Like the Luddites, the novel asks what happens when people build powerful new things without thinking about who they'll hurt.",
               "answer_kind": "sentence"
             }
@@ -86099,9 +86099,9 @@
         {
           "title": "Examine Publication Context",
           "mastery": "Describe the publishing conditions and audience expectations that shaped the work's form.",
-          "practice": "Find the original 1818 three-volume edition of *Frankenstein* and record its page count and price in shillings.",
-          "detail": "Use a library catalogue or a reputable digital archive (e.g., Project Gutenberg). Locate the bibliographic entry for the 1818 edition, copy the volume count, total pages, and listed price. Write the numbers exactly as they appear, using digits and the proper currency symbol.",
-          "proof": "You note \"3 volumes, 400 pages total, 1 shilling per volume,\" matching the bibliographic record.",
+          "practice": "Find a catalog record for the 1818 three-volume edition of *Frankenstein* and record its page counts and print run.",
+          "detail": "Use a library catalog or a rare book record, since a reading copy won't give you these facts. Copy the volume count and each volume's numbered pages. Penn's online Frankenstein site adds the publisher's accounts: 500 copies printed, sold at 10s 6d a set. Write down what you find and where you found it.",
+          "proof": "You note 3 volumes of 181, 156 and 192 numbered pages, printed in a run of 500 copies.",
           "pitfall": "Reporting modern paperback data instead of the original edition.",
           "minutes": 10,
           "problems": [
@@ -86115,15 +86115,15 @@
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "What was the price of each volume of the original 1818 three-volume edition of Frankenstein, in shillings?",
-              "answer": "1 shilling.",
+              "prompt": "How many copies of the 1818 edition of 'Frankenstein' were printed?",
+              "answer": "500",
               "answer_kind": "integer"
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "State the total page count and price per volume of the original 1818 edition of Frankenstein, and explain how these publishing conditions might have shaped its form.",
-              "answer": "≈280 pages total; 1 shilling per volume. The modest length and low price led to publication in three small volumes, encouraging serialized reading and limiting extensive footnotes.",
+              "prompt": "The 1818 'Frankenstein' came out as 3 volumes in a run of 500 copies. Explain how those conditions might have shaped its form and its readers.",
+              "answer": "Three volumes was a common shape for a new novel then, so the story had to be paced to fill three books. With only 500 copies printed, many readers likely met it through a lending library or a review.",
               "answer_kind": "paragraph"
             }
           ]
@@ -86155,7 +86155,7 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "The 1818 edition of 'Frankenstein' came out without Mary Shelley's name on it. Write 1 sentence on how that could've shaped its reviews.",
-              "answer": "With no name to go on, reviewers guessed at a male author and judged the book without any of the bias they might've brought to a young woman's novel.",
+              "answer": "With no name to go on, reviewers guessed from the dedication to Godwin, so Scott took it for Percy Shelley's and Croker judged it as a product of Godwin's school.",
               "answer_kind": "paragraph"
             },
             {
@@ -86172,7 +86172,7 @@
           "mastery": "Identify how the work follows or subverts the conventions of its contemporary literary genre.",
           "practice": "List three Gothic novel conventions and mark for each whether *Frankenstein* conforms (C) or subverts (S).",
           "detail": "Consult a standard reference on Gothic literature (e.g., a textbook chapter). Write the three conventions as bullet points, then place a single letter \"C\" or \"S\" after each, based on evidence from the text. Keep each line under 30 characters.",
-          "proof": "Your list shows, for example, \"Remote castle, C, Supernatural terror, S, Moral didacticism, C.\".",
+          "proof": "Your list shows, for example: wild setting, C; supernatural terror, S; nested narrators, C.",
           "pitfall": "Using vague descriptors like \"somewhat\" without a clear C/S label.",
           "minutes": 14,
           "problems": [
@@ -86203,39 +86203,39 @@
           "title": "Trace Ideological Influences",
           "mastery": "Explain how prevailing philosophical ideas of the era inform the work's themes.",
           "practice": "Identify two Enlightenment ideas and one Romantic notion present in *Frankenstein*, citing a specific passage for each.",
-          "detail": "Open a searchable e-edition. Use the search function to locate keywords like \"knowledge,\" \"nature,\" and \"monster.\" Record the page numbers and copy the short surrounding sentence (no more than 25 words) that illustrates the idea. Pair each citation with the corresponding philosophical label.",
-          "proof": "You cite, for example, the pursuit of knowledge (Enlightenment) on page 45, the critique of industrialization (Romantic) on page 112, and the emphasis on emotion (Romantic) on page 78.",
+          "detail": "Open a searchable e-edition and note whether it prints the 1818 or the 1831 text, since their chapter numbers differ. Search for words like \"knowledge,\" \"sublime\" and \"misery.\" Record who is speaking and the chapter, then copy the short sentence (no more than 25 words) that illustrates the idea. Pair each citation with its philosophical label.",
+          "proof": "You name your edition and cite, for example, faith in discovery from Walton's first letter, science as mastery from Waldman, and the sublime from Victor in the Alps.",
           "pitfall": "Listing ideas without linking them to a concrete passage.",
           "minutes": 20,
           "problems": [
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Identify one Enlightenment idea that appears in Frankenstein and give the page number where it is mentioned.",
-              "answer": "Pursuit of knowledge, page 45.",
+              "prompt": "Walton asks in his first letter, \"What may not be expected in a country of eternal light?\" Name the Enlightenment idea this carries.",
+              "answer": "Faith in progress through discovery.",
               "answer_kind": "phrase"
             },
             {
               "slot": 2,
               "weight": "warmup",
-              "prompt": "Identify one Romantic notion in Frankenstein and give the page number where it is mentioned.",
-              "answer": "Emphasis on emotion, page 78.",
+              "prompt": "After William and Justine die, Victor says the Alps' \"sublime and magnificent scenes\" consoled him. Name the Romantic notion this carries.",
+              "answer": "Sublime nature can heal the mind.",
               "answer_kind": "phrase"
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Cite a passage that shows a Romantic critique of industrialization in Frankenstein, stating the page number and the idea it illustrates.",
-              "answer": "The passage describing the \"desolate, barren waste\" of the laboratory on page 112 illustrates the Romantic critique of industrialization.",
-              "hint": "Look for language that links the laboratory to a loss of natural harmony.",
+              "prompt": "The creature tells Victor, \"I was benevolent and good; misery made me a fiend.\" In 1 sentence, name the idea Romantic writers took from Rousseau that this line echoes.",
+              "answer": "People start out good and are corrupted by how society treats them.",
+              "hint": "Think about what he blames for the change.",
               "answer_kind": "sentence"
             },
             {
               "slot": 4,
               "weight": "stretch",
-              "prompt": "Explain how the Enlightenment idea of rationalism and the Romantic notion of the sublime together shape Victor's ambition, referencing specific passages and their page numbers.",
-              "answer": "Victor's rationalist drive to master nature is shown on page 45 (\"the desire to penetrate the secrets of nature\"), while his later awe of the sublime Arctic landscape on page 112 (\"the boundless and powerful forces of nature\") reveals Romantic influence; together they illustrate how rational ambition is tempered by an overwhelming sense of the sublime, leading to his tragic hubris.",
-              "hint": "Combine the passage about scientific curiosity with the one describing the Arctic.",
+              "prompt": "Waldman says chemists \"penetrate into the recesses of nature.\" Victor later finds comfort in \"sublime and magnificent scenes.\" In 2 sentences, explain how the Enlightenment idea and the Romantic one pull against each other in Victor.",
+              "answer": "Waldman's line treats nature as something reason can search and master, and that hope drives Victor's experiment. The Alps give him what his science can't, a nature far bigger than he is that calms him, so the book sets the urge to conquer nature against the need to stand in awe of it.",
+              "hint": "Compare what each line wants from nature.",
               "answer_kind": "paragraph"
             }
           ]
@@ -86244,8 +86244,8 @@
           "title": "Synthesize Contextual Essay",
           "mastery": "Compose a short essay that integrates authorial purpose, historical events, and ideological influences into a coherent argument.",
           "practice": "Write a 250-word paragraph that explains how the science of Shelley's time shapes the novel's warning about creation.",
-          "detail": "Begin with a topic sentence linking the science of the period to the novel's theme. Insert two supporting sentences that cite the preface and an experiment such as Galvani's on frogs or Aldini's on an executed man. Conclude with a sentence that ties the historical context back to the author's purpose. Count words using any word-processor to stay within 250.",
-          "proof": "Your paragraph references Galvani or Aldini, the preface's purpose, and Romantic doubts about what science should do.",
+          "detail": "Begin with a topic sentence linking the science of the period to the novel's theme. Insert two supporting sentences that cite the preface's nod to Dr. Darwin and an experiment such as Galvani's on frogs or Aldini's on an executed man. Conclude with a sentence that ties the historical context back to the author's purpose. Count words using any word-processor to stay within 250.",
+          "proof": "Your paragraph references Galvani or Aldini, the preface's nod to Dr. Darwin, and Romantic doubts about what science should do.",
           "pitfall": "Drifting into plot summary instead of focusing on contextual analysis.",
           "minutes": 25,
           "problems": [
@@ -86290,8 +86290,8 @@
           "title": "Create Independent Contextual Guide",
           "mastery": "Produce a reusable checklist that prompts all necessary contextual considerations for any literary work.",
           "practice": "Draft a 6-item checklist, each item a concise phrase, covering purpose, contemporary events, publication facts, reception, genre, and ideology.",
-          "detail": "Write each item on a separate line, using no more than eight words per item. Verify that the list covers the six categories mentioned in the mastery statement. Keep the total character count under 150.",
-          "proof": "Your checklist reads: 1) Author's stated aim, 2) Year-specific events, 3) Original edition data, 4) First-reader reactions, 5) Genre conventions, 6) Dominant philosophies.",
+          "detail": "Write each item on a separate line, using no more than eight words per item. Verify that the list covers the six categories named in the practice line. Keep the total character count under 150.",
+          "proof": "Your checklist reads: 1) Author's stated aim, 2) Events of its time, 3) Original edition data, 4) First-reader reactions, 5) Genre conventions, 6) Dominant philosophies.",
           "pitfall": "Including more than six items or writing long explanatory sentences instead of brief prompts.",
           "minutes": 12,
           "problems": [
@@ -86313,7 +86313,7 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Write 1 short phrase for each checklist item on 'Frankenstein': purpose, events, publication, reception, genre, ideology.",
-              "answer": "Purpose: stir deep fears. Events: Luddite unrest. Publication: anonymous, 1818. Reception: Scott's praise, Croker's scorn. Genre: Gothic. Ideology: Romantic doubts about science.",
+              "answer": "Purpose: show the worth of family love. Events: Luddite unrest. Publication: anonymous, 1818. Reception: Scott's praise, Croker's scorn. Genre: Gothic. Ideology: Romantic doubts about science.",
               "answer_kind": "paragraph"
             }
           ]
@@ -86339,7 +86339,7 @@
           "practice": "Read Act 1, Scene 2 of Shakespeare's *Macbeth* and list all stage directions.",
           "detail": "Open the text and scan each line for brackets or italics that signal stage directions. Write them in a separate notebook, noting the line number. If a direction is described in the dialogue, underline it and add a brief note of its visual implication. This helps you separate spoken words from visual cues.",
           "proof": "You list the scene's directions, such as \"Alarum within\" and \"Exit Captain,\" and they match your edition.",
-          "pitfall": "Missing implicit directions embedded in dialogue, like \"She looks away\".",
+          "pitfall": "Missing directions hidden in the dialogue, like Duncan's \"Go, get him surgeons,\" which sends actors offstage.",
           "minutes": 15,
           "problems": [
             {
@@ -86400,32 +86400,32 @@
         {
           "title": "Analyze Subtext in Dialogue",
           "mastery": "Identify the underlying meaning behind spoken lines that characters conceal.",
-          "practice": "Take the line \"The lady doth protest too much, methinks\" from *Hamlet* and write the subtext in 15 words.",
-          "detail": "Locate the line in the play, read the surrounding conversation, and ask what the speaker truly feels versus what they say. Condense that feeling into a concise statement of no more than fifteen words. This sharpens your ability to read between the lines.",
-          "proof": "Your answer reveals the speaker suspects insincerity and hints at personal doubt.",
+          "practice": "Take Gertrude's line \"The lady doth protest too much, methinks\" from *Hamlet* (Act 3, Scene 2) and write the subtext in 15 words.",
+          "detail": "Locate the line in the play and read the surrounding conversation. Hamlet has just asked his mother how she likes the play, in which a queen swears she'd never remarry. \"Protest\" here means vow. Ask what Gertrude truly feels versus what she says, then condense that into no more than fifteen words.",
+          "proof": "Your answer shows Gertrude finds the Player Queen's vows overdone and hints at her own unease about remarrying.",
           "pitfall": "Confusing the literal meaning with the subtext or giving a summary longer than 15 words.",
           "minutes": 10,
           "problems": [
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Subtext: In Hamlet's line \"The lady doth protest too much, methinks\", what is the speaker's attitude toward the lady's claim?",
-              "answer": "Skeptical of her sincerity.",
-              "answer_kind": "phrase"
+              "prompt": "Who says \"The lady doth protest too much, methinks\" in Shakespeare's 'Hamlet'?",
+              "answer": "Gertrude",
+              "answer_kind": "word"
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Subtext: Write a 15-word description of the subtext behind \"The lady doth protest too much, methinks\".",
-              "answer": "She suspects the lady's protest is false, reflecting her own doubts about honesty and insincerity.",
+              "prompt": "Write a 15-word description of the subtext behind Gertrude's \"The lady doth protest too much, methinks\".",
+              "answer": "These vows sound overdone to me, and I'd rather not think about my own remarriage.",
               "answer_kind": "sentence"
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Subtext: Explain why the subtext of \"The lady doth protest too much, methinks\" reveals Hamlet's fear of marriage, in two sentences.",
-              "answer": "Hamlet sees the lady's exaggerated denial as a mirror of his own anxieties about commitment, fearing that vows may be empty. This subtext shows he doubts the sincerity of love and marriage.",
-              "hint": "Link the line to Hamlet's broader concerns.",
+              "prompt": "Hamlet asks Gertrude how she likes a play where a queen swears she'd never remarry, and she says \"The lady doth protest too much, methinks.\" In 2 sentences, explain what could be under her answer.",
+              "answer": "She's watching a queen swear to the kind of loyalty she didn't keep when she married Claudius, so calling the vows too much could be a way to brush off the sting. Hamlet's reply, \"O, but she'll keep her word,\" shows he's pressing on that sore spot.",
+              "hint": "Link the line to Gertrude's marriage to Claudius.",
               "answer_kind": "paragraph"
             }
           ]
@@ -86433,32 +86433,32 @@
         {
           "title": "Contrast Showing vs. Telling",
           "mastery": "Distinguish passages that show character emotions through action from those that tell them directly.",
-          "practice": "Find two 3-line excerpts from *A Streetcar Named Desire*, one that shows tension and one that tells it.",
-          "detail": "Search the play for a short segment where a character's body language, tone, or setting conveys feeling. Then locate a segment where the narrator or another character states the feeling outright. Write both excerpts, label them, and note the techniques used. This exercise builds awareness of dramatized storytelling.",
-          "proof": "You present one excerpt with physical cues (e.g., clenched fists) and another with explicit statements (e.g., \"She felt angry\").",
+          "practice": "Find two short passages in Ibsen's *A Doll's House*, one that shows Nora's fear and one that says it outright.",
+          "detail": "Use a public domain text such as the R. Farquharson Sharp translation. Find a passage where movement or a stage direction conveys the feeling, like the opening of Act 2. Then find a line where a character states the feeling outright. Copy both passages, label them, and note the techniques used. This exercise builds awareness of dramatized storytelling.",
+          "proof": "You present one passage with a stated feeling, such as \"I am frightened to death of him,\" and one with physical cues, such as Nora checking the letterbox.",
           "pitfall": "Choosing excerpts that both rely on dialogue without clear physical or sensory detail.",
           "minutes": 14,
           "problems": [
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Showing vs. telling: Provide a three-line excerpt from A Streetcar Named Desire that shows tension through physical description.",
-              "answer": "Stella clutched the arm of the chair, her knuckles white.\nShe stared at Stanley, eyes narrowed.\nThe room felt cramped and oppressive.",
-              "answer_kind": "paragraph"
+              "prompt": "In Act 2 of R. Farquharson Sharp's translation of 'A Doll's House', Nora says \"Someone is coming now!\", goes to the door and listens, then checks the letterbox. Name the feeling this shows.",
+              "answer": "Fear",
+              "answer_kind": "word"
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Showing vs. telling: Provide a three-line excerpt from A Streetcar Named Desire that tells the character is angry.",
-              "answer": "She shouted, \"I'm angry!\"\nShe declared, \"I can't stand this any longer.\"\nShe announced, \"Leave me alone.\".",
+              "prompt": "In Sharp's translation of 'A Doll's House', Nora says of Krogstad, \"I am frightened to death of him.\" Does this show her fear or tell it? Say how you know.",
+              "answer": "It tells. She names the feeling out loud, so the audience has nothing to read from her actions.",
               "answer_kind": "sentence"
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Showing vs. telling: Identify which of the following two excerpts from A Streetcar Named Desire demonstrates showing rather than telling, and explain why in one sentence.\nExcerpt A: \"She felt furious, her heart pounding.\"\nExcerpt B: \"She slammed the door, her face flushed, and paced the room with clenched fists.\".",
-              "answer": "Excerpt B shows rather than tells because it uses concrete physical actions and sensory detail to convey fury.",
-              "hint": "Focus on sensory detail.",
+              "prompt": "Compare 2 moments from Sharp's translation of 'A Doll's House'. A: \"I am frightened to death of him.\" B: \"her hair comes down and falls over her shoulders; she pays no attention to it, but goes on dancing.\" Which one shows rather than tells, and why?",
+              "answer": "B. She's too frantic to notice her own hair, so you see the panic in her body and nobody has to name it.",
+              "hint": "Look for what her body is doing.",
               "answer_kind": "sentence"
             }
           ]
@@ -86468,37 +86468,37 @@
           "mastery": "Break a scene into beats that mark shifts in intention, conflict, or emotion.",
           "practice": "Divide *Macbeth* Act 1, Scene 3 into five beats, writing a one-sentence description for each.",
           "detail": "Read the scene once for overall flow, then reread marking where the focus changes, new information, a reaction, a decision. Assign each change a beat number and write a concise label that captures its purpose. This helps you see the structural rhythm of drama.",
-          "proof": "Your sheet lists five distinct beats, such as \"Witches prophesy\", \"Macbeth hears the news\", etc.",
+          "proof": "Your sheet lists five distinct beats, such as the Witches hailing Macbeth and Ross bringing the Cawdor news.",
           "pitfall": "Merging multiple beats into one vague description or creating more than five beats.",
           "minutes": 18,
           "problems": [
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "How many beats must the beat sheet contain for Macbeth Act 1, Scene 3?",
+              "prompt": "How many beats must the beat sheet contain for 'Macbeth' Act 1, Scene 3?",
               "answer": "5.",
               "answer_kind": "integer"
             },
             {
               "slot": 2,
               "weight": "warmup",
-              "prompt": "What is the line number where the witches first speak in Act 1, Scene 3 of Macbeth?",
-              "answer": "1.",
+              "prompt": "In Act 1, Scene 3 of 'Macbeth', how many titles do the Witches hail Macbeth by?",
+              "answer": "3",
               "answer_kind": "integer"
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Write a one-sentence beat description for beat 3 (the moment Macbeth first hears the witches' prophecy) in Act 1, Scene 3 of Macbeth.",
-              "answer": "Macbeth, startled by the witches' words, begins to imagine a future of power.",
+              "prompt": "Write a one-sentence beat description for the moment Ross tells Macbeth he's Thane of Cawdor in Act 1, Scene 3 of 'Macbeth'.",
+              "answer": "The Witches' first promise comes true, and Macbeth's wonder starts to turn into a dangerous hope.",
               "hint": "Focus on the shift from curiosity to ambition.",
               "answer_kind": "sentence"
             },
             {
               "slot": 4,
               "weight": "stretch",
-              "prompt": "Explain why merging beats 2 (Witches prophesy) and 3 (Macbeth hears the news) into one beat weakens the beat sheet for Act 1, Scene 3 of Macbeth.",
-              "answer": "Combining them hides the crucial emotional shift; the audience loses the moment of Macbeth's internal conflict between wonder and ambition, making the scene less dynamic.",
+              "prompt": "Explain why merging the Witches' prophecy and Ross's news into one beat weakens a beat sheet for Act 1, Scene 3 of 'Macbeth'.",
+              "answer": "The first is only a prediction, and the second makes it look true. Merge them and you lose the shift that turns Macbeth's wonder into a thought of murder.",
               "hint": "Consider the function of a beat as a change in intention.",
               "answer_kind": "paragraph"
             }
@@ -86507,46 +86507,46 @@
         {
           "title": "Perform a Monologue with Subtext",
           "mastery": "Deliver a short monologue while conveying the hidden motives behind the spoken words.",
-          "practice": "Memorize and perform the 8-line soliloquy of Lady Macbeth (Act 1, Scene 5) in front of a mirror, emphasizing the subtext you identified earlier.",
+          "practice": "Memorize and perform the 8 lines of Lady Macbeth's speech (Act 1, Scene 5) from \"Come, you spirits\" to \"effect and it\" in front of a mirror, emphasizing your subtext.",
           "detail": "Write the subtext next to each line on a sticky note. As you rehearse, glance at the note to remind yourself of the underlying feeling, then translate that feeling into a physical cue, raised chin, clenched jaw, lingering pause. Record yourself, then watch to see if the cues align with the subtext. This bridges analysis and performance.",
-          "proof": "A video recording shows clear facial expression and posture that match the subtext, e.g., ambition and guilt.",
+          "proof": "A video recording shows clear facial expression and posture that match the subtext, e.g., ambition and fear of her own conscience.",
           "pitfall": "Reciting flatly without varying tone, gesture, or eye contact to reflect the inner conflict.",
           "minutes": 25,
           "problems": [
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "What is the line number of Lady Macbeth's first line in her soliloquy (Act 1, Scene 5) of Macbeth?",
-              "answer": "1.",
-              "answer_kind": "integer"
+              "prompt": "Lady Macbeth's speech in Act 1, Scene 5 begins \"The raven himself is hoarse / That croaks the fatal entrance of\" whom?",
+              "answer": "Duncan",
+              "answer_kind": "word"
             },
             {
               "slot": 2,
               "weight": "warmup",
-              "prompt": "Which emotion is most evident in line 4 of Lady Macbeth's soliloquy (Act 1, Scene 5), \"Come, you spirits / That tend on mortal thoughts\"?",
-              "answer": "Ambition.",
+              "prompt": "Lady Macbeth asks the spirits in Act 1, Scene 5 to fill her \"top-full / Of direst\" what?",
+              "answer": "Cruelty",
               "answer_kind": "word"
             },
             {
               "slot": 3,
               "weight": "core",
-              "prompt": "Recite line 5 of Lady Macbeth's soliloquy (Act 1, Scene 5), \"And on thy hardiness, give me the power\", and state the subtext you are conveying.",
-              "answer": "Line: \"And on thy hardiness, give me the power.\" Subtext: a desperate plea for ruthless strength to achieve her goals.",
-              "hint": "Show the hidden desire for power behind the words.",
+              "prompt": "Say Lady Macbeth's line \"Stop up th' access and passage to remorse\" aloud and state the subtext you're conveying.",
+              "answer": "She knows she could feel remorse and she's scared it would stop her, so she asks to be shut off from it.",
+              "hint": "Ask why she'd need to block a feeling she doesn't have.",
               "answer_kind": "sentence"
             },
             {
               "slot": 4,
               "weight": "stretch",
-              "prompt": "Identify a physical gesture that could illustrate Lady Macbeth's hidden guilt while she says line 7, \"Yet I do fear thy nature; It is too full o' the milk of human kindness\".",
-              "answer": "She briefly clutches her chest, then lets her hand fall to her side, indicating an internal struggle.",
+              "prompt": "Earlier in Act 1, Scene 5, Lady Macbeth reads her husband's letter and says, \"Yet do I fear thy nature.\" Identify a physical gesture that could show her impatience with him.",
+              "answer": "She folds the letter tight and taps it against her palm, as if she's already doing his part for him.",
               "hint": "Think of a subtle, brief movement.",
               "answer_kind": "sentence"
             },
             {
               "slot": 5,
               "weight": "stretch",
-              "prompt": "Explain how varying tone on the word \"unsex\" reveals Lady Macbeth's subtext in her soliloquy (Act 1, Scene 5).",
+              "prompt": "Explain how varying tone on the word \"unsex\" reveals Lady Macbeth's subtext in her soliloquy (Act 1, Scene 5).",
               "answer": "A sharp, commanding tone on \"unsex\" conveys her fierce determination to discard femininity and embrace cruelty, exposing her ambition and willingness to transgress gender norms.",
               "hint": "Contrast a flat tone with a forceful one.",
               "answer_kind": "paragraph"
@@ -87321,8 +87321,8 @@
           "title": "Identify Plot Elements",
           "mastery": "Name the five core components of a narrative plot and locate them in a text.",
           "practice": "List the five basic plot elements (exposition, rising action, climax, falling action, resolution) in the short story \"The Lottery\".",
-          "detail": "Read \"The Lottery\" quickly, then pause after each paragraph. Ask yourself: Is this setting the scene (exposition)? Is a conflict beginning (rising action)? Does the story reach a turning point (climax)? Does the tension start to ease (falling action)? Finally, does the story end with a clear outcome (resolution)? Write each label next to the paragraph where you think it belongs, then compare with a plot-element checklist.",
-          "proof": "All five elements are listed correctly.",
+          "detail": "Read \"The Lottery\" quickly, then pause after each paragraph. Is this setting the scene (exposition)? Is a conflict beginning (rising action)? Does the story reach a turning point (climax)? Does the tension ease (falling action)? Is there a clear outcome (resolution)? Write each label next to the paragraph it fits. The story stops right at its climax, so say which elements it skips.",
+          "proof": "All five elements are listed, and you've said which ones the story skips.",
           "pitfall": "Missing one of the five elements or mixing up rising action with climax.",
           "minutes": 12,
           "problems": [
@@ -87417,7 +87417,7 @@
           "title": "Explain Cause-Effect Chains",
           "mastery": "Build logical cause-and-effect sequences that connect plot actions.",
           "practice": "For \"The Most Dangerous Game\", draw a cause-effect chain linking the hunter's arrival to the final chase, using three links.",
-          "detail": "Start with the event that brings Rainsford to the island (shipwreck). Identify the next cause (meeting General Zaroff). Then note the effect that leads to the hunt (Rainsford becomes the prey). Finally, link the climax (the final chase) as the result of the previous cause. Sketch the three links on paper, using arrows, and label each with a brief phrase.",
+          "detail": "Start with the event that brings Rainsford to the island (he falls off a yacht and swims ashore). Identify the next cause (meeting General Zaroff). Then note the effect that leads to the hunt (Rainsford refuses to hunt men, so he becomes the prey). Finally, link the climax (the final chase) as the result of the previous cause. Sketch the three links on paper, using arrows, and label each with a brief phrase.",
           "proof": "Chain shows three logical links in correct order.",
           "pitfall": "Creating a chain that jumps steps or repeats the same cause.",
           "minutes": 14,
