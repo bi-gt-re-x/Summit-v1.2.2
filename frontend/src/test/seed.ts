@@ -218,8 +218,8 @@ export function seedRatings(): Ratings {
         ...base,
       },
       consistency: { score: 80, active_days: 292, total_days: 365, rate: 80, ...base },
-      efficiency: { score: 66, avg_minutes: 34, on_time_pct: 75, has_timing: true, ...base },
-      focus: { score: 70, focused_minutes: 13140, goal_minutes: 18000, pct_of_goal: 73, ...base },
+      efficiency: { score: 66, avg_minutes: 34, on_time_pct: 75, has_timing: true, deadline_tracked: 40, min_deadlines: 5, ...base },
+      focus: { score: 70, focused_minutes: 13140, goal_minutes: 18000, pct_of_goal: 73, focus_days: 60, min_days: 3, ...base },
     },
   };
 }

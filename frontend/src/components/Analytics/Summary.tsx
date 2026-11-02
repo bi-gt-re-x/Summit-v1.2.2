@@ -271,7 +271,7 @@ export function Summary({
             <li key={part.name} className={gradeClass(null)} title={part.raw}>
               <span className="ax-summary-part-name">{part.label}</span>
               <span className="ax-summary-part-grade">-</span>
-              <span className="ax-summary-part-score">Not rated</span>
+              <span className="ax-summary-part-score">{part.name === 'quality' ? 'Not rated' : 'Not yet'}</span>
             </li>
           ))}
         </ul>

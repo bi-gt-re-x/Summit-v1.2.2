@@ -126,7 +126,8 @@ def test_efficiency_is_the_number_the_card_prints_beside_it(client):
     punishing exactly what the calendar and the goals page ask people to do.
     The card's caption always read "N% finished on time"; the score now is it.
     """
-    finish(client, xp=10, due='2099-01-01T00:00:00')
+    for _ in range(analytics.EFFICIENCY_MIN_DEADLINES):
+        finish(client, xp=10, due='2099-01-01T00:00:00')
     efficiency = card(client)['metrics']['efficiency']
     assert efficiency['score'] == efficiency['on_time_pct'] == 100
 
@@ -137,10 +138,11 @@ def test_a_day_with_no_focus_does_not_count_against_the_focus_score(client):
     A tracked day with zero seconds used to add its goal to the denominator and
     nothing to the numerator. Consistency already counts the days off.
     """
-    today = date.today().isoformat()
     idle = (date.today() - timedelta(days=1)).isoformat()
-    client.post('/api/focus_sync', json={'date': today, 'focused_seconds': 7200,
-                                         'goal_hours': 2})
+    for back in (0, 2, 3):
+        client.post('/api/focus_sync', json={
+            'date': (date.today() - timedelta(days=back)).isoformat(),
+            'focused_seconds': 7200, 'goal_hours': 2})
     client.post('/api/focus_sync', json={'date': idle, 'focused_seconds': 0,
                                          'goal_hours': 2})
     assert card(client)['metrics']['focus']['score'] == 100
@@ -449,8 +451,11 @@ def test_the_history_is_one_account_s_oldest_first(client, stranger):
 def test_reading_the_report_card_reads_each_table_once(client):
     """The endpoint as a whole: four reads and six writes, whatever is stored.
     A `SELECT *` creeping back onto it shows up as the column list changing."""
-    for _ in range(analytics.QUALITY_MIN_RATED):
-        finish(client, xp=40, difficulty=3, execution=3)
+    for back in range(analytics.QUALITY_MIN_RATED):
+        finish(client, xp=40, difficulty=3, execution=3, due='2099-01-01T00:00:00')
+        client.post('/api/focus_sync', json={
+            'date': (date.today() - timedelta(days=back)).isoformat(),
+            'focused_seconds': 3600, 'goal_hours': 2})
     client.post('/api/get_growth_ratings')
 
     statements = _statements(lambda: client.post('/api/get_growth_ratings'))

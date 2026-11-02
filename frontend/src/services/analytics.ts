@@ -272,8 +272,9 @@ export const PERIOD_METRICS = [
 export type PeriodMetric = (typeof PERIOD_METRICS)[number];
 
 /** Every metric's 0-100 score for one window. */
-/** Quality is null over a window with too few rated tasks to score. */
-export type MetricScores = Record<Exclude<PeriodMetric, 'quality'>, number> & { quality: number | null };
+/** Quality, efficiency and focus are null over a window with too little to score. */
+export type MetricScores = Record<'productivity' | 'consistency', number>
+  & Record<'quality' | 'efficiency' | 'focus', number | null>;
 
 /** One window, scored, with the measured figures the scores came from. */
 export interface PeriodSide {

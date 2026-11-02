@@ -68,7 +68,7 @@ export const GRADE_BANDS: ReadonlyArray<readonly [number, Grade]> =
  * "not enough yet" belongs and it is already said there.
  */
 export const GRADE_MEANING: Record<Grade, string> = {
-  S: 'All five parts maxed out.',
+  S: 'Every part is maxed out.',
   'A+': 'Almost perfect.',
   A: 'Strong all around.',
   B: 'Solid. One or two weak spots.',
@@ -140,10 +140,12 @@ const LABELS: Record<MetricName, string> = {
  * because "Focus 34" tells a reader nothing they can act on and "2h 10m of a 6h
  * goal" tells them what to do about it.
  */
-/** What Quality needs before it counts, in the reader's terms. */
-function toRate(quality: Ratings['metrics']['quality']): string {
-  const left = Math.max(1, quality.min_rated - quality.rated_tasks);
-  return `Not counted yet. Rate ${left} more ${left === 1 ? 'task' : 'tasks'} to add it.`;
+const WORDS = ['no', 'one', 'two', 'three', 'four', 'five'];
+
+/** How many more it takes, and of what, before a part counts. */
+function more(left: number, what: string): string {
+  const count = Math.max(1, left);
+  return `Not counted yet. ${what.replace('{n}', String(count)).replace('{s}', count === 1 ? '' : 's')} to add it.`;
 }
 
 export function analyticalScore(ratings: Ratings | null): AnalyticalScore {
@@ -174,20 +176,22 @@ export function analyticalScore(ratings: Ratings | null): AnalyticalScore {
       score: m.consistency.score,
       raw: `${m.consistency.active_days} of ${m.consistency.total_days} days worked`,
     },
-    {
-      name: 'efficiency',
-      label: LABELS.efficiency,
-      score: m.efficiency.score,
-      raw: m.efficiency.has_timing
-        ? `${m.efficiency.on_time_pct}% finished on time`
-        : 'nothing timed yet',
-    },
-    {
-      name: 'focus',
-      label: LABELS.focus,
-      score: m.focus.score,
-      raw: `${m.focus.pct_of_goal}% of your focus goal`,
-    },
+    ...(m.efficiency.score === null
+      ? []
+      : [{
+          name: 'efficiency' as const,
+          label: LABELS.efficiency,
+          score: m.efficiency.score,
+          raw: `${m.efficiency.on_time_pct}% finished on time`,
+        }]),
+    ...(m.focus.score === null
+      ? []
+      : [{
+          name: 'focus' as const,
+          label: LABELS.focus,
+          score: m.focus.score,
+          raw: `${m.focus.pct_of_goal}% of your focus goal`,
+        }]),
   ];
 
   const parts: ScorePart[] = measured.map((part) => ({
@@ -205,7 +209,20 @@ export function analyticalScore(ratings: Ratings | null): AnalyticalScore {
     parts,
     weakest: ranked[0] ?? null,
     strongest: ranked[ranked.length - 1] ?? null,
-    unscored: quality.score === null ? [{ name: 'quality', label: LABELS.quality, raw: toRate(quality) }] : [],
+    unscored: [
+      ...(quality.score === null
+        ? [{ name: 'quality' as const, label: LABELS.quality,
+             raw: more(quality.min_rated - quality.rated_tasks, 'Rate {n} more task{s}') }]
+        : []),
+      ...(m.efficiency.score === null
+        ? [{ name: 'efficiency' as const, label: LABELS.efficiency,
+             raw: more(m.efficiency.min_deadlines - m.efficiency.deadline_tracked, 'Finish {n} more task{s} with a due date') }]
+        : []),
+      ...(m.focus.score === null
+        ? [{ name: 'focus' as const, label: LABELS.focus,
+             raw: more(m.focus.min_days - m.focus.focus_days, 'Log focus on {n} more day{s}') }]
+        : []),
+    ],
   };
 }
 
@@ -232,10 +249,15 @@ export function howItIsCalculated(score: AnalyticalScore): string {
   if (score.value === null) return 'Not enough work to score yet.';
   const { weakest, strongest } = score;
   const names = score.parts.map((part) => part.label.toLowerCase());
-  const list = `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`;
+  const and = (items: string[]) =>
+    items.length > 1 ? `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}` : (items[0] ?? '');
+  const list = and(names);
+  const waiting = score.unscored.map((part) => part.label);
   const base =
-    `The average of ${names.length === 5 ? 'five' : 'four'} parts over the last 90 days: ${list}. Each is out of 100.`
-    + (score.unscored.length ? ` ${score.unscored[0]!.label} joins once you've rated enough tasks.` : '');
+    `The average of ${WORDS[names.length]} parts over the last 90 days: ${list}. Each is out of 100.`
+    + (waiting.length
+      ? ` ${and(waiting)} ${waiting.length === 1 ? 'joins' : 'join'} once there's enough to measure.`
+      : '');
   if (!weakest || !strongest || weakest.name === strongest.name) return base;
   /* Naming a best and a worst only says something when they differ. Five
      metrics all at 100 would otherwise produce "Focus is carrying it at 100;

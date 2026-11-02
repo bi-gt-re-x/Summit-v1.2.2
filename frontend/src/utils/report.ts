@@ -156,6 +156,7 @@ function scoreSection(input: ReportInput): string {
       const figure = String(Math.round(part.score)).padStart(3);
       return `  ${label}${figure} / 100    ${part.raw}`;
     })
+    .concat(score.unscored.map((part) => `  ${part.label.padEnd(14)}  -          ${part.raw}`))
     .join('\n');
 
   return [
@@ -167,7 +168,7 @@ function scoreSection(input: ReportInput): string {
     '',
     wrap(howItIsCalculated(score)),
     '',
-    "The five parts it's made of:",
+    "The parts it's made of:",
     '',
     parts,
     '',

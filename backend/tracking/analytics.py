@@ -114,6 +114,12 @@ QUALITY_MAX = 25
 #: to grade anyone on. The overall score averages the parts it could measure.
 QUALITY_MIN_RATED = 5
 
+#: The same rule for the other two parts that can have nothing behind them. No
+#: deadlines isn't a 0 for hitting deadlines, and no focus logged isn't a 0 for
+#: focus. One missed date or one short sitting is too little to grade either.
+EFFICIENCY_MIN_DEADLINES = 5
+FOCUS_MIN_DAYS = 3
+
 #: The focus goal a logged day is measured against when its own goal is missing.
 DEFAULT_FOCUS_GOAL_HOURS = 2.0
 
@@ -189,6 +195,12 @@ def rating_summary(tasks):
         'avg_difficulty': mean(difficulties),
         'avg_execution': mean(executions),
     }
+
+
+def has_deadline(task):
+    """Whether a finished task can count as on time or late: it needs a date to
+    be measured against and a recorded result. Plenty of tasks have neither."""
+    return bool(task.get('due_date')) and task.get('met_deadline') is not None
 
 
 def _message(metric_scores):
@@ -267,7 +279,7 @@ def _trend(current, previous):
 #: and gets a KeyError on the rows it forgot rather than a silent zero.
 SCORED_TASK_FIELDS = ('status', 'completed_at', 'xp_value',
                       'difficulty', 'execution',
-                      'completion_seconds', 'met_deadline')
+                      'completion_seconds', 'met_deadline', 'due_date')
 
 #: The ledger columns the score is made of, on the same footing.
 #:
@@ -384,7 +396,7 @@ def _daily_rollup(username, tasks=None, events=None, focus_history=None):
         if spent is not None:
             row['timed'] += 1
             row['seconds_sum'] += spent
-        if 'met_deadline' in task:
+        if has_deadline(task):
             row['deadline_tracked'] += 1
             if task.get('met_deadline'):
                 row['on_time'] += 1
@@ -522,13 +534,14 @@ def score_window(rollup, start, end, daily_goal):
     #    measure of.
     avg_minutes = ((seconds_sum / timed) / 60.0) if timed else None
     deadline_score = (on_time / deadline_tracked * 100) if deadline_tracked else 0
-    efficiency_score = round(_clamp(deadline_score))
+    efficiency_score = (round(_clamp(deadline_score))
+                        if deadline_tracked >= EFFICIENCY_MIN_DEADLINES else None)
 
     # 5. Focus — tracked focus time against the daily focus goal, counted over
     #    the days focus was actually tracked. See `_daily_rollup`, which is
     #    where a day with a row and no seconds is dropped.
     focus_ratio = (focused_sec / focus_goal_sec) if focus_goal_sec > 0 else 0.0
-    focus_score = round(_clamp(focus_ratio * 100))
+    focus_score = round(_clamp(focus_ratio * 100)) if focus_days >= FOCUS_MIN_DAYS else None
 
     parts = {
         'productivity': productivity_score,
@@ -578,12 +591,14 @@ def score_window(rollup, start, end, daily_goal):
                 'has_timing': bool(timed),
                 'on_time': on_time,
                 'deadline_tracked': deadline_tracked,
+                'min_deadlines': EFFICIENCY_MIN_DEADLINES,
             },
             'focus': {
                 'focused_minutes': round(focused_sec / 60),
                 'goal_minutes': round(focus_goal_sec / 60),
                 'pct_of_goal': round(focus_ratio * 100),
                 'focus_days': focus_days,
+                'min_days': FOCUS_MIN_DAYS,
             },
         },
     }
@@ -748,7 +763,7 @@ def ratings(username, record=True, tasks=None, events=None, focus_history=None):
             spent = time_spent.seconds_spent(task)
             if spent is not None:
                 secs.append(spent)
-            if 'met_deadline' in task:
+            if has_deadline(task):
                 met.append(bool(task['met_deadline']))
         if not secs and not met:
             return None
@@ -779,7 +794,8 @@ def ratings(username, record=True, tasks=None, events=None, focus_history=None):
     productivity_trend = _trend(this_w['xp'], prev_w['xp'])
     quality_trend = _trend(this_quality, prev_quality)
     consistency_trend = _trend(this_w['active_days'], prev_w['active_days'])
-    efficiency_trend = _trend(window_efficiency(0, 6) or 0, window_efficiency(7, 13) or 0)
+    efficiency_trend = (_trend(0, 0) if efficiency_score is None else
+                        _trend(window_efficiency(0, 6) or 0, window_efficiency(7, 13) or 0))
     # Windowed out of the history already read. This was
     # `focus_tracking.seconds_in_window`, which read the focus table for each
     # of the two windows — a third and fourth read of a table this function
@@ -792,7 +808,8 @@ def ratings(username, record=True, tasks=None, events=None, focus_history=None):
                    for day_iso, record_row in focus_history.items()
                    if in_window(day_iso, lo_days, hi_days))
 
-    focus_trend = _trend(focused_seconds(0, 6), focused_seconds(7, 13))
+    focus_trend = (_trend(0, 0) if focus_score is None else
+                   _trend(focused_seconds(0, 6), focused_seconds(7, 13)))
 
     card = {
         "overall": {
@@ -841,6 +858,8 @@ def ratings(username, record=True, tasks=None, events=None, focus_history=None):
                 "grade": grade_for_score(efficiency_score),
                 "on_time_pct": round(deadline_score),
                 "has_timing": bool(timed),
+                "deadline_tracked": figures['efficiency']['deadline_tracked'],
+                "min_deadlines": EFFICIENCY_MIN_DEADLINES,
                 "trend": efficiency_trend,
             },
             "focus": {
@@ -849,6 +868,8 @@ def ratings(username, record=True, tasks=None, events=None, focus_history=None):
                 "focused_minutes": round(focused_sec / 60),
                 "goal_minutes": round(focus_goal_sec / 60),
                 "pct_of_goal": round(focus_ratio * 100),
+                "focus_days": figures['focus']['focus_days'],
+                "min_days": FOCUS_MIN_DAYS,
                 "trend": focus_trend,
             },
         },

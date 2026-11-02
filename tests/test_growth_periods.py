@@ -274,8 +274,8 @@ def test_xp_per_task_never_moves_the_quality_score_or_the_overall():
 def test_the_overall_averages_only_the_parts_it_could_measure():
     scored = _scored(_day(tasks=1, task_xp=10))
     parts = scored['parts']
-    measured = [parts[name] for name in analytics.METRICS if name != 'quality']
-    assert scored['overall'] == round(sum(measured) / len(measured))
+    assert parts['quality'] is parts['efficiency'] is parts['focus'] is None
+    assert scored['overall'] == round((parts['productivity'] + parts['consistency']) / 2)
 
 
 def test_a_first_rating_does_not_move_the_score():
@@ -313,10 +313,11 @@ def test_a_daily_goal_with_nothing_to_divide_by_reads_as_the_default(goal):
 
 def test_focus_logged_on_a_day_with_a_goal_of_zero_still_scores():
     """Two hours against no goal used to score 0, as if nothing was logged."""
-    today = date.today().isoformat()
-    rollup = analytics._daily_rollup('nobody', tasks=[], events=[],
-                                     focus_history={today: {'seconds': 3600, 'goal_hours': 0}})
-    scored = analytics.score_window(rollup, date.today(), date.today(), 100)
+    today = date.today()
+    logged = {(today - timedelta(days=back)).isoformat(): {'seconds': 3600, 'goal_hours': 0}
+              for back in range(analytics.FOCUS_MIN_DAYS)}
+    rollup = analytics._daily_rollup('nobody', tasks=[], events=[], focus_history=logged)
+    scored = analytics.score_window(rollup, today - timedelta(days=2), today, 100)
     assert scored['parts']['focus'] == 50
 
 
@@ -334,3 +335,58 @@ def test_every_analytics_read_works_with_no_goals_and_with_zero_targets(client):
         client.post('/api/add_goal', json={'title': 'Zero ' + measure, 'measure': measure,
                                            'target_number': 0, 'deadline': ago(-30)})
     reads()
+
+
+def _finished(due, met, on=None):
+    return {'status': 'done', 'completed_at': (on or date.today().isoformat()) + 'T12:00:00',
+            'xp_value': 10, 'due_date': due, 'met_deadline': met}
+
+
+def _efficiency(tasks):
+    today = date.today()
+    rollup = analytics._daily_rollup('nobody', tasks=tasks, events=[], focus_history={})
+    return analytics.score_window(rollup, today, today, 100)
+
+
+def test_a_task_with_no_due_date_is_not_on_time_or_late():
+    """New undated tasks store no result and read as late; old ones hold either."""
+    tasks = [_finished('', None), _finished(None, True), _finished('', False)] * 4
+    scored = _efficiency(tasks)
+    assert scored['figures']['efficiency']['deadline_tracked'] == 0
+    assert scored['parts']['efficiency'] is None
+
+
+def test_efficiency_waits_for_enough_due_dates_and_only_counts_those():
+    enough = analytics.EFFICIENCY_MIN_DEADLINES
+    few = [_finished('2026-01-01', False)] * (enough - 1)
+    assert _efficiency(few)['parts']['efficiency'] is None
+
+    mixed = [_finished('2026-01-01', True)] * enough + [_finished('', False)] * 20
+    assert _efficiency(mixed)['parts']['efficiency'] == 100
+
+
+def test_focus_waits_for_enough_days_and_never_counts_as_zero_before_that():
+    today = date.today()
+    logged = {today.isoformat(): {'seconds': 60, 'goal_hours': 2}}
+    rollup = analytics._daily_rollup('nobody', tasks=[], events=[], focus_history=logged)
+    scored = analytics.score_window(rollup, today, today, 100)
+    assert scored['parts']['focus'] is None
+    assert scored['figures']['focus']['focus_days'] == 1
+
+
+def test_a_first_deadline_or_focus_session_does_not_move_the_score():
+    bare = _scored(_day(tasks=2, task_xp=20))
+    first = _scored(_day(tasks=2, task_xp=20, deadline_tracked=1, on_time=0,
+                         focus_seconds=60.0, focus_goal_seconds=7200.0))
+    assert first['overall'] == bare['overall']
+
+
+def test_an_unmeasured_part_files_no_row_and_reads_on_the_growth_tab(client):
+    finish(client, xp=40)
+    card = client.post('/api/get_growth_ratings').json()
+    for name in ('efficiency', 'focus'):
+        assert card['metrics'][name]['score'] is None
+        assert card['metrics'][name]['grade'] is None
+        assert not analytics.history('tester', name)
+    parts = periods(client, '30d')['current']['parts']
+    assert parts['efficiency'] is None and parts['focus'] is None

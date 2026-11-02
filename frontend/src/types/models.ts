@@ -532,16 +532,26 @@ export interface Ratings {
       total_days: number;
       rate: number;
     };
-    efficiency: MetricBase & {
+    efficiency: Omit<MetricBase, 'score' | 'grade'> & {
+      /** Null until `min_deadlines` finished tasks have a due date. Left out of the overall then. */
+      score: number | null;
+      grade: Grade | null;
       /** Null when no completed task has been timed yet. */
       avg_minutes: number | null;
       on_time_pct: number;
       has_timing: boolean;
+      deadline_tracked: number;
+      min_deadlines: number;
     };
-    focus: MetricBase & {
+    focus: Omit<MetricBase, 'score' | 'grade'> & {
+      /** Null until `min_days` days have focus logged. Left out of the overall then. */
+      score: number | null;
+      grade: Grade | null;
       focused_minutes: number;
       goal_minutes: number;
       pct_of_goal: number;
+      focus_days: number;
+      min_days: number;
     };
   };
 }

@@ -170,10 +170,11 @@ export function measuredAs(metric: PeriodMetric, side: PeriodSide | null): strin
       return `${fmtNumber(Number(figures.active_days) || 0)} of `
         + `${fmtNumber(Number(figures.total_days) || 0)} days worked`;
     case 'efficiency':
-      return figures.has_timing || Number(figures.on_time_pct) > 0
+      return Number(figures.deadline_tracked) >= Number(figures.min_deadlines)
         ? `${Math.round(Number(figures.on_time_pct) || 0)}% finished on time`
-        : 'no tasks with deadlines yet';
+        : 'not enough due dates to score yet';
     case 'focus':
+      if (Number(figures.focus_days) < Number(figures.min_days)) return 'not enough focus days to score yet';
       return `${(Number(figures.focused_minutes) / 60 || 0).toFixed(1)} hrs of a `
         + `${(Number(figures.goal_minutes) / 60 || 0).toFixed(1)} hr goal`;
     default:

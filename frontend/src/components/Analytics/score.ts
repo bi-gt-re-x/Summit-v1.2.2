@@ -76,20 +76,22 @@ export function growthScore(ratings: Ratings | null): GrowthScore {
       score: m.consistency.score,
       raw: `${m.consistency.active_days}/${m.consistency.total_days} days active`,
     },
-    {
-      name: 'efficiency',
-      label: 'Efficiency',
-      score: m.efficiency.score,
-      raw: m.efficiency.has_timing
-        ? `${m.efficiency.on_time_pct}% on time`
-        : 'no timed tasks yet',
-    },
-    {
-      name: 'focus',
-      label: 'Focus',
-      score: m.focus.score,
-      raw: `${m.focus.pct_of_goal}% of focus goal`,
-    },
+    ...(m.efficiency.score === null
+      ? []
+      : [{
+          name: 'efficiency' as const,
+          label: 'Efficiency',
+          score: m.efficiency.score,
+          raw: `${m.efficiency.on_time_pct}% on time`,
+        }]),
+    ...(m.focus.score === null
+      ? []
+      : [{
+          name: 'focus' as const,
+          label: 'Focus',
+          score: m.focus.score,
+          raw: `${m.focus.pct_of_goal}% of focus goal`,
+        }]),
   ];
 
   const factors: ScoreFactor[] = measured.map((factor) => ({
