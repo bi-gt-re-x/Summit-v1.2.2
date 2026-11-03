@@ -9,19 +9,22 @@
  *   This week     Up, down or level against last week, with the last eight
  *                 weeks as a strip so a single week is seen in context.
  *   Two weeks     Every metric that moved more than its own noise, with both
- *                 figures, good news and bad news marked as such.
- *   Tensions      The diagnosis cards, when two readings of the same weeks
- *                 disagree (utils/diagnosis).
+ *                 figures, and what the lot of them add up to (`moveReads`).
+ *   Tensions      When two readings of the same weeks disagree, with what that
+ *                 suggests and what to try (utils/diagnosis). Mixed readings
+ *                 sit beside Worse, and the warnings get a card of their own.
  */
+import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Panel } from './charts';
 import { Figures } from './Figures';
-import { DiagnosisCards } from './Diagnosis';
+import { Suggestion } from './Suggestion';
 import type { Diagnosis } from '@/utils/diagnosis';
 import {
   moveSentence,
   rangeLabel,
   directionOf,
+  type MoveReads,
   type Slump,
   type TrackedMove,
   type WeekBlock,
@@ -118,8 +121,8 @@ function WeekRead({ move, blocks }: { move: WeekMove; blocks: WeekBlock[] }) {
         </div>
       </div>
 
-      {/* Eight weeks side by side, each marked up or down against the one
-          before it, so this week is read against a run rather than alone. */}
+      {/* Eight weeks side by side, the color marking the ones that moved, so
+          this week is read against a run rather than alone. */}
       <ol className="ax-week-strip" aria-label="XP by week">
         {blocks.map((block, index) => {
           const prev = blocks[index - 1];
@@ -133,10 +136,7 @@ function WeekRead({ move, blocks }: { move: WeekMove; blocks: WeekBlock[] }) {
             >
               <span className="ax-week-val">{fmt(block.xp)}</span>
               <span className="ax-week-bar">
-                <i style={{ height: `${Math.max(3, (block.xp / top) * 100)}%` }} />
-              </span>
-              <span className="ax-week-way" aria-hidden="true">
-                {prev ? (way === 'up' ? '↑' : way === 'down' ? '↓' : '·') : ''}
+                <i style={{ height: `${Math.max(4, (block.xp / top) * 100)}%` }} />
               </span>
               <span className="ax-week-date">{last ? 'This week' : rangeLabel(block.from, block.to).split(' to ')[0]}</span>
             </li>
@@ -165,6 +165,74 @@ export interface WhatChangedProps {
    * Shown when the numbers found nothing: what they typed is still a record.
    */
   reported?: { phrase: string; count: number } | null;
+  /** What the worse and better lists add up to. See `moveReads`. */
+  reads?: MoveReads;
+}
+
+/* One mark per card, in a tinted circle: a warning for worse, a trend line for
+   mixed, a tick for better, and a circled ! for what needs attention. */
+const CARD_ICON = {
+  worse: (
+    <>
+      <path d="M12 4 2.8 20h18.4L12 4Z" />
+      <path d="M12 10v4.5M12 17.5v.01" />
+    </>
+  ),
+  mixed: (
+    <>
+      <path d="m3 17 6-6 4 4 8-8" />
+      <path d="M15 7h6v6" />
+    </>
+  ),
+  better: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="m8 12.5 2.6 2.5L16 9.5" />
+    </>
+  ),
+  attention: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7.5V13M12 16.5v.01" />
+    </>
+  ),
+} as const;
+
+type CardKind = keyof typeof CARD_ICON;
+
+function ChangeCard({
+  kind,
+  title,
+  wide,
+  children,
+}: {
+  kind: CardKind;
+  title: string;
+  wide?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <section className={`ax-moves-col is-${kind}${wide ? ' is-wide' : ''}`}>
+      <h3 className="ax-moves-head">
+        <span className="ax-moves-icon" aria-hidden="true">
+          <svg
+            width="17"
+            height="17"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            {CARD_ICON[kind]}
+          </svg>
+        </span>
+        {title}
+      </h3>
+      {children}
+    </section>
+  );
 }
 
 export function WhatChangedPanel({
@@ -176,9 +244,14 @@ export function WhatChangedPanel({
   nowRange,
   wasRange,
   reported,
+  reads,
 }: WhatChangedProps) {
-  const good = moves.filter((row) => row.good);
-  const bad = moves.filter((row) => !row.good);
+  const better = moves.filter((row) => row.good);
+  const worse = moves.filter((row) => !row.good);
+  const attention = diagnoses.filter((row) => row.tone === 'warning');
+  const mixed = diagnoses.filter((row) => row.tone === 'tension');
+  const going = diagnoses.filter((row) => row.tone === 'good');
+  const hasBetter = better.length > 0 || going.length > 0;
 
   return (
     <Panel
@@ -193,17 +266,12 @@ export function WhatChangedPanel({
           This compares two weeks with the two before, so it needs about a month of work. It'll
           fill in as you go.
         </p>
-      ) : moves.length === 0 ? (
+      ) : moves.length === 0 && diagnoses.length === 0 ? (
         <p className="ax-empty">
           Nothing moved enough to count over the last two weeks. Small ups and downs are left out
           so only real changes show up.
         </p>
-      ) : (
-        <div className="ax-moves">
-          {bad.length > 0 && <MoveList title="Worse" rows={bad} tone="bad" />}
-          {good.length > 0 && <MoveList title="Better" rows={good} tone="good" />}
-        </div>
-      )}
+      ) : null}
 
       {enoughRecord && moves.length === 0 && reported && (
         <p className="ax-empty">
@@ -212,32 +280,73 @@ export function WhatChangedPanel({
         </p>
       )}
 
-      {diagnoses.length > 0 && (
-        <div className="ax-moves-diag">
-          <DiagnosisCards items={diagnoses} />
+      {(worse.length > 0 || mixed.length > 0 || hasBetter || attention.length > 0) && (
+        <div className="ax-moves">
+          {worse.length > 0 && (
+            <ChangeCard kind="worse" title="Worse">
+              <MoveList rows={worse} />
+              {reads?.worse && <Suggestion text={reads.worse} />}
+            </ChangeCard>
+          )}
+          {mixed.length > 0 && (
+            <ChangeCard kind="mixed" title="Mixed">
+              <ReadList items={mixed} />
+            </ChangeCard>
+          )}
+          {attention.length > 0 && (
+            <ChangeCard kind="attention" title="Needs attention" wide>
+              <ReadList items={attention} />
+            </ChangeCard>
+          )}
+          {hasBetter && (
+            <ChangeCard kind="better" title="Better">
+              {better.length > 0 && <MoveList rows={better} />}
+              {reads?.better && <Suggestion text={reads.better} />}
+              {going.length > 0 && <ReadList items={going} />}
+            </ChangeCard>
+          )}
         </div>
       )}
     </Panel>
   );
 }
 
-function MoveList({ title, rows, tone }: { title: string; rows: TrackedMove[]; tone: 'good' | 'bad' }) {
+function MoveList({ rows }: { rows: TrackedMove[] }) {
   return (
-    <div className={`ax-moves-col is-${tone}`}>
-      <p className="ax-moves-head">{title}</p>
-      <ul className="ax-moves-list">
-        {rows.map((row) => (
-          <li key={row.id} className="ax-moves-row">
-            <span className="ax-moves-mark" aria-hidden="true">
-              {row.up ? '↑' : '↓'}
-            </span>
-            <div>
-              <strong>{row.label}</strong>
-              <p><Figures text={moveSentence(row)} /></p>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <ul className="ax-moves-list">
+      {rows.map((row) => (
+        <li key={row.id} className="ax-moves-row">
+          <div>
+            <strong className="ax-moves-name">{row.label}</strong>
+            <p><Figures text={moveSentence(row)} /></p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** The two readings that don't line up: the claim, the figures, what to try. */
+function ReadList({ items }: { items: Diagnosis[] }) {
+  return (
+    <ul className="ax-moves-list">
+      {items.map((item) => (
+        <li key={item.id} className="ax-moves-row">
+          <div>
+            <strong className="ax-moves-name">{item.headline}</strong>
+            <p>
+              <Figures text={item.detail} />
+              {item.points[0] ? (
+                <>
+                  {' '}
+                  <Figures text={item.points[0]} />
+                </>
+              ) : null}
+            </p>
+            <Suggestion text={`${item.means} ${item.action}`} />
+          </div>
+        </li>
+      ))}
+    </ul>
   );
 }

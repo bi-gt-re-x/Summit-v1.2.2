@@ -138,8 +138,12 @@ export interface InsightBar {
 export interface SubjectInsight {
   key: string;
   tone: 'up' | 'down' | 'note';
+  /** What's going on, in a sentence that says what it means. */
   head: string;
+  /** The figures behind it. */
   detail: string;
+  /** What those figures suggest, and what to try next. */
+  suggests: string;
   figures: InsightFigure[];
   bars?: InsightBar[];
 }
@@ -328,8 +332,11 @@ export function subjectInsights(
       add(90, {
         key: 'rhythm',
         tone: 'down',
-        head: `Quiet for ${since} days`,
+        head: lately !== null && since > lately * 2 ? `Quiet for ${since} days, well past your usual gap` : `Quiet for ${since} days`,
         detail: `${lately !== null ? `Lately you came back ${every(lately)}. ` : ''}${breakLine}`,
+        suggests: last
+          ? `This suggests ${card.name} has dropped off your list. "${clip(last.title)}" is where you stopped, so a short session on that is the easiest way back in.`
+          : `This suggests ${card.name} has dropped off your list. If it still matters, one short session this week is enough to restart it.`,
         figures: [...lastFigure, { label: 'Last worked', value: when(card.lastOn!) }, ...longestFigure],
       });
     } else if (lately !== null && since > lately * 2) {
@@ -337,7 +344,8 @@ export function subjectInsights(
       add(60, {
         key: 'rhythm',
         tone: 'down',
-        head: `${since} days since your last task`,
+        head: `Starting to slip: ${since} days since your last task`,
+        suggests: "This suggests it's falling out of your routine. A break this size is still easy to close, so one task in the next day or two keeps your rhythm going.",
         detail: `Lately you come back ${every(lately)}, so this is ${
           times === 2 ? 'twice' : `${times} times`
         } your normal gap. ${breakLine}`,
@@ -361,7 +369,10 @@ export function subjectInsights(
     add(slower ? 58 : 50, {
       key: 'rhythm',
       tone: slower ? 'down' : 'up',
-      head: slower ? 'Coming back less often' : 'Coming back more often',
+      head: slower ? "You're coming back less often" : "You're coming back more often",
+      suggests: slower
+        ? `This suggests something else is squeezing ${card.name} out. If that's on purpose, fine. If it isn't, give it a set day each week.`
+        : 'This suggests it\'s turning into a routine. The next opportunity is making those sessions count, so check whether your ratings here are moving too.',
       detail: `Lately it's ${every(lately)}. Usually it's ${every(usual)}. ${breaksLine}`,
       figures: [
         ...lastFigure,
@@ -374,7 +385,13 @@ export function subjectInsights(
     add(30, {
       key: 'rhythm',
       tone: 'note',
-      head: lately === 1 ? 'Back almost every day' : `Back ${every(lately)} or so`,
+      head: lately === 1 ? "It's part of your routine: back almost every day" : `You come back ${every(lately)} or so`,
+      suggests:
+        lately <= 2
+          ? "This suggests showing up isn't the issue here. The next opportunity is raising the difficulty, since regular practice can take it."
+          : lately <= 7
+            ? "This suggests a rhythm you can hold. It's enough to keep what you know. If you want faster progress, add one more session a week."
+            : "This suggests it's an occasional subject for you. With gaps this long, part of each session goes to remembering where you were, so shorter gaps would save that time.",
       detail: `You worked on it ${plural(recent.days, 'day')} of the last 30. You last did it ${agoText(
         since ?? 0,
       )}.`,
@@ -392,7 +409,10 @@ export function subjectInsights(
     add(45 + Math.min(25, liveRun.length), {
       key: 'run',
       tone: 'up',
-      head: `${liveRun.length} days in a row`,
+      head: `You're on a ${liveRun.length}-day run here`,
+      suggests: isBest
+        ? "This suggests it's working right now, so don't change much. On a busy day, one small task is enough to keep it alive."
+        : `This suggests it's picked up again. ${plural(bestRun.length - liveRun.length + 1, 'more day')} would make it your best run here.`,
       detail: isBest
         ? `That's your best run here. It started on ${when(liveRun.from)}.`
         : `Your best here is ${plural(bestRun.length, 'day')}, from ${when(bestRun.from)} to ${when(bestRun.to)}.`,
@@ -429,10 +449,46 @@ export function subjectInsights(
       }
       if (!why.length) why.push(`You finished ${recent.tasks} tasks, compared with ${before.tasks}.`);
     }
+    // Which of the three moved is what decides the next step.
+    const daysMoved = moved(recent.days, before.days, 0.25);
+    const fewerDays = daysMoved && recent.days < before.days;
+    const moreDays = daysMoved && recent.days > before.days;
+    const sizeMoved = moved(perRecent, perBefore, 0.15);
+    const smaller = sizeMoved && perRecent < perBefore;
+    const bigger = sizeMoved && perRecent > perBefore;
+    const driver = up
+      ? moreDays
+        ? ', mostly from coming back more'
+        : bigger
+          ? ', mostly from bigger tasks'
+          : ''
+      : recent.tasks === 0
+        ? ', with nothing finished'
+        : fewerDays
+          ? ', mostly from coming back less'
+          : smaller
+            ? ', mostly from smaller tasks'
+            : '';
+    const momentumNext = up
+      ? moreDays
+        ? 'This suggests coming back more often is what paid off. Keep that rhythm before you add anything bigger.'
+        : bigger
+          ? "This suggests you're taking on more in each task. Check they're going well before you go bigger again."
+          : "This suggests more finished work is behind the rise. Now's a good time to check the work still stretches you."
+      : recent.tasks === 0
+        ? 'This suggests it has dropped off completely. If it still matters, put one task on it this week.'
+        : fewerDays && smaller
+          ? "This suggests you're doing less here in both ways: fewer days and smaller tasks. Start with one real session a week."
+          : fewerDays
+            ? "This suggests you're here less often, but what you do when you're here held up. Getting one day a week back will do the most."
+            : smaller
+              ? "This suggests you're still showing up but picking smaller tasks. Try one bigger task next time."
+              : 'This suggests fewer finished tasks are behind the drop. One extra task a week would bring it back.';
     add(30 + Math.min(50, Math.abs(card.growth30) / 2), {
       key: 'momentum',
       tone: up ? 'up' : 'down',
-      head: `${up ? 'Up' : 'Down'} ${Math.abs(card.growth30)}% on last month`,
+      head: `${up ? 'Up' : 'Down'} ${Math.abs(card.growth30)}% on last month${driver}`,
+      suggests: momentumNext,
       detail: `${xpText(card.xp30)} in the last 30 days vs. ${xpText(card.xp30Before)} in the 30 before. ${why.join(' ')}`,
       bars: [
         { label: 'Last 30 days', value: card.xp30, text: xpText(card.xp30), lit: true },
@@ -449,7 +505,10 @@ export function subjectInsights(
     add(brandNew ? 45 : 55, {
       key: 'momentum',
       tone: 'up',
-      head: brandNew ? 'New this month' : 'Back after a break',
+      head: brandNew ? 'New this month' : "You've picked this back up",
+      suggests: brandNew
+        ? "This suggests you're still finding your feet here. Keep it regular for a few weeks, so there's a real pattern to read."
+        : 'This suggests it still matters to you. The hard part is keeping it going, so put the next session on your calendar now.',
       detail: brandNew
         ? `All ${xpText(card.xp)} here came in the last 30 days, over ${plural(recent.tasks, 'task')}.`
         : `Nothing in the 30 days before, then ${xpText(card.xp30)} in the last 30 over ${plural(
@@ -483,6 +542,14 @@ export function subjectInsights(
       key: 'ratings',
       tone: execGap > 0 ? 'up' : 'down',
       head: execGap > 0 ? 'It goes better than your other work' : 'It goes worse than your other work',
+      suggests:
+        execGap > 0
+          ? hardGap >= 0.3
+            ? "It's harder than your other work too, which suggests a real strength. Look at what you do here and try it on your weakest subject."
+            : "It isn't harder than your other work, which suggests it may be too comfortable. Pick something harder next time."
+          : hardGap >= 0.3
+            ? "It's harder than your other work too, which explains some of this. Drop down a level for a few tasks and build back up."
+            : "It isn't harder than your other work, which suggests how you work on it is the issue. Look at your last low-rated task here and find where it went wrong.",
       detail: `You rate how it went ${outOf5(execHere!)} out of 5 here and ${outOf5(
         execElse!,
       )} everywhere else. That's across ${plural(ratedHere.length, 'rated task')}.`,
@@ -499,7 +566,13 @@ export function subjectInsights(
     add(50 + Math.abs(hardGap) * 20, {
       key: 'ratings',
       tone: 'note',
-      head: hardGap > 0 ? 'Harder than the rest' : 'Easier than the rest',
+      head: hardGap > 0 ? 'This is harder than your other work' : 'This is easier than your other work',
+      suggests:
+        hardGap > 0
+          ? execGap >= -0.2
+            ? "This suggests you can handle it. Keep the difficulty where it is, and don't back off just because it feels hard."
+            : "This suggests it's a bit much right now. Mix in one easier task for every hard one until your ratings come back."
+          : 'This suggests it may be too comfortable. If you want it to keep moving, make your next task harder.',
       detail: `You rate it ${outOf5(hardHere!)} out of 5 for difficulty vs. ${outOf5(
         hardElse!,
       )} for your other work. How it went is ${
@@ -529,6 +602,9 @@ export function subjectInsights(
         key: 'trend',
         tone: rising ? 'up' : 'down',
         head: rising ? 'Your ratings here are climbing' : 'Your ratings here are slipping',
+        suggests: rising
+          ? 'This suggests practice here is paying off. The last stretch went well, so it\'s a good time to try something harder.'
+          : "This suggests something's changed. If your tasks got harder, that's normal. If they didn't, slow down and redo the one that went worst.",
         detail: `Your last ${stretch} rated tasks average ${outOf5(now)} out of 5 for how they went. The ${stretch} before that averaged ${outOf5(
           then,
         )}.`,
@@ -565,6 +641,9 @@ export function subjectInsights(
           : drop <= -0.3
             ? 'Hard tasks go better here'
             : 'Hard tasks go just as well here',
+        suggests: !holds
+          ? 'This suggests the jump to hard is too steep. Put a medium task right before your next hard one, so you\'re warmed up.'
+          : 'This suggests you can take on more hard work here. Try making one more task a week Hard.',
         detail: `When you rate a task Hard or Brutal, it goes ${outOf5(hardGoes)} out of 5. Easier ones go ${outOf5(
           easyGoes,
         )}. ${share(hardOnes.length, bothRated.length)}% of your rated tasks here were Hard or Brutal.`,
@@ -601,7 +680,11 @@ export function subjectInsights(
       add(42, {
         key: 'size',
         tone: 'note',
-        head: ratio > 1 ? 'Bigger tasks than usual' : 'Smaller tasks than usual',
+        head: ratio > 1 ? 'Your tasks here are bigger than your other work' : 'Your tasks here are smaller than your other work',
+        suggests:
+          ratio > 1
+            ? 'This suggests long sittings are how you do this subject. If you often run out of time, split them, since smaller pieces get finished more.'
+            : "This suggests you're doing small pieces here. That's fine for upkeep. If you want it to move faster, try one bigger task.",
         detail: `${Math.round(card.perTask)} XP a task here vs. ${Math.round(
           elsewhere,
         )} across your other subjects. About ${
@@ -614,7 +697,8 @@ export function subjectInsights(
       add(15, {
         key: 'size',
         tone: 'note',
-        head: 'Tasks about your usual size',
+        head: "Task size isn't what makes this subject different",
+        suggests: 'If it feels slow, look at how often you come back or how hard the tasks are. Those are more likely to be holding it back.',
         detail: `${Math.round(card.perTask)} XP a task here vs. ${Math.round(
           elsewhere,
         )} across your other subjects.${biggest ? ` Your biggest here was worth ${xpText(xpOf(biggest))} on ${when(dayOf(biggest))}.` : ''}`,
@@ -641,13 +725,27 @@ export function subjectInsights(
     const rateGap = elseRate ? hereRate / elseRate - 1 : 0;
     const hours30 =
       timedHere.filter((entry) => dayOf(entry.task) >= from30).reduce((sum, entry) => sum + entry.seconds, 0) / 3600;
+    const typicalTime = minutesText(median(minutes));
     add(Math.abs(rateGap) >= 0.2 ? 46 : 28, {
       key: 'time',
-      tone: 'note',
-      head: `About ${minutesText(median(minutes))} a task`,
-      detail: `That's from ${plural(timedHere.length, 'task')} here with a time on them. They earn ${Math.round(
-        hereRate,
-      )} XP an hour${elseRate ? ` vs. ${Math.round(elseRate)} in the rest of your work` : ''}.`,
+      tone: !elseRate || Math.abs(rateGap) < 0.2 ? 'note' : rateGap > 0 ? 'up' : 'down',
+      head: !elseRate
+        ? `A task here takes about ${typicalTime}`
+        : rateGap >= 0.2
+          ? 'Your time pays off more here than in your other work'
+          : rateGap <= -0.2
+            ? 'Your time pays off less here than in your other work'
+            : 'Your time here pays off about the same as your other work',
+      detail: `A task here takes about ${typicalTime} and earns ${Math.round(hereRate)} XP an hour${
+        elseRate ? `, vs. ${Math.round(elseRate)} in the rest of your work` : ''
+      }. That's from ${plural(timedHere.length, 'timed task')}.`,
+      suggests: !elseRate
+        ? `This suggests you should block at least ${typicalTime} when you sit down for it. Less than that and you'll likely stop partway through.`
+        : rateGap >= 0.2
+          ? `This suggests this work suits how you study. When you're short on time, it'll give you the most back. The next opportunity is working out what makes it click and trying that on a slower subject.`
+          : rateGap <= -0.2
+            ? `This suggests tasks here run long for what they earn. You may be stuck on them, or they may be too big. Split your next one into pieces under ${typicalTime} and see if the rate moves.`
+            : "This suggests time isn't the problem here. If it's moving slowly, look at how hard the tasks are before you add more hours.",
       ...(elseRate
         ? {
             bars: [
@@ -679,7 +777,12 @@ export function subjectInsights(
       add(40 + Math.min(20, Math.abs(rateHere - rateElse)), {
         key: 'deadlines',
         tone: better ? 'up' : 'down',
-        head: better ? `You beat ${rateHere}% of deadlines here` : 'Deadlines slip more here',
+        head: better ? `You keep your dates better here: ${rateHere}% vs. ${rateElse}%` : 'Deadlines slip more here than in your other work',
+        suggests: better
+          ? rateHere <= 75
+            ? "This suggests your dates fit this subject better than the rest, but there's still room. Give the ones you keep missing another day."
+            : 'This suggests your dates are realistic here. See what\'s different about how you plan this one, and try it on the subject that runs latest.'
+          : "This suggests you're underestimating how long this takes. Give tasks here more room, or start them a day earlier.",
         detail: `${lateHere.length.toLocaleString()} of ${plural(
           datedHere.length,
           'task',
@@ -723,7 +826,14 @@ export function subjectInsights(
     add(standsOut ? 35 + topShare * 30 : 20, {
       key: 'weekday',
       tone: 'note',
-      head: standsOut ? `${WEEKDAYS[top]} is your day for it` : 'Spread across the week',
+      head: standsOut ? `${WEEKDAYS[top]} is your day for it` : "It doesn't have a set day",
+      suggests: bestDay
+        ? bestDay.weekday === top
+          ? `Your busiest day is also where it goes best. Keep your hardest work here for ${WEEKDAYS[top]}s.`
+          : `You do the most on ${WEEKDAYS[top]}s, but it goes best on ${WEEKDAYS[bestDay.weekday]}s. Try moving your hardest task here to ${WEEKDAYS[bestDay.weekday]}.`
+        : standsOut
+          ? `This suggests ${WEEKDAYS[top]} is its natural slot. Miss one and the week may go by without it, so pick a backup day.`
+          : "This suggests it fits in wherever there's room. That's flexible, but it's easy to skip too. If it starts to slip, give it a set day.",
       detail: `${share(byDay[top]!, mine.length)}% of your tasks here land on a ${WEEKDAYS[top]}. ${
         WEEKDAYS[low]
       } is the quietest at ${share(byDay[low]!, mine.length)}%.${
@@ -766,6 +876,13 @@ export function subjectInsights(
           part === 'night'
             ? 'Mostly done late at night'
             : `Mostly a${part === 'afternoon' || part === 'evening' ? 'n' : ''} ${part} subject`,
+        suggests: spread
+          ? spread.best.name === part
+            ? `You're working on it at the right time. Keep your hardest tasks here ${PART_PHRASE[part]}.`
+            : `You mostly do it ${PART_PHRASE[part]}, but it goes better ${PART_PHRASE[spread.best.name]}. Try one task ${PART_PHRASE[spread.best.name]} this week and compare.`
+          : part === 'night'
+            ? "Late work is the first thing to go when you're tired. Try moving one task earlier and see how it rates."
+            : 'This suggests it has a set place in your day. That\'s worth keeping, since work tied to a time is harder to skip.',
         detail: `${share(info.count, mine.length)}% of your tasks here get finished ${PART_PHRASE[part]}.${
           spread
             ? ` They go best ${PART_PHRASE[spread.best.name]} (${outOf5(spread.best.avg)} out of 5) and worst ${
@@ -803,7 +920,8 @@ export function subjectInsights(
       add(36 + (topTask.count / mine.length) * 20, {
         key: 'repeat',
         tone: 'note',
-        head: 'Your most repeated task',
+        head: `One task makes up ${share(topTask.count, mine.length)}% of your work here`,
+        suggests: "This suggests you've got a solid routine, but repeating the same thing only takes you so far. Try a harder version of it next time.",
         detail: `${clip(topTask.title, 60)} makes up ${topTask.count.toLocaleString()} of your ${mine.length.toLocaleString()} tasks here, about ${share(
           topTask.count,
           mine.length,
@@ -824,7 +942,14 @@ export function subjectInsights(
     add(inDays <= 14 ? 52 : 38, {
       key: 'next',
       tone: 'up',
-      head: `Level ${card.level.tier + 1} in about ${plural(inDays, 'day')}`,
+      head: `Level ${card.level.tier + 1} is about ${plural(inDays, 'day')} away`,
+      suggests:
+        inDays <= 14
+          ? "You're close, so this is a good time to keep going. A few extra tasks now would get you there sooner."
+          : `One extra task a week would bring that down to about ${plural(
+              Math.max(1, Math.ceil(card.level.toNext / (perDay + Math.max(1, card.perTask) / 7))),
+              'day',
+            )}.`,
       detail: `${xpText(card.level.toNext)} to go at your recent pace of ${Math.max(
         1,
         Math.round(perDay),
@@ -855,8 +980,18 @@ export function subjectInsights(
       cards.length === 1
         ? 'Your only subject so far'
         : place === 1
-          ? 'Your biggest subject'
-          : `Your ${ordinal(place)} biggest subject`,
+          ? 'More of your XP comes from here than anywhere else'
+          : `This is your ${ordinal(place)} biggest subject`,
+    suggests:
+      cards.length === 1
+        ? "There's nothing to compare it with yet. A second subject would show you whether this one's a strength."
+        : place === 1
+          ? share(card.xp, total) >= 50
+            ? "This suggests a lot is riding on one subject. If it's your main goal, great. If not, give your second subject more room."
+            : "This suggests it's your main focus but not your only one. Keep the split if it matches what you care about most."
+          : above
+            ? `If this matters more to you than ${above.name}, it's the next one to pass. If it doesn't, this order's fine.`
+            : 'Check that this order matches what you care about most.',
     detail: `${share(card.xp, total)}% of your subject XP, out of ${plural(cards.length, 'subject')}.${neighbor}`,
     figures: [
       { label: 'XP here', value: Math.round(card.xp).toLocaleString() },
@@ -875,7 +1010,11 @@ export function subjectInsights(
   add(10, {
     key: 'history',
     tone: 'note',
-    head: `${plural(card.tasks, 'task')} on ${plural(days.length, 'day')}`,
+    head: `You've built a record here: ${plural(card.tasks, 'task')} on ${plural(days.length, 'day')}`,
+    suggests:
+      bestMonth && byMonth.size > 1
+        ? `That's plenty of your own history to learn from. Check what ${monthText(bestMonth[0])} had that this month doesn't.`
+        : "It's still early here. A few more weeks will show a real pattern.",
     detail: firstDay
       ? `Your first one here was ${when(firstDay)}${
           todayIso && daysBetween(firstDay, todayIso) > 0 ? ` (${plural(daysBetween(firstDay, todayIso), 'day')} ago)` : ''

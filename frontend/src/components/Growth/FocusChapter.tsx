@@ -38,6 +38,7 @@ import {
 import { HEAT_WEEKDAYS } from '@/utils/growthSummary';
 import { EmptyChapter, HeroRow, PanelHead, Seg } from './ChapterParts';
 import { Glyph } from './GrowthPanels';
+import { Suggestion } from '@/components/Analytics/Suggestion';
 
 /**
  * The three windows the calendar is drawn at, and the columns each needs.
@@ -303,7 +304,10 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
             No due dates in these weeks, so there was no plan to check.
           </p>
         ) : (
-          <WeeklyPlot weeks={weeks} />
+          <>
+            <WeeklyPlot weeks={weeks} />
+            <Suggestion text={plannedRead(weeks)} />
+          </>
         )}
       </section>
       )}
@@ -350,6 +354,7 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
             <p className="gr-mix-foot">
               Compared with the 90 days before.
             </p>
+            <Suggestion text={depthRead(mix.bands)} />
           </>
         )}
       </section>
@@ -491,6 +496,7 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
             </ul>
           </div>
         </div>
+        {recovery.rate !== null && <Suggestion text={recoveryRead(recovery.rate)} />}
       </section>
       )}
 
@@ -500,6 +506,43 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
           on Achievements — so it is gone. */}
     </div>
   );
+}
+
+/** What the weeks of plan add up to. The latest week leads when it broke away. */
+function plannedRead(weeks: ReturnType<typeof weeklyPlan>): string {
+  const rows = weeks.flatMap((week) => (week.completion === null ? [] : [week.completion]));
+  const latest = rows[rows.length - 1] ?? 0;
+  const earlier = rows.slice(0, -1);
+  const usual = earlier.length
+    ? Math.round(earlier.reduce((sum, value) => sum + value, 0) / earlier.length)
+    : latest;
+  if (earlier.length >= 3 && latest < usual - 25) {
+    return `You've finished ${latest}% of this week's plan, against your usual ${usual}%. This suggests the plan got away from you, so cut it down to what you can still finish.`;
+  }
+  if (usual >= 90) {
+    return 'You finish almost everything you plan. This suggests your plans may be playing it safe, so try one stretch task next week.';
+  }
+  if (usual < 60) {
+    return 'This suggests you plan more than you can do. Plan a third less next week and see if you finish more of it.';
+  }
+  return 'This suggests your plans are about the right size. Move the task you skip most to the top of next week.';
+}
+
+function depthRead(bands: Array<{ key: string; share: number }>): string {
+  const share = (key: string) => bands.find((band) => band.key === key)?.share ?? 0;
+  if (share('deep') >= 60) {
+    return "This suggests long sittings are how you work. Keep a few short tasks ready for days you can't protect a long block.";
+  }
+  if (share('light') >= 40) {
+    return 'This suggests your sessions are short and broken up. Try one 60-minute block this week for your hardest task.';
+  }
+  return 'This suggests a good mix of long and short sessions. Save the long ones for your hardest work.';
+}
+
+function recoveryRead(rate: number): string {
+  if (rate >= 80) return "This suggests a bad day doesn't throw you. A single miss is fine, so watch for a run of them.";
+  if (rate >= 60) return 'This suggests you get back, but not always quickly. Plan something small for the day after a miss.';
+  return 'This suggests one missed day often turns into a few. Keep a 10-minute task ready for the day after a miss.';
 }
 
 /**

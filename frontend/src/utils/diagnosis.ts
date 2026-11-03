@@ -325,6 +325,8 @@ export interface Diagnosis {
   headline: string;
   /** The two readings it is made of. This is where the numbers go. */
   detail: string;
+  /** What the two readings suggest together: the reason behind the action. */
+  means: string;
   /** One thing to do differently, small enough to start today. */
   action: string;
   /** What the reader should watch to know whether the action worked. */
@@ -436,12 +438,13 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
     push({
       id: 'productive-inefficient',
       tone: 'tension',
-      headline: 'Tasks are taking longer',
+      headline: "You're still finishing your work, but each task costs more time",
       detail: `You're still finishing ${round(now.completionRate)}% of dated tasks, but the average task now takes ${round(now.minutesPerTask!)} min, up from ${round(before.minutesPerTask!)}.`,
       points: [
         slowed ? `${nameOf(slowed.id)} slowed the most: ${round(slowed.is)} min a task, up from ${round(slowed.was)}.` : '',
         now.slowest ? `Your longest task was "${now.slowest.title}" at ${round(now.slowest.minutes)} min.` : '',
       ],
+      means: "This suggests finishing isn't the problem. Your tasks have gotten too big, or you're getting stuck partway through.",
       action: now.slowest && now.slowest.minutes > before.minutesPerTask! * 1.5
         ? `Split tasks like "${now.slowest.title}" into ${round(before.minutesPerTask!)}-minute pieces, and time the next three.`
         : `Time your next 3 sessions at ${round(before.minutesPerTask!)} min. If a task doesn't fit, split it.`,
@@ -462,12 +465,13 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
     push({
       id: 'volume-over-quality',
       tone: 'warning',
-      headline: 'More tasks, lower quality',
+      headline: "You're doing more, but it's going worse",
       detail: `You're doing ${moreLess(volume, 'more', 'fewer')} tasks a day, but your execution rating dropped from ${one(before.execution!)} to ${one(now.execution!)} (${now.ratedCount} rated tasks).`,
       points: [
         dropped ? `${nameOf(dropped.id)} dropped the most: ${one(dropped.was)} to ${one(dropped.is)}.` : '',
         now.lowest ? `Lowest rated: "${now.lowest.title}" (${now.lowest.execution}/5, ${day(now.lowest.date)}).` : '',
       ],
+      means: 'This suggests the extra tasks are coming out of the care you give each one.',
       action: now.lowest
         ? `Redo "${now.lowest.title}" before adding anything new, and drop one task tomorrow to make room.`
         : 'Drop one task tomorrow and spend that time on the hardest one.',
@@ -487,12 +491,13 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
     push({
       id: 'levelling-up',
       tone: 'good',
-      headline: 'Harder work, same quality',
+      headline: 'Your work got harder and your quality kept up',
       detail: `Difficulty rose from ${one(before.difficulty!)} to ${one(now.difficulty!)} out of 5 and your execution held at ${one(now.execution!)}.`,
       points: [
         climbed ? `Most of the climb was ${nameOf(climbed.id)}: ${one(climbed.was)} to ${one(climbed.is)} for difficulty.` : '',
         `Based on ${now.ratedCount} rated tasks.`,
       ],
+      means: "This suggests you've outgrown your old level. The risk now is adding more before this one has settled.",
       action: climbed
         ? `Keep ${nameOf(climbed.id)} at this level for two more weeks before adding more.`
         : 'Keep this level for another two weeks before adding more.',
@@ -506,11 +511,18 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
     push({
       id: 'drifting-easy',
       tone: 'warning',
-      headline: 'Your tasks are getting easier',
-      detail: `Average difficulty fell from ${one(before.difficulty!)} to ${one(now.difficulty!)} out of 5 (${now.ratedCount} rated tasks), while your task count stayed flat.`,
+      headline: 'Your tasks are getting easier, and that can hide a stall',
+      detail: `Average difficulty fell from ${one(before.difficulty!)} to ${one(now.difficulty!)} out of 5 (${now.ratedCount} rated tasks)${
+        volume === null || Math.abs(volume) < MOVE
+          ? ', while your task count stayed flat'
+          : volume > 0
+            ? `, while you did ${moreLess(volume, 'more', 'fewer')} tasks a day`
+            : `, and you did ${moreLess(volume, 'more', 'fewer')} tasks a day too`
+      }.`,
       points: [
         eased ? `${nameOf(eased.id)} eased the most: ${one(eased.was)} to ${one(eased.is)}.` : '',
       ],
+      means: "This suggests you may be picking what's comfortable. Your ratings won't warn you, since easy work goes well.",
       action: eased
         ? `Start tomorrow with one ${nameOf(eased.id)} task you expect to rate 4 or 5 for difficulty.`
         : 'Start tomorrow with one task you expect to rate 4 or 5 for difficulty.',
@@ -526,12 +538,13 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
     push({
       id: 'present-but-thin',
       tone: 'tension',
-      headline: 'Showing up daily, doing less each day',
+      headline: "You're showing up, but each day counts for less",
       detail: `You worked ${now.activeDays} of ${now.days} days, but each day earned ${round(now.xpPerActiveDay)} XP, down from ${round(before.xpPerActiveDay)}.`,
       points: [
         thinner ? `${nameOf(thinner.id)} fell furthest: ${round(thinner.is)} XP, down from ${round(thinner.was)}.` : '',
         strong ? `Your strongest day is ${strong.name}, at ${round(strong.xp)} XP.` : '',
       ],
+      means: 'This suggests showing up is less of a problem now. The next opportunity is getting more out of each session.',
       action: strong
         ? `Make ${strong.name} and one other day long sessions this week${thinner ? `, starting with ${nameOf(thinner.id)}` : ''}.`
         : 'Pick two days this week for one long session each.',
@@ -547,12 +560,13 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
     push({
       id: 'cramming',
       tone: 'tension',
-      headline: 'Same work, fewer days',
+      headline: "You're packing your work into fewer days",
       detail: `You worked ${now.activeDays} of ${now.days} days (down from ${before.activeDays}), with ${moreLess(perDay, 'more', 'less')} XP on each.`,
       points: [
         now.busiest ? `Your biggest day was ${day(now.busiest.date)}, with ${round(now.busiest.xp)} XP.` : '',
         quietest ? `You worked ${quietest.worked} of ${quietest.total} ${quietest.name}s.` : '',
       ],
+      means: 'This suggests big days are covering for the ones you skip. That holds until a big day falls through.',
       action: now.busiest && quietest
         ? `Move one task from a day like ${day(now.busiest.date)} to ${quietest.name}.`
         : 'Move one task from your busiest day to your quietest.',
@@ -576,7 +590,7 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
     push({
       id: 'time-without-return',
       tone: 'warning',
-      headline: 'More focus time, same results',
+      headline: "You're putting in more focus time, but it isn't paying off yet",
       detail: `You're focusing ${round(now.focusPerActiveDay)} min a day, up from ${round(before.focusPerActiveDay)}, but daily XP hasn't changed.`,
       points: [
         /* A jump from a few minutes a day is the timer starting to be used,
@@ -588,6 +602,10 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
         absorbed ? `The extra time went mostly to ${nameOf(absorbed.id)}: ${round(absorbed.is)} min on finished tasks, up from ${round(absorbed.was)}.` : '',
         best && (!absorbed || best.id !== absorbed.id) ? `${nameOf(best.id)} earns the most per hour, at ${round(best.rate)} XP.` : '',
       ],
+      means:
+        before.focusPerActiveDay < 20
+          ? "This suggests much of the jump is time you weren't timing before, so give it a couple of weeks before you read much into it."
+          : "This suggests the extra minutes aren't going into work that finishes. More time alone won't fix that.",
       action: absorbed && best && best.id !== absorbed.id
         ? `Cap ${nameOf(absorbed.id)} sessions at 45 min and give the time back to ${nameOf(best.id)}.`
         : absorbed
@@ -613,11 +631,12 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
     push({
       id: 'deadlines-slipping',
       tone: 'warning',
-      headline: 'Finishing, but late',
+      headline: "You're getting things done, but later than you planned",
       detail: `${round(now.deadlineRate)}% of your ${now.deadlineCount} dated tasks were on time, down from ${round(before.deadlineRate!)}%.`,
       points: [
         late ? `${nameOf(late[0])} ran late most: ${late[1].late} of ${late[1].dated} dated tasks.` : '',
       ],
+      means: "This suggests your dates are tighter than your real pace, or they're on tasks that don't need one.",
       action: late
         ? `Set ${nameOf(late[0])} due dates a day earlier this week, and drop dates from tasks that don't need one.`
         : "Set due dates a day earlier this week, and drop dates from tasks that don't need one.",
@@ -632,13 +651,19 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
     push({
       id: 'gap',
       tone: 'tension',
-      headline: 'Long gaps between sessions',
+      headline: 'Long breaks are taking days out of your weeks',
       detail: `Your longest break was ${now.longestGap} days${now.gapFrom && now.gapTo ? `, ${day(now.gapFrom)} to ${day(now.gapTo)}` : ''}, and you had ${now.gapCount} ${now.gapCount === 1 ? 'break' : 'breaks'} of 2+ days. On days you worked, you averaged ${round(now.xpPerActiveDay)} XP.`,
       points: [
         missed ? `${missed.name} is the day you miss most: worked ${missed.worked} of ${missed.total}.` : '',
         now.returnXp !== null ? `Your first day back after a break averaged ${round(now.returnXp)} XP, against ${round(now.xpPerActiveDay)} on a usual day.` : '',
         now.beforeGap ? `Before the longest break you were on ${nameOf(now.beforeGap)}.` : '',
       ],
+      means:
+        now.returnXp !== null && now.returnXp < now.xpPerActiveDay * 0.8
+          ? "This suggests restarting is the expensive part. You come back slower, so a shorter break saves more than pushing hard after one."
+          : now.returnXp !== null && now.returnXp > now.xpPerActiveDay * 1.2
+            ? "You come back strong, which suggests the breaks aren't hurting your sessions. What they cost you is the days themselves."
+            : 'This suggests the lost days are the real cost here, since your sessions hold up once you restart.',
       action: missed
         ? `Put a 15-minute ${subject ? `${nameOf(subject)} ` : ''}task on ${missed.name}, so a break can't run past one day.`
         : 'Plan 15 minutes for the day after your next session.',
@@ -664,12 +689,13 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
     push({
       id: 'steady',
       tone: 'good',
-      headline: 'Steady two weeks',
+      headline: "Nothing's moved in two weeks, good or bad",
       detail: `${now.finishedCount} tasks over ${now.activeDays} days at ${round(now.xpPerActiveDay)} XP a day, about the same as the two weeks before.`,
       points: [
         top ? `Most of it was ${nameOf(top)}: ${now.subjects.get(top)!.tasks} tasks.` : '',
         dropped ? `${nameOf(dropped)} had work two weeks ago and none since.` : '',
       ],
+      means: "This suggests your routine is holding. It also won't take you anywhere new by itself.",
       action: dropped
         ? `Change one thing: put one ${nameOf(dropped)} task back in this week, and keep the rest the same.`
         : 'Tweak one thing, like the difficulty. Leave the rest alone.',

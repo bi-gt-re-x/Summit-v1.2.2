@@ -10275,7 +10275,6 @@ html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-pag
     color: var(--ax-text)
 }
 html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-knows-fact {
-    border-top: 1px solid var(--ax-line-soft);
     color: var(--ax-muted)
 }
 html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-observe {
@@ -13567,8 +13566,14 @@ html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-pag
     border-color: var(--ax-bad);
     color: var(--ax-bad)
 }
-html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-week {
-    border-bottom: 1px solid var(--ax-line-soft)
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-week-lead {
+    background: color-mix(in srgb, var(--ax-muted) 9%, transparent)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-week.is-up .ax-week-lead {
+    background: color-mix(in srgb, var(--ax-good) 9%, transparent)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-week.is-down .ax-week-lead {
+    background: color-mix(in srgb, var(--ax-bad) 8%, transparent)
 }
 html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-week-mark {
     background: color-mix(in srgb, var(--ax-muted) 12%, transparent);
@@ -13589,31 +13594,22 @@ html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-pag
     color: var(--ax-muted)
 }
 html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-week-val {
-    color: var(--ax-faint)
+    color: var(--ax-muted)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-week-col.is-now .ax-week-val {
+    color: var(--ax-text)
 }
 html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-week-bar {
-    background: var(--ax-card-2)
+    border-bottom: 1px solid var(--ax-line)
 }
 html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-week-bar i {
-    background: color-mix(in srgb, var(--ax-muted) 45%, transparent)
+    background: color-mix(in srgb, var(--ax-muted) 38%, transparent)
 }
 html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-week-col.is-up .ax-week-bar i {
-    background: color-mix(in srgb, var(--ax-good) 60%, transparent)
+    background: color-mix(in srgb, var(--ax-good) 55%, transparent)
 }
 html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-week-col.is-down .ax-week-bar i {
-    background: color-mix(in srgb, var(--ax-bad) 55%, transparent)
-}
-html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-week-col.is-now .ax-week-bar {
-    outline: 2px solid var(--ax-line)
-}
-html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-week-way {
-    color: var(--ax-faint)
-}
-html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-week-col.is-up .ax-week-way {
-    color: var(--ax-good)
-}
-html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-week-col.is-down .ax-week-way {
-    color: var(--ax-bad)
+    background: color-mix(in srgb, var(--ax-bad) 45%, transparent)
 }
 html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-week-date {
     color: var(--ax-muted)
@@ -13623,25 +13619,43 @@ html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-pag
 }
 html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-moves-col {
     border: 1px solid var(--ax-line-soft);
-    background: var(--ax-card)
+    background: var(--ax-card);
+    --ax-moves-tone: var(--ax-muted)
 }
-html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-moves-col.is-good .ax-moves-head {
-    color: var(--ax-good)
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-moves-col.is-worse,
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-moves-col.is-attention {
+    --ax-moves-tone: var(--ax-bad)
 }
-html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-moves-col.is-bad .ax-moves-head {
-    color: var(--ax-bad)
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-moves-col.is-mixed {
+    --ax-moves-tone: var(--ax-amber)
 }
-html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-moves-col.is-good .ax-moves-mark {
-    color: var(--ax-good)
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-moves-col.is-better {
+    --ax-moves-tone: var(--ax-good)
 }
-html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-moves-col.is-bad .ax-moves-mark {
-    color: var(--ax-bad)
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-moves-head {
+    color: var(--ax-moves-tone)
 }
-html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-moves-row strong {
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-moves-icon {
+    background: color-mix(in srgb, var(--ax-moves-tone) 12%, transparent)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-moves-row::before {
+    background: var(--ax-moves-tone)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-moves-name {
     color: var(--ax-text)
 }
 html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-moves-row p {
     color: var(--ax-muted)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-suggest {
+    background: color-mix(in srgb, var(--ax-amber) 10%, transparent);
+    color: var(--ax-text)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-moves-row p.ax-suggest {
+    color: var(--ax-text)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-suggest-icon {
+    color: var(--ax-amber)
 }
 html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-period-list {
     color: var(--ax-muted)
@@ -14222,6 +14236,9 @@ html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-pag
 }
 html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .gr-fact p {
     color: var(--ink-quiet)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .gr-fact p.ax-suggest {
+    color: var(--ink)
 }
 html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .gr-fact-bar {
     color: var(--ink-faint)

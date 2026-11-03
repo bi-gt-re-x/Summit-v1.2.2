@@ -638,11 +638,18 @@ def headline(found: dict, by_band: Dict[str, dict]) -> Optional[dict]:
                 text = ('You get more done on rough days: {} tasks vs. {} on good days. '
                         'Hard days seem to push you to work.').format(
                             _num(rough['tasks_avg']), _num(good['tasks_avg']))
-            return {'text': text, 'tone': 'insight', 'confidence': sure}
+            suggests = ('This suggests your mood is setting your output more than your plan is. Keep one '
+                        'small, easy task ready for rough days, so they still count.'
+                        if good['tasks_avg'] > rough['tasks_avg'] else
+                        'This suggests pressure gets you moving. Just check you\'re not relying on bad days '
+                        'to get things done, and plan one real session for a good day.')
+            return {'text': text, 'tone': 'insight', 'confidence': sure, 'suggests': suggests}
         return {'text': 'Rough days and good days look about the same: '
                         '{} tasks vs. {}. Bad days don\'t seem to slow you down.'.format(
                             _num(rough['tasks_avg']), _num(good['tasks_avg'])),
-                'tone': 'steady', 'confidence': sure}
+                'tone': 'steady', 'confidence': sure,
+                'suggests': ('This suggests your mood isn\'t what\'s driving your output. If you want more '
+                             'done, look at your plan before you look at how you feel.')}
 
     strong = [row for row in found['feelings'] if row.get('enough') and row.get('change') is not None
               and abs(row['change']) >= SMALL_CHANGE]
@@ -651,12 +658,19 @@ def headline(found: dict, by_band: Dict[str, dict]) -> Optional[dict]:
         direction = 'more' if row['change'] > 0 else 'fewer'
         return {'text': 'On days you write that you feel {}, you finish {}% {} tasks.'.format(
                     row['label'].lower(), abs(row['change']), direction),
-                'tone': 'insight', 'confidence': row['confidence']}
+                'tone': 'insight', 'confidence': row['confidence'],
+                'suggests': ('This suggests that feeling gets in the way. On those days, start with your easiest '
+                             'task, so you\'re moving before it can stop you.'
+                             if row['change'] < 0 else
+                             'This suggests that feeling helps you work. Note what brings it on, and try to '
+                             'set it up before your hardest sessions.')}
 
     if found['harsher'] >= 2:
         return {'text': 'You\'re harder on yourself than your numbers are. {} times you wrote that '
                         'the day was a write-off and still did your usual or more.'.format(found['harsher']),
-                'tone': 'insight', 'confidence': 'early'}
+                'tone': 'insight', 'confidence': 'early',
+                'suggests': ('This suggests a day can feel worse than it was. Check your task count before '
+                             'you write one off.')}
 
     need = max(0, MIN_DAYS * 2 - found['mood_days'])
     if found['mood_days'] == 0:

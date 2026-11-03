@@ -398,8 +398,8 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
         found.append(_action(
             id='check-{}'.format(ready['node_id']), kind='check',
             title='Take the {} skill check'.format(ready['name']),
-            because=('{} session{} on it so far. Get 3 of 4 or 4 of 5 right and '
-                     "it's mastered.").format(ready['sessions'], '' if ready['sessions'] == 1 else 's'),
+            because=('{} session{} on it so far. A check shows whether it has really stuck. Get 3 of 4 or '
+                     "4 of 5 right and it's mastered.").format(ready['sessions'], '' if ready['sessions'] == 1 else 's'),
             minutes=CHECK_MINUTES, to='/skill-trees?node={}&check=1'.format(ready['node_id']),
             weight=CHECK_WEIGHT))
 
@@ -410,7 +410,8 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
             id='stuck-{}'.format(snag['reason']), kind='stuck',
             title=('Next {} session: {}'.format(name_of(where), snag['fix'][0].lower() + snag['fix'][1:])
                    if where else snag['fix']),
-            because='You picked "{}" on {} of your last {} rough sessions.'.format(
+            because=('You picked "{}" on {} of your last {} rough sessions. This suggests the same thing keeps '
+                     'getting in the way, so fixing it will do more than another hour of the same.').format(
                 snag['label'], snag['count'], snag['of']),
             minutes=PRACTICE_MINUTES, subject=where, weight=740))
 
@@ -422,8 +423,9 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
         found.append(_action(
             id='overdue-{}'.format(task.get('id')), kind='overdue',
             title='Finish "{}"'.format(task.get('title')),
-            because='Due {}. It\'s your oldest open task.'.format(
-                'yesterday' if late == 1 else '{} days ago'.format(late)),
+            because='Due {}.{} Late tasks lose XP each day, so this gets more expensive the longer it waits.'.format(
+                'yesterday' if late == 1 else '{} days ago'.format(late),
+                " It's your oldest open task." if index == 0 else ''),
             minutes=slot, taskId=task.get('id'), subject=task.get('subject') or None,
             goalId=(goal_ids_of(task) or [None])[0],
             weight=1000 - index * 10 + min(late, 30)))
@@ -432,7 +434,8 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
     for index, task in enumerate(due_today[:3]):
         found.append(_action(
             id='due-{}'.format(task.get('id')), kind='due',
-            title='Finish "{}"'.format(task.get('title')), because='Due today.',
+            title='Finish "{}"'.format(task.get('title')),
+            because="Due today. Finishing it now keeps it from losing XP tomorrow.",
             minutes=slot, taskId=task.get('id'), subject=task.get('subject') or None,
             goalId=(goal_ids_of(task) or [None])[0],
             weight=900 - index * 10 + (25 if task.get('priority') == 'high' else 0)))
@@ -473,7 +476,8 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
             title=('Finish "{}" for {}'.format(linked.get('title'), title) if linked
                    else 'Work on "{}" for {}'.format(stone.get('title'), title) if stone
                    else 'Put an hour into {}'.format(title)),
-            because='{} day{} left, {}% behind schedule.'.format(
+            because=('{} day{} left, {}% behind schedule. This suggests your current pace won\'t get you '
+                     'there, so your next hour should go here first.').format(
                 remaining, '' if remaining == 1 else 's', js_round(gap)),
             minutes=slot, taskId=linked.get('id') if linked else None, goalId=goal.get('id'),
             weight=800 - index * 20 + min(gap, 40)))
@@ -507,7 +511,8 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
             title=('Finish "{}" for {}'.format(linked.get('title'), title) if linked
                    else 'Start "{}" for {}'.format(stone.get('title'), title) if stone
                    else 'Plan the next step for {}'.format(title)),
-            because="Nothing finished toward it in {:,} days. It's at {}%.".format(
+            because=("Nothing finished toward it in {:,} days. It's at {}%. A goal this quiet has usually "
+                     "dropped off your list, so one small step now tells you if it still matters.").format(
                 since, js_round(_num(goal.get('progress')))),
             minutes=slot, taskId=linked.get('id') if linked else None, goalId=goal.get('id'),
             weight=580 + min(since, 30)))
@@ -589,7 +594,8 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
             title='Redo your {} latest low-rated tasks'.format(takeable),
             because=('{} tasks went badly (rated 1 or 2) in the last two weeks. Start with the newest {}.'
                      .format(len(poor), takeable) if len(poor) > takeable else
-                     '{} tasks went badly (rated 1 or 2) in the last two weeks. Nothing\'s been redone yet.'
+                     '{} tasks went badly (rated 1 or 2) in the last two weeks. Nothing\'s been redone yet, '
+                     'and redoing them while they\'re fresh shows you what went wrong.'
                      .format(len(poor))),
             minutes=min(30, max(MIN_SLOT, takeable * 6)), subject=subject,
             weight=560 + min(len(poor), 12) * 6))
@@ -607,7 +613,8 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
         found.append(_action(
             id='neglected-{}'.format(subject), kind='neglected',
             title='Come back to {}'.format(name_of(subject)),
-            because='Nothing in {:,} days, after {:,} tasks.'.format(since, count),
+            because=("Nothing in {:,} days, after {:,} tasks. You've put real work into this, and one session "
+                     "now costs less than relearning it later.").format(since, count),
             minutes=PRACTICE_MINUTES, subject=subject, weight=540 + min(since, 40)))
 
     stale = []
@@ -621,7 +628,8 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
         found.append(_action(
             id='stale-{}'.format(task.get('id')), kind='stale',
             title='Do or drop "{}"'.format(task.get('title')),
-            because='On your list for {} days with no due date. Do it this week or delete it.'.format(age),
+            because=('On your list for {} days with no due date. This suggests it isn\'t a priority. Do it this '
+                     'week or delete it, so your list stays honest.').format(age),
             minutes=min(slot, 20), taskId=task.get('id'), subject=task.get('subject') or None,
             weight=420 + min(age, 30)))
 
@@ -676,7 +684,8 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
             found.append(_action(
                 id='xp-pace', kind='xp',
                 title="Make up this week's XP" + (' with {}'.format(name_of(top)) if top else ''),
-                because='{} XP in the last 7 days, vs. your usual {} a week. {} XP behind.'.format(
+                because=('{} XP in the last 7 days, vs. your usual {} a week. {} XP behind. One solid session '
+                         'is the quickest way to close that.').format(
                     js_round(this_week), js_round(usual), js_round(usual - this_week)),
                 minutes=min(60, max(PRACTICE_MINUTES, slot)), subject=top, weight=470))
 

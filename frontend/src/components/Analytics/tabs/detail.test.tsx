@@ -27,6 +27,7 @@ import { describe, expect, it } from 'vitest';
 import { WhatChangedPanel } from '../WeekTrend';
 import { draw } from './fixtures';
 import { DETAIL_RULES, detailRows } from '@/utils/analyticsPrefs';
+import type { Diagnosis } from '@/utils/diagnosis';
 
 describe('What changed reads what you type after a task', () => {
   const panel = (reported: { phrase: string; count: number } | null) => (
@@ -54,6 +55,81 @@ describe('What changed reads what you type after a task', () => {
     // still a real finding; it just has no annotation to add to it.
     draw(panel(null));
     expect(screen.queryByText(/You reported/)).not.toBeInTheDocument();
+  });
+});
+
+describe('What changed lays out what moved', () => {
+  const moved = (id: string, label: string, before: number, after: number, good: boolean) => ({
+    id,
+    label,
+    before,
+    after,
+    show: (value: number) => `${value} XP`,
+    pct: ((after - before) / before) * 100,
+    up: after > before,
+    good,
+    size: 1,
+    percent: true,
+  });
+  const read = (id: string, tone: Diagnosis['tone'], headline: string): Diagnosis => ({
+    id,
+    tone,
+    headline,
+    detail: 'The figures behind it.',
+    means: 'This suggests a reason.',
+    action: 'Try one thing.',
+    watch: 'A number.',
+    points: [],
+    weight: 1,
+  });
+  const panel = (diagnoses: Diagnosis[]) => (
+    <WhatChangedPanel
+      move={null}
+      blocks={[]}
+      moves={[moved('xp', 'XP earned', 5197, 1948, false), moved('tasks', 'Tasks finished', 10, 20, true)]}
+      diagnoses={diagnoses}
+      enoughRecord
+      nowRange="Oct 21 to Nov 3"
+      wasRange="Oct 7 to Oct 20"
+      reads={{ worse: 'This suggests each day is doing less.', better: null }}
+    />
+  );
+
+  it('keeps a figure in line with its sentence', () => {
+    const { container } = draw(panel([]));
+    // The name of the metric is its own line. A bolded figure stays in the text.
+    const row = container.querySelector('.ax-moves-row')!;
+    expect(row.querySelector('.ax-moves-name')!.textContent).toBe('XP earned');
+    expect(row.querySelector('p')!.textContent).toBe('Down 63%, from 5197 XP to 1948 XP.');
+    expect(row.querySelector('p strong')!.textContent).toBe('63%');
+  });
+
+  it('puts each reading in the card for its tone, with what it suggests', () => {
+    const { container } = draw(
+      panel([
+        read('a', 'warning', 'You are getting things done late'),
+        read('b', 'tension', 'You are showing up, but doing less'),
+        read('c', 'good', 'Your work got harder and you kept up'),
+      ]),
+    );
+    const card = (kind: string) => container.querySelector(`.ax-moves-col.is-${kind}`)!;
+    expect(card('attention').textContent).toContain('You are getting things done late');
+    expect(card('mixed').textContent).toContain('You are showing up, but doing less');
+    expect(card('better').textContent).toContain('Your work got harder and you kept up');
+    expect(card('attention').querySelector('.ax-suggest')!.textContent).toBe(
+      'This suggests a reason. Try one thing.',
+    );
+    expect(card('worse').querySelector('.ax-suggest')!.textContent).toBe(
+      'This suggests each day is doing less.',
+    );
+  });
+
+  it('reads worse first, then what needs attention, and better last', () => {
+    const { container } = draw(panel([read('a', 'warning', 'Late')]));
+    const order = [...container.querySelectorAll('.ax-moves-col')].map((node) => node.className);
+    expect(order[0]).toContain('is-worse');
+    expect(order[1]).toContain('is-attention');
+    expect(order[2]).toContain('is-better');
   });
 });
 

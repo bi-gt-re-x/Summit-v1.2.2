@@ -186,7 +186,7 @@ describe('the advice turns on the figure', () => {
     const held = adviceOf('record', { activeDays: 90, spanDays: 90 });
     const patchy = adviceOf('record', { activeDays: 30, spanDays: 90 });
     expect(held).toMatch(/You show up plenty/i);
-    expect(patchy).toMatch(/hit and miss/);
+    expect(patchy).toMatch(/day you skip most/);
   });
 
   it('reads a dominant subject and a scattered week differently', () => {
@@ -205,8 +205,8 @@ describe('the advice turns on the figure', () => {
         { name: 'Violin', count: 25 },
       ],
     });
-    expect(dominant).toMatch(/Over half/);
-    expect(scattered).toMatch(/Your time is spread thin/);
+    expect(dominant).toMatch(/most of your attention/);
+    expect(scattered).toMatch(/no subject is getting enough/);
   });
 
   it('does not call a deliberate pair of interests unfocused', () => {
@@ -219,7 +219,7 @@ describe('the advice turns on the figure', () => {
           { name: 'History', count: 50 },
         ],
       }),
-    ).toMatch(/Over half|clear lead/);
+    ).toMatch(/most of your attention|split you can keep/);
   });
 
   it('names both subjects when the focus has moved', () => {
@@ -240,7 +240,7 @@ describe('the advice turns on the figure', () => {
         { name: 'Computer Science', count: 10 },
       ],
     });
-    expect(middle).toMatch(/one subject leads/i);
+    expect(middle).toMatch(/split you can keep/i);
     expect(middle).not.toMatch(/Over half|Nothing owns/);
   });
 });

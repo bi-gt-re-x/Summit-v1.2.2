@@ -40,7 +40,7 @@ import { GoalsFinished } from '../GoalsFinished';
 import { GoalForecast } from '../GoalForecast';
 import { SlumpAlert, WhatChangedPanel } from '../WeekTrend';
 import { PeriodSummary } from '../PeriodSummary';
-import { rangeLabel } from '@/utils/weekTrend';
+import { moveReads, rangeLabel } from '@/utils/weekTrend';
 
 export function OverviewTab({
   model,
@@ -258,6 +258,7 @@ export function OverviewTab({
               ? { phrase: reasons.struggle[0].phrase, count: reasons.struggle[0].count }
               : null
           }
+          reads={moveReads(moves, shownDiagnoses ?? [])}
         />
       </section>
 

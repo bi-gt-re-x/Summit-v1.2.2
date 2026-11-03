@@ -39,12 +39,12 @@
  * every row rather than a pre-sorted list of strings: the panel needs to know
  * which of the three it is drawing to label and colour it.
  *
- * ## It never says what to do
+ * ## Every card says what it suggests
  *
- * Same rule as the rest of the Insights tab. `Diagnosis.action` and
- * `Pattern.soWhat` both exist and both are deliberately dropped here — the
- * Recommendations tab owns instructions, and a card that states a finding and
- * then tells you to fix it has made the next tab redundant.
+ * A finding on its own leaves the reader to work out why it matters. So each
+ * card ends in `suggests`: what the figures point to, then what to try. It's
+ * read from that reader's own figures, and it branches with them, so two
+ * accounts don't get the same line for different reasons.
  */
 import type { GrowthDay, Task } from '@/types';
 import type { Diagnosis } from './diagnosis';
@@ -91,6 +91,8 @@ export interface Change {
   kind: ChangeKind;
   /** The finding, as one sentence a reader could repeat to somebody. */
   text: string;
+  /** What the figures suggest, and what to try next. */
+  suggests?: string;
   /**
    * "3.2 → 3.8", where the finding is a movement between two readings.
    *
@@ -168,6 +170,7 @@ function difficultyRising(days: GrowthDay[], window: number): Change | null {
     family: 'difficulty',
     text:
       `Your work got harder (${one(hardWas)} to ${one(hardNow)} over ${window} days), and how well it goes held steady at ${Math.round((wellNow / 5) * 100)}%.`,
+    suggests: "This suggests you've got room at this level. Stay here for a couple of weeks before you add more, so it's a level you can hold.",
     move: `${one(hardWas)} → ${one(hardNow)}`,
     basis: `${ratedNow.toLocaleString()} rated tasks in the last ${window} days.`,
     weight: 40 + lift,
@@ -207,6 +210,7 @@ function hardTasksFailing(finished: Task[]): Change | null {
     family: 'difficulty-bands',
     text:
       `Your hardest tasks go badly more often: ${Math.round(hardRate)}% rated 2 or lower, vs. ${Math.round(midRate)}% for medium ones.`,
+    suggests: 'This suggests the jump from medium to hard is too big right now. Split your next hard task into a medium step and a hard step, and see if the ratings close up.',
     move: `${Math.round(midRate)}% → ${Math.round(hardRate)}%`,
     basis: `${hard.length} tasks rated 4 or 5 for difficulty, ${middling.length} rated 3.`,
     strength: smaller >= 20 && points >= 15 ? 'strong' : smaller >= 12 ? 'likely' : 'weak',
@@ -277,6 +281,9 @@ function qualityMoved(days: GrowthDay[], window: number): Change | null {
     text: up
       ? `Your work is going better. You rate it ${one(wellNow)} out of 5 now, up from ${one(wellWas)}.`
       : `Your work is going worse. You rate it ${one(wellNow)} out of 5 now, down from ${one(wellWas)}.`,
+    suggests: up
+      ? 'This suggests something you changed is working. Work out what it was and keep it before you change anything else.'
+      : "This suggests you're rushing or reaching too far. Redo your lowest-rated task from these weeks before you add anything new.",
     move: `${one(wellWas)} → ${one(wellNow)}`,
     basis: `${ratedNow.toLocaleString()} rated tasks in the last ${window} days, ${ratedWas.toLocaleString()} before.`,
     weight: 45 + Math.abs(move),
@@ -320,6 +327,9 @@ function efficiencyMoved(days: GrowthDay[], window: number): Change | null {
     text: up
       ? `Your focus hours are paying off more: ${round(nowRate.rate)} XP an hour, up from ${round(wasRate.rate)}.`
       : `Your focus hours are paying off less: ${round(nowRate.rate)} XP an hour, down from ${round(wasRate.rate)}.`,
+    suggests: up
+      ? 'This suggests your sessions are getting sharper. Keep them the same length and see if it holds.'
+      : "This suggests your time is going into work that doesn't finish. Decide what you'll finish before your next session starts.",
     move: `${round(wasRate.rate)} → ${round(nowRate.rate)} XP/h`,
     basis: `${Math.round(nowRate.hours)} focus hours in the last ${window} days, ${Math.round(wasRate.hours)} before.`,
     weight: 35 + Math.abs(move),
@@ -368,6 +378,9 @@ function subjectMoved(rows: SubjectMove[]): Change[] {
       text: up
         ? `${row.name} is taking more of your time. It's ${Math.round(row.shareNow)}% of your XP now, up from ${Math.round(row.shareWas)}%.`
         : `${row.name} is taking less of your time. It's ${Math.round(row.shareNow)}% of your XP now, down from ${Math.round(row.shareWas)}%.`,
+      suggests: up
+        ? `This suggests ${row.name} has become your priority. If that's the plan, great. If it isn't, check what it's pushing out.`
+        : `This suggests ${row.name} is getting squeezed out. If it still matters, give it a set slot this week, since it won't come back by itself.`,
       move: `${Math.round(row.shareWas)}% → ${Math.round(row.shareNow)}%`,
       basis: `${Math.round(row.now).toLocaleString()} XP here vs. ${Math.round(row.before).toLocaleString()} before.`,
       weight: 25 + Math.abs(row.points),
@@ -416,6 +429,7 @@ function overdueBacklog(open: Task[], todayIso: string): Change | null {
       `${late.length} ${late.length === 1 ? 'task is' : 'tasks are'} past the date you set for ` +
       `${late.length === 1 ? 'it' : 'them'}` +
       (days > 0 ? `, the oldest by ${days} ${days === 1 ? 'day' : 'days'}.` : '.'),
+    suggests: "This suggests your list has more dated work than you can do. Decide today: do the oldest, move it, or drop it. Late tasks lose XP each day they wait.",
     basis: `From open tasks with a due date.`,
     weight: 32 + Math.min(20, late.length),
   };
@@ -431,6 +445,7 @@ function fromWin(win: Win): Change {
        `whatsWorking` is its own measure and keeps its own id. */
     family: win.id.startsWith('win-habit-') ? 'habit-streak' : win.id,
     text: `${win.text}.`,
+    suggests: win.suggests,
     move: win.figure.includes('→') ? win.figure : undefined,
     basis: win.figure.includes('→') ? undefined : win.figure,
     weight: 20,
@@ -447,9 +462,13 @@ function fromWin(win: Win): Change {
 function fromDiagnosis(row: Diagnosis): Change {
   return {
     id: `change-${row.id}`,
-    kind: 'problem',
-    family: row.id,
+    /* A diagnosis can be good news. Calling harder work that held up a "new
+       problem" sent the reader the wrong way before they'd read the sentence. */
+    kind: row.tone === 'good' ? 'gain' : 'problem',
+    /* The same news as `difficultyRising`, from the two-week window. */
+    family: row.id === 'levelling-up' ? 'difficulty' : row.id,
     text: `${row.headline}${/[.!?]$/.test(row.headline) ? '' : '.'} ${row.detail}`,
+    suggests: `${row.means} ${row.action}`,
     weight: row.weight,
   };
 }
@@ -461,6 +480,7 @@ function fromPattern(row: Pattern): Change {
     kind: 'pattern',
     family: row.id,
     text: row.text,
+    suggests: [row.means, row.soWhat].filter(Boolean).join(' ') || undefined,
     move: `${row.lift >= 0 ? '+' : '−'}${pct(row.lift)}`,
     basis: row.basis,
     strength: row.strength,
@@ -523,7 +543,7 @@ export function whatChanged({
 
   const failing = hardTasksFailing(finished);
   if (failing) problems.push(failing);
-  problems.push(...diagnoses.map(fromDiagnosis));
+  diagnoses.map(fromDiagnosis).forEach((row) => (row.kind === 'gain' ? gains : problems).push(row));
 
   /* The five measures the section was missing. Each returns its card to the
      lane its own direction puts it in — quality falling is a problem and

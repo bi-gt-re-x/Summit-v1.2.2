@@ -28,6 +28,7 @@ import {
   type HabitSummary,
 } from '@/utils/habits';
 import type { HabitFacts } from '@/utils/habitEffects';
+import { Suggestion } from './Suggestion';
 
 /** "Mar 14, 2026" from an ISO date. */
 function pretty(iso: string): string {
@@ -141,6 +142,7 @@ export function HabitCard({
       </div>
 
       <p className={`ax-habit-verdict is-${verdictTone(habit)}`}>{habitVerdict(habit)}</p>
+      <Suggestion text={habitNext(habit)} />
 
       <div className="ax-habit-row">
         <span className="ax-habit-streak" title={`Longest run: ${habit.bestStreak} ${unit}s`}>
@@ -254,6 +256,37 @@ export function habitVerdict(habit: Habit): string {
   const light = score < dayRate * 0.5 ? ' Most of those days were light or easy.' : '';
   if (score < 25) return `Not a habit yet. Real work on few of your days.${light}`;
   return `Holding at about ${recentScore}% lately.${light}`;
+}
+
+/**
+ * What that verdict suggests, and the one thing to try. Same branches.
+ *
+ * Named and counted, because several habits can land on the same branch and
+ * the cards sit side by side. Four copies of one sentence read as boilerplate.
+ */
+export function habitNext(habit: Habit): string {
+  const { name, daysSince, score, recentScore, recentDays, dayRate } = habit;
+  if (daysSince !== null && daysSince >= 14) {
+    return `This suggests ${name} has stopped being part of your week. Restart it smaller than it was, or drop it for good.`;
+  }
+  if (daysSince !== null && daysSince >= 7) {
+    return `This suggests something's crowding ${name} out. Do the smallest version today, since a ${daysSince}-day break is still easy to close.`;
+  }
+  if (score >= 10 && recentScore < score * 0.5) {
+    const days = `${recentDays} of the last ${RECENT_DAYS} days`;
+    return `This suggests ${name} is losing out to other things. At ${days}, one more day a week is a fair next step. Tie it to something you already do daily.`;
+  }
+  if (recentScore >= 10 && recentScore > score * 1.25) {
+    return `This suggests ${name} is taking hold. Keep it this size for a few weeks before you add more.`;
+  }
+  if (score < 25) {
+    return score < dayRate * 0.5
+      ? `This suggests you show up for ${name} but keep it light. Make one session a week a real one before you try to do it more often.`
+      : `This suggests ${name} is still something you do when you remember. Pick a set time for it, or stop tracking it.`;
+  }
+  return score >= 60
+    ? `This suggests ${name} is solid, so it can take a harder version now.`
+    : `This suggests ${name} is steady but not automatic yet. A set time would make it easier to keep.`;
 }
 
 function verdictTone(habit: Habit): 'bad' | 'good' | 'flat' {
@@ -457,7 +490,8 @@ export function TimelinePanel({
           Not enough time here to compare. Try a longer window.
         </p>
       ) : (
-        <ul className="ax-phases">
+        <>
+                <ul className="ax-phases">
           {withPhases.map((habit) => {
             const peak = Math.max(...habit.phases, 0.1);
             const first = habit.phases[0] ?? 0;
@@ -486,6 +520,18 @@ export function TimelinePanel({
             );
           })}
         </ul>
+          {withPhases.length >= 2 && (
+            <Suggestion
+              text={
+                rising === 0
+                  ? "This suggests your routines are wearing down over time. Pick the one you care about most and rebuild it first, before you try to fix the rest."
+                  : rising * 2 >= withPhases.length
+                    ? 'This suggests your habits tend to grow once they stick. Add new ones one at a time, so they get the same chance.'
+                    : "This suggests some routines stick and some don't. Look at what your strongest ones have in common, and copy that for the one you want back."
+              }
+            />
+          )}
+        </>
       )}
 
       {/* Only what the rows above can't show: a stronger or weaker habit is one of them. */}
@@ -575,9 +621,26 @@ export function HabitOpening({
      the Recommendations tab, so the panel is the habits' own movement only. */
   if (!slip) return null;
 
+  /* The habit that's holding is the best place to hang the one that isn't:
+     doing it straight after something you already do needs no remembering. */
+  const anchor =
+    summary.anchor &&
+    summary.anchor.name !== summary.slipping?.name &&
+    summary.anchor.strength !== 'declining' &&
+    (summary.anchor.trend ?? 0) >= 0
+      ? summary.anchor
+      : null;
+
   return (
     <Panel title="Your routine" note={span}>
       {leadWithStrength ? [hold, slip] : [slip, hold]}
+      <Suggestion
+        text={
+          anchor
+            ? `This suggests it's getting crowded out. You've kept ${anchor.name} going, so try doing ${summary.slipping!.name} right after it.`
+            : "This suggests it's getting crowded out. Give it a set time this week, and start smaller than you think you need to."
+        }
+      />
     </Panel>
   );
 }

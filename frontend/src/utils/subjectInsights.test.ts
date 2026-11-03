@@ -110,7 +110,7 @@ describe('subjectInsights', () => {
     const shifted = [...daily, ...weekly];
     const shiftedCards = skillCards(shifted, subjects, TODAY);
     const rhythm = subjectInsights(shiftedCards[0]!, shiftedCards, shifted, TODAY).find((entry) => entry.key === 'rhythm')!;
-    expect(rhythm.head).toBe('Coming back less often');
+    expect(rhythm.head).toBe("You're coming back less often");
     expect(rhythm.detail).toBe(
       "Lately it's every 7 days. Usually it's every day. Your last 4 breaks here were 7, 7, 7 and 7 days.",
     );
@@ -133,7 +133,7 @@ describe('subjectInsights', () => {
   it('leads with the silence on a subject that has gone quiet', () => {
     const [first] = subjectInsights(card('maths'), cards, TASKS, TODAY);
     expect(first!.key).toBe('rhythm');
-    expect(first!.head).toBe('Quiet for 32 days');
+    expect(first!.head).toMatch(/^Quiet for 32 days/);
   });
 
   it('reports momentum on a rising subject', () => {
@@ -152,11 +152,39 @@ describe('subjectInsights', () => {
     expect(insight?.head).toBe('It goes better than your other work');
   });
 
+  it('gives every card a suggestion, and never the same one for two cards', () => {
+    for (const entry of cards) {
+      const found = subjectInsights(entry, cards, TASKS, TODAY);
+      for (const insight of found) expect(insight.suggests.length).toBeGreaterThan(20);
+      const lines = found.map((insight) => insight.suggests);
+      expect(new Set(lines).size).toBe(lines.length);
+    }
+  });
+
+  it('says what a task time means, and only what its figures support', () => {
+    const timed = (subject: string, day: string, xp: number, seconds: number) =>
+      done(subject, day, xp, { completion_seconds: seconds });
+    const dates = ['2026-10-01', '2026-10-02', '2026-10-03', '2026-10-04', '2026-10-05', '2026-10-06'];
+    const quick = [
+      ...dates.map((day) => timed('chem', day, 100, 3600)),
+      ...dates.map((day) => timed('maths', day, 20, 3600)),
+    ];
+    const quickCards = skillCards(quick, subjects, TODAY);
+    const read = (key: string) =>
+      subjectInsights(quickCards.find((entry) => entry.key === key)!, quickCards, quick, TODAY).find(
+        (entry) => entry.key === 'time',
+      );
+    expect(read('chem')?.head).toBe('Your time pays off more here than in your other work');
+    expect(read('chem')?.suggests).toContain('short on time');
+    expect(read('maths')?.head).toBe('Your time pays off less here than in your other work');
+    expect(read('maths')?.suggests).toContain('Split your next one');
+  });
+
   it('keeps visible copy free of em dashes', () => {
     for (const entry of cards) {
       for (const insight of subjectInsights(entry, cards, TASKS, TODAY)) {
         const figures = insight.figures.map((figure) => `${figure.label} ${figure.value}`).join(' ');
-        expect(`${insight.head} ${insight.detail} ${figures}`).not.toMatch(/[—–“”‘’]/);
+        expect(`${insight.head} ${insight.detail} ${insight.suggests} ${figures}`).not.toMatch(/[—–“”‘’]/);
       }
     }
   });

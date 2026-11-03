@@ -22,6 +22,7 @@
  */
 import { Panel, PanelNote } from '@/components/Analytics/charts';
 import { Figures } from '@/components/Analytics/Figures';
+import { Suggestion } from '@/components/Analytics/Suggestion';
 import { STRENGTH_TEXT } from '@/utils/insight';
 import { CHANGE_TITLE, type Change, type ChangeKind } from '@/utils/changed';
 
@@ -57,7 +58,6 @@ export function ChangedPanel({ changes, window: days }: ChangedPanelProps) {
             <li><b>Gains:</b> Your last {days} days vs. the {days} before.</li>
             <li><b>Problems:</b> Two numbers from the same days that don't line up.</li>
             <li><b>Patterns:</b> Two groups of your tasks, side by side.</li>
-                        <li><b>What to do:</b> That's on the Recommendations tab.</li>
           </ul>
         </PanelNote>
       }
@@ -88,6 +88,7 @@ export function ChangedPanel({ changes, window: days }: ChangedPanelProps) {
                     )}
                   </p>
                 )}
+                {change.suggests && <Suggestion text={change.suggests} />}
               </li>
             );
           })}

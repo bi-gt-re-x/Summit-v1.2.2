@@ -55,6 +55,7 @@ import {
 } from '@/utils/subjectInsights';
 import { EmptyChapter, HeroRow, Notes, PanelHead, Seg, W, H } from './ChapterParts';
 import { Glyph } from './GrowthPanels';
+import { Suggestion } from '@/components/Analytics/Suggestion';
 
 export interface SkillsChapterProps {
   all: GrowthDay[];
@@ -639,6 +640,7 @@ function InsightCard({ insight }: { insight: SubjectInsight }) {
           ))}
         </dl>
       )}
+      <Suggestion text={insight.suggests} />
     </li>
   );
 }

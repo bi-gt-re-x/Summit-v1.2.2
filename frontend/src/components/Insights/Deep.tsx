@@ -23,6 +23,7 @@
 import { useState } from 'react';
 import { Panel, Scatter, asTone, toneVar } from '@/components/Analytics';
 import { Figures } from '@/components/Analytics/Figures';
+import { Suggestion } from '@/components/Analytics/Suggestion';
 import {
   STRENGTH_HUE,
   STRENGTH_TEXT,
@@ -73,7 +74,7 @@ function Waiting({ notice }: { notice: Unlock }) {
  * which is where the hedging and the denominators live.
  */
 export function FindingCard({ finding }: { finding: Finding }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   return (
     <li className={`ax-finding${open ? ' is-open' : ''}`}>
       <button type="button" className="ax-finding-head" aria-expanded={open} onClick={() => setOpen(!open)}>
@@ -94,6 +95,7 @@ export function FindingCard({ finding }: { finding: Finding }) {
       <div className="ax-finding-body" inert={!open}>
         <div>
           <p className="ax-prose"><Figures text={finding.detail} /></p>
+          <Suggestion text={finding.suggests} />
           <StrengthChip strength={finding.strength} />
         </div>
       </div>

@@ -517,6 +517,120 @@ export function trackChanges({ current, previous, tasks, nameOf }: ChangeInput):
   return [...moves.sort((a, b) => b.size - a.size), ...gains, ...drops];
 }
 
+export interface MoveReads {
+  worse: string | null;
+  better: string | null;
+}
+
+const isSubject = (move: TrackedMove) => move.id.startsWith('subject:');
+
+/**
+ * What the worse list adds up to.
+ *
+ * A list of what fell says nothing about why, and the why is usually sitting
+ * in which figures moved together. XP and days falling side by side is a
+ * different problem from XP falling while the days held, and each has a
+ * different next step. A metric missing from the list moved less than its own
+ * noise, so missing means it held.
+ */
+function readWorse(moves: TrackedMove[], told: Set<string>): string | null {
+  const find = (id: string) => moves.find((move) => move.id === id);
+  const xp = find('xp');
+  const days = find('days');
+  const tasks = find('tasks');
+  const focus = find('focus');
+  const onTime = find('on-time');
+  const quality = find('execution');
+  const fell = moves.filter(isSubject).sort((a, b) => b.size - a.size)[0];
+  const start = fell ? ` ${fell.label} fell the most, so start there.` : '';
+
+  if (days && xp) {
+    if (days.after <= 0 || days.before <= 0) {
+      return `This suggests the break is the whole story. One short session gets you going again, and the rest is easier after that.${start}`;
+    }
+    const perWas = xp.before / days.before;
+    const perNow = xp.after / days.after;
+    if (perWas <= 0 || perNow >= perWas * 0.85) {
+      return `This suggests the drop is about how often you worked. A working day still earns about ${whole(perNow)} XP (it was ${whole(perWas)}), so getting those days back is the quickest fix.${start}`;
+    }
+    return `This suggests two things fell together. You worked fewer days, and each one earned less: ${whole(perWas)} → ${whole(perNow)} XP. Get the days back first, since that's the easier one to fix.${start}`;
+  }
+  if (xp) {
+    if (told.has('present-but-thin')) return null;
+    return `You worked about as many days, which suggests each day is doing less. The next opportunity is one longer session on the work that matters most.${start}`;
+  }
+  if (days) {
+    if (told.has('cramming')) return null;
+    return "You worked fewer days but earned about the same, which suggests you're packing your work into less time. That holds until one big day falls through, so add a short day back.";
+  }
+  if (quality) {
+    if (told.has('volume-over-quality')) return null;
+    return "Your ratings fell while the amount of work held, which suggests you're rushing or reaching too far. Redo your lowest-rated task before you add anything new.";
+  }
+  if (tasks) {
+    return "You finished fewer tasks but earned about the same, which suggests your tasks got bigger. That's fine if they're the right ones, so check they're what you meant to work on.";
+  }
+  if (onTime) {
+    if (told.has('deadlines-slipping')) return null;
+    return 'You missed more of your own dates, which suggests they\'re tighter than your real pace. Give the next few more room, or start them a day sooner.';
+  }
+  if (focus) {
+    return "Focus time fell but your output held. If you stopped using the timer, the figure's just missing. If you didn't, your sessions got sharper.";
+  }
+  if (fell) {
+    return `This suggests ${fell.label} got squeezed out. If that's on purpose, fine. If it isn't, give it a set slot this week, since it won't come back by itself.`;
+  }
+  return null;
+}
+
+/** The same for the better list. Read second, and kept short on purpose. */
+function readBetter(moves: TrackedMove[], told: Set<string>): string | null {
+  const find = (id: string) => moves.find((move) => move.id === id);
+  const xp = find('xp');
+  const days = find('days');
+  const focus = find('focus');
+  const onTime = find('on-time');
+  const quality = find('execution');
+  const rose = moves.filter(isSubject).sort((a, b) => b.size - a.size)[0];
+
+  if (days && xp) {
+    return 'This suggests showing up more is what paid off. Keep those extra days before you add anything bigger.';
+  }
+  if (xp && quality) {
+    return 'You worked about as many days, earned more, and rated the work higher. This suggests your sessions got stronger, so work out what changed and keep it.';
+  }
+  if (xp) {
+    return 'You worked about as many days and earned more, which suggests your sessions got stronger. Check your ratings are holding too, since more only counts if it goes well.';
+  }
+  if (quality) {
+    return 'This suggests something you changed is working. Work out what it was and keep it, then try something a little harder.';
+  }
+  if (focus) {
+    if (told.has('time-without-return')) return null;
+    return "You put in more focus time, but XP hasn't followed yet. Give it a couple of weeks. If it still hasn't moved, the time's going into work that doesn't finish.";
+  }
+  if (onTime) {
+    return 'This suggests your dates are closer to your real pace now. Keep setting them this way.';
+  }
+  if (rose) {
+    return `This suggests ${rose.label} is getting more of your attention. Check that it's the subject you want to grow.`;
+  }
+  return null;
+}
+
+/**
+ * `diagnoses` are the readings drawn beside these lists. Where one of them has
+ * already explained the same thing, the list says nothing, so the panel doesn't
+ * give the same reason twice.
+ */
+export function moveReads(moves: TrackedMove[], diagnoses: Array<{ id: string }> = []): MoveReads {
+  const told = new Set(diagnoses.map((row) => row.id));
+  return {
+    worse: readWorse(moves.filter((move) => !move.good), told),
+    better: readBetter(moves.filter((move) => move.good), told),
+  };
+}
+
 /** One short sentence for a move: "Up 27%, from 980 XP to 1,240 XP." */
 export function moveSentence(move: TrackedMove): string {
   const way = move.up ? 'Up' : 'Down';

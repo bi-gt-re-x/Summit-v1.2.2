@@ -66,6 +66,8 @@ export interface Pattern {
   lift: number;
   /** How much weight this can carry, from the sample it is drawn from. */
   strength: Strength;
+  /** What the finding suggests about how the reader works. */
+  means?: string;
   /** Something to try, where the finding suggests one. Never a conclusion. */
   soWhat?: string;
   /** Ranking weight. */
@@ -173,6 +175,10 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
       basis: `${evening.withCount} tasks finished before 5pm, ${evening.withoutCount} after.`,
       lift: evening.lift,
       strength: strengthFor(evening.smaller, evening.lift),
+      means:
+        evening.lift > 0
+          ? 'This suggests your best work happens earlier in the day.'
+          : 'This suggests you do better later on, or that your mornings are going to the wrong tasks.',
       soWhat:
         evening.lift > 0
           ? 'Try moving one important task earlier in the day.'
@@ -195,6 +201,10 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
       basis: `${morning.withCount} tasks finished in the morning, ${morning.withoutCount} later.`,
       lift: morning.lift,
       strength: strengthFor(morning.smaller, morning.lift),
+      means:
+        morning.lift > 0
+          ? "This suggests you already save your hard work for when you're fresh."
+          : "This suggests you're putting off the hard stuff until later in the day.",
       soWhat:
         morning.lift > 0
           ? 'Keep your mornings free for hard work.'
@@ -220,10 +230,14 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
       basis: `${weekend.withCount} tasks on weekends, ${weekend.withoutCount} on weekdays.`,
       lift: weekend.lift,
       strength: strengthFor(weekend.smaller, weekend.lift),
+      means:
+        weekend.lift > 0
+          ? 'This suggests you do better with more room around your work.'
+          : "This suggests weekends are harder to focus on, or they're when the leftovers get done.",
       soWhat:
         weekend.lift > 0
           ? 'You do your best work on weekends. Save hard tasks for then.'
-          : 'Your weekday work goes better.',
+          : 'Keep hard work for weekdays, and use weekends for lighter tasks.',
       weight: weekend.smaller + Math.abs(weekend.lift),
     });
   }
@@ -242,10 +256,14 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
       basis: `${linked.withCount} tasks linked to a goal, ${linked.withoutCount} unlinked.`,
       lift: linked.lift,
       strength: strengthFor(linked.smaller, linked.lift),
+      means:
+        linked.lift > 0
+          ? "This suggests work goes better when you know what it's for."
+          : "This suggests linking alone isn't lifting the work.",
       soWhat:
         linked.lift > 0
           ? 'Link more tasks to your goals. You can do this from the Goals page.'
-          : undefined,
+          : 'Check whether your goal tasks are simply harder before you read much into this.',
       weight: linked.smaller + Math.abs(linked.lift),
     });
   }
@@ -272,10 +290,14 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
           basis: `${long.length} longer days vs. ${short.length} shorter ones.`,
           lift,
           strength: strengthFor(Math.min(long.length, short.length), lift),
+          means:
+            lift > 0
+              ? 'This suggests longer sittings help you get more done.'
+              : 'This suggests long days are going to fewer, slower tasks.',
           soWhat:
             lift > 0
               ? `Longer focus days work well for you. Aim for ${Math.round(median)}+ minutes.`
-              : "Longer focus days aren't helping. More time won't fix this.",
+              : "More time won't fix that, so decide what you'll finish before you sit down.",
           weight: Math.min(long.length, short.length) + Math.abs(lift),
         });
       }
@@ -313,10 +335,14 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
       basis: `${mine.length} rated ${nameOf(subject)} tasks vs. ${rest.length} others.`,
       lift,
       strength: strengthFor(smaller, lift),
+      means:
+        lift < 0
+          ? `This suggests something about how you work on ${nameOf(subject)} isn't clicking.`
+          : `This suggests ${nameOf(subject)} is a strength.`,
       soWhat:
         lift < 0
           ? `Try a different approach to ${nameOf(subject)}.`
-          : undefined,
+          : 'Try its harder material next, since it can take it.',
       weight: smaller + Math.abs(lift),
     });
   });
@@ -347,7 +373,8 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
         basis: `${weekly.slice(-run - 1).reduce((sum, week) => sum + week.count, 0)} rated tasks across ${run + 1} weeks.`,
         lift: pctChange(last, first) ?? 0,
         strength: run >= 4 ? 'strong' : 'likely',
-        soWhat: 'Whatever you changed recently is working. Keep doing it.',
+        means: 'This suggests something you changed recently is working.',
+        soWhat: 'Work out what it was and keep doing it.',
         weight: 60 + run * 8,
       });
     }

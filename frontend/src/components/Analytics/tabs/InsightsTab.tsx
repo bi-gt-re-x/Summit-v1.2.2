@@ -9,7 +9,8 @@
  * say what repeats and the findings need 18 to compare two stretches, so between
  * the two it's a real page rather than a notice.
  *
- * It never says what to do. That is the Recommendations tab.
+ * Every finding here ends in what it suggests and what to try. Recommendations
+ * is still where the day's plan lives; this tab says why.
  *
  * Panels that only restated another or named things worth no decision are gone
  * from here, though a space's page can still draw them: the quick reads past the

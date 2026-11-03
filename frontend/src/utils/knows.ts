@@ -108,6 +108,8 @@ export interface KnowsInput {
   }>;
   /** The most-worked subject over the recent stretch, when that is known. */
   recentTop: string | null;
+  /** Days worked in the last two weeks, against the whole record. */
+  recentDays?: number;
 }
 
 /** An average needs more than the one day it would otherwise be. */
@@ -161,9 +163,11 @@ export const LIGHT_LOAD = 3;
  */
 export const DOMINANT_SHARE = 50;
 export const SCATTERED_SHARE = 25;
+/** Fewer working days than this in the last 14 and the record isn't the story. */
+export const RECENT_FLOOR = 8;
 
 export function whatSummitKnows(input: KnowsInput): Knowledge[] {
-  const { finished, activeDays, spanDays, subjects, recentTop } = input;
+  const { finished, activeDays, spanDays, subjects, recentTop, recentDays } = input;
   const found: Knowledge[] = [];
 
   /* First, because it frames every figure under it: the others are rates and
@@ -174,18 +178,27 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
      below still turns on it, it just does not repeat it. */
   if (spanDays >= RECORD_FLOOR && activeDays > 0) {
     const held = activeDays / spanDays;
+    /* A strong record can sit above a bad fortnight, and telling somebody in a
+       slump that showing up isn't their problem would be reading the wrong
+       stretch. */
+    const fallenOff = held >= HELD_RATIO && recentDays !== undefined && recentDays < RECENT_FLOOR;
     found.push({
       key: 'record',
-      heading: 'Record',
+      heading: fallenOff
+        ? "Your record is strong, but the last two weeks aren't"
+        : held >= HELD_RATIO
+          ? "Showing up isn't what's holding you back"
+          : 'Your days are hit and miss',
       text: `You've used Summit for ${spanDays.toLocaleString()} days.`,
       /* An unbroken record is the one case where the useful advice is to stop
          protecting it: a reader who has not missed a day in three years is
          being held back by the safe day they take to keep the run alive, not
          by the run. */
-      advice:
-        held >= HELD_RATIO
-          ? 'You show up plenty. Push yourself with something tough next.'
-          : 'Your days are hit and miss. Pick the day you skip most and make sure you work that day.',
+      advice: fallenOff
+        ? 'This suggests something changed recently. Getting back to your usual rhythm will do more than anything else on this page.'
+        : held >= HELD_RATIO
+          ? "This suggests more days won't be your next gain. You show up plenty, so push yourself with something tough next."
+          : 'This suggests your routine depends on the day going well. Pick the day you skip most and make sure you work that day.',
     });
   }
 
@@ -193,17 +206,22 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
     const perDay = finished / activeDays;
     found.push({
       key: 'workload',
-      heading: 'Workload',
+      heading:
+        perDay >= HEAVY_LOAD
+          ? 'You pack a lot into each sitting'
+          : perDay < LIGHT_LOAD
+            ? 'You keep your list short'
+            : 'Your list is a size you can finish',
       /* Against active days, not calendar days — the same denominator every
          gate on this page uses, so a reader who skips a week does not appear
          to have got slower. See utils/activeDay. */
       text: `You average ${perDay.toFixed(1)} tasks on the days you work.`,
       advice:
         perDay >= HEAVY_LOAD
-          ? "That's a lot every time you sit down, so the hard stuff gets left. Three tasks max next time, hardest first."
+          ? 'This suggests the hard stuff gets left until last. Three tasks max next time, hardest first.'
           : perDay < LIGHT_LOAD
-            ? "A short list is fine if it's the right one. Add one task you're not sure you can finish."
-            : "That's a list you can finish, so keep the size. Just make sure the right tasks make it on.",
+            ? "This suggests you're being careful, and a short list is fine if it's the right one. Add one task you're not sure you can finish."
+            : 'This suggests the size is right, so keep it. The next thing to check is whether the right tasks make the list.',
     });
   }
 
@@ -221,17 +239,22 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
     const share = Math.round((top.count / total) * 100);
     found.push({
       key: 'subjects',
-      heading: 'Subjects',
+      heading:
+        share >= DOMINANT_SHARE
+          ? `${top.name} is carrying most of your work`
+          : share <= SCATTERED_SHARE && real.length >= 3
+            ? 'Your time is spread thin'
+            : `${top.name} leads, and the others still get time`,
       text: `${top.name} is ${share}% of your work.`,
       /* The scattered case needs three subjects, not two: a 50/50 split across
          two is a deliberate pair of interests, and calling that unfocused is
          the advice misreading its own figure. */
       advice:
         share >= DOMINANT_SHARE
-          ? `Over half your work is ${top.name}. If that's the plan, great. If not, take an hour off it this week.`
+          ? `This suggests one subject is getting most of your attention. If that's the plan, great. If not, take an hour off it this week.`
           : share <= SCATTERED_SHARE && real.length >= 3
-            ? `Your time is spread thin. Top subject: just ${share}%. Pick one and give it more hours.`
-            : `One subject leads, but the others still get time. Keep the split and go deeper on ${top.name}.`,
+            ? `This suggests no subject is getting enough to move fast. Your top one is just ${share}%, so pick one and give it more hours.`
+            : `This suggests a split you can keep. Hold onto it and go deeper on ${top.name}.`,
     });
   }
 
@@ -239,12 +262,12 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
   if (recentTop && top && recentTop !== top.name) {
     found.push({
       key: 'focus',
-      heading: 'Current focus',
+      heading: `Your focus has moved to ${recentTop}`,
       text: `Lately you've worked on ${recentTop} the most.`,
       /* The only fact here that reports a *change*, so it is the only one whose
          advice can ask the reader a question they alone can answer: the figures
          cannot tell a deliberate switch from an avoided subject. */
-      advice: `You've moved from ${top.name} to ${recentTop}. If that's on purpose, keep going. If not, put ${top.name} first tomorrow.`,
+      advice: `This suggests your priorities have shifted from ${top.name} to ${recentTop}. If that's on purpose, keep going. If not, put ${top.name} first tomorrow.`,
     });
   }
 

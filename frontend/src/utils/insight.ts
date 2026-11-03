@@ -126,6 +126,8 @@ export interface Finding {
   headline: string;
   /** The figures it was read off. */
   detail: string;
+  /** What the figures suggest, and what to try next. */
+  suggests: string;
   strength: Strength;
   tone: string;
 }
@@ -188,6 +190,14 @@ export function whyFindings(days: GrowthDay[], window = 30): Finding[] {
       } ${pct(perDayChange)} (${Math.round(perDayWas).toLocaleString()} → ${Math.round(
         perDayNow,
       ).toLocaleString()}).`,
+      suggests:
+        totalChange > 0
+          ? byDays
+            ? 'This suggests showing up more is what paid off. Keep those extra days before you add anything bigger.'
+            : 'This suggests your sessions got bigger. Check your ratings are holding too, since more only counts if it goes well.'
+          : byDays
+            ? "This suggests how often you work is the first thing to fix. Getting those days back will do more than pushing harder on the days you already work."
+            : "This suggests showing up isn't the problem. The next opportunity is one longer session a week, on the task that matters most.",
       strength: 'strong',
       tone: totalChange > 0 ? 'green' : 'amber',
     });
@@ -207,10 +217,17 @@ export function whyFindings(days: GrowthDay[], window = 30): Finding[] {
   if (Math.abs(shareNow - shareWas) >= 6) {
     out.push({
       id: 'why-weekend',
-      headline: `You're doing ${shareNow > shareWas ? 'more' : 'less'} on weekends`,
+      headline:
+        shareNow > shareWas
+          ? 'More of your work is landing on weekends'
+          : 'Your weekends are doing less of the work',
       detail: `Weekends made up ${Math.round(shareNow)}% of your XP in the last ${window} days, compared with ${Math.round(
         shareWas,
       )}% before.`,
+      suggests:
+        shareNow > shareWas
+          ? "This suggests your weeks are leaving work for later. If weekends are simply when you've got time, that's fine. If you're catching up, move one task back to midweek."
+          : "This suggests weekends are turning into rest, or slipping away. If you want them off, great. If you don't, plan one task for Saturday.",
       strength: now.length >= 28 ? 'likely' : 'weak',
       tone: 'blue',
     });
@@ -226,12 +243,27 @@ export function whyFindings(days: GrowthDay[], window = 30): Finding[] {
   };
   const spreadNow = spread(now);
   const spreadWas = spread(before);
+  /* The two ends of a stretch: the average of its biggest and smallest quarter
+     of working days. A spread on its own is a statistic nobody can picture. */
+  const ends = (rows: GrowthDay[]) => {
+    const sorted = activeOf(rows)
+      .map((day) => num(day.xp_earned))
+      .sort((a, b) => a - b);
+    const quarter = Math.max(1, Math.floor(sorted.length / 4));
+    return {
+      low: Math.round(mean(sorted.slice(0, quarter))).toLocaleString(),
+      high: Math.round(mean(sorted.slice(-quarter))).toLocaleString(),
+    };
+  };
   if (spreadNow !== null && spreadWas !== null && Math.abs(spreadNow - spreadWas) >= 0.15) {
     const steadier = spreadNow < spreadWas;
     out.push({
       id: 'why-variance',
-      headline: steadier ? 'Your days are more consistent' : 'Your days are less consistent',
-      detail: `Your daily XP is ${steadier ? 'more even' : 'more up and down'} than before. ${steadier ? 'You have a steadier routine.' : "You're working in bursts."}`,
+      headline: steadier ? 'Your days are evening out' : 'Your days are swinging more',
+      detail: `Your biggest days earn about ${ends(now).high} XP and your smallest about ${ends(now).low}. Before, it was ${ends(before).high} and ${ends(before).low}.`,
+      suggests: steadier
+        ? "This suggests you've got a routine that doesn't depend on the day going well. Now you can raise the floor: add one small task to your smallest days."
+        : "This suggests you're working in bursts. They feel productive, but they're hard to plan around. A small task on your light days would smooth it out.",
       strength: 'likely',
       tone: steadier ? 'green' : 'amber',
     });
@@ -286,6 +318,14 @@ export function howFindings(
           Math.max(0.0001, Math.min(longRate, shortRate))) *
           100,
       )} more XP per minute than days with the ${longRate >= shortRate ? 'least' : 'most'}.`,
+      /* Several times over isn't a difference in how anybody works. It's days
+         whose tasks earned XP with hardly any of it on the timer. */
+      suggests:
+        Math.max(longRate, shortRate) / Math.max(0.0001, Math.min(longRate, shortRate)) >= 3
+          ? "A gap this big is mostly work you didn't put on the timer, so don't read much into it. Time your sessions for a week and this will get more reliable."
+          : longRate >= shortRate
+            ? 'This suggests you need time to warm up. Protect a long block for your hardest work, and keep small tasks for the gaps.'
+            : 'This suggests you run out of steam on long days. Try splitting them into two sittings with a real break between.',
       strength: strengthOf(r, n),
       tone: 'green',
     });
@@ -308,6 +348,10 @@ export function howFindings(
         detail: `You finished ${Math.round(scheduled)}% of ${withDate.length} dated tasks and ${Math.round(
           spontaneous,
         )}% of ${without.length} without a date.`,
+        suggests:
+          scheduled > spontaneous
+            ? 'This suggests a date is what makes you follow through. Put one on anything you really want finished.'
+            : "This suggests dates aren't helping. You may be saving them for the hard stuff. Try fewer of them and see if the hard tasks still slip.",
         strength: strengthOf(0.4, Math.min(withDate.length, without.length)),
         tone: 'violet',
       });
@@ -326,10 +370,14 @@ export function howFindings(
     if (Math.abs(hard - easy) >= 8) {
       out.push({
         id: 'how-difficulty',
-        headline: hard >= easy ? 'You finish your high-priority tasks' : 'Your high-priority tasks are slipping',
+        headline: hard >= easy ? 'You follow through on what you mark high priority' : 'Your high-priority tasks are slipping',
         detail: `You finish ${Math.round(hard)}% of high-priority tasks and ${Math.round(
           easy,
         )}% of low-priority ones.`,
+        suggests:
+          hard >= easy
+            ? 'This suggests your priorities are honest. Save that label for the few tasks that really need it, so it keeps working.'
+            : "This suggests the label isn't changing what you do. Start tomorrow with one high-priority task before anything else.",
         strength: strengthOf(0.4, Math.min(high.length, low.length)),
         tone: 'amber',
       });
@@ -343,11 +391,11 @@ export function howFindings(
       headline: `You get most done between ${hourLabel(
         clock.coreWindow.from,
       )} and ${hourLabel(clock.coreWindow.to)}`,
-      detail: `${clock.coreWindow.share}% of your tasks are finished in this window. ${
+      detail: `${clock.coreWindow.share}% of your tasks are finished in this window. The rest are spread across the day.`,
+      suggests:
         clock.coreWindow.share >= 60
-          ? 'Schedule important work here.'
-          : 'The rest are spread across the day.'
-      }`,
+          ? 'This suggests this is your real working time. Put your hardest task here and guard it from everything else.'
+          : "This suggests a loose rhythm, with plenty of work outside it. Try your hardest task in this window for a week and compare how it goes.",
       strength: clock.coreWindow.share >= 60 ? 'strong' : 'likely',
       tone: 'blue',
     });
@@ -355,10 +403,42 @@ export function howFindings(
 
   // ---- what a gap costs ---------------------------------------------------
   if (rhythm.gapCount > 0 && rhythm.span >= 60) {
+    /* The first working day after 3+ days off, against every other working day.
+       This used to say "the first day back is usually slower" whatever the
+       record showed, which made it a claim about people in general. */
+    const firsts: number[] = [];
+    const others: number[] = [];
+    let idle = 0;
+    days.forEach((day) => {
+      const xp = num(day.xp_earned);
+      if (xp <= 0) {
+        idle += 1;
+        return;
+      }
+      (idle >= 3 ? firsts : others).push(xp);
+      idle = 0;
+    });
+    const backXp = firsts.length >= 2 ? mean(firsts) : null;
+    const usualXp = others.length >= 5 ? mean(others) : null;
+    const slower = backXp !== null && usualXp !== null && backXp < usualXp * 0.85;
+    const stronger = backXp !== null && usualXp !== null && backXp > usualXp * 1.15;
     out.push({
       id: 'how-gaps',
-      headline: 'Breaks are slowing you down',
-      detail: `You had ${rhythm.gapCount} breaks of 3+ days in ${rhythm.span.toLocaleString()} days. The first day back is usually slower.`,
+      headline: slower
+        ? 'Breaks cost you more than the days you miss'
+        : stronger
+          ? 'You come back strong after a break'
+          : "Your breaks don't seem to slow you down once you're back",
+      detail: `You had ${rhythm.gapCount} ${rhythm.gapCount === 1 ? 'break' : 'breaks'} of 3+ days in ${rhythm.span.toLocaleString()} days.${
+        backXp !== null && usualXp !== null
+          ? ` Your first day back averaged ${Math.round(backXp).toLocaleString()} XP, vs. ${Math.round(usualXp).toLocaleString()} on a usual day.`
+          : ''
+      }`,
+      suggests: slower
+        ? 'This suggests restarting is the costly part. When a break is coming, leave yourself one small, easy task to come back to.'
+        : stronger
+          ? "This suggests rest isn't hurting your work. Breaks only cost you the days themselves, so plan them on purpose and they won't cost much."
+          : "This suggests the lost days are the only real cost. Keep breaks short, and don't worry about making up for them when you're back.",
       strength: rhythm.gapCount >= 4 ? 'likely' : 'weak',
       tone: 'pink',
     });
@@ -374,6 +454,8 @@ export interface Win {
   id: string;
   text: string;
   figure: string;
+  /** What it suggests, and what to do with it. */
+  suggests: string;
   tone: string;
 }
 
@@ -403,6 +485,7 @@ export function whatsWorking(
       read: (day: GrowthDay) => number,
       format: (value: number) => string,
       tone: string,
+      next: string,
     ) => {
       const a = mean(now.map(read));
       const b = mean(before.map(read));
@@ -413,18 +496,34 @@ export function whatsWorking(
         id,
         text: `${label} is up ${pct(change)} on the previous ${window} days`,
         figure: `${format(b)} → ${format(a)}`,
+        suggests: next,
         tone,
       });
     };
 
-    measure('win-xp', 'Your daily XP', (day) => num(day.xp_earned), (v) => Math.round(v).toLocaleString(), 'violet');
-    measure('win-tasks', 'Task completion', (day) => num(day.tasks_completed), (v) => v.toFixed(1), 'green');
+    measure(
+      'win-xp',
+      'Your daily XP',
+      (day) => num(day.xp_earned),
+      (v) => Math.round(v).toLocaleString(),
+      'violet',
+      'This suggests your work is adding up. Check your ratings are holding too, since more only counts if it goes well.',
+    );
+    measure(
+      'win-tasks',
+      'Task completion',
+      (day) => num(day.tasks_completed),
+      (v) => v.toFixed(1),
+      'green',
+      "This suggests you're getting through more each day. The next opportunity is making sure the hard tasks are among them.",
+    );
     measure(
       'win-focus',
       'Average focus time',
       (day) => num(day.focus_minutes),
       (v) => `${Math.round(v)}m`,
       'blue',
+      "This suggests you're sitting down for longer. Check your XP is rising with it. If it isn't, the time's going into work that doesn't finish.",
     );
 
     const rate = activeRate;
@@ -435,6 +534,7 @@ export function whatsWorking(
         id: 'win-consistency',
         text: `You're working on more days`,
         figure: `${Math.round(wasRate)}% → ${Math.round(nowRate)}% of days worked`,
+        suggests: 'This suggests showing up is becoming less of a problem. The next opportunity is getting more out of each session.',
         tone: 'amber',
       });
     }
@@ -448,6 +548,7 @@ export function whatsWorking(
         id: `win-habit-${habit.name}`,
         text: `${habit.name}: ${habit.streak} ${habit.unit === 'day' ? 'days' : 'weeks'} in a row`,
         figure: `${habit.consistency}% consistent`,
+        suggests: "This suggests it's become part of your routine, so it can take a harder version now.",
         tone: 'green',
       });
     });

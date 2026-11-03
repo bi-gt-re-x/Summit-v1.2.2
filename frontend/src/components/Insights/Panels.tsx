@@ -14,6 +14,7 @@
 import { Columns, Panel, type Column } from '@/components/Analytics';
 import { hourLabel, WEEKDAYS_SHORT } from '@/utils/behaviour';
 import type { ClockShape, WeekShape } from '@/utils/behaviour';
+import { Suggestion } from '@/components/Analytics/Suggestion';
 
 // --------------------------------------------------------------------------
 // The week
@@ -29,43 +30,40 @@ export function WeekPanel({ week }: { week: WeekShape }) {
   return (
     <Panel title="Your best days of the week" note="Average XP per weekday">
       <Columns columns={columns} label="Average XP per weekday" />
-      <p className="ax-prose">
-        {week.best && week.worst && week.best.index !== week.worst.index ? (
-          <>
-            {week.best.label} outproduces {week.worst.label} by{' '}
+      {week.best && week.worst && week.best.index !== week.worst.index ? (
+        <>
+          <p className="ax-prose">
+            {week.spread > 1.6
+              ? `Your week leans hard on ${week.best.label}. It `
+              : `Your week is fairly even. ${week.best.label} `}
+            outproduces {week.worst.label} by{' '}
             <strong>
               {week.worst.avgXp > 0
                 ? `${Math.round((week.best.avgXp / week.worst.avgXp - 1) * 100)}%`
                 : 'a wide margin'}
             </strong>
-            . {week.spread > 1.6
-              ? 'A lopsided week. Miss that day and the week suffers.'
-              : 'An even week. No one day does all the work.'}
-          </>
-        ) : (
-          'Not enough days worked to compare yet.'
-        )}
-      </p>
-      {week.weekendGap !== null && (
-        <p className="ax-prose">
-          {week.weekendGap <= -20 ? (
-            <>
-              Weekends run <strong>{Math.abs(week.weekendGap)}% lighter</strong>. Plan your week
-              around that.
-            </>
-          ) : week.weekendGap >= 20 ? (
-            <>
-              Weekends run <strong>{week.weekendGap}% heavier</strong>. You're catching up at the
-              end of the week. Try spreading it out.
-            </>
-          ) : (
-            <>
-              Weekends and weekdays are within{' '}
-              <strong>{Math.abs(week.weekendGap)}%</strong> of each other. An even week makes long
-              streaks easy.
-            </>
-          )}
-        </p>
+            {week.weekendGap !== null && Math.abs(week.weekendGap) >= 20 ? (
+              <>
+                , and weekends run{' '}
+                <strong>
+                  {Math.abs(week.weekendGap)}% {week.weekendGap < 0 ? 'lighter' : 'heavier'}
+                </strong>
+              </>
+            ) : null}
+            .
+          </p>
+          <Suggestion
+            text={
+              week.weekendGap !== null && week.weekendGap >= 20
+                ? "This suggests you're catching up at the end of the week. Move one task from the weekend to midweek, so it isn't all riding on those two days."
+                : week.spread > 1.6
+                  ? `This suggests one day is holding up your week, so missing it costs a lot. Move one task from ${week.best.label} to ${week.worst.label} and see if the week evens out.`
+                  : `This suggests no single day carries your week, so a missed day won't sink it. Use ${week.best.label} for your hardest work, since that's when you do the most.`
+            }
+          />
+        </>
+      ) : (
+        <p className="ax-prose">Not enough days worked to compare yet.</p>
       )}
     </Panel>
   );
@@ -96,12 +94,18 @@ export function ClockPanel({ clock }: { clock: ClockShape }) {
       {/* The hours that hold half the work are a finding under "Why it
           happens" (`HowPanel`), so the chart does not say them again. */}
       {clock.lateShare > 0 && (
-        <p className="ax-prose">
-          <strong>{clock.lateShare}%</strong> of your work happens after 10 PM or before 5 AM.{' '}
-          {clock.lateShare >= 25
-            ? "Late work is the first thing to go when you're tired or busy."
-            : "Just now and then, so it's fine."}
-        </p>
+        <>
+          <p className="ax-prose">
+            <strong>{clock.lateShare}%</strong> of your work happens after 10 PM or before 5 AM.
+          </p>
+          <Suggestion
+            text={
+              clock.lateShare >= 25
+                ? "This suggests your day's work is getting pushed late, when you're tired and it's the first thing to go. Try your hardest task before dinner, and leave the late slot for easy stuff."
+                : "This suggests late work is the exception for you. You can leave it alone unless it starts to grow."
+            }
+          />
+        </>
       )}
     </Panel>
   );

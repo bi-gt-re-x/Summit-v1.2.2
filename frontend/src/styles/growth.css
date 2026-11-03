@@ -956,6 +956,7 @@ body.dark .grade-charts-btn:hover { border-color: #C9A86A; }
 .gr-fact.is-note { border-left-color: var(--accent); }
 .gr-fact strong { font-size: var(--text-sm); color: var(--ink); }
 .gr-fact p { margin: 0; font-size: var(--text-xs); color: var(--ink-quiet); line-height: 1.5; }
+.gr-fact p.ax-suggest { margin: var(--space-1) 0 0; font-size: var(--text-xs); color: var(--ink); }
 
 /* The little chart under an insight. Two bars are rows; more are columns. */
 .gr-fact-bars { display: flex; flex-direction: column; gap: 4px; }

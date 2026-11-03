@@ -49,7 +49,7 @@ function model(over: Partial<AnalyticsModel> = {}): AnalyticsModel {
     analytical: analyticalScore(card()),
     streak: 6,
     weekChange: 18,
-    wins: [{ id: 'w1', text: 'Your daily XP is up 20% on the previous 30 days', figure: '100 → 120', tone: 'violet' }],
+    wins: [{ id: 'w1', text: 'Your daily XP is up 20% on the previous 30 days', figure: '100 → 120', suggests: 'Keep it going.', tone: 'violet' }],
     changes: [change()],
     ...over,
   });
@@ -76,10 +76,14 @@ describe('what it does not repeat', () => {
     expect(screen.queryByText('XP by subject')).not.toBeInTheDocument();
   });
 
-  it('never says what to do', () => {
-    draw(<InsightsTab model={model()} subjects={subjects} />);
-    expect(screen.queryByText(/Worth trying/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/Keep this time free/)).not.toBeInTheDocument();
+  it('ends a change in what it suggests', () => {
+    draw(
+      <InsightsTab
+        model={model({ changes: [change({ suggests: 'This suggests you can stay at this level.' })] })}
+        subjects={subjects}
+      />,
+    );
+    expect(screen.getByText('This suggests you can stay at this level.')).toBeInTheDocument();
   });
 });
 

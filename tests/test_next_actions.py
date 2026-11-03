@@ -157,7 +157,7 @@ def test_a_second_goal_behind_its_schedule_still_gets_the_goal_row():
            'start_date': iso(30), 'deadline': iso(-10), 'milestones': []}
     item = first(plan([task(title='Past paper 3', goal_id='g')], [near, far], budget=120), 'goal')
     assert item['title'] == 'Finish "Past paper 3" for Pass the exam'
-    assert item['because'] == '10 days left, 66% behind schedule.'
+    assert item['because'].startswith('10 days left, 66% behind schedule.')
 
 
 def test_an_undated_task_sitting_two_weeks_is_do_or_drop():
@@ -446,7 +446,7 @@ def test_a_reason_picked_again_and_again_comes_back_with_its_fix():
                       completed_at=iso(6) + 'T12:00:00'))
     item = first(plan(rough, budget=120), 'stuck')
     assert item['title'] == 'Next maths session: start with one worked example before you try one yourself'
-    assert item['because'] == 'You picked "Did not know where to start" on 3 of your last 4 rough sessions.'
+    assert item['because'].startswith('You picked "Did not know where to start" on 3 of your last 4 rough sessions.')
 
 
 def test_a_near_date_leads_even_when_the_lens_leans_toward_overdue_work():

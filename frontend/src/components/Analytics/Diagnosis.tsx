@@ -111,7 +111,7 @@ export function DiagnosisCards({ items }: { items: Diagnosis[] }) {
             <span className="ax-diag-arrow" aria-hidden="true">
               →
             </span>
-            <p>{item.action}</p>
+            <p>{item.means} {item.action}</p>
           </div>
           <p className="ax-diag-watch">
             <strong>Watch:</strong> {item.watch}

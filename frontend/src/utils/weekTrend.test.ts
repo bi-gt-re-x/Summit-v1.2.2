@@ -3,7 +3,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import { days, task } from '@/test/factories';
-import { directionOf, findSlump, trackChanges, weekBlocks, weekMove } from './weekTrend';
+import { directionOf, findSlump, moveReads, trackChanges, weekBlocks, weekMove, type TrackedMove } from './weekTrend';
 import type { GrowthDay } from '@/types';
 
 /** `count` days from `from`, each earning `xp` with one task, then `quiet` empty days. */
@@ -134,5 +134,61 @@ describe('trackChanges', () => {
     const chem = moves.find((move) => move.id === 'subject:chemistry');
     expect(chem?.good).toBe(true);
     expect(chem?.label).toBe('Chemistry');
+  });
+});
+
+describe('moveReads', () => {
+  const move = (id: string, before: number, after: number, good = after > before): TrackedMove => ({
+    id,
+    label: id,
+    before,
+    after,
+    show: String,
+    pct: null,
+    up: after > before,
+    good,
+    size: 1,
+    percent: true,
+  });
+
+  it('blames the days when a working day still earns about the same', () => {
+    const { worse } = moveReads([move('xp', 1400, 650), move('days', 14, 7)]);
+    expect(worse).toContain('how often you worked');
+    expect(worse).toContain('93 XP (it was 100)');
+  });
+
+  it('says both fell when each day earned less too', () => {
+    const { worse } = moveReads([move('xp', 1400, 350), move('days', 14, 7)]);
+    expect(worse).toContain('two things fell together');
+    expect(worse).toContain('100 → 50 XP');
+  });
+
+  it('says each day did less when the days held', () => {
+    const { worse } = moveReads([move('xp', 1400, 700)]);
+    expect(worse).toContain('each day is doing less');
+  });
+
+  it('names the subject that fell the most', () => {
+    const fell = { ...move('subject:maths', 10, 2), label: 'Mathematics' };
+    expect(moveReads([move('xp', 1400, 700), fell]).worse).toContain('Mathematics fell the most');
+  });
+
+  it("doesn't divide by a day count of zero", () => {
+    const { worse } = moveReads([move('xp', 1400, 0), move('days', 14, 0)]);
+    expect(worse).toContain('break');
+    expect(worse).not.toMatch(/NaN|Infinity/);
+  });
+
+  it("doesn't repeat what a diagnosis beside it already says", () => {
+    const late = move('on-time', 28, 5);
+    expect(moveReads([late]).worse).toContain('your own dates');
+    expect(moveReads([late], [{ id: 'deadlines-slipping' }]).worse).toBeNull();
+  });
+
+  it('reads the better list on its own, and stays quiet with nothing to read', () => {
+    const reads = moveReads([move('xp', 700, 1400), move('days', 7, 14)]);
+    expect(reads.better).toContain('showing up more');
+    expect(reads.worse).toBeNull();
+    expect(moveReads([])).toEqual({ worse: null, better: null });
   });
 });

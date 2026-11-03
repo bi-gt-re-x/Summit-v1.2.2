@@ -22,6 +22,7 @@
 import { useMemo } from 'react';
 import { whatSummitKnows, type Knowledge } from '@/utils/knows';
 import { OTHER_KEY } from '@/utils/subjectXp';
+import { Suggestion } from './Suggestion';
 import type { AnalyticsModel } from './useAnalyticsModel';
 
 /**
@@ -46,6 +47,11 @@ export function useKnows(model: AnalyticsModel): Knowledge[] {
       if (!day || day < cutoff || day > toIso) return;
       lately.set(task.subject, (lately.get(task.subject) ?? 0) + 1);
     });
+    const workedDays = new Set<string>();
+    tasks.forEach((task) => {
+      const day = (task.completed_at || '').slice(0, 10);
+      if (task.status === 'done' && day >= cutoff && day <= toIso) workedDays.add(day);
+    });
     let recentTop: string | null = null;
     let most = 0;
     lately.forEach((count, id) => {
@@ -67,6 +73,7 @@ export function useKnows(model: AnalyticsModel): Knowledge[] {
         lumped: row.key === OTHER_KEY,
       })),
       recentTop,
+      recentDays: workedDays.size,
     });
   }, [breakdown.rows, maturity.activeDays, maturity.spanDays, nameOf, tasks, toIso]);
 }
@@ -82,8 +89,8 @@ export function Knows({ facts }: { facts: Knowledge[] }) {
           <div key={fact.key}>
             <dt>{fact.heading}</dt>
             <dd>
-              <span className="ax-knows-do">{fact.advice}</span>
               <span className="ax-knows-fact">{fact.text}</span>
+              <Suggestion text={fact.advice} />
             </dd>
           </div>
         ))}

@@ -140,12 +140,13 @@ describe('hard tasks failing', () => {
 });
 
 describe('the order', () => {
-  const win = (id: string): Win => ({ id, text: 'Your daily XP is up 20%', figure: '100 → 120', tone: 'violet' });
+  const win = (id: string): Win => ({ id, text: 'Your daily XP is up 20%', figure: '100 → 120', suggests: 'Keep it going.', tone: 'violet' });
   const problem = (id: string, weight: number): Diagnosis => ({
     id,
     tone: 'warn' as Diagnosis['tone'],
     headline: 'Something is off.',
     detail: 'Two readings disagree.',
+    means: 'This suggests a thing.',
     action: 'Do a thing.',
     watch: 'Watch a thing.',
     points: [],
@@ -355,8 +356,8 @@ describe('one card per measure', () => {
        a row" and "Lift: 267 weeks in a row", one above the other, two of the
        three cards the section had room for. */
     const streaks: Win[] = [
-      { id: 'win-habit-Gym', text: 'Gym: 267 weeks in a row', figure: '100% consistent', tone: 'green' },
-      { id: 'win-habit-Lift', text: 'Lift: 267 weeks in a row', figure: '100% consistent', tone: 'green' },
+      { id: 'win-habit-Gym', text: 'Gym: 267 weeks in a row', figure: '100% consistent', suggests: 'Keep it going.', tone: 'green' },
+      { id: 'win-habit-Lift', text: 'Lift: 267 weeks in a row', figure: '100% consistent', suggests: 'Keep it going.', tone: 'green' },
     ];
     const found = whatChanged({
       days: run(CHANGE_WINDOW * 2), finished: [], ...EMPTY, wins: streaks,

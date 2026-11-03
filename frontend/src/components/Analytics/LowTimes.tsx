@@ -8,6 +8,7 @@
  */
 import type { LowMark, LowTimes } from '@/services/said';
 import { Panel, PanelNote } from './charts';
+import { Suggestion } from './Suggestion';
 
 const DAY = new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 const CLOCK = new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit' });
@@ -77,8 +78,42 @@ function lead(part: string | null, day: string | null, what: string) {
   return bits.length ? `${what} ${bits.join(' and ')}.` : '';
 }
 
+/**
+ * Where it happens, as a phrase. Null when no time or day stands out.
+ *
+ * The worst time of day and the worst weekday are counted apart, so this keeps
+ * them apart too. "Afternoons on Fridays" would claim a slot nobody measured.
+ */
+function slot(part: string | null, day: string | null): string | null {
+  const bits = [
+    part ? `in the ${part.toLowerCase()}` : '',
+    day ? `on ${WEEKDAY_NAME[day] ?? day}` : '',
+  ].filter(Boolean);
+  return bits.length ? bits.join(' and ') : null;
+}
+
+/* When energy and output drop at the same time of day, the plan is probably
+   asking for hard work when there's no energy for it, which is a different
+   fix from either one on its own. */
+function energyNext(energy: LowTimes['energy'], output: LowTimes['output']): string | null {
+  const where = slot(energy.worst_part, energy.worst_day);
+  if (!where) return null;
+  if (energy.worst_part && energy.worst_part === output.worst_part) {
+    return `Your energy and your work drop at the same time, which suggests your plan is asking too much ${slot(energy.worst_part, null)}. Move your hardest task out of it, and keep something easy there.`;
+  }
+  return `This suggests you should plan lighter work ${where}. Save your hardest task for another time, and keep something easy ready.`;
+}
+
+function outputNext(output: LowTimes['output']): string | null {
+  const where = slot(output.worst_part, output.worst_day);
+  if (!where) return null;
+  return `This suggests your plan doesn't fit how you work ${where}. Move your hardest task out of that time for a week, and see if your ratings change.`;
+}
+
 export function LowTimesPanel({ low, windowDays }: { low: LowTimes; windowDays: number }) {
   const { energy, output } = low;
+  const energyAdvice = energyNext(energy, output);
+  const outputAdvice = outputNext(output);
   const energyLead = lead(energy.worst_part, energy.worst_day, 'Low energy hits most');
   const outputLead = lead(output.worst_part, output.worst_day, 'Work slows down most');
 
@@ -99,6 +134,7 @@ export function LowTimesPanel({ low, windowDays }: { low: LowTimes; windowDays: 
           }
         >
                       {energyLead && <p className="ax-low-lead">{energyLead}</p>}
+              {energyAdvice && <Suggestion text={energyAdvice} />}
               <Bars
                 title="Time of day"
                 worst={energy.worst_part}
@@ -134,6 +170,7 @@ export function LowTimesPanel({ low, windowDays }: { low: LowTimes; windowDays: 
         ) : (
           <>
             {outputLead && <p className="ax-low-lead">{outputLead}</p>}
+            {outputAdvice && <Suggestion text={outputAdvice} />}
             <Bars
               title="Time of day"
               worst={output.worst_part}

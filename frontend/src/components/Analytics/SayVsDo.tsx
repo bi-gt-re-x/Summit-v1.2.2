@@ -33,6 +33,7 @@ import type {
 } from '@/services/said';
 import { Panel, PanelNote } from './charts';
 import { SaidVsDid } from './SaidVsDid';
+import { Suggestion } from './Suggestion';
 
 const CONFIDENCE: Record<Confidence, string> = {
   early: 'Early read',
@@ -246,6 +247,7 @@ function MoodHero({ mood }: { mood: MoodVsOutput }) {
       }
     >
       {headline && <p className={`ax-sv-headline is-${headline.tone}`}>{headline.text}</p>}
+      {headline?.suggests && <Suggestion text={headline.suggests} />}
       <p className="ax-sv-source">
         Mood on {mood.mood_days} of the last {mood.window_days} days
         {mood.mood_days > 0 && `: ${mood.said_days} tapped, ${mood.read_days} from your words`}.

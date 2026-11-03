@@ -197,7 +197,13 @@ export interface MoodVsOutput {
   low_times?: LowTimes;
   min_days: number;
   small_change: number;
-  headline: { text: string; tone: 'insight' | 'steady' | 'building'; confidence: Confidence } | null;
+  headline: {
+    text: string;
+    tone: 'insight' | 'steady' | 'building';
+    confidence: Confidence;
+    /** What it suggests, and what to try. Absent while there's nothing to read yet. */
+    suggests?: string;
+  } | null;
 }
 
 export function readMood(): Promise<ApiResult<MoodVsOutput>> {
