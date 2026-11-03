@@ -54,6 +54,9 @@ def routine(subject: str) -> bool:
 
 #: A rating has to move at least this much (1-5 scale) to count as a change.
 MOVE = 0.3
+#: Sessions on a topic, and the rating under which, before no change is a problem.
+STUCK_SESSIONS = 12
+STUCK_BELOW = 3.5
 
 #: The parts of the day a session can start in.
 PARTS = (
@@ -211,6 +214,14 @@ def improvements(sessions: List[Dict[str, Any]], since: date, tax) -> List[Dict[
                 'You took on harder {}'.format(topics.lower(label)),
                 'Difficulty {:.1f} → {:.1f}, and your ratings held at {:.1f}.'.format(hard_was, hard_now, now),
                 _strength(hard_now - hard_was, len(rows)), 'improved'))
+            continue
+        # Plenty of work and no movement, on something that isn't going well.
+        if (len(rows) >= STUCK_SESSIONS and was is not None and now is not None
+                and (was + now) / 2 < STUCK_BELOW):
+            out.append(_finding(
+                'stuck', topic_id, 'bad', '{} isn\'t moving'.format(label),
+                'Rated {:.1f} → {:.1f} over your last {} sessions ({}).'.format(was, now, len(rows), area),
+                _strength(STUCK_BELOW - (was + now) / 2, len(rows)), 'watch'))
 
     for (subject, area), rows in by_area.items():
         if len(rows) < 10:
@@ -367,9 +378,9 @@ def steady(sessions: List[Dict[str, Any]], today: date) -> List[Dict[str, Any]]:
 
 
 GROUPS = (
-    ('improved', 'Where you grew'),
+    ('watch', 'Slipping'),
+    ('improved', 'Improving'),
     ('when', 'When you work best'),
-    ('watch', 'Watch out for'),
 )
 
 
@@ -409,5 +420,7 @@ def reads(tasks: Sequence[Dict[str, Any]], today: date, days: int = 90, per_grou
         'to': today.isoformat(),
         'days': days,
         'sessions': sum(1 for s in sessions if s['day'] >= since),
+        # Life admin isn't growth, so the page leaves these subjects out too.
+        'routine': sorted({s['subject'] for s in sessions if routine(s['subject'])}),
         'groups': groups,
     }

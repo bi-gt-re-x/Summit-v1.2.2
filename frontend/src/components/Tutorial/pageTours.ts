@@ -108,7 +108,7 @@ const analytics: Step[] = [
     kind: 'next',
     target: ['[data-tour="ax-tab-growth"]'],
     title: 'Growth',
-    body: 'How far you have come, year by year. Come back here after a few months.',
+    body: 'What got worse and what got better. Come back here after a few months.',
   },
   {
     id: 'ax-done',

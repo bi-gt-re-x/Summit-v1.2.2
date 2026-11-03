@@ -112,7 +112,7 @@ export const VIEWS: View[] = [
     key: 'growth',
     label: 'Growth',
     path: '/analytics/growth',
-    purpose: 'Your progress, year by year.',
+    purpose: 'What got worse and what got better.',
     title: 'Growth',
     tone: 'rose',
   },

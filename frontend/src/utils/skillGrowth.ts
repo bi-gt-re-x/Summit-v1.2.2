@@ -518,6 +518,9 @@ export interface TimeProgress {
   pointsGained: number;
   /** Subjects that rose at all. */
   subjectsUp: number;
+  /** The falls, kept beside the rises rather than netted against them. */
+  pointsLost: number;
+  subjectsDown: number;
   /** XP per focus hour, this period and the one before it. */
   perHour: number | null;
   perHourBefore: number | null;
@@ -560,6 +563,8 @@ export function timeToProgress({
   const rated = finished.filter((task) => num(task.difficulty) > 0 && num(task.execution) > 0);
   const risen = tracks.filter((track) => (track.delta ?? 0) > 0);
   const pointsGained = risen.reduce((sum, track) => sum + (track.delta ?? 0), 0);
+  const fallen = tracks.filter((track) => (track.delta ?? 0) < 0);
+  const pointsLost = fallen.reduce((sum, track) => sum - (track.delta ?? 0), 0);
 
   /* An hour either side before a ratio is printed. Below that the figure is
      one afternoon divided by another, and it swings far enough to read as a
@@ -575,6 +580,8 @@ export function timeToProgress({
     xp,
     pointsGained,
     subjectsUp: risen.length,
+    pointsLost,
+    subjectsDown: fallen.length,
     perHour: rate(xp, hours),
     perHourBefore: rate(xpBefore, hoursBefore),
     pointsPerTenHours: hours >= 1 ? (pointsGained / hours) * 10 : null,

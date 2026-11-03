@@ -28,7 +28,8 @@ import { useApi, type UseApiResult } from '@/hooks';
 import { records as recordService } from '@/services';
 import type { AnalysedRecord, RecordAnalysis, RecordRead } from '@/services/records';
 import { changeText, formatValue } from '@/utils/records';
-import { Panel } from './charts';
+import { Panel, PanelGroup } from './charts';
+import { Figures } from './Figures';
 import { windowOption, type WindowKey } from './data';
 
 const MARK = { good: '↑', bad: '!', flat: '·' } as const;
@@ -87,6 +88,9 @@ function readAs(record: AnalysedRecord): string {
   return parts.join(' · ');
 }
 
+/** Lines of record news on the Growth tab. The server puts bad news first. */
+const READS_SHOWN = 5;
+
 function Reads({ items }: { items: RecordRead[] }) {
   return (
     <ul className="ax-period-list ax-rx-reads">
@@ -94,7 +98,7 @@ function Reads({ items }: { items: RecordRead[] }) {
         <li key={item.id} className={`is-${item.tone === 'good' ? 'up' : item.tone === 'bad' ? 'down' : 'flat'}`}>
           <span className="ax-period-mark" aria-hidden="true">{MARK[item.tone]}</span>
           <span>
-            <b>{item.title}.</b> {item.detail}
+            <b>{item.title}.</b> <Figures text={item.detail} />
           </span>
         </li>
       ))}
@@ -424,22 +428,26 @@ export function RecordsGrowthSection({ read }: { read: RecordsRead }) {
       <section className="ax-section">
         <Panel
           title="What your records say"
-          note={`Your personal bests over ${windowText(data.days)}, next to your tasks and goals`}
           aside={<Link className="ax-link" to="/achievements">Your records</Link>}
         >
           {data.reads.length ? (
-            <Reads items={data.reads} />
+            <Reads items={data.reads.slice(0, READS_SHOWN)} />
           ) : (
             <p className="ax-empty">Nothing to report yet. Log each record again when you try it.</p>
           )}
         </Panel>
       </section>
-      <section className="ax-section ax-grid ax-grid-halves-even">
-        <PeriodPanel data={data} />
-        <WorkPanel data={data} />
-      </section>
       <section className="ax-section">
-        <GoalsPanel data={data} />
+        <PanelGroup
+          title="Your records in detail"
+          note="New bests, the work behind each one and the goals they help"
+        >
+          <div className="ax-grid ax-grid-halves-even">
+            <PeriodPanel data={data} />
+            <WorkPanel data={data} />
+          </div>
+          <GoalsPanel data={data} />
+        </PanelGroup>
       </section>
     </>
   );

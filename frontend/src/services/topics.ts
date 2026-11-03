@@ -124,6 +124,8 @@ export interface GrowthReads {
   days: number;
   sessions: number;
   groups: { id: 'improved' | 'when' | 'watch'; title: string; items: GrowthReadItem[] }[];
+  /** Subjects that are life admin rather than skills, which Growth leaves out. */
+  routine?: string[];
 }
 
 /**

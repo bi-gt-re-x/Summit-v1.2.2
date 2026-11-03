@@ -776,7 +776,7 @@ export function MoverPanel({
             : quiet
               ? 'No big gains. This is your best score'
               : `No big gains. Your best so far is ${shown.to} of 100`}
-        . It tracks {meta.asks}.
+        .
       </p>
 
       {/* The quantities the score was computed from, so the claim can be
@@ -806,19 +806,6 @@ export function MoverPanel({
             );
           })}
       </ul>
-
-      {/* Why it matters, assembled from the same figures. */}
-      <p className="ax-gp-mover-why">
-        <span className="ax-gp-mover-why-mark" aria-hidden="true">✦</span>
-        <span>
-          <strong>What this is:</strong> {meta.asks}.{' '}
-          {fell
-            ? `It's the score that ${kind === 'best' ? 'rose' : 'fell'} the most this period, `
-              + 'in points. Going from 4 to 12 is a big percent but a small change, so points are fairer.'
-            : 'Nothing moved much this period, so this just shows the score. '
-              + 'Nothing got worse.'}
-        </span>
-      </p>
     </Panel>
   );
 }
@@ -874,7 +861,6 @@ export function ThenNow({ data }: { data: GrowthPeriods }) {
             <div className="ax-gp-metric-head">
               <span className={`ax-gp-dot ax-tone-${meta.tone}`} aria-hidden="true" />
               <span className="ax-gp-metric-name">{meta.label}</span>
-              <span className="ax-gp-metric-asks">{meta.asks}</span>
             </div>
 
             <p className="ax-gp-metric-scores">

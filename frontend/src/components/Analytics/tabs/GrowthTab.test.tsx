@@ -23,6 +23,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { draw, fakeModel } from './fixtures';
+import { PeriodCards } from '../GrowthPeriod';
 import type { GrowthPeriods, MetricScores, PeriodSide } from '@/services/analytics';
 
 vi.mock('@/hooks', async (importOriginal) => ({
@@ -124,13 +125,16 @@ beforeEach(() => {
   growthPeriods.mockReset();
 });
 
+/** The row of period cards, which a panel on a space's page still draws. */
+function drawCards(cards = payload().periods, onPick: (key: never) => void = () => {}) {
+  draw(<PeriodCards cards={cards} active="30d" onPick={onPick as never} busy={false} />);
+  return screen.getByRole('navigation', { name: /Growth by period/i });
+}
+
 // --------------------------------------------------------------------------
 describe('the period row', () => {
   it('offers every period as a control that states its own growth', async () => {
-    serve();
-    draw(<GrowthTab model={fakeModel()} />);
-
-    const row = await screen.findByRole('navigation', { name: /Growth by period/i });
+    const row = drawCards();
     const buttons = within(row).getAllByRole('button');
     expect(buttons).toHaveLength(6);
     // The control and the summary are one object: pressing it is worth doing
@@ -139,31 +143,22 @@ describe('the period row', () => {
     expect(within(row).getByText('−3.5%')).toBeInTheDocument();
   });
 
-  it('marks the open period pressed in both controls, and no other', async () => {
-    // The segmented control in the chart head and the row of cards at the foot
-    // are two ways of asking the same question, so they cannot disagree about
-    // which period is open.
+  it('marks the open period pressed, and no other', async () => {
     serve();
     draw(<GrowthTab model={fakeModel()} />);
-    const row = await screen.findByRole('navigation', { name: /Growth by period/i });
-    const tabs = screen.getByRole('group', { name: /Growth period/i });
-
-    for (const control of [row, tabs]) {
-      const pressed = within(control)
-        .getAllByRole('button')
-        .filter((button) => button.getAttribute('aria-pressed') === 'true');
-      expect(pressed).toHaveLength(1);
-    }
+    const tabs = await screen.findByRole('group', { name: /Growth period/i });
+    const pressed = within(tabs)
+      .getAllByRole('button')
+      .filter((button) => button.getAttribute('aria-pressed') === 'true');
+    expect(pressed).toHaveLength(1);
     expect(within(tabs).getByRole('button', { pressed: true }).textContent).toBe('Month');
   });
 
-  it('asks the server again when a different period is pressed', async () => {
-    serve();
-    draw(<GrowthTab model={fakeModel()} />);
-    const row = await screen.findByRole('navigation', { name: /Growth by period/i });
-
+  it('says which period a card asks for when it is pressed', async () => {
+    const onPick = vi.fn();
+    const row = drawCards(undefined, onPick);
     await userEvent.click(within(row).getByRole('button', { name: /Last year/ }));
-    expect(growthPeriods).toHaveBeenCalledWith('365d');
+    expect(onPick).toHaveBeenCalledWith('365d');
   });
 
   it('drives the same fetch from the segmented control', async () => {
@@ -205,21 +200,15 @@ describe('the period row', () => {
        backend sends null rather than inventing +100%. A dash in 52px type is
        the one reading of that movement which says nothing, so the tab states
        it in the units the scores are already in. */
-    serve(payload({
-      periods: payload().periods.map((card) =>
-        card.key === '7d' ? { ...card, previous: 0, overall: 44, change: null } : card),
-    }));
-    draw(<GrowthTab model={fakeModel()} />);
-    const row = await screen.findByRole('navigation', { name: /Growth by period/i });
+    const row = drawCards(payload().periods.map((card) =>
+      card.key === '7d' ? { ...card, previous: 0, overall: 44, change: null } : card));
     expect(within(row).getByText('+44 pts')).toBeInTheDocument();
   });
 
   it('says a period has nothing before it rather than printing a growth figure', async () => {
     // "Since you started" reaches back to the first day by definition, so there
     // is no earlier equivalent. A "+100%" here would mean "we had no idea".
-    serve();
-    draw(<GrowthTab model={fakeModel()} />);
-    const row = await screen.findByRole('navigation', { name: /Growth by period/i });
+    const row = drawCards();
     const all = within(row).getByRole('button', { name: /Since you started/ });
     expect(all.textContent).toContain('-');
     expect(all.textContent).toContain('nothing earlier to compare with');
@@ -319,7 +308,7 @@ describe('the movers', () => {
     draw(<GrowthTab model={fakeModel()} />);
     const worst = (await screen.findByRole('heading', { name: /Needs attention/ }))
       .closest('.ax-panel') as HTMLElement;
-    expect(worst.textContent).toMatch(/nothing got worse/i);
+    expect(worst.textContent).toMatch(/no big drops/i);
   });
 
   it('gives every measure more than one quantity to be checked against', async () => {
@@ -381,8 +370,9 @@ describe('what changed', () => {
       consistency: null, efficiency: null, focus: null,
     } }));
     draw(<GrowthTab model={fakeModel()} />);
-    expect(await screen.findByText(/you started during this period/i))
-      .toBeInTheDocument();
+    await screen.findByRole('heading', { name: /^Then and now/ });
+    expect(screen.queryByRole('heading', { name: /What changed behind/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: /Needs attention/ })).not.toBeInTheDocument();
   });
 });
 
@@ -448,28 +438,38 @@ describe('the chart', () => {
    -------------------------------------------------------------------------- */
 
 // --------------------------------------------------------------------------
-describe('the panels brought back from before the cuts', () => {
-  /* Skill growth, skill levels, what the time bought, the skill's shape, when
-     the work happens and the year of days — all removed in the complexity cut
-     and restored at the reader's request. */
+describe('what the tab draws', () => {
+  it.each(['Skill growth', 'Skills by level', 'Time vs. progress', 'Then and now'])(
+    'draws %s',
+    async (title) => {
+      serve();
+      draw(<GrowthTab model={fakeModel()} />);
+      expect(await screen.findByRole('heading', { name: new RegExp(title) })).toBeInTheDocument();
+    },
+  );
+
   it.each([
-    'Skill growth',
-    'Skills by level',
-    'Time vs. progress',
+    'What makes up a skill',
+    'Growth by period',
+    'Your milestones',
     'When you get work done',
-    'Your whole year, day by day',
-  ])('draws %s', async (title) => {
+    'Your whole year',
+  ])('no longer draws %s', async (title) => {
     serve();
     draw(<GrowthTab model={fakeModel()} />);
-    expect(await screen.findByRole('heading', { name: new RegExp(title.replace(/[(),]/g, '.')) })).toBeInTheDocument();
+    await screen.findByRole('heading', { name: /^Then and now/ });
+    expect(screen.queryByRole('heading', { name: new RegExp(title) })).not.toBeInTheDocument();
   });
 
-  it('opens on skill growth, ahead of the five graded measures', async () => {
+  it('puts the scores ahead of the subject levels, with the drop before the gain', async () => {
     serve();
     draw(<GrowthTab model={fakeModel()} />);
-    const skill = await screen.findByRole('heading', { name: /^Skill growth/ });
-    const timeline = screen.getByRole('heading', { name: /^Growth timeline/ });
-    // DOCUMENT_POSITION_FOLLOWING: the timeline comes after.
-    expect(skill.compareDocumentPosition(timeline) & 4).toBeTruthy();
+    const then = await screen.findByRole('heading', { name: /^Then and now/ });
+    const skill = screen.getByRole('heading', { name: /^Skill growth/ });
+    // DOCUMENT_POSITION_FOLLOWING: the second comes after the first.
+    expect(then.compareDocumentPosition(skill) & 4).toBeTruthy();
+    const drop = screen.getByRole('heading', { name: /Needs attention/ });
+    const gain = screen.getByRole('heading', { name: /Biggest improvement/ });
+    expect(drop.compareDocumentPosition(gain) & 4).toBeTruthy();
   });
 });

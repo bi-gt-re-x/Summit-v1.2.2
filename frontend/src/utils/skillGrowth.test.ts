@@ -323,6 +323,8 @@ describe('time against what it bought', () => {
     });
     expect(out.pointsGained).toBe(9);
     expect(out.subjectsUp).toBe(1);
+    expect(out.pointsLost).toBe(9);
+    expect(out.subjectsDown).toBe(1);
   });
 
   it('carries the previous period, so the rate has something to move against', () => {

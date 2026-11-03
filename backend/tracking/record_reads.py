@@ -816,7 +816,8 @@ def reads(records: Sequence[Dict[str, Any]], days: int) -> List[Dict[str, Any]]:
                               round(top, 1), round(low, 1), low_name),
                           'weight': 1.3})
 
-    found.sort(key=lambda item: -item['weight'])
+    # Bad news first, so a long run of new bests can't push it off the list.
+    found.sort(key=lambda item: (item['tone'] != 'bad', -item['weight']))
     # At most two lines about any one record, so one busy record can't fill
     # it, and at most PER_KIND of each kind.
     per_record: Counter = Counter()

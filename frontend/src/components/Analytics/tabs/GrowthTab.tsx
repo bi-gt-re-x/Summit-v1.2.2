@@ -29,27 +29,27 @@
  * it was handed, and every sentence on it is assembled from those figures
  * rather than written, so no claim here can drift from the number beside it.
  *
- * ## The year-on-year half is still here, folded
+ * ## What it leaves out
  *
- * The tab used to be only that: the account a calendar year at a time, with
- * execution set against difficulty to separate getting better from picking
- * easier work. It is a genuinely different reading — self-rated, over years,
- * about the *work* rather than about the record — and it survives at the foot
- * of the page in a group of its own. What it is not is the answer to "how have
- * I changed lately", which is the question people arrive with.
+ * This isn't a list of wins. What got worse goes first, and a panel that only has
+ * something to compare draws only when there's something to compare it with.
+ * Panels that repeated another tab or the chart are gone from here, though a
+ * space's page can still draw them (components/Spaces/panelViews): the shape of
+ * one skill, the period cards, milestones, core hours and the year of days.
+ *
+ * The year-on-year reading survives at the foot, folded. It's self-rated and
+ * about the work rather than the record, and it isn't the answer to "how have I
+ * changed lately", which is the question people arrive with.
  */
 import { Link } from 'react-router-dom';
 import { useMemo, useState, type ReactNode } from 'react';
 import { Panel, PanelGroup, type Tone } from '../charts';
-import { ConsistencyPanel } from '../Breakdown';
 import { GrowthLine, type LineMark, type LineSeries } from '../GrowthLine';
 import { YearOnYear } from '../GrowthYears';
 import {
   METRIC_META,
   METRIC_ORDER,
-  MilestoneFeed,
   MoverPanel,
-  PeriodCards,
   PeriodTabs,
   ThenNow,
   milestones,
@@ -64,7 +64,6 @@ import { hourLabel } from '@/utils/behaviour';
 import { useGrowthPeriods } from '../useGrowthPeriods';
 import { useSkillAttempts, useSkillReading, useStats } from '@/hooks';
 import type { GrowthPeriods, PeriodKey } from '@/services/analytics';
-import { SkillShapePanel } from '../SkillView';
 import { GrowthReadsPanel } from '../GrowthReads';
 import { RecordsGrowthSection, type RecordsRead } from '../RecordsAnalysis';
 import type { AnalyticsModel } from '../useAnalyticsModel';
@@ -294,9 +293,7 @@ export function GrowthTimelinePanel({
   return (
     <Panel
       title="Growth timeline"
-      note={
-        `Each point covers the ${data.trend_window} days before it, so the line is smooth instead of jumping day to day`
-      }
+      note={`Each point covers the ${data.trend_window} days before it`}
       aside={aside}
     >
       <div className="ax-gp-toggles" role="group" aria-label="Metrics on the chart">
@@ -336,10 +333,7 @@ export function GrowthTimelinePanel({
 export function ScoreChangesPanel({ data }: { data: GrowthPeriods }) {
   const changes = useMemo(() => whatChanged(data), [data]);
   return (
-    <Panel
-      title="What changed behind the scores"
-      note="From the same numbers your scores use"
-    >
+    <Panel title="What changed behind the scores">
       {changes.length === 0 ? (
         <p className="ax-empty">
           {data.previous
@@ -358,7 +352,7 @@ export function ScoreChangesPanel({ data }: { data: GrowthPeriods }) {
 }
 
 export function GrowthTab({ model, records }: { model: AnalyticsModel; records?: RecordsRead }) {
-  const { detail, heatRows, nameOf, skills, clock } = model;
+  const { detail } = model;
   /* The page's window picker drives the period — see ../useGrowthPeriods. */
   const { period, setPeriod, periods } = useGrowthPeriods(model.span, model.chooseSpan);
   const { tracks, progress, context: subjectContext, practice, periodText } = useSkillGrowth(model, period);
@@ -367,7 +361,6 @@ export function GrowthTab({ model, records }: { model: AnalyticsModel; records?:
   const data = periods.data;
 
   const moved = useMemo(() => (data ? movers(data) : { best: null, worst: null }), [data]);
-  const feed = useMemo(() => (data ? milestones(data) : []), [data]);
 
   if (periods.error && !data) {
     return (
@@ -406,89 +399,47 @@ export function GrowthTab({ model, records }: { model: AnalyticsModel; records?:
         </section>
       )}
 
-      {/* First: the things only this record can say. Not "Chemistry went
-          Competent → Strong" but which topic improved, when each subject goes
-          best and what keeps going wrong. Its own request, so it doesn't wait
-          on the grades below. See ../GrowthReads. */}
+      {/* First: what got worse and what got better, in topics and subjects. Its
+          own request, so it doesn't wait on the scores below. */}
       <section className="ax-section">
-        <GrowthReadsPanel span={model.span} />
+        <GrowthReadsPanel span={model.span} tracks={tracks} />
       </section>
-
-      {/* The records: what each personal best is about, read from its name,
-          set against the work on the same contest or subject and the goals
-          that name it. Before the grades because it is about the reader's own
-          results; the page fetched it with everything else. See
-          ../RecordsAnalysis and backend/tracking/record_reads.py. */}
-      {records && <RecordsGrowthSection read={records} />}
 
       {data && (
         <>
-          {/* Skill growth leads, and the five graded measures no longer do.
-              The tab is called Growth and every one of those five reads
-              *output* — how much got done, how often, how fast, how well it
-              was rated. An account can hold all five steady for a term and
-              have climbed two bands in Mathematics, and this page used to
-              report that as a flat month. The one figure here about the
-              reader rather than their record is the skill score, so it opens
-              the tab. See utils/skillGrowth. */}
-          <section className="ax-section">
+          {/* The same question on the five scores, with the drop first. */}
+          <section className={`ax-section${data.previous ? ' ax-grid ax-grid-halves-even' : ''}`}>
             <Panel
-              title="Skill growth"
-              note={`How your level in each subject moved over ${periodText}`}
+              title="Then and now"
+              note={
+                data.previous
+                  ? `${data.label} vs. the ${data.days} days before`
+                  : "All your work. There's nothing earlier to compare with."
+              }
             >
-              <SkillGrowthPanel
-                tracks={tracks}
-                periodText={periodText}
-                limit={detail.rows}
-                context={subjectContext}
-              />
+              <ThenNow data={data} />
             </Panel>
+
+            {data.previous && (
+              <div className="ax-gp-stack">
+                <MoverPanel
+                  kind="worst"
+                  mover={moved.worst}
+                  now={data.current}
+                  then={data.previous}
+                  data={data}
+                />
+                <MoverPanel
+                  kind="best"
+                  mover={moved.best}
+                  now={data.current}
+                  then={data.previous}
+                  data={data}
+                />
+              </div>
+            )}
           </section>
 
-          {/* The same question one level down: not Mathematics but Factor
-              Simple Quadratics, read from problems the reader marked right or
-              wrong on the skill tree. The subject panel above cannot go finer
-              than a subject, because that is all a task records. */}
-          <section className="ax-section">
-            <Panel
-              title="Skills by level"
-              note="Each skill tree step, based on problems you got right or wrong"
-            >
-              <SkillLevelsPanel
-                practice={practice}
-                periodText="all your work"
-                limit={detail.rows}
-              />
-            </Panel>
-          </section>
-
-          {/* And what the time bought. The reader already knows how many hours
-              they spent; what they cannot work out for themselves is whether
-              those hours moved anything. */}
-          <section className="ax-section">
-            <Panel
-              title="Time vs. progress"
-              note="Hours in, work done, and whether your level moved"
-            >
-              <TimeProgressPanel progress={progress} periodText={periodText} />
-            </Panel>
-          </section>
-
-          {/* The five graded measures and an overall grade were here: a second
-              report card that came out different from Overview's (8.7 against
-              8.1, and B against S for the same measure). Overview keeps the
-              one grade; the timeline below still reads the same periods. */}
-
-          {/* The shape of the strongest subject. It sits under the strip for
-              the same reason it always did: the strip says how the account is
-              doing overall and this says what one skill is made of. */}
-          <section className="ax-section">
-            <SkillShapePanel rows={skills} nameOf={nameOf} />
-          </section>
-
-          {/* The line. The period control lives in this panel's header because
-              the period is a property of the chart before it is a property of
-              anything else on the tab. */}
           <section className="ax-section ax-hero ax-gp-timeline">
             <GrowthTimelinePanel
               data={data}
@@ -505,110 +456,67 @@ export function GrowthTab({ model, records }: { model: AnalyticsModel; records?:
             />
           </section>
 
-          {/*
-            The comparison beside the two measures at its extremes.
+          {data.previous && (
+            <section className="ax-section">
+              <ScoreChangesPanel data={data} />
+            </section>
+          )}
 
-            The movers are stacked in one column rather than each taking a row
-            of its own, and that is a height decision as much as a reading one:
-            panels in a row are stretched to the tallest of them, and "then and
-            now" is five metrics with a bar and a sentence each while a mover is
-            one metric with three. Set one against one, the short panel carried
-            a band of nothing half its own height again. Two against one is the
-            arrangement where both columns end at about the same place, and it
-            also happens to be the right reading order — the comparison, then
-            what came top and bottom of it.
-          */}
-          <section className="ax-section ax-grid ax-grid-halves-even">
+          {/* Every subject's level. The one thing here about the reader rather
+              than their record: see utils/skillGrowth. */}
+          <section className="ax-section">
             <Panel
-              title="Then and now"
-              note={
-                data.previous
-                  ? `${data.label} vs. the ${data.days} days before`
-                  : "All your work. There's nothing earlier to compare with."
-              }
+              title="Skill growth"
+              note={`Each subject's level over ${periodText}`}
             >
-              <ThenNow data={data} />
+              <SkillGrowthPanel
+                tracks={tracks}
+                periodText={periodText}
+                limit={detail.rows}
+                context={subjectContext}
+              />
             </Panel>
+          </section>
 
-            <div className="ax-gp-stack">
-              <MoverPanel
-                kind="best"
-                mover={moved.best}
-                now={data.current}
-                then={data.previous}
-                data={data}
+          {/* One level down: read from problems marked right or wrong on the
+              skill tree, which a task can't say. */}
+          <section className="ax-section">
+            <Panel
+              title="Skills by level"
+              note="From problems you got right or wrong"
+            >
+              <SkillLevelsPanel
+                practice={practice}
+                periodText="all your work"
+                limit={detail.rows}
               />
-              <MoverPanel
-                kind="worst"
-                mover={moved.worst}
-                now={data.current}
-                then={data.previous}
-                data={data}
-              />
-            </div>
+            </Panel>
           </section>
 
           <section className="ax-section">
-            <ScoreChangesPanel data={data} />
-          </section>
-
-          {/* Every period at once. Not a second copy of the segmented control:
-              that shows one answer and this shows six, and pressing a card is
-              asking for the detail behind a figure just read. */}
-          <section className="ax-section">
-            <h2 className="ax-gp-heading">Growth by period</h2>
-            <PeriodCards
-              cards={data.periods}
-              active={period}
-              onPick={setPeriod}
-              busy={periods.refreshing}
-            />
-          </section>
-
-          {/* The two readings that explain the five above rather than restating
-              them: what the underlying quantities did, and when the score
-              crossed a letter. Folded, because they are the follow-up. */}
-          <section className="ax-section">
-            <PanelGroup
-              title="Your milestones"
-              note="Days your score hit a new grade"
+            <Panel
+              title="Time vs. progress"
+              note="Hours in, and whether your level moved"
             >
-              <Panel
-                title="Milestones"
-                note="Updated every time you visit"
-              >
-                <MilestoneFeed entries={feed} format={shortDate} />
-              </Panel>
-            </PanelGroup>
-
-            {/* The same year of days the Overview draws, and deliberately the
-                same component rather than a second one: consistency is one of
-                the five scores above, and the panel that shows it as days is
-                where a reader goes to see *which* days. Always a year,
-                whatever period is selected — a heatmap of the last seven days
-                is seven squares. */}
-            <PanelGroup
-              title="When you get work done"
-              note="The hours you get things done"
-            >
-              <CoreHoursPanel clock={clock} />
-            </PanelGroup>
-
-            <PanelGroup
-              title="Your whole year, day by day"
-              note="One square for each day"
-            >
-              <ConsistencyPanel rows={heatRows} />
-            </PanelGroup>
-
-            <PanelGroup
-              title="Your work, year by year"
-              note="How hard it was and how well it went, by your ratings"
-            >
-              <YearOnYear model={model} />
-            </PanelGroup>
+              <TimeProgressPanel progress={progress} periodText={periodText} />
+            </Panel>
           </section>
         </>
+      )}
+
+      {/* Personal bests, read against the work and the goals. The page fetched
+          it with everything else. See ../RecordsAnalysis. */}
+      {records && <RecordsGrowthSection read={records} />}
+
+      {data && (
+        <section className="ax-section">
+          <PanelGroup
+            title="Your work, year by year"
+            note="How hard it was and how well it went, by your ratings"
+          >
+            <YearOnYear model={model} />
+          </PanelGroup>
+        </section>
       )}
     </>
   );

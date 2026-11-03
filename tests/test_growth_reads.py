@@ -99,3 +99,25 @@ def test_the_endpoint_answers_and_never_writes(client):
     reply = client.get('/api/growth_reads?days=90').json()
     assert reply['success'] and reply['days'] == 90 and reply['groups'] == []
     assert client.get('/api/growth_reads?days=5').json()['days'] == 30
+
+
+def test_a_topic_with_plenty_of_work_and_no_movement_is_called_out():
+    tasks = [_task(60 - 4 * i, 16, 'AMC 10 recursive counting set', 'mathematics', 3) for i in range(14)]
+    found = _items(growth_reads.reads(tasks, TODAY, 90))
+    stuck = [item for key, item in found.items() if key.startswith('stuck:')]
+    assert stuck and stuck[0]['tone'] == 'bad' and "isn't moving" in stuck[0]['title']
+
+
+def test_a_topic_holding_a_good_rating_isnt_stuck():
+    tasks = [_task(60 - 4 * i, 16, 'AMC 10 recursive counting set', 'mathematics', 5) for i in range(14)]
+    assert not [key for key in _items(growth_reads.reads(tasks, TODAY, 90)) if key.startswith('stuck:')]
+
+
+def test_the_bad_news_comes_first():
+    assert [key for key, _title in growth_reads.GROUPS][:2] == ['watch', 'improved']
+
+
+def test_it_names_the_subjects_that_are_life_admin():
+    tasks = [_task(60 - 4 * i, 16, 'Do laundry', 'laundry', 3) for i in range(3)]
+    tasks += [_task(60 - 4 * i, 16, 'AMC 10 recursive counting set', 'mathematics', 3) for i in range(3)]
+    assert growth_reads.reads(tasks, TODAY, 90)['routine'] == ['laundry']

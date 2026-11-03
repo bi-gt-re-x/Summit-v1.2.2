@@ -9546,9 +9546,6 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-gp-metric-name {
     color: var(--ax-text)
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-gp-metric-asks {
-    color: var(--ax-faint)
-}
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-gp-metric-scores {
     color: var(--ax-text)
 }
@@ -9789,16 +9786,6 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-gp-part-value strong {
     color: var(--ax-text)
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-gp-mover-why {
-    background: var(--ax-card-2);
-    color: var(--ax-muted)
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-gp-mover-why strong {
-    color: var(--ax-text)
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-gp-mover-why-mark {
-    color: var(--ax-violet)
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-gp-card-go {
     color: var(--ax-faint)
@@ -10291,45 +10278,6 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .sg-subjects-all:hover {
     border-color: color-mix(in srgb, var(--ax-violet) 45%, var(--ax-line))
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .sg-highlight {
-    --sg-hl: var(--ax-violet);
-    border: 1px solid color-mix(in srgb, var(--sg-hl) 28%, var(--ax-line));
-    border-top: 4px solid var(--sg-hl);
-    background: color-mix(in srgb, var(--sg-hl) 6%, var(--ax-card))
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .sg-highlight.is-growing {
-    --sg-hl: var(--ax-good)
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .sg-highlight-name {
-    color: var(--sg-hl)
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .sg-highlight-note {
-    color: var(--ax-muted)
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .sg-highlight-empty {
-    color: var(--ax-muted)
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .sg-highlight-row {
-    border: 1px solid transparent;
-    background: var(--ax-card);
-    color: var(--ax-text)
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .sg-highlight-row:hover {
-    border-color: color-mix(in srgb, var(--sg-hl) 40%, var(--ax-line))
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .sg-highlight-row:focus-visible {
-    outline: 2px solid var(--sg-hl)
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .sg-highlight-rank {
-    background: color-mix(in srgb, var(--sg-hl) 16%, transparent);
-    color: var(--sg-hl)
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .sg-highlight-text span {
-    color: var(--ax-muted)
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .sg-highlight-go {
-    color: var(--ax-faint)
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-delta-up {
     color: var(--ax-good)
@@ -11404,6 +11352,18 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-period-list b {
     color: var(--ax-text)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-period-list strong {
+    color: var(--ax-text)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-growth-lead {
+    color: var(--ax-muted)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-growth-lead .is-down {
+    color: var(--ax-bad)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-growth-lead .is-up {
+    color: var(--ax-good)
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-period-mark {
     color: var(--ax-faint)
