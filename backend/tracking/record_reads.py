@@ -765,9 +765,10 @@ def reads(records: Sequence[Dict[str, Any]], days: int) -> List[Dict[str, Any]]:
 
         # 3. Stalled, with work going in.
         if stalled:
-            detail = 'You set your best of {} on {}. The {} {} since haven\'t beaten it.'.format(
+            detail = 'You set your best of {} on {}. The {} {} since {} beaten it.'.format(
                 fmt(r['best'], r['unit'], r['target']), _short(r['best_on']),
-                r['after_best'], 'try' if r['after_best'] == 1 else 'tries')
+                r['after_best'], 'try' if r['after_best'] == 1 else 'tries',
+                'hasn\'t' if r['after_best'] == 1 else 'haven\'t')
             if work['basis'] and work['since_seconds'] >= 3600:
                 detail += ' You\'ve put {} into {} since then, so maybe try a different kind of session.'.format(
                     hours(work['since_seconds']), _area(r))

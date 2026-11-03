@@ -191,17 +191,17 @@ export function periodSummary(
   const focusNow = now.days.reduce((sum, day) => sum + num(day.focus_minutes), 0);
   const focusWas = was.days.reduce((sum, day) => sum + num(day.focus_minutes), 0);
   const taskMove = moved(now.tasks.length, was.tasks.length);
+  /* Each figure carries its own change. One percentage after "37 tasks and 514
+     XP" read as both, when it was only the tasks, and XP had moved 64%. */
+  const xpWas = was.days.reduce((sum, day) => sum + num(day.xp_earned), 0);
+  const taskNote = compared && taskMove.words ? ` (${taskMove.words})` : '';
+  const xpWords = compared ? moved(xpNow, xpWas).words : '';
   effort.push({
     label: 'Done',
     text:
-      `${count(now.tasks.length)} task${now.tasks.length === 1 ? '' : 's'}${xpNow > 0 ? ` and ${count(xpNow)} XP` : ''}` +
-      (!compared || !taskMove.words
-        ? '.'
-        : taskMove.tone === 'flat'
-          ? `, about the same as ${before}.`
-          : was.tasks.length === 0
-            ? `, up from none ${before}.`
-            : `, ${taskMove.words} on ${before}.`),
+      `${count(now.tasks.length)} task${now.tasks.length === 1 ? '' : 's'}${taskNote}` +
+      (xpNow > 0 ? ` and ${count(xpNow)} XP${xpWords ? ` (${xpWords})` : ''}` : '') +
+      (taskNote || (xpNow > 0 && xpWords) ? ` vs. ${before}.` : '.'),
     tone: compared ? taskMove.tone : 'flat',
   });
   if (focusNow > 0 || focusWas > 0) {

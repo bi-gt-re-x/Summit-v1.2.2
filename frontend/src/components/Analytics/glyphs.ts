@@ -27,7 +27,7 @@ function solid(body: string): string {
 }
 
 export const GLYPHS = {
-  /** Total XP, and the growth score — the page's "this is the headline" mark. */
+  /** Total XP, and the work score — the page's "this is the headline" mark. */
   sparkle: solid(
     "<path d='M12 2l1.9 5.6a4 4 0 0 0 2.5 2.5L22 12l-5.6 1.9a4 4 0 0 0-2.5 2.5L12 22l-1.9-5.6a4 4 0 0 0-2.5-2.5L2 12l5.6-1.9a4 4 0 0 0 2.5-2.5z'/>",
   ),

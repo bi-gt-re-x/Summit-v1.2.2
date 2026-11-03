@@ -1,5 +1,5 @@
 /**
- * Low productivity and low energy: when they happened, on the Insights tab.
+ * Low activity and low energy: when they happened, on the Insights tab.
  *
  * Two panels side by side, each with the same three parts: which part of the
  * day, which weekday, and the latest ones with their date and time. Every
@@ -150,7 +150,7 @@ export function LowTimesPanel({ low, windowDays }: { low: LowTimes; windowDays: 
       )}
 
       <Panel
-        title="Low productivity"
+        title="Low activity"
         note={`${output.slow_days} slow ${output.slow_days === 1 ? 'day' : 'days'} and ${output.low_rated} low-rated ${
           output.low_rated === 1 ? 'task' : 'tasks'
         } in the last ${windowDays} days.`}

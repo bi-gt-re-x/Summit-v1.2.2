@@ -63,7 +63,7 @@ function greeting(name: string | null): string {
  * and six at about 145 is 8,610 XP; level N costs N × 100 (utils/format), so
  * that is level 13 with 810 of 1,300 in hand — the 62% bar under the chart.
  * The last thirty days at ~145 a day is ~4,350 XP, or 142 tasks at ~30 each.
- * The growth score is the Analytics section's five factors averaged: 83, a B.
+ * The work score is the Analytics section's five factors averaged: 83, a B.
  * Change one of these and change the rest with it.
  */
 const HERO_XP = [
@@ -501,7 +501,7 @@ export function Pricing({
           <ul className="lp-price-list">
             <li>✓ Tasks and a calendar</li>
             <li>✓ Goals with checkpoints</li>
-            <li>✓ Analytics and your growth score</li>
+            <li>✓ Analytics and your work score</li>
             <li>✓ Skill trees, badges and personal bests</li>
             <li>✓ The Log and Spaces</li>
           </ul>

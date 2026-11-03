@@ -254,7 +254,7 @@ describe('the movers', () => {
     const best = (await screen.findByRole('heading', { name: /Biggest improvement/ }))
       .closest('.ax-panel') as HTMLElement;
     expect(within(best).getByText('Efficiency')).toBeInTheDocument();
-    expect(within(best).queryByText('Productivity')).toBeNull();
+    expect(within(best).queryByText('Activity')).toBeNull();
   });
 
   it('says nothing moved rather than promoting a wobble', async () => {
@@ -385,7 +385,7 @@ describe('the chart', () => {
     const on = await screen.findAllByRole('button', { pressed: true });
     const toggles = on.filter((button) => button.className.includes('ax-gp-toggle'));
     expect(toggles.map((button) => button.textContent))
-      .toEqual(['Productivity', 'Quality', 'Consistency', 'Efficiency']);
+      .toEqual(['Activity', 'Quality', 'Consistency', 'Efficiency']);
     expect(document.querySelectorAll('.ax-gp-line')).toHaveLength(4);
   });
 
@@ -403,8 +403,8 @@ describe('the chart', () => {
     draw(<GrowthTab model={fakeModel()} />);
     // Awaited, not read straight off: the tab fetches, so the toggles are not
     // in the document on the tick after `draw`.
-    await screen.findByRole('button', { name: 'Productivity' });
-    for (const name of ['Productivity', 'Quality', 'Consistency', 'Efficiency']) {
+    await screen.findByRole('button', { name: 'Activity' });
+    for (const name of ['Activity', 'Quality', 'Consistency', 'Efficiency']) {
       await userEvent.click(screen.getByRole('button', { name }));
     }
     expect(document.querySelectorAll('.ax-gp-line')).toHaveLength(1);

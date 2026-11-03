@@ -176,6 +176,21 @@ def _session_word(count, subject_name):
     return '{} {}'.format(subject_name, 'session' if count == 1 else 'sessions')
 
 
+def _top_names(rows, count=2):
+    """The most-done kinds of task, each by a real title.
+
+    Grouped by name family so "Sprint 1-10" and "Sprint 21-30" are one thing, but
+    printed as a title the reader wrote: the family itself has its numbers blanked,
+    and "Math # lecture" isn't something anyone would call it.
+    """
+    titles = defaultdict(Counter)
+    for task in rows:
+        title = str(task.get('title') or '').strip()
+        titles[next_sessions.name_family(title)][title] += 1
+    ranked = sorted(titles.values(), key=lambda family: -sum(family.values()))[:count]
+    return [family.most_common(1)[0][0] for family in ranked]
+
+
 def _direct_point(direct, nearby, subject_name):
     if not direct and not nearby:
         return None
@@ -183,8 +198,7 @@ def _direct_point(direct, nearby, subject_name):
         return {'label': 'Direct work', 'tone': 'good',
                 'text': 'All {} lately went right at this goal.'.format(_count(len(direct), 'session'))}
     total = len(direct) + len(nearby)
-    top = Counter(next_sessions.name_family(task.get('title')) for task in nearby).most_common(2)
-    names = ' and '.join(name for name, _ in top)
+    names = ' and '.join(_top_names(nearby))
     if len(direct) / total >= DIRECT_SHARE:
         return {'label': 'Direct work', 'tone': 'good',
                 'text': '{} of your {} {} sessions lately went right at this goal.'.format(

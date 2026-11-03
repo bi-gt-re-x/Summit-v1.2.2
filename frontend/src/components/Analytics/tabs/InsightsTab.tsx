@@ -245,7 +245,7 @@ export function InsightsTab({
             for no gate: one Drained tap is already worth keeping. */}
         {data && mood?.low_times && (
           <PanelGroup
-            title="Low productivity and low energy"
+            title="Low activity and low energy"
             note="When your work or your energy dropped"
             defaultOpen={mood.low_times.energy.count + mood.low_times.output.count > 0}
           >

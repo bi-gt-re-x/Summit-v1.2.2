@@ -260,3 +260,29 @@ export function showsTaskVolume(style: LogStyle | undefined): boolean {
 export function showsSessionVolume(style: LogStyle | undefined): boolean {
   return (style ?? 'both') !== 'tasks';
 }
+
+// --------------------------------------------------------------------------
+// Which tab Analytics opens on
+// --------------------------------------------------------------------------
+
+const HOME_TAB_PATHS: Record<string, string> = {
+  recommendations: '/recommendations',
+  overview: '/analytics',
+  insights: '/insights',
+  subjects: '/subjects',
+  growth: '/analytics/growth',
+  // Words an older account may still have stored, for tabs that moved.
+  habits: '/insights',
+  goals: '/analytics',
+  records: '/analytics/growth',
+};
+
+/**
+ * Where "open Analytics" goes for this account.
+ *
+ * Read by the rail's entry and the front door, the two places that mean Analytics
+ * in general. A link to `/analytics` itself means the Overview and stays there.
+ */
+export function analyticsHomePath(tab: string | undefined): string {
+  return HOME_TAB_PATHS[tab ?? ''] ?? '/analytics';
+}

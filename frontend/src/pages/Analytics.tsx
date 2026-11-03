@@ -1,5 +1,5 @@
 /**
- * Analytics — one page, seven tabs, and the first one is the point.
+ * Analytics — one page, five tabs, and the first one is the point.
  *
  * This page was the graded report card, then the long view of an account, and
  * it is now the place the app does its thinking. Analysis split across separate
@@ -7,25 +7,17 @@
  * analysis is in the movement — what I do, then why, then what to change. One
  * bar makes that sequence a click instead of a navigation.
  *
- * ## The seven tabs
+ * ## The five tabs
  *
- * - **Recommendations — how I improve.** Instructions, ranked by what each is
- *   worth, with the arithmetic attached. It never re-states a finding as news.
- *   It leads the bar and owns the rail entry, because it is the only tab that
- *   ends in a button and it used to sit five clicks behind four screens of
- *   description.
- * - **Overview** — productivity, consistency and quality, their trajectory, the
- *   score, and where the account stands. The three rates lead every panel on
- *   this tab; the totals they came from sit behind them. See `Tiles` for why.
- * - **Trends** — the derivative rather than the level, plus the long-term
- *   projection that was the growth page's Long Term chapter.
- * - **Habits — what I do.** Recurring behaviour, counted, plus the growth
- *   page's Focus chapter: whether it can be executed reliably. It never says
- *   *why*: the moment it does, the next tab has no reason to exist.
- * - **Insights — why and how.** Two counts put together, with the evidence for
- *   the connection graded and printed. It never says what to do.
- * - **Subjects** — mastery. The growth page's Subject chapter.
- * - **Records** — achievement, against the reader's own best and their goals.
+ * - **Recommendations — how I improve.** The plan, and what to do first. It leads
+ *   the bar and owns the rail entry, because it ends in buttons.
+ * - **Overview** — the score, what changed lately, whether each goal will make
+ *   its date, and the rates and totals behind them.
+ * - **Insights — why and how.** Habits and findings, with the evidence for each
+ *   one graded and printed, ending in what it suggests.
+ * - **Subjects** — where the XP went, and a read of one subject at a time.
+ * - **Growth** — what got worse and what got better, with records and the year
+ *   by year.
  *
  * Keeping the middle boundaries sharp is the design decision this page is built
  * around: three tabs that all show cards of numbers are one tab with a broken
@@ -124,7 +116,6 @@ import {
   TabOpening,
   useAnalyticsData,
   useAnalyticsModel,
-  viewByKey,
   ViewTabs,
   NEED_DAYS,
   StageReached,
@@ -222,23 +213,6 @@ export default function Analytics() {
   if (!recordRead.loading) recordsAnswered.current = true;
 
   /**
-   * Which tab a bare visit lands on.
-   *
-   * `/analytics` is the Overview's own path, so an account that asked to open
-   * on Recommendations has to be sent there — once, replacing the entry rather
-   * than pushing one, or the back button would bounce off this page forever.
-   *
-   * Three guards. `ready` is what makes "opens on" true at all: preferences
-   * arrive a moment after this page mounts, so acting on the built-in default
-   * would send everybody to the Overview and then, for anyone who had chosen
-   * otherwise, somewhere else a tick later. The ref makes it once per mount,
-   * so a reader who navigates back to the Overview on purpose stays there. And
-   * it only fires on the Overview's own path — the other six were asked for.
-   *
-   * The same shape as FrontDoor's redirect for `home_page`, and for the same
-   * reason: a redirect cannot be taken back.
-   */
-  /**
    * Whether the reader asked for the questions outright.
    *
    * `/analytics?setup=1`, which is what the settings page links to. A query
@@ -249,19 +223,11 @@ export default function Analytics() {
    */
   const askedSetup = new URLSearchParams(location.search).get('setup') !== null;
 
-  const landed = useRef(false);
-  useEffect(() => {
-    if (landed.current || !ready) return;
-    landed.current = true;
-    // Somebody who followed a link *to the questions* is not making a bare
-    // visit, and sending them to their opening tab would drop the request.
-    if (askedSetup || view.key !== 'overview') return;
-    if (prefs.analytics_home_tab === 'overview') return;
-    /* `viewByKey` rather than a find over VIEWS: an account that chose Habits
-       has that word stored, and Habits is Insights now. See `MOVED_KEYS`. */
-    const target = viewByKey(prefs.analytics_home_tab);
-    if (target) navigate(target.path, { replace: true });
-  }, [askedSetup, navigate, prefs.analytics_home_tab, ready, view.key]);
+  /* `/analytics` is the Overview, every time. The tab an account chose to open on
+     is applied where it opens Analytics: the rail's entry and the front door,
+     both through `analyticsHomePath`. This page used to redirect a bare visit
+     itself, which also caught every link that meant the Overview: the tab's
+     neighbors, the rail's Overall row, "See totals", a pasted URL. */
   /* The page reads a dozen of the model's eighty figures — the gates, the
      opening sentence and the export. Everything else goes to a tab whole. */
   const {

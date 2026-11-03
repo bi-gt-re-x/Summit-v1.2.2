@@ -226,7 +226,7 @@ export function Summary({
             band table the letter came from rather than a judgement, so there
             was never a reason to ration it by tone. */}
         <p className="ax-summary-lead">
-          Your growth score is{' '}
+          Your work score for the last 90 days is{' '}
           <strong>
             {(value / 10).toFixed(1)}
             <em>/10</em>
@@ -309,6 +309,7 @@ export function Summary({
       <details className="ax-summary-how" open={howOpen}>
         <summary>How this works</summary>
         <p>{howItIsCalculated(score)}</p>
+        <p>This score only covers how you work. Progress and Mastery say if you're getting closer.</p>
       </details>
     </section>
   );

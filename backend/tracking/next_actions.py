@@ -87,8 +87,6 @@ SLIP = 0.4
 SLIP_FLOOR = 3
 # A live goal with nothing finished toward it for this long has gone quiet.
 QUIET_DAYS = 10
-# This week's XP this far under the usual pace is worth a row.
-PACE_GAP = 0.25
 # How far the soft suggestions are shuffled each day, in weight. Enough to
 # swap two of similar weight, never enough to lift one over an overdue task.
 JITTER = 24
@@ -279,7 +277,13 @@ def goal_lens(goal, tasks):
 
 
 def leading_lens(goals, tasks):
-    """The lens of the live goal with the most finished work behind it."""
+    """The lens of the live goal with the most finished work behind it.
+
+    A goal with a real outcome comes ahead of one that only counts XP, tasks, focus
+    or a streak. Every finished task counts toward a counter, so it always had the
+    most work behind it, and the page ended up reading "working toward 250,000 XP"
+    to somebody with a contest in 28 days. See backend/tracking/measures.py.
+    """
     ranked = []
     for goal in goals:
         if goal.get('status') == 'completed':
@@ -288,9 +292,10 @@ def leading_lens(goals, tasks):
         if lens is None:
             continue
         aimed = sum(1 for task in evidence_for(goal, tasks) if task.get('status') == 'done')
-        ranked.append((aimed, lens))
-    ranked.sort(key=lambda row: (-row[0], row[1]['goalTitle'].lower(), row[1]['goalTitle']))
-    return ranked[0][1] if ranked else None
+        outcome = measure_of(goal) in ('number', 'milestones')
+        ranked.append((outcome, aimed, lens))
+    ranked.sort(key=lambda row: (not row[0], -row[1], row[2]['goalTitle'].lower(), row[2]['goalTitle']))
+    return ranked[0][2] if ranked else None
 
 
 # ---------------------------------------------------------------------------
@@ -490,7 +495,10 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
     for goal in goals:
         if goal.get('status') != 'active' or goal.get('id') in behind_ids:
             continue
-        linked_done = [task for task in finished if _links_to(task, goal.get('id'))]
+        # All finished work counts toward an XP, streak, task or focus goal, so
+        # one of those is only quiet when the whole account is. Reading linked
+        # tasks alone called an XP goal "nothing finished in 1,699 days".
+        linked_done = evidence_for(goal, finished)
         ages = [age for age in (_days_ago(task.get('completed_at'), now) for task in linked_done)
                 if age is not None]
         since = min(ages) if ages else _days_ago(goal.get('start_date') or goal.get('created_at'), now)
@@ -673,21 +681,6 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
                 'About {} of your usual tasks closes it.'.format(int(needed)) if usual_xp else
                 'One more task gets you most of the way.'),
             minutes=min(60, max(MIN_SLOT, int(needed) * slot)), weight=500))
-    elif len(days) >= 14:
-        week = days[-7:]
-        earlier = days[:-7]
-        per_day = sum(_num(day.get('xp_earned')) for day in earlier) / len(earlier) if earlier else 0
-        this_week = sum(_num(day.get('xp_earned')) for day in week)
-        usual = per_day * len(week)
-        if usual > 0 and this_week < usual * (1 - PACE_GAP):
-            top = max(by_subject.items(), key=lambda row: len(row[1]))[0] if by_subject else None
-            found.append(_action(
-                id='xp-pace', kind='xp',
-                title="Make up this week's XP" + (' with {}'.format(name_of(top)) if top else ''),
-                because=('{} XP in the last 7 days, vs. your usual {} a week. {} XP behind. One solid session '
-                         'is the quickest way to close that.').format(
-                    js_round(this_week), js_round(usual), js_round(usual - this_week)),
-                minutes=min(60, max(PRACTICE_MINUTES, slot)), subject=top, weight=470))
 
     if (last and last.get('date') == today_iso and _num(last.get('tasks_completed')) == 0
             and _num(last.get('xp_earned')) == 0):

@@ -34,7 +34,7 @@ excellently.
 after a completed task can be skipped, and about half of them are. An account
 that never answers it must not be graded 0 for quality — that would turn an
 optional question into a mandatory one by way of the scoreboard, and would drop
-its Growth Score by up to two points for declining to answer. It can't fall back
+its Work Score by up to two points for declining to answer. It can't fall back
 on XP per task either: that's a different scale, so the score jumped the moment
 somebody rated their first task. So under QUALITY_MIN_RATED rated tasks there's
 no quality score at all, `basis` says 'unrated', and the overall averages the
@@ -206,7 +206,7 @@ def has_deadline(task):
 def _message(metric_scores):
     """Short qualitative note based on the strongest / weakest metric."""
     phrases = {
-        'productivity': ('strong daily output', 'raise your daily XP'),
+        'productivity': ('strong daily activity', 'raise your daily XP'),
         'quality': ('hard work done well', 'take on harder tasks, or finish them better'),
         'consistency': ('showing up daily', 'show up more often'),
         'efficiency': ('fast, on-time work', 'work faster and beat deadlines'),
@@ -1029,6 +1029,11 @@ _ROLLUP_CACHE = {}
 _ROLLUP_CACHE_MAX = 64
 
 
+def rollup_for(username):
+    """Each day's figures, for a caller outside this module. Read only."""
+    return _cached_rollup(username)
+
+
 def _cached_rollup(username):
     """The daily rollup, rebuilt only when the record under it has changed.
 
@@ -1073,6 +1078,14 @@ def period_scores(username, period='30d', rollup=None, user=None, today=None):
     created = created_date_for(user)
     daily_goal = user.get('daily_goal') or DEFAULT_DAILY_GOAL
     rollup = _cached_rollup(username) if rollup is None else rollup
+
+    # The record can start before the stored creation date (Alpha's starts eleven
+    # months earlier). The day series already walks from the first recorded day,
+    # see backend/tracking/growth.py, so "all time" has to start there too or this
+    # tab scores a different stretch from every other tab.
+    recorded = [day_iso for day_iso in rollup if day_iso < created.isoformat()]
+    if recorded:
+        created = date.fromisoformat(min(recorded)[:10])
 
     start, end, length = _period_bounds(period, today, created)
 

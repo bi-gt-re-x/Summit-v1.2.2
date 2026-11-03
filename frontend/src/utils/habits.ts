@@ -153,6 +153,13 @@ export interface Habit {
 export const RECENT_DAYS = 28;
 
 /**
+ * Lately under this share of its usual effort, and a habit is slipping. Half of
+ * it was the old line, so a habit at 58% after years at 79% read as "holding"
+ * and was told it could take a harder version in the middle of a slump.
+ */
+export const SLIPPING_SHARE = 0.75;
+
+/**
  * How much one day counts toward a habit's effort score, 0 to 1.
  *
  * XP against `good`, the habit's own strong day (the 75th percentile of its
@@ -454,11 +461,11 @@ export function buildHabits(
       : null;
 
     // Strength is read off the effort score, not off weeks kept, and a habit
-    // that has fallen to half its usual lately, or gone quiet for two weeks,
+    // that has fallen well under its usual lately, or gone quiet for two weeks,
     // is declining whatever its history says.
     const strength: HabitStrength =
       (trend !== null && trend <= -30) ||
-      (score >= 10 && recentScore < score * 0.5) ||
+      (score >= 10 && recentScore < score * SLIPPING_SHARE) ||
       (daysSince !== null && daysSince >= 14)
         ? 'declining'
         : score >= 50

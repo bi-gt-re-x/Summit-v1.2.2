@@ -812,7 +812,7 @@ export function scoreCards(all: GrowthDay[], tasks: Task[], days = 30): ScoreCar
       'check',
       '%',
       (window) => followScore(window, plans),
-      (value) => (value === null ? 'nothing was planned for these days' : `${met} of ${planned} planned tasks done`),
+      (value) => (value === null ? 'nothing was planned for these days' : `${met} of ${planned} planned tasks done, late ones included`),
     ),
     build('stability', 'Stability', 'target', '', stabilityScore, (value) =>
       value === null ? 'needs two full weeks' : 'how similar your weeks are',

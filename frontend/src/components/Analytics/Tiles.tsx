@@ -1,7 +1,7 @@
 /**
  * The figures across the top, each with its own days drawn under it.
  *
- * The Growth Score was one of them, and it is not any more: the summary above
+ * The Work Score was one of them, and it is not any more: the summary above
  * leads with it and the score panel below charts it, so a tile was the third
  * copy of one number on one tab.
  *
@@ -62,7 +62,7 @@ export function Tiles({
     {
       key: 'productivity',
       glyph: 'trend',
-      label: 'Productivity',
+      label: 'Activity',
       value: Math.round(figures.xpPerDay.value).toLocaleString(),
       unit: 'XP/day',
       delta: figures.xpPerDay.delta,
@@ -79,7 +79,7 @@ export function Tiles({
       series: sparks.consistency,
       tone: 'amber',
       hint:
-        'How many days in this window you did any work. Your growth score always reads the last 90 days.',
+        'How many days in this window you did any work. Your work score always reads the last 90 days.',
     },
     {
       key: 'quality',

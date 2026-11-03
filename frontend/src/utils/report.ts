@@ -22,7 +22,7 @@
  *
  * ## What is in it, and in what order
  *
- *     The Growth Score          one number and its letter, at the top
+ *     The Work Score          one number and its letter, at the top
  *     Overview                  what the window holds, and which way it moved
  *     Subject growth            where the effort went and whether it worked
  *     Insights                  the conditions the good work happens under
@@ -142,7 +142,7 @@ function scoreSection(input: ReportInput): string {
   const { score } = input;
   if (score.value === null || score.grade === null) {
     return [
-      heading('Growth score'),
+      heading('Work score'),
       '',
       wrap(
         'Not enough work to score yet. Five parts make up the score, and each needs a few days.',
@@ -160,7 +160,7 @@ function scoreSection(input: ReportInput): string {
     .join('\n');
 
   return [
-    heading('Growth score'),
+    heading('Work score'),
     '',
     `                    ${(score.value / 10).toFixed(1)} / 10        Grade ${score.grade}`,
     '',

@@ -218,7 +218,7 @@ export function benchCategories(all: GrowthDay[], tasks: Task[], streak: number)
   return [
     {
       key: 'output',
-      label: 'Output',
+      label: 'Activity',
       note: 'Last 30 days vs. your best stretch',
       rows: [
         row('xp', 'XP earned', xp, asXp),

@@ -2,6 +2,40 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-11-03 — Activity, output, progress and mastery; Analytics stops disagreeing with itself
+
+### Busy, or getting closer?
+
+XP, tasks and focus time only say how much happened, and every total on the page
+was built from them. The Overview now opens with four separate readings over the
+last 30 days against the 30 before, with no total (backend/tracking/measures.py):
+
+- **Activity:** finished tasks, days, focus and XP. XP and focus only count here.
+- **Output:** study work that was hard and went well, or was scored and mostly
+  right. Routines and things attended don't count, however they were rated.
+- **Progress:** goals with a number or checkpoints that actually moved. XP, streak,
+  task and focus goals count activity, so they're left out.
+- **Mastery:** checks passed, new bests on records that measure skill, and problems
+  right or wrong. Self-ratings are shown but never counted.
+
+"Productivity" (XP against a daily goal) is now **Activity** everywhere it's shown,
+and the growth score is the **work score**, since it says how someone works and
+nothing about whether they're improving. The plan no longer says "make up this
+week's XP", and the goal lens prefers a goal with a real outcome over a counter.
+
+### Fixes to figures that contradicted each other
+
+- Growth's "All time" starts at the first recorded day, like every other tab, and
+  its dates carry a year when they span one. "Aug 12 to Nov 3" was five years.
+- One Focus score. Insights scored minutes against a flat 60 and read 100 next to
+  the Overview's 46, so that card is gone.
+- `/analytics` is always the Overview. The chosen opening tab now applies to the
+  rail's entry and the front door, not to every link that meant the Overview.
+- A habit well under its usual effort lately now reads as slipping, and an XP goal
+  is only "quiet" when the whole account is.
+- The weekly summary gives tasks and XP their own change, and "why XP fell" no
+  longer says showing up isn't the problem when days fell just as far.
+
 ## 2026-10-12 — The Goals guide sets a real goal; Analytics reads a new account early
 
 ### Mango teaches goal setting by doing

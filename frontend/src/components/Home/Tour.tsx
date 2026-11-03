@@ -283,8 +283,8 @@ const TILES: {
   {
     icon: 'chart',
     title: 'Analytics',
-    body: 'A growth score built from five stats, with a grade for each. Plus a short list of what to do next.',
-    bits: ['Growth score', 'Grades', 'Advice'],
+    body: 'A work score built from five stats, with a grade for each. Plus a short list of what to do next.',
+    bits: ['Work score', 'Grades', 'Advice'],
     to: '#analytics',
   },
   {
@@ -691,7 +691,7 @@ export function SpacesTour() {
             </span>
           </div>
           <div className={`lp-space-block lp-space-panel${shown(2) ? ' is-in' : ''}`}>
-            <small>Panel · Growth score</small>
+            <small>Panel · Work score</small>
             <span className="lp-space-clock">
               <svg viewBox="0 0 36 36">
                 <circle cx="18" cy="18" r="14" />
@@ -712,7 +712,7 @@ export function SpacesTour() {
             {!answered && <i className="lp-caret" />}
           </p>
           <p className={`lp-space-ai${answered ? ' is-in' : ''}`}>
-            Done. I added a checklist, a live XP chart and your growth score, plus a note
+            Done. I added a checklist, a live XP chart and your work score, plus a note
             about your test date.
           </p>
         </div>

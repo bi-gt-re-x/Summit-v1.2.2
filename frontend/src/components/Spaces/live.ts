@@ -82,7 +82,7 @@ export const SOURCE_INFO: Record<LiveSource, SourceInfo> = {
   records: { label: 'Records', hint: "Personal bests and how far they've come.", glyph: '🏆', keys: ['records', 'best', 'pr', 'personal'] },
   record: { label: 'Record history', hint: 'One record over time, with every new best.', glyph: '📈', keys: ['record', 'history', 'pr', 'best', 'progression'] },
   calendar: { label: 'Upcoming', hint: 'Tasks, checkpoints and deadlines coming up.', glyph: '📅', keys: ['calendar', 'upcoming', 'schedule', 'due', 'agenda'] },
-  productivity: { label: 'Productivity', hint: 'Weekly trend, forecast and consistency.', glyph: '▤', keys: ['productivity', 'weekly', 'consistency', 'streak', 'forecast'] },
+  productivity: { label: 'Activity', hint: 'Weekly trend, forecast and consistency.', glyph: '▤', keys: ['productivity', 'weekly', 'consistency', 'streak', 'forecast'] },
   growth: { label: 'Growth', hint: 'A subject over 7, 30 or 90 days.', glyph: '↗', keys: ['growth', 'subject', 'trend', 'progress'] },
   skills: { label: 'Skill tree', hint: "What's done and what's next in a tree.", glyph: '⌥', keys: ['skill', 'tree', 'nodes', 'accuracy'] },
   heatmap: { label: 'Activity heatmap', hint: 'Every day of the last few months, shaded.', glyph: '▦', keys: ['heatmap', 'activity', 'calendar', 'days', 'contributions'] },

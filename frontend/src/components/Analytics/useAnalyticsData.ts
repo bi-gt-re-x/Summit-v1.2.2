@@ -99,7 +99,7 @@ export function useAnalyticsData() {
   );
   const series = useApi(seriesCall, [username]);
 
-  // The report card, for the Growth Score tile and the weakest-metric
+  // The report card, for the Work Score tile and the weakest-metric
   // suggestion. Reading it files a dated snapshot per metric
   // (backend/tracking/analytics.py), which is why it is called once on open and
   // not on a timer.

@@ -1,7 +1,7 @@
 /**
  * The big chart: the account's history, this period against the last.
  *
- * The growth score panel that sat beside it is gone. The score over time, its
+ * The work score panel that sat beside it is gone. The score over time, its
  * five parts and how it is worked out are the Growth tab, and
  * this row was the same answer a second time.
  */
@@ -69,7 +69,7 @@ export function Trajectory({
 
   return (
     <Panel
-      title="Productivity, consistency, quality"
+      title="Activity, consistency, quality"
       note="This period vs. the last one, day by day"
       aside={
         <label className="ax-select-wrap">

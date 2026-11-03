@@ -48780,7 +48780,7 @@
     },
     {
       "id": "mi.journal",
-      "name": "Journalling",
+      "name": "Journaling",
       "desc": "Writing to find out what you think, rather than to record what happened. Ten minutes on paper resolves more circling than an hour of thinking about it does.",
       "tier": "advanced",
       "core": false,
@@ -48905,7 +48905,7 @@
       ],
       "group": "Health and fitness",
       "requires": [
-        "Journalling",
+        "Journaling",
         "Working with Thoughts"
       ],
       "recommends": [],

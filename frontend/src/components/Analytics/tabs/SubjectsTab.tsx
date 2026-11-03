@@ -235,7 +235,10 @@ export function TreeDepthPanel({ tasks, limit, empty = null }: { tasks: Task[]; 
             </span>
             <span className="ax-treedepth-pct">{tree.percent}%</span>
             <span className="ax-treedepth-xp">
-              {tree.xp.toLocaleString()} / {tree.worth.toLocaleString()} XP
+              {/* Past the tree's total, a fraction over 1 next to "100%" reads as a bug. */}
+              {tree.xp > tree.worth
+                ? `${tree.xp.toLocaleString()} XP, full at ${tree.worth.toLocaleString()}`
+                : `${tree.xp.toLocaleString()} / ${tree.worth.toLocaleString()} XP`}
             </span>
           </li>
         ))}
@@ -324,17 +327,20 @@ export function SubjectOpensPanel({
 }
 
 /**
- * The tab's opening line: how many subjects have XP in the window, and which
- * is furthest along. Nothing when none do. pages/Analytics draws it over the
- * tab, and a panel on a space's page draws it as its short form.
+ * The tab's opening line: which subject earned the most in the window. Nothing
+ * when none did. pages/Analytics draws it over the tab, and a panel on a space's
+ * page draws it as its short form.
+ *
+ * It used to count `rows` too, but those are the top few plus "Other", so an
+ * account with 32 subjects read "7 subjects have XP".
  */
 export function SubjectsOpening({ rows, span }: { rows: SubjectXpRow[]; span: string }) {
-  if (rows.length === 0) return null;
+  const top = rows.find((row) => row.key !== 'other');
+  if (!top) return null;
   return (
     <TabOpening>
-      <strong>{rows.length}</strong>{' '}
-      {rows.length === 1 ? 'subject has' : 'subjects have'} XP {span.includes(' to ') ? 'from' : 'in'} {span}, and{' '}
-      <strong>{rows[0]!.label}</strong> is the furthest along.
+      <strong>{top.label}</strong> earned the most XP {span.includes(' to ') ? 'from' : 'in'} {span}, with{' '}
+      <strong>{top.xp.toLocaleString()}</strong>.
     </TabOpening>
   );
 }

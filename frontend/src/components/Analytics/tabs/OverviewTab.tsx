@@ -38,6 +38,7 @@ import type { AnalyticsModel } from '../useAnalyticsModel';
 import { WhatYouToldUs } from '../WhatYouToldUs';
 import { GoalsFinished } from '../GoalsFinished';
 import { GoalForecast } from '../GoalForecast';
+import { MeasuresPanel } from '../Measures';
 import { SlumpAlert, WhatChangedPanel } from '../WeekTrend';
 import { PeriodSummary } from '../PeriodSummary';
 import { moveReads, rangeLabel } from '@/utils/weekTrend';
@@ -237,6 +238,10 @@ export function OverviewTab({
           <SlumpAlert slump={slump} />
         </section>
       )}
+
+      {/* Whether the work is getting anywhere, before any count of how much of it
+          there was. Everything below this is about activity. */}
+      <MeasuresPanel />
 
       {/* "How did it go", answered before any chart. See ../PeriodSummary. */}
       <section id="summary" className="ax-section">

@@ -135,7 +135,7 @@ afterEach(() => {
 describe('an Analytics panel', () => {
   it("draws the Analytics page's own tiles from the account's numbers", async () => {
     draw(<Host kind="tiles" />);
-    expect(await screen.findByText('Productivity')).toBeInTheDocument();
+    expect(await screen.findByText('Activity')).toBeInTheDocument();
     expect(screen.getByText('Consistency')).toBeInTheDocument();
     expect(screen.getByText('Live')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Open Analytics' })).toHaveAttribute('href', '/analytics');
@@ -149,7 +149,7 @@ describe('an Analytics panel', () => {
     expect(latest.panel!.show).toEqual(['productivity', 'consistency', 'tasks', 'focus']);
     const body = () => within(document.querySelector('.sp-panel-body') as HTMLElement);
     await waitFor(() => expect(body().queryByText('Quality')).not.toBeInTheDocument());
-    expect(body().getByText('Productivity')).toBeInTheDocument();
+    expect(body().getByText('Activity')).toBeInTheDocument();
   });
 
   it("won't untick the last one", async () => {
@@ -163,7 +163,7 @@ describe('an Analytics panel', () => {
   it("plots the measure picked in settings, and the chart's own buttons write the setting back", async () => {
     draw(<Host kind="trajectory" />);
     const series = await screen.findByRole('group', { name: 'Chart series' });
-    expect(within(series).getByRole('button', { name: 'Productivity' })).toHaveAttribute('aria-pressed', 'true');
+    expect(within(series).getByRole('button', { name: 'Activity' })).toHaveAttribute('aria-pressed', 'true');
 
     openSettings();
     fireEvent.click(within(settingsGroup()).getByRole('radio', { name: 'Total tasks' }));
@@ -184,7 +184,7 @@ describe('an Analytics panel', () => {
 
   it('switches to another panel on its defaults', async () => {
     draw(<Host kind="tiles" />);
-    await screen.findByText('Productivity');
+    await screen.findByText('Activity');
     openSettings();
     fireEvent.change(within(settingsGroup()).getByRole('combobox', { name: /Shows/ }), { target: { value: 'week' } });
     expect(latest.panel).toEqual({ kind: 'week', window: '30d' });

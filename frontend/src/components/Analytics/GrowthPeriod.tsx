@@ -55,7 +55,7 @@ export const METRIC_META: Record<
   { label: string; tone: Tone; glyph: GlyphName; asks: string }
 > = {
   productivity: {
-    label: 'Productivity',
+    label: 'Activity',
     tone: 'blue',
     glyph: 'sparkle',
     asks: 'XP a working day vs. your daily goal',
@@ -496,7 +496,7 @@ export function MetricStrip({ data }: { data: GrowthPeriods }) {
             </>
           ) : (
             <>
-              Graded <strong>{now.grade}</strong> at a growth score of {(now.overall / 10).toFixed(1)} out of 10. Nothing to compare yet. You started during this period.
+              Graded <strong>{now.grade}</strong> at a work score of {(now.overall / 10).toFixed(1)} out of 10. Nothing to compare yet. You started during this period.
             </>
           )}
         </p>
@@ -815,8 +815,17 @@ export function MoverPanel({
 // --------------------------------------------------------------------------
 /** "6 Aug — 4 Sep", the span a column of figures belongs to. */
 function span(from: string, to: string): string {
+  /* The year goes on whenever the two dates cross one, or the stretch isn't this
+     year. Without it, five years read "Aug 12 to Nov 3", which looks like twelve
+     weeks. */
+  const year = (iso: string) => iso.slice(0, 4);
+  const withYear = year(from) !== year(to) || year(to) !== String(new Date().getFullYear());
   const at = (iso: string) =>
-    new Date(`${iso}T00:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    new Date(`${iso}T00:00:00`).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      ...(withYear ? { year: 'numeric' as const } : {}),
+    });
   return `${at(from)} to ${at(to)}`;
 }
 
@@ -995,7 +1004,7 @@ export function milestones(data: GrowthPeriods, limit = 6): Milestone[] {
       date: best.date,
       kind: 'best',
       headline: 'Best of the period',
-      detail: `Your growth score peaked at ${(best.overall / 10).toFixed(1)} out of 10.`,
+      detail: `Your work score peaked at ${(best.overall / 10).toFixed(1)} out of 10.`,
     });
   }
 

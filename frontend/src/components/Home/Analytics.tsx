@@ -1,5 +1,5 @@
 /**
- * Analytics — the Growth Score, the five measures under it, and the six tabs.
+ * Analytics — the Work Score, the five measures under it, and the six tabs.
  *
  * The one section on this page with no home-*.js behind it: the analytics page
  * post-dates the landing page, so there was nothing to port. It is written to
@@ -71,7 +71,7 @@ import type { CSSProperties } from 'react';
  * below is their flat mean and nothing here needs to know a weight.
  */
 const FACTORS = [
-  { name: 'Productivity', to: 92 },
+  { name: 'Activity', to: 92 },
   { name: 'Consistency', to: 78 },
   { name: 'Quality', to: 85 },
   { name: 'Efficiency', to: 71 },
@@ -238,7 +238,7 @@ export function Analytics() {
       <div className="lp-ax">
         <div className="lp-card lp-ax-score">
           <div className="lp-card-top">
-            <span className="lp-metric-label">Growth score</span>
+            <span className="lp-metric-label">Work score</span>
           </div>
 
           <div className="lp-ax-dial">

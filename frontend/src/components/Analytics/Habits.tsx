@@ -18,6 +18,7 @@ import { Panel, Sparkline, asTone, toneVar } from './charts';
 import { StatRow, type Stat } from './StatRow';
 import {
   RECENT_DAYS,
+  SLIPPING_SHARE,
   STRENGTH_LABEL,
   STRENGTH_NOTE,
   STRENGTH_TONE,
@@ -250,6 +251,9 @@ export function habitVerdict(habit: Habit): string {
   if (score >= 10 && recentScore < score * 0.5) {
     return `Fading. ${recentScore}% the last 4 weeks, down from ${score}% overall.`;
   }
+  if (score >= 10 && recentScore < score * SLIPPING_SHARE) {
+    return `Slipping. ${recentScore}% the last 4 weeks, down from ${score}% overall.`;
+  }
   if (recentScore >= 10 && recentScore > score * 1.25) {
     return `Picking up. ${recentScore}% the last 4 weeks, up from ${score}% overall.`;
   }
@@ -276,6 +280,9 @@ export function habitNext(habit: Habit): string {
     const days = `${recentDays} of the last ${RECENT_DAYS} days`;
     return `This suggests ${name} is losing out to other things. At ${days}, one more day a week is a fair next step. Tie it to something you already do daily.`;
   }
+  if (score >= 10 && recentScore < score * SLIPPING_SHARE) {
+    return `This suggests ${name} is losing days lately. At ${recentDays} of the last ${RECENT_DAYS} days, add one day back this week before you change anything else.`;
+  }
   if (recentScore >= 10 && recentScore > score * 1.25) {
     return `This suggests ${name} is taking hold. Keep it this size for a few weeks before you add more.`;
   }
@@ -291,7 +298,7 @@ export function habitNext(habit: Habit): string {
 
 function verdictTone(habit: Habit): 'bad' | 'good' | 'flat' {
   const verdict = habitVerdict(habit);
-  if (/^(Gone quiet|Skipped|Fading|Not a habit)/.test(verdict)) return 'bad';
+  if (/^(Gone quiet|Skipped|Fading|Slipping|Not a habit)/.test(verdict)) return 'bad';
   if (/^Picking up/.test(verdict)) return 'good';
   return 'flat';
 }

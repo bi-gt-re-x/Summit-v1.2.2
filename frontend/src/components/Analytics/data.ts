@@ -4,7 +4,7 @@
  * Everything here reads the day series the backend already builds — the same
  * rows the growth page slices — so the two pages cannot tell different stories
  * about the same account. Nothing here invents a figure. `scoreHistory` used to
- * sit at the bottom generating a plausible run-up to the growth score, and it
+ * sit at the bottom generating a plausible run-up to the work score, and it
  * went with the rest of the placeholder data: the score panel draws its own
  * recorded readings or draws nothing.
  *
@@ -241,7 +241,7 @@ const num = (value: unknown) => Number(value) || 0;
 export const METRICS: MetricOption[] = [
   {
     key: 'productivity',
-    label: 'Productivity',
+    label: 'Activity',
     read: (day) => num(day.xp_earned),
     cumulative: false,
     format: (value) => `${Math.round(value).toLocaleString()} XP/day`,

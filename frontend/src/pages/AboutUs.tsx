@@ -65,7 +65,7 @@ export default function AboutUs() {
 
       <h2>Where it came from</h2>
       <p>
-        I kept working hard all day and still wondering if anything got done. Spreadsheets were a pain and the big apps were bloated. So I built something smaller: tasks, a calendar, focus sessions and goals that feed your streak, XP and growth score.
+        I kept working hard all day and still wondering if anything got done. Spreadsheets were a pain and the big apps were bloated. So I built something smaller: tasks, a calendar, focus sessions and goals that feed your streak, XP and work score.
       </p>
 
       <h2>What it's built on</h2>

@@ -85,7 +85,7 @@ export const VIEWS: View[] = [
     key: 'overview',
     label: 'Overview',
     path: '/analytics',
-    purpose: 'The big picture: totals, trends and your growth score.',
+    purpose: 'The big picture: totals, trends and your work score.',
     title: 'Overview',
     tone: 'violet',
   },

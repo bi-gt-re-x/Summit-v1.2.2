@@ -23,7 +23,9 @@ export function LimiterLine({ row }: { row: GoalLimiter }) {
   return (
     <p className="ax-goal-line">
       <strong>{row.goalTitle}</strong>: {row.movement.toLowerCase()}. <strong>{row.subjectName}</strong>{' '}
-      is holding it back the most. It's about {row.share}% of {basisPhrase(row)}.{' '}
+      is holding it back the most.{' '}
+      {/* A goal with one subject always reads 100%, which tells nobody anything. */}
+      {row.share < 100 && <>It's about {row.share}% of {basisPhrase(row)}.{' '}</>}
       <Link to={row.treeHref} className="ax-link">
         Open the {row.subjectName} skill tree
       </Link>

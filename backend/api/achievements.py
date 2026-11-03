@@ -40,7 +40,7 @@ is not a badge, because nothing in this app knows what an article is.
 
 ## The graded metrics come from the analytics engine, not from here
 
-Nine of them — the growth score, the five metric grades under it, the
+Nine of them — the work score, the five metric grades under it, the
 consistency rate, the share of finished work that was rated, and the share that
 met its deadline — are read off `analytics.ratings` in
 backend/tracking/analytics.py rather than recounted.
@@ -315,11 +315,11 @@ CATALOGUE = (
     # nothing went wrong at all; a badge nobody can earn is a badge that makes
     # the wall feel rigged rather than hard. The S grade is the one exception,
     # and it is deliberately the single hardest visible badge on the wall.
-    ('score-40',     'Graded',                'Reach a Growth Score of 40 over a month.',         'growth_score', 40,   1, 'Analytics'),
-    ('score-60',     'Passing Grade',         'Reach a Growth Score of 60 over a month.',         'growth_score', 60,   2, 'Analytics'),
-    ('score-75',     'Solid Record',          'Reach a Growth Score of 75 over a month.',         'growth_score', 75,   3, 'Analytics'),
-    ('score-85',     'Straight B',            'Keep a Growth Score of 85 two months running.',    'growth_score', 85,   4, 'Analytics'),
-    ('score-90',     'Top of the Class',      'Keep a Growth Score of 90 three months running.',  'growth_score', 90,   5, 'Analytics'),
+    ('score-40',     'Graded',                'Reach a Work Score of 40 over a month.',         'growth_score', 40,   1, 'Analytics'),
+    ('score-60',     'Passing Grade',         'Reach a Work Score of 60 over a month.',         'growth_score', 60,   2, 'Analytics'),
+    ('score-75',     'Solid Record',          'Reach a Work Score of 75 over a month.',         'growth_score', 75,   3, 'Analytics'),
+    ('score-85',     'Straight B',            'Keep a Work Score of 85 two months running.',    'growth_score', 85,   4, 'Analytics'),
+    ('score-90',     'Top of the Class',      'Keep a Work Score of 90 three months running.',  'growth_score', 90,   5, 'Analytics'),
     ('prod-70',      'Productive',            'Score 70 on productivity over a month.',           'productivity_score', 70, 2, 'Analytics'),
     ('prod-90',      'Prolific',              'Keep 90 on productivity two months running.',      'productivity_score', 90, 4, 'Analytics'),
     ('qual-70',      'Good Work',             'Score 70 on quality over a month.',                'quality_score', 70,  2, 'Analytics'),
@@ -638,7 +638,7 @@ def _block_figures(block):
     A score only counts where there was enough in the stretch to score: two
     deadlines met out of two is "100% on time", and a badge for that would be
     a badge for having two deadlines. Below MIN_SAMPLE the figure is zero, and
-    the growth score is the mean of the five parts after that floor.
+    the work score is the mean of the five parts after that floor.
     """
     parts = dict(block['parts'])
     fig = block['figures']

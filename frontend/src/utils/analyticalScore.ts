@@ -1,9 +1,9 @@
 /**
- * The Growth Score — one number for the whole account, and its letter.
+ * The Work Score — one number for the whole account, and its letter.
  *
  * Kept here out of a hundred, because the letter bands are, and shown
  * everywhere out of ten. It used to be shown out of a hundred under its own
- * name, the "Analytical Score", beside the Growth Score tile printing the same
+ * name, the "Analytical Score", beside the Work Score tile printing the same
  * mean divided by ten: one calculation under two names on two scales.
  *
  * ## It is the report card, not a second opinion
@@ -15,7 +15,7 @@
  *
  *     score = mean(productivity, quality, consistency, efficiency, focus)
  *
- * The Growth Score tile shows the same mean divided by ten. Two figures, one
+ * The Work Score tile shows the same mean divided by ten. Two figures, one
  * calculation, and they can never disagree because there is only one of them.
  * If a page ever needs a *different* score, it needs a different name and a
  * paragraph explaining why — not a second formula under this one.
@@ -126,7 +126,7 @@ export interface AnalyticalScore {
 }
 
 const LABELS: Record<MetricName, string> = {
-  productivity: 'Productivity',
+  productivity: 'Activity',
   quality: 'Quality',
   consistency: 'Consistency',
   efficiency: 'Efficiency',

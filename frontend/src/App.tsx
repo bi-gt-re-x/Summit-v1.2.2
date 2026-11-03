@@ -29,6 +29,7 @@ import { useVoid } from '@/hooks/useVoid';
 import Unbuilt, { PATHS as UNBUILT_PATHS } from '@/pages/Unbuilt';
 import { storedUsername } from '@/services/auth';
 import type { Prefs } from '@/services/settings';
+import { analyticsHomePath } from '@/utils/analyticsPrefs';
 import { rememberExit } from '@/utils/settingsExit';
 
 const loadDashboard = () => import('@/pages/Dashboard');
@@ -109,6 +110,10 @@ export function FrontDoor() {
   if (status === 'loading') return <Loading />;
   if (status !== 'signed-in') return <Navigate to="/home" replace />;
   if (!ready) return <Loading />;
+  /* Starting on Analytics means the tab the account chose to open on. */
+  if (prefs.home_page === 'analytics') {
+    return <Navigate to={analyticsHomePath(prefs.analytics_home_tab)} replace />;
+  }
   return <Navigate to={HOME_PATHS[prefs.home_page] ?? '/dashboard'} replace />;
 }
 

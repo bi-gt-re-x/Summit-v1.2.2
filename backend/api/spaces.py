@@ -133,7 +133,7 @@ TEXT_PREFIX = {'h1': '# ', 'h2': '## ', 'h3': '### ', 'bullet': '- ', 'numbered'
 
 #: A live block in `body`, which has only words.
 LIVE_NAMES = {'goal': 'Goal progress', 'goals': 'All goals', 'skills': 'Skill tree',
-              'productivity': 'Productivity', 'records': 'Records', 'record': 'Record history',
+              'productivity': 'Activity', 'records': 'Records', 'record': 'Record history',
               'calendar': 'Calendar', 'growth': 'Growth', 'heatmap': 'Activity heatmap',
               'rhythm': 'Weekly rhythm', 'subjects': 'Subject mix'}
 

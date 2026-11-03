@@ -31,6 +31,9 @@ import { hourLabel } from './behaviour';
 
 const num = (value: unknown) => Number(value) || 0;
 
+/** Days worked and XP a day both down this many percent: neither is "the" cause. */
+const BOTH_FELL_AT = 10;
+
 // --------------------------------------------------------------------------
 // Evidence
 // --------------------------------------------------------------------------
@@ -178,11 +181,17 @@ export function whyFindings(days: GrowthDay[], window = 30): Finding[] {
 
   if (Math.abs(totalChange) >= 8) {
     const byDays = Math.abs(daysChange) >= Math.abs(perDayChange);
+    /* Both fell by real amounts, so neither one is "the" cause. Picking the
+       bigger of 23% and 24% told a reader who'd lost a quarter of their days
+       that showing up wasn't the problem. */
+    const bothFell = daysChange <= -BOTH_FELL_AT && perDayChange <= -BOTH_FELL_AT;
     out.push({
       id: 'why-decomposition',
-      headline: `Your XP ${totalChange > 0 ? 'rose' : 'fell'} ${pct(totalChange)} in the last ${window} days, mostly because of ${
-        byDays ? 'how often you worked' : 'how much you did each day'
-      }`,
+      headline: bothFell
+        ? `Your XP fell ${pct(totalChange)} in the last ${window} days, because you worked fewer days and did less on each`
+        : `Your XP ${totalChange > 0 ? 'rose' : 'fell'} ${pct(totalChange)} in the last ${window} days, mostly because of ${
+            byDays ? 'how often you worked' : 'how much you did each day'
+          }`,
       detail: `Days worked went ${daysChange >= 0 ? 'up' : 'down'} ${pct(daysChange)} (${
         wasActive.length
       } → ${nowActive.length}) and XP per day went ${
@@ -190,8 +199,9 @@ export function whyFindings(days: GrowthDay[], window = 30): Finding[] {
       } ${pct(perDayChange)} (${Math.round(perDayWas).toLocaleString()} → ${Math.round(
         perDayNow,
       ).toLocaleString()}).`,
-      suggests:
-        totalChange > 0
+      suggests: bothFell
+        ? "This suggests two things fell together. Get the days back first, since that's the easier one to fix, then look at how much each day gets."
+        : totalChange > 0
           ? byDays
             ? 'This suggests showing up more is what paid off. Keep those extra days before you add anything bigger.'
             : 'This suggests your sessions got bigger. Check your ratings are holding too, since more only counts if it goes well.'
@@ -678,7 +688,7 @@ export function relationships(days: GrowthDay[], tasks: Task[], week: WeekShape)
         top > 0 && bottom / top <= 0.5
           ? `Your best weekday has ${(top / Math.max(bottom, 1)).toFixed(
               1,
-            )}× the output of your worst. Plan around that.`
+            )}× the XP of your worst. Plan around that.`
           : 'Your weekdays are fairly even.',
       points: normalise(weekPairs),
       tone: 'amber',

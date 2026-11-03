@@ -9566,7 +9566,7 @@ g:hover > .ax-sv-time-bar { filter: brightness(.9); }
 .ax-period-list li.is-up .ax-period-mark { color: var(--ax-good); }
 .ax-period-list li.is-down .ax-period-mark { color: var(--ax-bad); }
 
-/* ---- Low productivity and low energy: components/Analytics/LowTimes ------ */
+/* ---- Low activity and low energy: components/Analytics/LowTimes ---------- */
 .ax-low-bars { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 6px; }
 .ax-low-bars li { display: grid; grid-template-columns: 90px minmax(0, 1fr) 76px; align-items: center; gap: var(--space-2); font-size: var(--text-xs); color: var(--ax-muted); }
 .ax-low-bars b { text-align: right; font-weight: 600; color: var(--ax-text); }
@@ -9586,6 +9586,35 @@ g:hover > .ax-sv-time-bar { filter: brightness(.9); }
 .ax-goal-points { margin: var(--space-2) 0 0; font-size: var(--text-sm); line-height: 1.5; }
 .ax-plan-mins:has(.ax-goal-due) { display: grid; justify-items: end; gap: 2px; }
 .ax-goal-due { color: var(--ax-faint); font-size: var(--text-xs); white-space: nowrap; }
+
+/* ---- Busy, or getting closer: components/Analytics/Measures --------------- */
+.ax-mx-reading { padding-bottom: var(--space-4); border-bottom: 1px solid var(--ax-line); }
+.ax-mx-headline { margin: 0; font-size: var(--text-lg); font-weight: 650; line-height: 1.3; color: var(--ax-text); }
+.ax-mx-figures { margin: var(--space-1) 0 0; font-size: var(--text-sm); line-height: 1.5; color: var(--ax-muted); }
+.ax-mx-action { display: inline-flex; margin-top: var(--space-2); }
+.ax-mx-grid { list-style: none; margin: var(--space-4) 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+.ax-mx-card { min-width: 0; padding: var(--space-3) var(--space-4) var(--space-4); border: 1px solid var(--ax-line); border-radius: var(--radius-md); }
+.ax-mx-card header { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); }
+.ax-mx-card h3 { margin: 0; font-size: var(--text-sm); font-weight: 700; color: var(--ax-text); }
+.ax-mx-evidence { font-size: var(--text-xs); color: var(--ax-faint); white-space: nowrap; }
+.ax-mx-question { margin: 2px 0 0; font-size: var(--text-xs); color: var(--ax-muted); }
+.ax-mx-figure { margin: var(--space-3) 0 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px; font-size: var(--text-sm); color: var(--ax-muted); }
+.ax-mx-figure strong { font-size: 28px; line-height: 1.1; font-weight: 650; color: var(--ax-text); }
+.ax-mx-change { margin: 2px 0 0; font-size: var(--text-xs); color: var(--ax-faint); }
+.ax-mx-lines { list-style: none; margin: var(--space-2) 0 0; padding: 0; display: grid; gap: var(--space-1); font-size: var(--text-sm); line-height: 1.45; color: var(--ax-text); }
+.ax-mx-mix { margin-top: var(--space-2); }
+.ax-mx-mix-bar { display: flex; gap: 2px; height: 8px; border-radius: 999px; overflow: hidden; }
+.ax-mx-mix-bar span { display: block; min-width: 2px; }
+.ax-mx-mix ul { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 2px var(--space-3); font-size: var(--text-xs); color: var(--ax-muted); }
+.ax-mx-mix li { display: inline-flex; align-items: center; gap: 4px; }
+.ax-mx-mix b { font-weight: 600; color: var(--ax-text); }
+.ax-mx-mix i { width: 8px; height: 8px; border-radius: 50%; }
+.ax-mx-mix .is-study { background: var(--ax-text); }
+.ax-mx-mix .is-routine { background: var(--ax-faint); }
+.ax-mx-mix .is-attended { background: var(--ax-line); }
+@media (max-width: 720px) {
+  .ax-mx-grid { grid-template-columns: minmax(0, 1fr); }
+}
 
 /* ---- Overview: everything a step bigger and darker ------------------------
    The wrapper adds no box. It only resets the sizes and greys for what's in

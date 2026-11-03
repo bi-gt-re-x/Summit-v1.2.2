@@ -39,7 +39,7 @@ describe('a part with nothing to measure', () => {
 
   it('is named in the sentence about how the score works', () => {
     const text = howItIsCalculated(analyticalScore(card()));
-    expect(text).toContain('The average of two parts over the last 90 days: productivity and consistency.');
+    expect(text).toContain('The average of two parts over the last 90 days: activity and consistency.');
     expect(text).toContain("Quality, Efficiency and Focus join once there's enough to measure.");
   });
 

@@ -330,10 +330,18 @@ def test_the_daily_goal_says_how_far_off_it_is():
     assert "You're at 60 of your 200 XP daily goal" in item['because']
 
 
-def test_a_slow_week_is_called_out_without_a_daily_goal():
+def test_a_slow_week_never_asks_for_more_xp():
+    # XP is a count of activity, so "make up this week's XP" points at the count
+    # rather than at anything the reader is trying to do.
     days = series(list(range(7, 28)), span=28)
-    item = first(plan([done('maths', 9)], days=days), 'xp')
-    assert '0 XP in the last 7 days' in item['because']
+    assert not [row for row in plan([done('maths', 9)], days=days)['actions'] if row['kind'] == 'xp']
+
+
+def test_the_lens_prefers_a_goal_with_a_real_outcome_over_a_counter():
+    totals = {'id': 'x', 'title': 'Earn XP', 'status': 'active', 'measure': 'xp'}
+    rated = [dict(done('maths', 1, execution=4), difficulty=4, goal_id='o') for _ in range(20)]
+    aim = {'id': 'o', 'title': 'Reach AIME', 'status': 'active', 'measure': 'number'}
+    assert leading_lens([totals, aim], rated)['goalTitle'] == 'Reach AIME'
 
 
 def test_the_shuffle_changes_by_day_but_never_lifts_soft_rows_over_overdue_work():

@@ -163,7 +163,7 @@ export const PLACES: Place[] = [
     name: 'Overview',
     where: 'Analytics',
     to: '/analytics',
-    keywords: 'totals trajectory growth score long view summary',
+    keywords: 'totals trajectory work score long view summary',
   },
   {
     id: 'analytics-insights',

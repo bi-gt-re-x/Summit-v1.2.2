@@ -55,7 +55,7 @@ import { analytics as analyticsService } from '@/services';
 import type { GrowthPeriods, PeriodKey } from '@/services/analytics';
 import type { WindowKey } from './data';
 
-/** The page's window, as the period the Growth scores are asked for. */
+/** The page's window, as the period the Work scores are asked for. */
 export const PERIOD_FOR_WINDOW: Record<WindowKey, PeriodKey> = {
   '7d': '7d',
   '30d': '30d',

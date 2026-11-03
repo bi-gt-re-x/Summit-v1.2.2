@@ -194,7 +194,7 @@ const GROWTH = '/analytics/growth';
 
 export const PANEL_INFO: Record<PanelKind, PanelInfo> = {
   summary: { hint: 'Your score out of 100, the grade and what moved it.', glyph: '★', keys: ['score', 'grade', 'summary', 'report'], home: ANALYTICS },
-  tiles: { hint: 'Productivity, consistency, quality and more, with sparklines.', glyph: '▤', keys: ['tiles', 'stats', 'numbers', 'kpi', 'overview'], home: ANALYTICS },
+  tiles: { hint: 'Activity, consistency, quality and more, with sparklines.', glyph: '▤', keys: ['tiles', 'stats', 'numbers', 'kpi', 'overview'], home: ANALYTICS },
   basics: { hint: 'Tasks done, focus time, XP, streak and completion.', glyph: '#', keys: ['basics', 'totals', 'counts', 'stats'], home: ANALYTICS },
   trajectory: { hint: 'Any measure over time against the period before.', glyph: '⟋', keys: ['trend', 'chart', 'trajectory', 'over time', 'line'], home: ANALYTICS },
   heat: { hint: 'One square a day, shaded by how much you did.', glyph: '▦', keys: ['heatmap', 'consistency', 'calendar', 'days'], home: ANALYTICS },
@@ -281,7 +281,7 @@ export const CHOICE_LABEL: Partial<Record<FieldName, Record<string, string>>> = 
   window: { '7d': '7 days', '30d': '30 days', '90d': '90 days', '1y': '1 year', '2y': '2 years', all: 'All time' },
   period: { '7d': '7 days', '30d': '30 days', '90d': '90 days', '365d': '1 year', '730d': '2 years', all: 'All time' },
   metric: {
-    productivity: 'Productivity', consistency: 'Consistency', quality: 'Quality',
+    productivity: 'Activity', consistency: 'Consistency', quality: 'Quality',
     xp: 'Total XP', tasks: 'Total tasks', focus: 'Total focus',
   },
   grain: { daily: 'Day', weekly: 'Week', monthly: 'Month' },
@@ -291,7 +291,7 @@ export const CHOICE_LABEL: Partial<Record<FieldName, Record<string, string>>> = 
   category: { all: 'All' },
   which: { earned: 'Earned', next: 'Up next', all: 'All' },
   show: {
-    productivity: 'Productivity', consistency: 'Consistency', quality: 'Quality', tasks: 'Tasks', focus: 'Focus',
+    productivity: 'Activity', consistency: 'Consistency', quality: 'Quality', tasks: 'Tasks', focus: 'Focus',
     xp: 'XP', streak: 'Streak', completion: 'Completion',
     scores: 'Scores', calendar: 'Calendar', planned: 'Planned vs. done', depth: 'Focus depth',
     stability: 'Habit stability', trail: 'Over time', recovery: 'Bouncing back',

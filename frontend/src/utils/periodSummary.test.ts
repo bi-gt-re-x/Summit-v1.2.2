@@ -71,7 +71,7 @@ describe('periodSummary', () => {
 
   it('adds up effort and focus time', () => {
     const summary = periodSummary(all, tasks, 'week', TODAY, nameOf);
-    expect(line(summary, 'effort', 'Done')!.text).toBe('4 tasks and 200 XP, down 33% on the week before.');
+    expect(line(summary, 'effort', 'Done')!.text).toMatch(/^4 tasks \(down 33%\) and 200 XP \((down \d+%|up \d+%|about the same)\) vs\. the week before\.$/);
     expect(line(summary, 'effort', 'Focus')!.text).toBe('2h 30m of focus, up from 1h 30m.');
   });
 

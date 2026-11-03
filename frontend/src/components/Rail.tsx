@@ -54,7 +54,7 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useAuth, useMediaQuery, useSettings, useSpaces, useStats, useSubjectIndex } from '@/hooks';
-import { followedSubjects } from '@/utils/analyticsPrefs';
+import { analyticsHomePath, followedSubjects } from '@/utils/analyticsPrefs';
 import { format } from '@/utils';
 import { rankFor } from '@/utils/rank';
 import { useNametag } from '@/hooks/useNametag';
@@ -502,6 +502,14 @@ export function Rail() {
   const catalogue = useSubjectIndex(username);
   const followed = followedSubjects(prefs.analytics_subjects, catalogue);
 
+  /* Analytics opens on the tab the account chose. The built-in choice is the
+     Overview, which nobody has really picked, so that keeps the table's
+     Recommendations. See the note on its entry above. */
+  const destination = (tab: Tab) =>
+    tab.menu === 'analytics' && prefs.analytics_home_tab !== 'overview'
+      ? analyticsHomePath(prefs.analytics_home_tab)
+      : tab.to;
+
   /* Open when the reader is already on one of these pages, and remembered
      while they are not. Two rules rather than one because they answer
      different questions: a reader who has just landed on a subject page should
@@ -619,7 +627,7 @@ export function Rail() {
           const link = (
             <NavLink
               key={tab.to}
-              to={tab.to}
+              to={destination(tab)}
               data-tour={`rail-${tab.to.slice(1)}`}
               className={({ isActive }) => `rail-link${isActive || onPage(tab, pathname) ? ' active' : ''}`}
               title={tab.label}
@@ -881,7 +889,7 @@ export function Rail() {
             {rest.map((tab) => (
               <NavLink
                 key={tab.to}
-                to={tab.to}
+                to={destination(tab)}
                 role="menuitem"
                 className={({ isActive }) =>
                   `rail-sheet-link${isActive || onPage(tab, pathname) ? ' active' : ''}`

@@ -1,5 +1,5 @@
 /**
- * The Growth Score: what it is made of.
+ * The Work Score: what it is made of.
  *
  * ## The score is the report card, restated
  *
@@ -58,7 +58,7 @@ export function growthScore(ratings: Ratings | null): GrowthScore {
   const measured: Array<Omit<ScoreFactor, 'contribution'>> = [
     {
       name: 'productivity',
-      label: 'Productivity',
+      label: 'Activity',
       score: m.productivity.score,
       raw: `${Math.round(m.productivity.avg_daily_xp).toLocaleString()} XP/day`,
     },

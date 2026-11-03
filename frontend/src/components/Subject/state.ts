@@ -784,7 +784,7 @@ export function subjectState(
     },
     {
       key: 'productivity',
-      label: 'Productivity',
+      label: 'Activity',
       value: productivity,
       known: span.days > 0 && done.length > 0,
       meaning: 'Tasks finished per week, out of 6.',

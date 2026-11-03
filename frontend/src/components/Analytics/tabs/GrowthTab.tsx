@@ -411,11 +411,13 @@ export function GrowthTab({ model, records }: { model: AnalyticsModel; records?:
           <section className={`ax-section${data.previous ? ' ax-grid ax-grid-halves-even' : ''}`}>
             <Panel
               title="Then and now"
-              note={
+              /* The Overview's grade always reads the last 90 days. Every other
+                 window here can land on different scores, so say why. */
+              note={`${
                 data.previous
-                  ? `${data.label} vs. the ${data.days} days before`
+                  ? `${data.label} vs. the ${data.days} days before.`
                   : "All your work. There's nothing earlier to compare with."
-              }
+              }${data.period === '90d' ? '' : ' Your Overview grade only reads the last 90 days, so its scores can differ.'}`}
             >
               <ThenNow data={data} />
             </Panel>

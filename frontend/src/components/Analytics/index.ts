@@ -152,7 +152,7 @@ export {
 export type { Tone, PanelProps, AreaSeries, Column, RadarAxis, ScatterProps } from './charts';
 
 /**
- * The Growth Score and its five factors.
+ * The Work Score and its five factors.
  *
  * `SCORE_SCALE` used to be declared here on its own, back when the score was
  * one division of the backend's `overall`. It moved into ./score with the

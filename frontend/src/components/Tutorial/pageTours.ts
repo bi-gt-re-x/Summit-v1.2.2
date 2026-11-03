@@ -73,7 +73,7 @@ const analytics: Step[] = [
     kind: 'next',
     target: AX_PANEL,
     title: 'The overall view',
-    body: 'Totals for the window you picked, how they compare with before, and your growth score. Scroll down for the trend charts.',
+    body: 'Totals for the window you picked, how they compare with before, and your work score. Scroll down for the trend charts.',
   },
   {
     id: 'ax-insights',

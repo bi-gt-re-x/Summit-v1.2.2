@@ -361,7 +361,11 @@ function SubjectCard({
                 ? tree.focus
                   ? `${Math.round(tree.focus.percent)}% of ${tree.focus.name}`
                   : `${tree.done} of ${tree.total} skills`
-                : 'No tree'
+                : /* The tree is only read once the card is open and the reader's
+                     practice has arrived. Until then, say nothing about it. */
+                  open && context
+                  ? 'No tree'
+                  : '-'
             }
             detail={
               tree ? (
@@ -371,8 +375,10 @@ function SubjectCard({
                     ? `${tree.practiced} ${tree.practiced === 1 ? 'step' : 'steps'} practiced, best Level ${tree.best} of 5.`
                     : 'No problems marked on it yet.'}
                 </>
-              ) : (
+              ) : open && context ? (
                 'This subject has no skill tree of its own.'
+              ) : (
+                ''
               )
             }
             extra={

@@ -55,7 +55,7 @@ const TITLES: Record<AuthStep, string> = {
 const POINTS: [IconName, string][] = [
   ['check', 'Tasks, calendar and goals in one app'],
   ['flame', 'Earn XP and build a streak as you go'],
-  ['chart', 'A growth score that shows you the math'],
+  ['chart', 'A work score that shows you the math'],
 ];
 
 export default function Login() {

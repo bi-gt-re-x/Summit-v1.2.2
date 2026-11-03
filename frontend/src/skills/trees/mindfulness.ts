@@ -41,7 +41,7 @@ export const MINDFULNESS: SubjectTree = {
       desc: 'Identifying what you are feeling with some precision, which reliably reduces its intensity. Anxious, disappointed and resentful call for different responses and feel similar from inside.' },
     { id: 'mi.thoughts', name: 'Working with Thoughts', icon: 'thoughts', tier: 'advanced', requires: ['mi.emotion'], state: lock, percent: 0, xp: 2000,
       desc: 'Noticing a thought as a thought rather than as a report on reality. Catastrophizing and mind reading are patterns rather than insights, and naming them takes most of their force.' },
-    { id: 'mi.journal', name: 'Journalling', icon: 'journal', tier: 'advanced', requires: ['mi.thoughts'], state: lock, percent: 0, xp: 1700,
+    { id: 'mi.journal', name: 'Journaling', icon: 'journal', tier: 'advanced', requires: ['mi.thoughts'], state: lock, percent: 0, xp: 1700,
       desc: 'Writing to find out what you think, rather than to record what happened. Ten minutes on paper resolves more circling than an hour of thinking about it does.' },
     { id: 'mi.boundaries', name: 'Boundaries', icon: 'boundary', tier: 'advanced', requires: ['mi.emotion'], state: lock, percent: 0, xp: 1900,
       desc: 'Deciding what you will and will not take on, and saying so early. Most burnout is an accumulation of small agreements that each seemed manageable in isolation.' },

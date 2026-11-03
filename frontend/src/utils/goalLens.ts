@@ -16,7 +16,7 @@ export type LensId = 'accuracy' | 'depth' | 'volume' | 'consistency';
 /**
  * What a lens can rank.
  *
- * The five the growth score is built from plus the two the charts add. It is
+ * The five the work score is built from plus the two the charts add. It is
  * wider than `MetricKey` because the score's factors carry `efficiency`, which
  * is not a chartable series and is still one of the five things a lens has an
  * opinion about — see `analyticalScore`. Every lens lists all seven, so

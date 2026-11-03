@@ -146,8 +146,11 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
       <div className="gr-span-3">
         <HeroRow
           /* No Consistency card: the share of days worked is the Overview's
-             Consistency tile and is printed nowhere else. */
-          cards={scores.filter((score) => score.key !== 'consistency').map((score) => ({
+             Consistency tile and is printed nowhere else. No Focus card either:
+             it scored minutes against a flat 60 and read 100 beside the
+             Overview's 46, which is measured against the account's own goal.
+             One Focus score, on the Overview. */
+          cards={scores.filter((score) => score.key !== 'consistency' && score.key !== 'focus').map((score) => ({
             key: score.key,
             label: score.label,
             value: score.value,
@@ -296,7 +299,7 @@ export function FocusChapter({ all, tasks, subjects, omit = [] }: FocusChapterPr
       <section className="gr-panel gr-span-2 gr-chart-panel">
         <PanelHead
           title="Planned vs. done"
-          hint="How much of each week's plan you finished"
+          hint="How much of each week's plan you finished, late work included"
           note={planned > 0 ? `${WEEKS} weeks` : 'nothing planned yet'}
         />
         {planned === 0 ? (

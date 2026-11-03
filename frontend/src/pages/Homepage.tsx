@@ -332,7 +332,7 @@ export default function Homepage() {
           <section className="lp-section" id="analytics">
             <SectionHead
               title="Analytics"
-              blurb="Five stats make up your growth score: productivity, consistency, quality, efficiency and focus. Each one gets a grade from F up to S. Click any number to see how it works."
+              blurb="Five stats make up your work score: activity, consistency, quality, efficiency and focus. Each one gets a grade from F up to S. Click any number to see how it works."
             />
             <Analytics />
             <Facts

@@ -81,9 +81,9 @@ export function SlumpAlert({ slump }: { slump: Slump }) {
 // This week
 // --------------------------------------------------------------------------
 const HEADLINE = {
-  up: 'Productivity is up this week',
-  down: 'Productivity is down this week',
-  level: 'Productivity is steady this week',
+  up: 'Activity is up this week',
+  down: 'Activity is down this week',
+  level: 'Activity is steady this week',
 } as const;
 
 function WeekRead({ move, blocks }: { move: WeekMove; blocks: WeekBlock[] }) {

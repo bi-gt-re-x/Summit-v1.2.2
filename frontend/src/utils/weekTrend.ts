@@ -575,7 +575,7 @@ function readWorse(moves: TrackedMove[], told: Set<string>): string | null {
     return 'You missed more of your own dates, which suggests they\'re tighter than your real pace. Give the next few more room, or start them a day sooner.';
   }
   if (focus) {
-    return "Focus time fell but your output held. If you stopped using the timer, the figure's just missing. If you didn't, your sessions got sharper.";
+    return "Focus time fell but your finished work held. If you stopped using the timer, the figure's just missing. If you didn't, your sessions got sharper.";
   }
   if (fell) {
     return `This suggests ${fell.label} got squeezed out. If that's on purpose, fine. If it isn't, give it a set slot this week, since it won't come back by itself.`;

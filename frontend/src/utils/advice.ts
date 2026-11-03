@@ -906,7 +906,7 @@ function fallbacks(
       kind: 'load',
       category: 'Burnout',
       title: 'Big days are followed by slow ones',
-      because: `The day after a heavy day is ${drop}% below your normal output.`,
+      because: `The day after a heavy day is ${drop}% below your normal XP.`,
       action: 'End heavy days one task early and do it the next day.',
       evidence: `The day after a big one averages ${Math.round(load.afterHeavy).toLocaleString()} XP. Other days average ${Math.round(load.ordinary).toLocaleString()}.`,
       impact: 0,
@@ -956,7 +956,7 @@ const METRIC_CATEGORY: Record<string, AdviceCategory> = {
 
 /** What each report-card metric actually responds to. */
 const METRIC_ADVICE: Record<string, string> = {
-  productivity: `Productivity is your average XP per day, including days off. Working more days
+  productivity: `Activity is your average XP per day, including days off. Working more days
     raises it faster than working longer.`,
   quality: `Quality is the average XP per finished task. Fewer, bigger tasks raise it.`,
   consistency: `Consistency is the share of days you do any work. Avoid gaps to raise it.`,

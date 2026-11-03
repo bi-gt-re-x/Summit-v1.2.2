@@ -55,7 +55,7 @@ export const FEATURES: Feature[] = [
     name: 'Analytics',
     to: '/recommendations',
     paths: ['/analytics', '/recommendations', '/insights', '/habits', '/subjects', '/growth'],
-    what: 'Reports on how you work: your growth score, trends, per-subject pages and recommended sessions.',
+    what: 'Reports on how you work: your work score, trends, per-subject pages and recommended sessions.',
     why: 'It asks a few setup questions and has five tabs of charts. It also needs about a week of tasks and sessions before the numbers mean much.',
     after: 7,
   },
