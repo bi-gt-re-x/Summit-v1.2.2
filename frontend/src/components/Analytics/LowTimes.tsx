@@ -6,7 +6,6 @@
  * number comes from `low_times` in backend/tracking/mood.py, which says what
  * counts as each.
  */
-import { Link } from 'react-router-dom';
 import type { LowMark, LowTimes } from '@/services/said';
 import { Panel, PanelNote } from './charts';
 
@@ -48,13 +47,15 @@ function Bars({ title, rows, worst }: {
   );
 }
 
+const LATEST_SHOWN = 4;
+
 function Latest({ marks }: { marks: LowMark[] }) {
   if (marks.length === 0) return null;
   return (
     <div className="ax-low-part">
       <span className="ax-sv-extra-label">Latest</span>
       <ul className="ax-low-list">
-        {marks.map((mark) => (
+        {marks.slice(0, LATEST_SHOWN).map((mark) => (
           <li key={`${mark.day}${mark.time}${mark.label}${mark.detail}`}>
             <time dateTime={mark.day}>{when(mark)}</time>
             <span>
@@ -82,42 +83,35 @@ export function LowTimesPanel({ low, windowDays }: { low: LowTimes; windowDays: 
   const outputLead = lead(output.worst_part, output.worst_day, 'Work slows down most');
 
   return (
-    <div className="ax-grid ax-grid-halves-even">
-      <Panel
-        title="Low energy"
-        note={`${energy.count} ${energy.count === 1 ? 'time' : 'times'} in the last ${windowDays} days.`}
-        footer={
-          <PanelNote label="What counts">
-            <ul className="ax-sv-rules">
-              <li>You tapped Drained on the Log page.</li>
-              <li>You wrote that you were tired and didn't tap an energy level.</li>
-              <li>You picked Low energy when you rated a task.</li>
-            </ul>
-          </PanelNote>
-        }
-      >
-        {energy.count === 0 ? (
-          <p className="ax-low-empty">
-            Nothing yet. Tap Drained on the <Link to="/log" className="ax-link">Log page</Link> when you're
-            running low, or pick Low energy when you rate a task.
-          </p>
-        ) : (
-          <>
-            {energyLead && <p className="ax-low-lead">{energyLead}</p>}
-            <Bars
-              title="Time of day"
-              worst={energy.worst_part}
-              rows={energy.parts.map((row) => ({ name: row.name, size: row.count, value: String(row.count) }))}
-            />
-            <Bars
-              title="Day of the week"
-              worst={energy.worst_day}
-              rows={energy.weekdays.map((row) => ({ name: row.name, size: row.count, value: String(row.count) }))}
-            />
-            <Latest marks={energy.latest} />
-          </>
-        )}
-      </Panel>
+    <div className={energy.count > 0 ? 'ax-grid ax-grid-halves-even' : undefined}>
+      {energy.count > 0 && (
+        <Panel
+          title="Low energy"
+          note={`${energy.count} ${energy.count === 1 ? 'time' : 'times'} in the last ${windowDays} days.`}
+          footer={
+            <PanelNote label="What counts">
+              <ul className="ax-sv-rules">
+                <li>You tapped Drained on the Log page.</li>
+                <li>You wrote that you were tired and didn't tap an energy level.</li>
+                <li>You picked Low energy when you rated a task.</li>
+              </ul>
+            </PanelNote>
+          }
+        >
+                      {energyLead && <p className="ax-low-lead">{energyLead}</p>}
+              <Bars
+                title="Time of day"
+                worst={energy.worst_part}
+                rows={energy.parts.map((row) => ({ name: row.name, size: row.count, value: String(row.count) }))}
+              />
+              <Bars
+                title="Day of the week"
+                worst={energy.worst_day}
+                rows={energy.weekdays.map((row) => ({ name: row.name, size: row.count, value: String(row.count) }))}
+              />
+              <Latest marks={energy.latest} />
+        </Panel>
+      )}
 
       <Panel
         title="Low productivity"

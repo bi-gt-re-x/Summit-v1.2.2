@@ -21,6 +21,7 @@
  * difference. See utils/changed for which rule produces which.
  */
 import { Panel, PanelNote } from '@/components/Analytics/charts';
+import { Figures } from '@/components/Analytics/Figures';
 import { STRENGTH_TEXT } from '@/utils/insight';
 import { CHANGE_TITLE, type Change, type ChangeKind } from '@/utils/changed';
 
@@ -30,6 +31,9 @@ const KIND: Record<ChangeKind, { mark: string; tone: string }> = {
   problem: { mark: '!', tone: 'pink' },
   pattern: { mark: '◆', tone: 'blue' },
 };
+
+/** Problems first: the good news can wait a line. */
+const KIND_ORDER: Record<ChangeKind, number> = { problem: 0, pattern: 1, gain: 2 };
 
 export interface ChangedPanelProps {
   changes: Change[];
@@ -64,7 +68,7 @@ export function ChangedPanel({ changes, window: days }: ChangedPanelProps) {
         </p>
       ) : (
         <ul className="ax-changes">
-          {changes.map((change) => {
+          {[...changes].sort((a, b) => KIND_ORDER[a.kind] - KIND_ORDER[b.kind]).map((change) => {
             const kind = KIND[change.kind];
             return (
               <li key={change.id} className={`ax-change ax-tone-${kind.tone}`}>
@@ -75,7 +79,7 @@ export function ChangedPanel({ changes, window: days }: ChangedPanelProps) {
                   <span className="ax-change-kind">{CHANGE_TITLE[change.kind]}</span>
                   {change.move && <span className="ax-change-move">{change.move}</span>}
                 </div>
-                <p className="ax-change-text">{change.text}</p>
+                <p className="ax-change-text"><Figures text={change.text} /></p>
                 {(change.basis || change.strength) && (
                   <p className="ax-change-basis">
                     {change.basis}

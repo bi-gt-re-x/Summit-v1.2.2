@@ -91,6 +91,11 @@ describe('Figures', () => {
     expect(bold('80% of the way to 15.')).toEqual(['80%']);
   });
 
+  it('leaves a range and a date alone', () => {
+    expect(bold('Your best work comes in 30-60 minute sessions.')).toEqual([]);
+    expect(bold('Set on 2026-10-01.')).toEqual([]);
+  });
+
   it('keeps every word of the sentence', () => {
     const { container } = render(<Figures text="Level 71 → 54. Nothing done in 53 days." />);
     expect(container.textContent).toBe('Level 71 → 54. Nothing done in 53 days.');

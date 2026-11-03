@@ -19,6 +19,15 @@ import { bookForecast, goalForecast, type ForecastState, type GoalForecast as Fo
 
 /** How many goals show before the rest fold away. */
 const SHOWN = 3;
+/** The strongest reasons under each goal. The server sends up to five. */
+const POINTS_SHOWN = 2;
+const TROUBLE_FIRST: Record<ForecastState, number> = {
+  stalled: 0,
+  behind: 1,
+  on_track: 2,
+  missing: 3,
+  done: 4,
+};
 
 const STATE_LABEL: Record<ForecastState, string> = {
   on_track: 'On track',
@@ -89,7 +98,7 @@ function ForecastRow({ row, onBooked }: { row: Forecast; onBooked: () => void })
         <p className="ax-plan-why ax-goal-lead">{row.why.lead}</p>
         {row.why.points.length > 0 && (
           <ul className="ax-tips ax-goal-points">
-            {row.why.points.map((point) => (
+            {row.why.points.slice(0, POINTS_SHOWN).map((point) => (
               <li key={point.label}>
                 <b>{point.label}:</b> {point.text}
               </li>
@@ -131,8 +140,10 @@ export function GoalForecast({ onBooked, reload = 0 }: { onBooked?: () => void; 
     void load();
     onBooked?.();
   };
-  const shown = rows.slice(0, SHOWN);
-  const more = rows.slice(SHOWN);
+  /* The goals in trouble first, then by date, which is how the server sends them. */
+  const ranked = [...rows].sort((a, b) => TROUBLE_FIRST[a.state] - TROUBLE_FIRST[b.state]);
+  const shown = ranked.slice(0, SHOWN);
+  const more = ranked.slice(SHOWN);
 
   return (
     <section className="ax-section">
@@ -167,7 +178,7 @@ export function GoalForecast({ onBooked, reload = 0 }: { onBooked?: () => void; 
           ))}
         </ul>
         {more.length > 0 && (
-          <details className="ax-plan-more" open>
+          <details className="ax-plan-more">
             <summary>
               {more.length} more {more.length === 1 ? 'goal' : 'goals'}
             </summary>

@@ -12,6 +12,7 @@ import { isoDate } from '@/utils/dates';
 import { periodSummary, type SummaryPeriod, type Tone } from '@/utils/periodSummary';
 import { rangeLabel } from '@/utils/weekTrend';
 import { Panel } from './charts';
+import { Figures } from './Figures';
 
 const PERIODS: { key: SummaryPeriod; label: string; title: string }[] = [
   { key: 'week', label: 'Week', title: 'Weekly summary' },
@@ -21,6 +22,7 @@ const PERIODS: { key: SummaryPeriod; label: string; title: string }[] = [
 
 const KEY = 'summit.analytics.summaryPeriod';
 const MARK: Record<Tone, string> = { up: '↑', down: '↓', flat: '·' };
+const WORST_FIRST: Record<Tone, number> = { down: 0, flat: 1, up: 2 };
 
 function withYear(iso: string): string {
   return new Date(`${iso}T00:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
@@ -93,17 +95,17 @@ export function PeriodSummary({
         <p className="ax-empty">Nothing done in this stretch yet. Finish a task and this fills in.</p>
       ) : (
         <div className="ax-period-groups">
-          {summary.groups.map((group) => (
+          {[...summary.groups].sort((a, b) => Number(b.id === 'changed') - Number(a.id === 'changed')).map((group) => (
             <div key={group.id} className="ax-period-group">
               <h3 className="ax-tips-head">{group.title}</h3>
               <ul className="ax-period-list">
-                {group.lines.map((line) => (
+                {[...group.lines].sort((a, b) => WORST_FIRST[a.tone] - WORST_FIRST[b.tone]).map((line) => (
                   <li key={line.label} className={`is-${line.tone}`}>
                     <span className="ax-period-mark" aria-hidden="true">
                       {MARK[line.tone]}
                     </span>
                     <span>
-                      <b>{line.label}:</b> {line.text}
+                      <b>{line.label}:</b> <Figures text={line.text} />
                     </span>
                   </li>
                 ))}

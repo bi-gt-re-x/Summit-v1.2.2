@@ -116,10 +116,35 @@ describe('what changed', () => {
     expect(screen.getByText(/Nothing has changed much yet/)).toBeInTheDocument();
   });
 
-  it('sits above the three evidence groups', () => {
+  it('puts the problems ahead of the gains', () => {
+    draw(<InsightsTab model={model()} subjects={subjects} />);
+    const kinds = [...document.querySelectorAll('.ax-change-kind')].map((one) => one.textContent);
+    expect(kinds.indexOf('New problem')).toBeLessThan(kinds.indexOf('Getting stronger'));
+  });
+
+  it('sits above the evidence groups', () => {
     draw(<InsightsTab model={model()} subjects={subjects} />);
     const changed = screen.getByText('What changed');
-    const first = screen.getByText('Your best and worst work');
+    const first = screen.getByText('Why it happens');
     expect(positionOf(changed)).toBeLessThan(positionOf(first));
+  });
+});
+
+describe('what the tab no longer draws', () => {
+  it.each([
+    'So far',
+    'Patterns in what you do',
+    'Your best and worst work',
+    'What moves with what',
+    'Your steadiest habits',
+    'Holding or slipping',
+  ])('%s', (title) => {
+    draw(<InsightsTab model={model()} subjects={subjects} />);
+    expect(screen.queryByRole('heading', { name: new RegExp(`^${title}`) })).not.toBeInTheDocument();
+  });
+
+  it('opens why it happens, right under what changed', () => {
+    draw(<InsightsTab model={model()} subjects={subjects} />);
+    expect(screen.getByRole('button', { name: /Why it happens/ })).toHaveAttribute('aria-expanded', 'true');
   });
 });

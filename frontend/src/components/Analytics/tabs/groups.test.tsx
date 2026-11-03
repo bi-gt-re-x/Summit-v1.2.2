@@ -18,7 +18,6 @@
  * shut it is the contract.
  */
 import { screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { OverviewTab } from './OverviewTab';
 import { draw, fakeData, fakeModel, matureOverview } from './fixtures';
@@ -37,60 +36,36 @@ function groups(): HTMLElement[] {
   return [...document.querySelectorAll<HTMLElement>('button.ax-group-head')];
 }
 
-function groupNamed(name: RegExp): HTMLElement {
-  const found = groups().find((b) => name.test(b.textContent ?? ''));
-  if (!found) throw new Error(`no group matching ${name} — saw ${groups().map((b) => b.textContent)}`);
-  return found;
-}
 
-/** The body a disclosure button controls. */
-function bodyOf(head: HTMLElement): HTMLElement {
-  const body = head.closest('.ax-group')?.querySelector<HTMLElement>('.ax-group-body');
-  if (!body) throw new Error('group has no body');
-  return body;
-}
 
 describe('Overview', () => {
-  it('keeps its follow-up in groups, all open on arrival', () => {
+  it('reads straight down, with nothing to open and no group around a single panel', () => {
     draw(
       <OverviewTab model={matureOverview()} data={fakeData()} onEditBaseline={() => {}} />,
     );
-    // The rows that used to run flat under the trajectory.
-    expect(groupNamed(/Quality/)).toBeInTheDocument();
-    expect(groupNamed(/^Consistency/)).toBeInTheDocument();
-    // "Findings" went: every line in it was a figure another tab prints.
-    expect(screen.queryByRole('button', { name: /^Findings/ })).not.toBeInTheDocument();
-
-    // Nothing on this tab takes a click to read.
-    groups().forEach((head) => {
-      expect(head).toHaveAttribute('aria-expanded', 'true');
-      expect(bodyOf(head)).not.toHaveAttribute('inert');
-    });
+    expect(groups()).toHaveLength(0);
+    expect(screen.getByRole('heading', { name: /^Quality of finished work/ })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /^Consistency over time/ })).toBeInTheDocument();
   });
 
-  it('opens every "how this works" note too, on this tab only', () => {
+  it('keeps its "how this works" notes shut until asked', () => {
     draw(
       <OverviewTab model={matureOverview()} data={fakeData()} onEditBaseline={() => {}} />,
     );
     const notes = [...document.querySelectorAll<HTMLElement>('button.ax-link[aria-expanded]')];
     expect(notes.length).toBeGreaterThan(0);
-    notes.forEach((note) => expect(note).toHaveAttribute('aria-expanded', 'true'));
+    notes.forEach((note) => expect(note).toHaveAttribute('aria-expanded', 'false'));
   });
 
-  it('shuts a group on a click and opens it again on the next', async () => {
-    draw(
-      <OverviewTab model={matureOverview()} data={fakeData()} onEditBaseline={() => {}} />,
-    );
-    const head = groupNamed(/^Consistency/);
-
-    await userEvent.click(head);
-    expect(head).toHaveAttribute('aria-expanded', 'false');
-    expect(bodyOf(head)).toHaveAttribute('inert');
-
-    await userEvent.click(head);
-    expect(head).toHaveAttribute('aria-expanded', 'true');
-    expect(bodyOf(head)).not.toHaveAttribute('inert');
-  });
+  it.each(['Records and improvement', 'How hard vs. how well', 'What you told us'])(
+    'leaves %s to another page',
+    (title) => {
+      draw(
+        <OverviewTab model={matureOverview()} data={fakeData()} onEditBaseline={() => {}} />,
+      );
+      expect(screen.queryByRole('heading', { name: new RegExp(`^${title}`) })).not.toBeInTheDocument();
+    },
+  );
 
   it('leaves the stand-in tallies to the Insights tab', () => {
     // "When you work" sat here until habits could answer it. The Insights tab

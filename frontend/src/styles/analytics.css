@@ -4920,6 +4920,12 @@ a.ax-plan-act-btn { display: inline-block; text-decoration: none; }
     letter-spacing: normal;
     color: var(--ax-text);
 }
+.ax-summary-lead .ax-summary-holding strong {
+    font-size: inherit;
+    font-weight: 700;
+    letter-spacing: normal;
+    color: var(--ax-text);
+}
 
 /* ---------- The rows ------------------------------------------------------
    Hairline-separated rather than carded. Four cards here would read as four
@@ -9485,7 +9491,11 @@ g:hover > .ax-sv-time-bar { filter: brightness(.9); }
 }
 .ax-period-list li { display: grid; grid-template-columns: 14px minmax(0, 1fr); gap: 6px; }
 .ax-period-list b { color: var(--ax-text); font-weight: 650; }
-.ax-period-list strong { color: var(--ax-text); font-weight: 700; }
+.ax-period-list strong,
+.ax-change-text strong,
+.ax-finding-body strong,
+.ax-moves-row p strong,
+.ax-week-text strong { color: var(--ax-text); font-weight: 700; }
 .ax-growth-lead { margin: 0 0 var(--space-4); font-size: var(--text-lg); line-height: 1.4; color: var(--ax-muted); }
 .ax-growth-lead strong { font-weight: 700; }
 .ax-growth-lead .is-down { color: var(--ax-bad); }

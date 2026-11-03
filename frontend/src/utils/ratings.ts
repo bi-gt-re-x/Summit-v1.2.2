@@ -388,16 +388,17 @@ export function ratingFindings(summary: RatingSummary, rated: RatedTask[]): Rati
   // The coverage caveat, always last and always present. Everything above is
   // drawn from a self-selected sample, and the reader should be told how large
   // it is even when — especially when — the findings sound confident.
-  out.push({
-    tone: 'note',
-    headline: `Based on ${summary.rated.toLocaleString()} of ${summary.finished.toLocaleString()} finished tasks.`,
-    hint:
-      summary.coverage >= 60
-        ? 'Enough to be reliable.'
-        : 'Less than half your tasks, so treat this as a rough guide.',
-  });
+  if (summary.coverage < 60) {
+    out.push({
+      tone: 'note',
+      headline: `Based on ${summary.rated.toLocaleString()} of ${summary.finished.toLocaleString()} finished tasks.`,
+      hint: 'Less than half your tasks, so treat this as a rough guide.',
+    });
+  }
 
-  return out;
+  /* What's going wrong first. */
+  const order = { watch: 0, note: 1, good: 2 };
+  return out.sort((a, b) => order[a.tone] - order[b.tone]);
 }
 
 // --------------------------------------------------------------------------

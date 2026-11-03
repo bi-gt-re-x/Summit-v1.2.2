@@ -199,6 +199,10 @@ export function Summary({
 
   /* Null at S, where there is no band above to climb to. */
   const next = value !== null ? toNextGrade(value) : null;
+  const holding =
+    score.weakest && score.weakest.name !== score.strongest?.name && score.weakest.score < 90
+      ? score.weakest.label
+      : null;
 
   return (
     <section className={`ax-panel ax-summary ${gradeClass(grade)}`}>
@@ -228,6 +232,12 @@ export function Summary({
             <em>/10</em>
           </strong>
           . {GRADE_MEANING[grade]}
+          {holding && (
+            <>
+              {' '}
+              <span className="ax-summary-holding"><strong>{holding}</strong> is holding it back.</span>
+            </>
+          )}
           {next && (
             <>
               {' '}
@@ -247,7 +257,7 @@ export function Summary({
           keeps the card one row of five rather than a second table. */}
       {score.parts.length > 0 && (
         <ul className="ax-summary-parts" aria-label="Your five scores">
-          {score.parts.map((part) => {
+          {[...score.parts].sort((a, b) => a.score - b.score).map((part) => {
             const letter = gradeFor(part.score);
             return (
               /* No hover on consistency: its measured quantity is the

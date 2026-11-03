@@ -567,7 +567,6 @@ export default function Analytics() {
         return (
           <div className="ax-ov">
           <Summary
-            howOpen
             score={analytical}
             movement={scoreMovement(recorded)}
             /* What it is read from, until "enough" is the honest answer. The
@@ -594,7 +593,7 @@ export default function Analytics() {
            twenty-eight days, but it opens on the share of days worked, which
            is the Overview's Consistency tile. */
         if (waitFor('habits') === 0 && habits.length > 0) {
-          return <TabOpening>{habitLead(summary, spanText)}</TabOpening>;
+          return <TabOpening><strong>{habitLead(summary)}</strong></TabOpening>;
         }
         return null;
       case 'recommendations':
@@ -702,8 +701,7 @@ export default function Analytics() {
         {opening}
 
         {view.key === 'overview' && (
-          <OverviewTab model={model} data={data} records={recordRead}
-                       onEditBaseline={() => setEditingSetup(true)} />
+          <OverviewTab model={model} data={data} onEditBaseline={() => setEditingSetup(true)} />
         )}
 
         {view.key === 'recommendations' && <RecommendationsTab model={model} data={data} />}

@@ -15,6 +15,7 @@
  */
 import { Link } from 'react-router-dom';
 import { Panel } from './charts';
+import { Figures } from './Figures';
 import { DiagnosisCards } from './Diagnosis';
 import type { Diagnosis } from '@/utils/diagnosis';
 import {
@@ -111,7 +112,7 @@ function WeekRead({ move, blocks }: { move: WeekMove; blocks: WeekBlock[] }) {
         <div>
           <h3 className="ax-week-title">{HEADLINE[direction]}</h3>
           <p className="ax-week-text">
-            {fmt(now.xp)} XP and {now.tasks} {now.tasks === 1 ? 'task' : 'tasks'} in the last 7
+            <strong>{fmt(now.xp)} XP</strong> and <strong>{now.tasks} {now.tasks === 1 ? 'task' : 'tasks'}</strong> in the last 7
             days, {change}. {extra.join(' ')}
           </p>
         </div>
@@ -199,8 +200,8 @@ export function WhatChangedPanel({
         </p>
       ) : (
         <div className="ax-moves">
-          {good.length > 0 && <MoveList title="Better" rows={good} tone="good" />}
           {bad.length > 0 && <MoveList title="Worse" rows={bad} tone="bad" />}
+          {good.length > 0 && <MoveList title="Better" rows={good} tone="good" />}
         </div>
       )}
 
@@ -232,7 +233,7 @@ function MoveList({ title, rows, tone }: { title: string; rows: TrackedMove[]; t
             </span>
             <div>
               <strong>{row.label}</strong>
-              <p>{moveSentence(row)}</p>
+              <p><Figures text={moveSentence(row)} /></p>
             </div>
           </li>
         ))}

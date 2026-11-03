@@ -13,6 +13,7 @@
  * is what stops the number on a card and the number in the timeline from
  * drifting apart when one of them is edited.
  */
+import { useState } from 'react';
 import { Panel, Sparkline, asTone, toneVar } from './charts';
 import { StatRow, type Stat } from './StatRow';
 import {
@@ -66,11 +67,11 @@ export function HabitTiles({
      it is the Consistency tile on the Overview. */
   const stats: Stat[] = [
     {
-      key: 'tracked',
-      label: 'Habits',
-      value: String(summary.tracked),
-      note: span,
-      tone: 'violet',
+      key: 'slipping',
+      label: 'Slipping',
+      value: String(summary.declining),
+      note: summary.declining ? 'fading or gone quiet' : 'none',
+      tone: 'pink',
     },
     {
       key: 'strong',
@@ -80,18 +81,11 @@ export function HabitTiles({
       tone: 'green',
     },
     {
-      key: 'slipping',
-      label: 'Slipping',
-      value: String(summary.declining),
-      note: summary.declining ? 'fading or gone quiet' : 'none',
-      tone: 'pink',
-    },
-    {
-      key: 'anchor',
-      label: 'Anchor',
-      value: summary.anchor?.name ?? '-',
-      note: summary.anchor ? `${summary.anchor.score}% effort score` : 'none steady yet',
-      tone: 'amber',
+      key: 'tracked',
+      label: 'Habits',
+      value: String(summary.tracked),
+      note: span,
+      tone: 'violet',
     },
   ];
 
@@ -139,7 +133,7 @@ export function HabitCard({
           See `dayWeight` in utils/habits. */}
       <div className="ax-habit-figure">
         <strong>{habit.score}%</strong>
-        <span className="ax-muted ax-small">effort score, every day since it started</span>
+        <span className="ax-muted ax-small">effort score</span>
       </div>
 
       <div className="ax-habit-track" aria-hidden="true">
@@ -176,18 +170,6 @@ export function HabitCard({
           <dd>
             {habit.recentDays} of {RECENT_DAYS} days
           </dd>
-        </div>
-        <div>
-          <dt>XP on a day</dt>
-          <dd>{habit.xpPerDay.toLocaleString('en-US')} XP</dd>
-        </div>
-        <div>
-          <dt>Difficulty</dt>
-          <dd>{habit.difficulty === null ? 'Not rated' : `${habit.difficulty} of 5`}</dd>
-        </div>
-        <div>
-          <dt>Finished</dt>
-          <dd>{habit.completionRate}% of what you planned</dd>
         </div>
         <div>
           <dt>Last done</dt>
@@ -285,12 +267,15 @@ export function HabitCards({
   habits,
   todayIso,
   effects,
+  limit,
 }: {
   habits: Habit[];
   todayIso: string;
-  /** Habit key → what it is worth. Absent draws the cards without the block. */
   effects?: Map<string, HabitFacts>;
+  /** Cards drawn before "Show all". Every one of them when left out. */
+  limit?: number;
 }) {
+  const [all, setAll] = useState(false);
   if (habits.length === 0) {
     return (
       <p className="ax-empty">
@@ -298,35 +283,28 @@ export function HabitCards({
       </p>
     );
   }
+  const shown = limit && !all ? habits.slice(0, limit) : habits;
   return (
-    <div className="ax-habit-grid">
-      {habits.map((habit) => (
-        <HabitCard
-          key={habit.id}
-          habit={habit}
-          todayIso={todayIso}
-          facts={effects?.get(habit.key)}
-        />
-      ))}
-    </div>
+    <>
+      <div className="ax-habit-grid">
+        {shown.map((habit) => (
+          <HabitCard
+            key={habit.id}
+            habit={habit}
+            todayIso={todayIso}
+            facts={effects?.get(habit.key)}
+          />
+        ))}
+      </div>
+      {limit !== undefined && habits.length > limit && (
+        <button type="button" className="ax-lv-more" onClick={() => setAll((was) => !was)}>
+          {all ? 'Show fewer' : `Show all ${habits.length}`}
+        </button>
+      )}
+    </>
   );
 }
 
-// --------------------------------------------------------------------------
-// Patterns
-// --------------------------------------------------------------------------
-/**
- * Recurring behaviours, described and never explained.
- *
- * The frequency word carries the confidence — "Usually" is 75% of occurrences
- * and "Sometimes" is under half — and the count it was read off is printed
- * underneath, because a tendency stated without its denominator is an assertion.
- */
-/**
- * `limit` is `toneRules().diagnoses` — how many findings this account asked to
- * see at once. The list arrives ranked, so this drops the weakest rows and
- * never the strongest, and it rewrites none of them.
- */
 export function PatternsPanel({
   patterns,
   limit,
@@ -452,6 +430,7 @@ export function TimelinePanel({
   shifts: HabitShift[];
 }) {
   const withPhases = habits.filter((habit) => habit.phases.length >= 2).slice(0, 6);
+  const events = shifts.filter((shift) => shift.event === 'started' || shift.event === 'stopped');
 
   // Which way the tracked habits moved overall — the one thing the four little
   // phase bars are there to show, said in words first.
@@ -509,9 +488,10 @@ export function TimelinePanel({
         </ul>
       )}
 
-      {shifts.length > 0 && (
+      {/* Only what the rows above can't show: a stronger or weaker habit is one of them. */}
+      {events.length > 0 && (
         <ul className="ax-shifts">
-          {shifts.slice(0, 5).map((shift) => (
+          {events.slice(0, 5).map((shift) => (
             <li key={`${shift.name}-${shift.event}`}>
               <span className="ax-shift-tag" style={{ color: toneVar(shift.tone), borderColor: toneVar(shift.tone) }}>
                 {EVENT_WORD[shift.event]}
@@ -543,21 +523,12 @@ export function TimelinePanel({
  * fills too. See `TabOpening`. The panel keeps everything that is not this
  * sentence, and no longer prints it twice.
  */
-export function habitLead(summary: HabitSummary, span: string): string {
-  const parts: string[] = [];
-  if (summary.tracked > 0) {
-    parts.push(
-      `${summary.tracked} ${summary.tracked === 1 ? 'habit' : 'habits'} found ${span.includes(' to ') ? 'from' : 'in'} ${span}`,
-    );
-  }
-  if (summary.anchor) {
-    parts.push(
-      `and ${summary.anchor.name} is your strongest (${summary.anchor.score}% effort score)`,
-    );
-  }
-  return parts.length
-    ? `${parts.join(', ')}.`
-    : 'Nothing repeats often enough to be a habit yet.';
+export function habitLead(summary: HabitSummary): string {
+  const { tracked, declining } = summary;
+  if (tracked === 0) return 'Nothing repeats often enough to be a habit yet.';
+  return declining > 0
+    ? `${declining} of your ${tracked} ${tracked === 1 ? 'habit is' : 'habits are'} slipping.`
+    : `None of your ${tracked} ${tracked === 1 ? 'habit is' : 'habits are'} slipping.`;
 }
 
 /** What the routine looks like underneath the sentence at the top of the tab. */

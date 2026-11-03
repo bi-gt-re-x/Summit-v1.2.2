@@ -114,10 +114,32 @@ describe('GoalForecast', () => {
     await waitFor(() => expect(goalForecast).toHaveBeenCalledTimes(2));
   });
 
-  it('groups goals past the first three, open by default', async () => {
+  it('folds goals past the first three', async () => {
     serve(['a', 'b', 'c', 'd'].map((id) => row({ goal_id: id, title: `Goal ${id}`, to_book: 0 })));
     render(<GoalForecast />);
-    expect((await screen.findByText('1 more goal')).closest('details')).toHaveAttribute('open');
+    expect((await screen.findByText('1 more goal')).closest('details')).not.toHaveAttribute('open');
+  });
+
+  it('puts the goals in trouble first, ahead of the nearest date', async () => {
+    serve([
+      row({ goal_id: 'a', title: 'Goal a', state: 'missing', to_book: 0 }),
+      row({ goal_id: 'b', title: 'Goal b', state: 'on_track', to_book: 0 }),
+      row({ goal_id: 'c', title: 'Goal c', state: 'behind', to_book: 0 }),
+      row({ goal_id: 'd', title: 'Goal d', state: 'stalled', to_book: 0 }),
+    ]);
+    render(<GoalForecast />);
+    await screen.findByText('Goal d');
+    const titles = [...document.querySelectorAll('.ax-plan-title')].map((one) => one.textContent);
+    expect(titles).toEqual(['Goal d', 'Goal c', 'Goal b', 'Goal a']);
+  });
+
+  it('gives each goal its two strongest reasons', async () => {
+    const points = ['One', 'Two', 'Three'].map((label) => ({ label, tone: 'bad' as const, text: 'Reason.' }));
+    serve([row({ why: { lead: 'Lead.', points }, to_book: 0 })]);
+    render(<GoalForecast />);
+    expect(await screen.findByText('One:')).toBeInTheDocument();
+    expect(screen.getByText('Two:')).toBeInTheDocument();
+    expect(screen.queryByText('Three:')).not.toBeInTheDocument();
   });
 
   it('draws nothing without a dated goal', async () => {

@@ -166,27 +166,38 @@ describe('the five measures on the grade card', () => {
     show({ score: FIVE });
     expect(screen.getByRole('list', { name: 'Your five scores' })).toBeInTheDocument();
     expect(measures()).toEqual([
-      'ProductivityS10.0/10',
       'QualityC7.6/10',
-      'ConsistencyB8.8/10',
       'EfficiencyC7.8/10',
       'FocusB8.0/10',
+      'ConsistencyB8.8/10',
+      'ProductivityS10.0/10',
     ]);
   });
 
   it('colors each letter by its own grade, not the headline\'s', () => {
     show({ score: FIVE });
     const rows = document.querySelectorAll('.ax-summary-parts li');
-    expect(rows[0]).toHaveClass('grade-S');
-    expect(rows[1]).toHaveClass('grade-C');
+    expect(rows[0]).toHaveClass('grade-C');
+    expect(rows[4]).toHaveClass('grade-S');
   });
 
   it('puts the measured quantity on hover, except the consistency rate', () => {
     // The consistency rate is printed once on the page, on the Overview tile.
     show({ score: FIVE });
     const rows = document.querySelectorAll('.ax-summary-parts li');
-    expect(rows[0]).toHaveAttribute('title', '100 of 100');
-    expect(rows[2]).not.toHaveAttribute('title');
+    expect(rows[4]).toHaveAttribute('title', '100 of 100');
+    expect(rows[3]).not.toHaveAttribute('title');
+  });
+
+  it('says which one is holding the score back', () => {
+    show({ score: FIVE });
+    expect(lead().textContent).toContain('Quality is holding it back.');
+    expect(screen.getByText('Quality', { selector: 'strong' })).toBeInTheDocument();
+  });
+
+  it('blames nothing when every part is already high', () => {
+    show({ score: { ...FIVE, weakest: part('quality', 'Quality', 92) } });
+    expect(lead().textContent).not.toContain('holding it back');
   });
 
   it('draws no measures before there is a score', () => {

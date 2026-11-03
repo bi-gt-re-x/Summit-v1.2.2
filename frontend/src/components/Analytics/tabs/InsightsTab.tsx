@@ -1,85 +1,33 @@
 /**
- * Insights — what you do, and what it is worth.
+ * Insights: what's going on, and why.
  *
- * This was two tabs. Habits answered "what do I repeat" and Insights answered
- * "why does the record look like this", and they were one argument split down
- * the middle: a reader who checked both twice concluded one of them was
- * redundant, because from the outside a tendency and the condition it holds
- * under are the same subject. Seven tabs was also one more than the bar can
- * carry — see the note on `VIEWS`.
+ * What changed comes first, with the problems at the head of it, then why, then
+ * the habits with the ones slipping first. Everything after that is folded.
  *
- * ## What the merge actually merged
- *
- * Not a concatenation. The two tabs carried ten panel groups between them and
- * this carries eight, because five things existed twice:
- *
- *   - **One "building" card.** Both tabs had one, with different thresholds
- *     and overlapping promises. There is one now, on the earlier of the two
- *     gates, and it lists what each half will say.
- *   - **One "What is already true".** Both tabs showed an early panel under
- *     that exact heading — one the observations, one the two raw counts. They
- *     were the same idea answered from two directions and are one group now.
- *   - **One place for the goal limiter.** Habits printed `LimiterLine`, a
- *     single line, precisely because a card about goals would have made it a
- *     tab about goals. That reasoning does not survive the merge: the cards
- *     are already here under "Why it happens", where a limiter belongs,
- *     so the line is gone rather than sitting a screen above them saying
- *     less.
- *   - **One group for steadiness.** "Every day you worked" was a calendar and
- *     "Holding or slipping" was consistency and start dates. Both answer
- *     whether a habit is keeping its shape over time, so the calendar moved
- *     in beside them.
- *   - **One group for subjects.** `SubjectInsights`, `SkillColdPanel` and
- *     `SkillFindingsPanel` were three separate sections across two tabs, all
- *     of them about which subject is doing what. One group.
- *
- * ## The two pattern panels are not a duplicate, and stay apart
- *
- * `PatternsPanel` says what recurs — "Usually finishes before 5pm", with the
- * denominator it was read off. `Patterns` says what your better work is
- * *associated* with — "execution is 14% higher on tasks finished before 5pm",
- * with the strength of the split behind it. Behaviour and consequence. They
- * read as the same panel in a summary and as two quite different claims on
- * screen, so each stays where its own group is: the first under "Your habits",
- * the second under "Why it happens".
- *
- * ## One group opens, and it is the habits
- *
- * The old Insights opened "What is true now" by default. It does not here, and
- * the reason is that `StateOverview` directly above already prints the weakest
- * measure and the strongest improvement, which is most of what that group
- * restates — two open things saying the same thing is how a merged page gets
- * long without getting fuller. So the page opens on the state, what changed,
- * and the habits themselves; everything else is a click.
- *
- * ## Two gates, because the halves need different amounts of record
- *
- * Habits need 21 days to say what repeats; insights need 28 to compare two
- * stretches. Both halves gate themselves, so between the two the tab is a real
- * page rather than a notice — which is the whole reason the thresholds were
- * never unified.
+ * This was two tabs, Habits and Insights, and they were one argument: what you
+ * repeat, and what it's worth. It has no gate of its own. Habits need 14 days to
+ * say what repeats and the findings need 18 to compare two stretches, so between
+ * the two it's a real page rather than a notice.
  *
  * It never says what to do. That is the Recommendations tab.
+ *
+ * Panels that only restated another or named things worth no decision are gone
+ * from here, though a space's page can still draw them: the quick reads past the
+ * first weeks, patterns in what you do, your best and worst tasks, what moves
+ * with what, and your steadiest habits.
  */
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { FollowupPanel } from '@/components/Recommendations';
-import { ChangedPanel, ClockPanel, HowPanel, RelationshipsPanel, WeekPanel, WhyPanel } from '@/components/Insights';
-import {
-  HabitCards,
-  ConsistencyPanel as HabitConsistencyPanel,
-  HabitOpening,
-  HabitTiles,
-  PatternsPanel,
-  TimelinePanel,
-} from '../Habits';
+import { ChangedPanel, ClockPanel, HowPanel, WeekPanel, WhyPanel } from '@/components/Insights';
+import { HabitCards, HabitOpening, HabitTiles, TimelinePanel } from '../Habits';
 import { Building } from '../Building';
 import { ObservationNote } from '../Observation';
-import { RatedTasksPanel, ReasonsPanel } from '../Quality';
+import { ReasonsPanel } from '../Quality';
 import { FinishPanel, WhenPanel } from '../Early';
 import { FocusChapter } from '@/components/Growth/FocusChapter';
 import { PanelGroup } from '../charts';
-import { partsOfDay } from '@/utils/habits';
+import { partsOfDay, type Habit } from '@/utils/habits';
 import { unlock } from '@/utils/insight';
 import { NEED_DAYS } from '../useAnalyticsModel';
 import { SOLID_AT, whyFor } from '../milestones';
@@ -91,6 +39,16 @@ import { LowTimesPanel } from '../LowTimes';
 import { FirstReads } from '../FirstReads';
 import type { SubjectIndex } from '@/hooks/useSubjects';
 
+/** Habit cards drawn before "Show all". They're the tallest thing on the tab. */
+const CARDS_SHOWN = 4;
+
+/** The ones in trouble first, and the rest in the order they came: strongest first. */
+function slippingFirst(habits: Habit[]): Habit[] {
+  return [...habits].sort(
+    (a, b) => Number(b.strength === 'declining') - Number(a.strength === 'declining'),
+  );
+}
+
 export function InsightsTab({
   model,
   data,
@@ -101,11 +59,10 @@ export function InsightsTab({
   const goalList = useMemo(() => data?.goals?.data?.goals ?? [], [data?.goals?.data]);
   const {
     all, changes, changeWindow, clock, effects, fromIso, habits, historyDays, how,
-    links, maturity, observed, patterns, qualitySummary, rated, ratingDepth, reasonRows, reasons,
+    maturity, observed, ratingDepth, reasonRows, reasons,
     shifts, slice, spanText, summary, tasks, toIso, waitFor, week, why,
-    /* How much of the page is drawn, and how bluntly — see utils/analyticsPrefs.
-       Neither moves a figure on either half: the habit counts and the findings
-       are computed in full and ranked the same way at every setting. */
+    /* How much of the page is drawn, and how bluntly: see utils/analyticsPrefs.
+       Neither moves a figure. */
     detail, toneRules,
     reviews, reviewSummary,
   } = model;
@@ -202,18 +159,46 @@ export function InsightsTab({
         </section>
       )}
 
-      {/* The state meters that opened here — the five measures, the grade,
-          the streak, the best improvement and the weakest area — are the
-          Overview, the Growth tab and Achievements. They are not repeated. */}
-
-      {/* What changed. The tab's own claim, and the only section here that is
-          neither a shape nor a chart: see `ChangedPanel`. Capped the way every
-          other finding list is, so a reader who asked for a short page gets
-          three cards rather than nine. */}
+      {/* What changed, with the problems first. Capped the way every other
+          finding list is, so a reader who asked for a short page gets a short one. */}
       {insightsReady && (
         <section className="ax-section">
           <EarlyRead days={historyDays} solidAt={SOLID_AT.insights} />
           <ChangedPanel changes={changes.slice(0, findings)} window={changeWindow} />
+        </section>
+      )}
+
+      {/* The quick reads off tasks and goals are for a record too short to say
+          more. Past that, the panels below say it with more behind them. */}
+      {data && !insightsReady && (
+        <section className="ax-section">
+          <FirstReads tasks={tasks} goals={goalList} />
+        </section>
+      )}
+
+      {/* Why, straight under what. It's the tab's whole claim, so it opens. */}
+      {insightsReady && (
+        <section className="ax-section">
+          <PanelGroup title="Why it happens" note="What lines up with your best and worst work" defaultOpen>
+            <div className="ax-grid ax-grid-halves-even">
+              <WhyPanel
+                findings={why.slice(0, findings)}
+                notice={unlock(slice.current.length, NEED_DAYS.insights, 'why your last stretch went the way it did')}
+              />
+              <HowPanel
+                findings={how.slice(0, findings)}
+                notice={unlock(slice.current.length, NEED_DAYS.insights, 'how you tend to work')}
+              />
+            </div>
+            {/* The only panel that answers *why* from what the reader said. It
+                draws nothing unless the account has asked to be asked. */}
+            <ReasonsPanel
+              reasons={reasons}
+              findings={reasonRows}
+              depth={ratingDepth}
+              span={spanText}
+            />
+          </PanelGroup>
         </section>
       )}
 
@@ -229,23 +214,11 @@ export function InsightsTab({
         </section>
       )}
 
-      {/* The quick reads off tasks and goals, each with the sample it came from.
-          It needs no gate: before there are any it says how many more it needs.
-          See ../reads. */}
-      {data && (
-        <section className="ax-section">
-          <FirstReads tasks={tasks} goals={goalList} />
-        </section>
-      )}
-
       <section className="ax-section">
-        {/* The one group that opens. It names the thing the tab is about and
-            it is the concrete half — the abstract half is directly above it in
-            two panels that need no disclosure. */}
         {habitsReady && (
           <PanelGroup
             title="Your habits"
-            note="Times per week"
+            note="Times per week, the ones slipping first"
             defaultOpen
           >
             <EarlyRead days={historyDays} solidAt={SOLID_AT.habits} />
@@ -256,33 +229,14 @@ export function InsightsTab({
                 span={spanText}
                 leadWithStrength={toneRules.leadWithStrength}
               />
-              <PatternsPanel patterns={patterns} limit={toneRules.diagnoses} />
+              <TimelinePanel habits={slippingFirst(habits)} shifts={shifts} />
             </div>
-            {/* `habits` is already ordered strongest-first by `buildHabits`, so
-                a cap takes the tail rather than an arbitrary slice. Four is the
-                floor: a tab that draws three cards on an account with twenty is
-                a shorter page, but one that draws one is a broken one. */}
             <HabitCards
-              habits={habits.slice(0, Math.max(4, detail.rows))}
+              habits={slippingFirst(habits)}
+              limit={CARDS_SHOWN}
               todayIso={toIso}
               effects={effects}
             />
-          </PanelGroup>
-        )}
-
-        {/* What you say vs. what you do: the Log and your About you answers,
-            held against the record (components/Analytics/SayVsDo). It needs
-            no gate of its own: every comparison inside carries its day count
-            and waits for its own floor, and a new account gets the invitation
-            to start rather than an empty heading. Opens when it has something
-            to say. */}
-        {data && (
-          <PanelGroup
-            title="Say vs. do"
-            note="Your mood and notes next to what got done"
-            defaultOpen={sayVsDoHasNews(mood, said)}
-          >
-            <SayVsDo mood={mood} said={said} reloadSaid={() => data.said?.reload()} />
           </PanelGroup>
         )}
 
@@ -298,80 +252,24 @@ export function InsightsTab({
           </PanelGroup>
         )}
 
-        {/* "What is true now" also held the current state, what improved and a
-            list of key findings. Each was said elsewhere — the tab's opening,
-            "What changed", the Overview's tiles, the personal bests — and the
-            findings carried advice, which is the Recommendations tab. What is
-            left is the one panel that names individual tasks. */}
-        {insightsReady && (
-          <PanelGroup title="Your best and worst work" note="Your highest and lowest rated tasks">
-            <RatedTasksPanel rated={rated} summary={qualitySummary} />
-          </PanelGroup>
-        )}
-
-        {insightsReady && (
-          <PanelGroup title="Why it happens" note="What lines up with your best work">
-            {/* The discovered-patterns panel that opened this group printed
-                the same findings as the "Hidden pattern" cards in What changed,
-                with a "worth trying" line under each. */}
-            <div className="ax-grid ax-grid-halves-even">
-              <WhyPanel
-                findings={why.slice(0, findings)}
-                notice={unlock(slice.current.length, NEED_DAYS.insights, 'why your last stretch went the way it did')}
-              />
-              <HowPanel
-                findings={how.slice(0, findings)}
-                notice={unlock(slice.current.length, NEED_DAYS.insights, 'how you tend to work')}
-              />
-            </div>
-            {/* The one hero here: the only panel that draws raw observations
-                rather than an aggregate over them. */}
-            <div className="ax-hero">
-              <RelationshipsPanel
-                relationships={links}
-                notice={unlock(slice.current.length, NEED_DAYS.insights, 'what goes with what')}
-              />
-            </div>
-            {/* The only panel that answers *why* from what the reader said
-                rather than from what they did, and the only one that exists at
-                one rating depth and not the others. It draws nothing at all
-                unless the account has asked to be asked. */}
-            <ReasonsPanel
-              reasons={reasons}
-              findings={reasonRows}
-              depth={ratingDepth}
-              span={spanText}
-            />
-
-            {/* The goal limiter that sat here is on Recommendations, which is
-                the one tab that says what to do about a goal. */}
-          </PanelGroup>
-        )}
-
-        {/* Steadiness over time, which was two groups on the old Habits tab.
-            The calendar was "Every day you worked" and the other two were
-            "Holding or slipping"; all three answer whether a habit is keeping
-            its shape, and a reader who wanted that had to open two headings to
-            get it. */}
-        {habitsReady && (
+        {/* What you say vs. what you do: the Log and your About you answers, held
+            against the record (../SayVsDo). Every comparison inside waits for its
+            own floor. Opens when it has something to say. */}
+        {data && (
           <PanelGroup
-            title="Holding or slipping"
-            note="How steady each habit is"
+            title="Say vs. do"
+            note="Your mood and notes next to what got done"
+            defaultOpen={sayVsDoHasNews(mood, said)}
           >
-            <div className="ax-grid ax-grid-halves-even">
-              <HabitConsistencyPanel habits={habits} />
-              <TimelinePanel habits={habits} shifts={shifts} />
-            </div>
+            <SayVsDo mood={mood} said={said} reloadSaid={() => data.said?.reload()} />
           </PanelGroup>
         )}
 
         {insightsReady && (
           <PanelGroup
-            title="When and what you work on"
-            note="The hours and days you work"
+            title="When you work"
+            note="The hours and days you get things done"
           >
-            {/* The headline tiles here restated the two charts below, and the
-                subject web is the Subjects tab. */}
             <div className="ax-grid ax-grid-halves-even">
               <ClockPanel clock={clock} />
               <WeekPanel week={week} />
@@ -379,23 +277,8 @@ export function InsightsTab({
           </PanelGroup>
         )}
 
-        {/* The per-subject group that sat here went with the subject score
-            it was built on; where each subject stands is the Subjects tab. */}
-
-        {/* The growth page's Focus chapter, three panels lighter.
-
-            It draws eight, and on this tab three of them were answers this
-            page had already given: its calendar is `HabitCalendarPanel`, its
-            habit-stability list is `HabitConsistencyPanel`, and its
-            consistency trail is `TimelinePanel` — all three directly above
-            under "Holding or slipping", at a different size and over a
-            different window. A reader opened one heading and met the same
-            calendar twice.
-
-            What is left is what only this chapter has: the scores, the
-            planned-against-finished grid, focus depth, and the recovery after
-            a miss. See `FocusPanel` for why it is an opt-out rather than a
-            split — the Growth page still wants all eight. */}
+        {/* The Focus chapter, less the calendar and the two habit panels this
+            tab draws already. See `FocusPanel`. */}
         {habitsReady && (
           <PanelGroup
             title="Do you follow through?"
@@ -412,10 +295,6 @@ export function InsightsTab({
           </PanelGroup>
         )}
       </section>
-
-      {/* The share of finished work aimed at a goal was a line here. Which
-          subjects have a goal aimed at them is the Subjects tab's opening line,
-          and the two said the same thing from two ends. */}
     </>
   );
 }

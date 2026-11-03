@@ -22,6 +22,7 @@
  */
 import { useState } from 'react';
 import { Panel, Scatter, asTone, toneVar } from '@/components/Analytics';
+import { Figures } from '@/components/Analytics/Figures';
 import {
   STRENGTH_HUE,
   STRENGTH_TEXT,
@@ -92,7 +93,7 @@ export function FindingCard({ finding }: { finding: Finding }) {
       */}
       <div className="ax-finding-body" inert={!open}>
         <div>
-          <p className="ax-prose">{finding.detail}</p>
+          <p className="ax-prose"><Figures text={finding.detail} /></p>
           <StrengthChip strength={finding.strength} />
         </div>
       </div>
@@ -145,7 +146,7 @@ export function HowPanel({
   return (
     <Panel
       title="How you tend to work"
-      note="These go together. Linked doesn't mean one causes the other."
+      note="Linked doesn't mean caused"
     >
       {!notice.ready ? (
         <Waiting notice={notice} />

@@ -249,7 +249,7 @@ const MODEL_VIEWS: Partial<Record<PanelKind, (props: ModelProps) => ReactNode>> 
     !model.habits.length ? (
       <Note>Nothing repeats often enough to be a habit yet.</Note>
     ) : text(config, 'style') === 'line' ? (
-      <TabOpening>{habitLead(model.summary, model.spanText)}</TabOpening>
+      <TabOpening>{habitLead(model.summary)}</TabOpening>
     ) : (
       <HabitOpening summary={model.summary} span={model.spanText} leadWithStrength={model.toneRules.leadWithStrength} />
     ),
