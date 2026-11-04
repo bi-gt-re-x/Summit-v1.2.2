@@ -97,7 +97,7 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
           not from the weeks of history the cards wait for. See
           components/NextSessions. */}
       <section className="ax-section">
-        <NextSessionsPanel where="analytics" />
+        <NextSessionsPanel where="analytics" focusTitle={plan.priority?.focus?.title ?? null} />
       </section>
 
       {/* Your coach's read: what Summit makes of the reader, each fact ending

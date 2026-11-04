@@ -49,6 +49,13 @@ import '@/styles/next-sessions.css';
 export interface NextSessionsPanelProps {
   /** Which page it is on — only the heading's wording and the class change. */
   where: 'dashboard' | 'analytics';
+  /**
+   * The goal the plan says comes first (backend/tracking/priority.py). These
+   * sessions are written from recent work across subjects and not from that
+   * decision, so with no subject picked the panel says so rather than sit under
+   * "Leave these alone" and appear to recommend one of them.
+   */
+  focusTitle?: string | null;
 }
 
 const KINDS: Array<{ id: SessionKind; label: string; line: string; nothing: string }> = [
@@ -126,7 +133,7 @@ function topicHint(topic: SessionTopic) {
   return [topic.area || topic.subject_label, standing].filter(Boolean).join(' · ');
 }
 
-export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
+export function NextSessionsPanel({ where, focusTitle = null }: NextSessionsPanelProps) {
   /* Read without `useAuth`, which throws outside a provider: a page drawn
      with nobody signed in (or in a test of the page around it) simply has
      no panel. */
@@ -324,6 +331,9 @@ export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
           <h2>{heading}</h2>
           <p>
             {about.line} in {scope}.{dueLine} Add one to your calendar or add all three.
+            {focusTitle && subjectIds.length === 0
+              ? ` These don't follow the plan above, so ${focusTitle} still comes first.`
+              : ''}
           </p>
         </div>
       </header>

@@ -86,6 +86,22 @@ function show(mutate = vi.fn()) {
   return mutate;
 }
 
+describe('beside the plan', () => {
+  it("says these sessions don't follow the plan's decision", async () => {
+    renderWithProviders(<NextSessionsPanel where="analytics" focusTitle="AMC 10 cutoff" />, {
+      auth: { username: 'alpha' },
+      userData: { mutate: vi.fn() },
+    });
+    expect(await screen.findByText(/don't follow the plan above, so AMC 10 cutoff still comes first/)).toBeInTheDocument();
+  });
+
+  it('says nothing about it where there is no plan', async () => {
+    show();
+    await screen.findByRole('button', { name: 'Suggest 3 sessions' });
+    expect(screen.queryByText(/don't follow the plan above/)).toBeNull();
+  });
+});
+
 const suggest = async () => {
   fireEvent.click(await screen.findByRole('button', { name: 'Suggest 3 sessions' }));
   await screen.findByText('Session 1');
