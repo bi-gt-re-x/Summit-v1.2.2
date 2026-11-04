@@ -14,7 +14,7 @@ import pytest
 
 from backend.api import spaces, tasks
 from backend.config.shared import PATH, RULES
-from backend.tracking import analytics, background, live, next_sessions, overdue, panels, record, session_plan, subject_ai, time_spent
+from backend.tracking import analytics, background, evidence, live, next_sessions, overdue, panels, record, session_plan, subject_ai, time_spent
 
 CASES = os.path.join(os.path.dirname(PATH), 'cases')
 
@@ -78,3 +78,36 @@ def test_the_server_reads_its_values_from_the_shared_file():
     assert list(spaces.BLOCK_TYPES) == RULES['spaces']['block_types']
     assert list(tasks.REASONS['struggle']) == [r['key'] for r in RULES['task_reasons']['struggle']]
     assert next_sessions.STRUGGLES['unclear'] == 'Did not know where to start'
+
+
+def _evidence(name):
+    with open(os.path.join(CASES, 'evidence.json'), encoding='utf-8') as handle:
+        return json.load(handle)[name]
+
+
+@pytest.mark.parametrize('case', _evidence('tiers'), ids=lambda case: str(case['n']))
+def test_evidence_tier(case):
+    assert evidence.tier_for(case['n']) == case['tier']
+
+
+@pytest.mark.parametrize('case', _evidence('means'), ids=lambda case: case['why'])
+def test_evidence_means(case):
+    found = evidence.means(case['a'], case['b'])
+    assert (found['tier'], found['noise'], found['n']) == (case['tier'], case['noise'], case['n'])
+
+
+@pytest.mark.parametrize('case', _evidence('rates'), ids=lambda case: case['why'])
+def test_evidence_rates(case):
+    found = evidence.rates(case['hits_a'], case['n_a'], case['hits_b'], case['n_b'])
+    assert (found['tier'], found['noise'], found['n']) == (case['tier'], case['noise'], case['n'])
+
+
+@pytest.mark.parametrize('case', _evidence('correlations'), ids=lambda case: case['why'])
+def test_evidence_correlation(case):
+    found = evidence.correlation(case['r'], case['n'])
+    assert (found['tier'], found['noise']) == (case['tier'], case['noise'])
+
+
+@pytest.mark.parametrize('case', _evidence('hedges'), ids=lambda case: case['tier'] + ':' + case['text'][:20])
+def test_evidence_hedge(case):
+    assert evidence.hedge(case['text'], case['tier']) == case['says']

@@ -73,6 +73,8 @@ BUSY = 30
 AIM_LOW = 0.25
 #: A move this much worse than the task count's means hard work went first.
 FELL_FASTER = 10
+#: A goal this close is what the plan is built around (backend/tracking/priority.py).
+PRESSING_DAYS = 45
 
 #: Things attended rather than produced. WORKED lets "Review lecture notes" through.
 ATTENDED = re.compile(
@@ -296,7 +298,8 @@ def _moves(goals: Sequence[Dict[str, Any]], records: Sequence[Dict[str, Any]],
 
 def _progress(goals: Sequence[Dict[str, Any]], records: Sequence[Dict[str, Any]],
               tasks: Sequence[Dict[str, Any]], now: List[Dict[str, Any]],
-              start: date, end: date, before_start: date, before_end: date, today: date) -> Dict[str, Any]:
+              start: date, end: date, before_start: date, before_end: date, today: date,
+              focus: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     objectives = [goal for goal in goals if _is_objective(goal)]
     live = [goal for goal in objectives if goal.get('status') == 'active']
     counters = [goal for goal in goals if goal.get('status') == 'active' and not _is_objective(goal)]
@@ -317,6 +320,11 @@ def _progress(goals: Sequence[Dict[str, Any]], records: Sequence[Dict[str, Any]]
         due, goal = dated[0]
         nearest = {'title': str(goal.get('title') or ''), 'percent': round(progress_of(goal)),
                    'days_left': (due - today).days, 'next': goal_why.next_step(goal)}
+    # What the priority engine picked, when it picked. Two panels naming two different
+    # goals as the place to go next would be the page arguing with itself.
+    if focus:
+        nearest = {'title': focus['title'], 'percent': focus['percent'], 'days_left': focus['days_left'],
+                   'next': focus['next']}
 
     lines = []
     seen = set()
@@ -337,7 +345,7 @@ def _progress(goals: Sequence[Dict[str, Any]], records: Sequence[Dict[str, Any]]
                     "number or checkpoints, like a contest score or a rating.")
     else:
         where = ''
-        if nearest:
+        if nearest and nearest['days_left'] is not None:
             where = ' {} has {} left and is {}% done.'.format(
                 nearest['title'], _plural(nearest['days_left'], 'day'), nearest['percent'])
         if not moved:
@@ -405,7 +413,8 @@ def _self_rated(tasks: Sequence[Dict[str, Any]], today: date) -> Optional[str]:
 def _mastery(tasks: Sequence[Dict[str, Any]], records: Sequence[Dict[str, Any]],
              attempts: Sequence[Dict[str, Any]], checks: Sequence[Dict[str, Any]],
              ready: Sequence[Dict[str, Any]], name_of_node: Callable[[str], str],
-             start: date, end: date, before_start: date, before_end: date, today: date) -> Dict[str, Any]:
+             start: date, end: date, before_start: date, before_end: date, today: date,
+             focus: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     passed = [row for row in checks if row.get('passed') and _day(row.get('finished_at'))]
     proofs = [{'on': _day(row.get('finished_at')), 'what': 'passed the {} check'.format(
         name_of_node(str(row.get('node_id') or '')))} for row in passed]
@@ -448,7 +457,11 @@ def _mastery(tasks: Sequence[Dict[str, Any]], records: Sequence[Dict[str, Any]],
         suggests = "This suggests the work is turning into things you can actually do. Keep testing it."
     elif check:
         suggests = ("This suggests you may know more than you can show. You've done {} on {} and nothing has "
-                    "tested it, so take the check.").format(_plural(check['sessions'], 'session'), check['name'])
+                    "tested it.").format(_plural(check['sessions'], 'session'), check['name'])
+        # The plan decides what comes first, and this shouldn't talk over it.
+        pressing = focus and focus.get('days_left') is not None and focus['days_left'] <= PRESSING_DAYS
+        suggests += (' Take the check once {} has had its time.'.format(focus['title']) if pressing
+                     else ' Take the check, since it only takes a few minutes.')
     else:
         suggests = ("This suggests nothing has measured your skill lately. Mark problems right or wrong in "
                     "the Skill Tree, or log a real score as a record.")
@@ -552,7 +565,8 @@ def _reading(activity: Dict[str, Any], output: Dict[str, Any], progress: Dict[st
 def read(tasks: Sequence[Dict[str, Any]], goals: Sequence[Dict[str, Any]], records: Sequence[Dict[str, Any]],
          attempts: Sequence[Dict[str, Any]], checks: Sequence[Dict[str, Any]],
          rollup: Dict[str, Dict[str, Any]], today: date, ready: Sequence[Dict[str, Any]] = (),
-         name_of_node: Callable[[str], str] = lambda node: node, days: int = WINDOW_DAYS) -> Dict[str, Any]:
+         name_of_node: Callable[[str], str] = lambda node: node, days: int = WINDOW_DAYS,
+         focus: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     """The four measures over the last `days` days, and what they say together."""
     start = today - timedelta(days=days - 1)
     before_end = start - timedelta(days=1)
@@ -562,9 +576,9 @@ def read(tasks: Sequence[Dict[str, Any]], goals: Sequence[Dict[str, Any]], recor
 
     activity = _activity(now, before, rollup, start, today)
     output = _output(now, before)
-    progress = _progress(goals, records, tasks, now, start, today, before_start, before_end, today)
+    progress = _progress(goals, records, tasks, now, start, today, before_start, before_end, today, focus)
     mastery = _mastery(tasks, records, attempts, checks, ready, name_of_node,
-                       start, today, before_start, before_end, today)
+                       start, today, before_start, before_end, today, focus)
     return {
         'days': days,
         'from': start.isoformat(),

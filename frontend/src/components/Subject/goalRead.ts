@@ -15,6 +15,7 @@
  * first move is to set one.
  */
 import type { GoalTopicPlan } from '@/services/topics';
+import { EVIDENCE_FLOOR } from '@/utils/evidence';
 import type { Driver, SubjectGoal, SubjectModel } from './model';
 import type { SubjectState } from './state';
 
@@ -240,7 +241,7 @@ export function goalRead({ subject, model, state, total, topics }: GoalReadInput
     });
   }
   const top = model.struggles[0];
-  if (top && top.count >= 3) insights.push(reasonInsight(top, aim));
+  if (top && top.count >= EVIDENCE_FLOOR) insights.push(reasonInsight(top, aim));
   const good = model.wentWell[0];
   if (good && good.count >= 3) {
     insights.push({
@@ -341,7 +342,7 @@ export function goalRead({ subject, model, state, total, topics }: GoalReadInput
       link: 'Plan it',
     });
   }
-  if (general && top && top.count >= 3) {
+  if (general && top && top.count >= EVIDENCE_FLOOR) {
     moves.push({
       id: 'reason',
       title: `Plan around "${top.label.toLowerCase()}"`,

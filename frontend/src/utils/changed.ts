@@ -48,8 +48,8 @@
  */
 import type { GrowthDay, Task } from '@/types';
 import type { Diagnosis } from './diagnosis';
-import type { Strength } from './insight';
-import type { Win } from './insight';
+import { strengthOf, type Strength, type Win } from './insight';
+import { compareMeans, compareRates, hedge, speaks, type ClaimKind } from './evidence';
 import type { Pattern } from './patterns';
 import { pctChange } from './recent';
 
@@ -103,8 +103,10 @@ export interface Change {
   move?: string;
   /** The counts the sentence stands on. Absent when the source carried none. */
   basis?: string;
-  /** How much weight it can take, where the source graded itself. */
+  /** How much weight it can take. Absent on a plain fact, like what's overdue. */
   strength?: Strength;
+  /** What sort of claim it is. See utils/evidence. */
+  claim?: ClaimKind;
   /** Ranking weight within its own kind. */
   weight: number;
   /**
@@ -124,6 +126,10 @@ export interface Change {
 const num = (value: unknown) => Number(value) || 0;
 const one = (value: number) => (Math.round(value * 10) / 10).toFixed(1);
 const pct = (value: number) => `${Math.round(Math.abs(value))}%`;
+
+/** A rating per day that has one, for reading a move against its ordinary swing. */
+const dailyRatings = (days: GrowthDay[], field: 'avg_difficulty' | 'avg_execution') =>
+  days.filter((day) => num(day.rated_tasks) > 0 && num(day[field]) > 0).map((day) => num(day[field]));
 
 /** Mean over rated tasks, weighted by how many each day had. */
 function overRated(days: GrowthDay[], read: (day: GrowthDay) => number): number | null {
@@ -164,15 +170,23 @@ function difficultyRising(days: GrowthDay[], window: number): Change | null {
   if (wellNow < wellWas - 0.1) return null;
 
   const ratedNow = now.reduce((sum, day) => sum + num(day.rated_tasks), 0);
+  const ratedWas = before.reduce((sum, day) => sum + num(day.rated_tasks), 0);
+  const read = compareMeans(dailyRatings(now, 'avg_difficulty'), dailyRatings(before, 'avg_difficulty'));
+  if (!speaks(read)) return null;
   return {
     id: 'change-difficulty-up',
     kind: 'gain',
     family: 'difficulty',
     text:
       `Your work got harder (${one(hardWas)} to ${one(hardNow)} over ${window} days), and how well it goes held steady at ${Math.round((wellNow / 5) * 100)}%.`,
-    suggests: "This suggests you've got room at this level. Stay here for a couple of weeks before you add more, so it's a level you can hold.",
+    suggests: hedge(
+      "This suggests you've got room at this level. Stay here for a couple of weeks before you add more, so it's a level you can hold.",
+      read.tier,
+    ),
     move: `${one(hardWas)} → ${one(hardNow)}`,
-    basis: `${ratedNow.toLocaleString()} rated tasks in the last ${window} days.`,
+    basis: `${ratedNow.toLocaleString()} rated tasks in the last ${window} days, ${ratedWas.toLocaleString()} before.`,
+    strength: strengthOf(read),
+    claim: 'before-after',
     weight: 40 + lift,
   };
 }
@@ -203,17 +217,23 @@ function hardTasksFailing(finished: Task[]): Change | null {
   const points = hardRate - midRate;
   if (points < MIN_POINTS) return null;
 
-  const smaller = Math.min(hard.length, middling.length);
+  const poorIn = (rows: Task[]) => rows.filter((task) => num(task.execution) <= POOR_EXECUTION).length;
+  const read = compareRates(poorIn(hard), hard.length, poorIn(middling), middling.length);
+  if (!speaks(read)) return null;
   return {
     id: 'change-hard-failing',
     kind: 'problem',
     family: 'difficulty-bands',
     text:
       `Your hardest tasks go badly more often: ${Math.round(hardRate)}% rated 2 or lower, vs. ${Math.round(midRate)}% for medium ones.`,
-    suggests: 'This suggests the jump from medium to hard is too big right now. Split your next hard task into a medium step and a hard step, and see if the ratings close up.',
+    suggests: hedge(
+      'This suggests the jump from medium to hard is too big right now. Split your next hard task into a medium step and a hard step, and see if the ratings close up.',
+      read.tier,
+    ),
     move: `${Math.round(midRate)}% → ${Math.round(hardRate)}%`,
     basis: `${hard.length} tasks rated 4 or 5 for difficulty, ${middling.length} rated 3.`,
-    strength: smaller >= 20 && points >= 15 ? 'strong' : smaller >= 12 ? 'likely' : 'weak',
+    strength: strengthOf(read),
+    claim: 'correlation',
     weight: 30 + points,
   };
 }
@@ -272,6 +292,8 @@ function qualityMoved(days: GrowthDay[], window: number): Change | null {
 
   const move = pctChange(wellNow, wellWas);
   if (move === null || Math.abs(move) < MIN_QUALITY_MOVE) return null;
+  const read = compareMeans(dailyRatings(now, 'avg_execution'), dailyRatings(before, 'avg_execution'));
+  if (!speaks(read)) return null;
 
   const up = move > 0;
   return {
@@ -281,11 +303,16 @@ function qualityMoved(days: GrowthDay[], window: number): Change | null {
     text: up
       ? `Your work is going better. You rate it ${one(wellNow)} out of 5 now, up from ${one(wellWas)}.`
       : `Your work is going worse. You rate it ${one(wellNow)} out of 5 now, down from ${one(wellWas)}.`,
-    suggests: up
-      ? 'This suggests something you changed is working. Work out what it was and keep it before you change anything else.'
-      : "This suggests you're rushing or reaching too far. Redo your lowest-rated task from these weeks before you add anything new.",
+    suggests: hedge(
+      up
+        ? 'This suggests something changed for the better, or your recent tasks were easier. Check which before you change anything else.'
+        : "This suggests you're rushing or reaching too far, or your recent tasks were harder. Redo your lowest-rated task from these weeks before you add anything new.",
+      read.tier,
+    ),
     move: `${one(wellWas)} → ${one(wellNow)}`,
     basis: `${ratedNow.toLocaleString()} rated tasks in the last ${window} days, ${ratedWas.toLocaleString()} before.`,
+    strength: strengthOf(read),
+    claim: 'before-after',
     weight: 45 + Math.abs(move),
   };
 }
@@ -317,6 +344,11 @@ function efficiencyMoved(days: GrowthDay[], window: number): Change | null {
 
   const move = pctChange(nowRate.rate, wasRate.rate);
   if (move === null || Math.abs(move) < MIN_EFFICIENCY_MOVE) return null;
+  /* Hour by hour across the days, so one odd week can't carry it. */
+  const hourly = (rows: GrowthDay[]) =>
+    rows.filter((day) => num(day.focus_minutes) > 0).map((day) => num(day.xp_earned) / (num(day.focus_minutes) / 60));
+  const read = compareMeans(hourly(now), hourly(before));
+  if (!speaks(read)) return null;
 
   const up = move > 0;
   const round = (value: number) => Math.round(value).toLocaleString();
@@ -327,11 +359,16 @@ function efficiencyMoved(days: GrowthDay[], window: number): Change | null {
     text: up
       ? `Your focus hours are paying off more: ${round(nowRate.rate)} XP an hour, up from ${round(wasRate.rate)}.`
       : `Your focus hours are paying off less: ${round(nowRate.rate)} XP an hour, down from ${round(wasRate.rate)}.`,
-    suggests: up
-      ? 'This suggests your sessions are getting sharper. Keep them the same length and see if it holds.'
-      : "This suggests your time is going into work that doesn't finish. Decide what you'll finish before your next session starts.",
+    suggests: hedge(
+      up
+        ? 'This suggests your sessions are getting sharper, or your tasks bigger. Keep them the same length and see if it holds.'
+        : "This suggests some of your time is going into work that doesn't finish, or into harder work. Decide what you'll finish before your next session starts.",
+      read.tier,
+    ),
     move: `${round(wasRate.rate)} → ${round(nowRate.rate)} XP/h`,
     basis: `${Math.round(nowRate.hours)} focus hours in the last ${window} days, ${Math.round(wasRate.hours)} before.`,
+    strength: strengthOf(read),
+    claim: 'before-after',
     weight: 35 + Math.abs(move),
   };
 }
@@ -383,6 +420,7 @@ function subjectMoved(rows: SubjectMove[]): Change[] {
         : `This suggests ${row.name} is getting squeezed out. If it still matters, give it a set slot this week, since it won't come back by itself.`,
       move: `${Math.round(row.shareWas)}% → ${Math.round(row.shareNow)}%`,
       basis: `${Math.round(row.now).toLocaleString()} XP here vs. ${Math.round(row.before).toLocaleString()} before.`,
+      claim: 'count',
       weight: 25 + Math.abs(row.points),
     };
   };
@@ -431,6 +469,7 @@ function overdueBacklog(open: Task[], todayIso: string): Change | null {
       (days > 0 ? `, the oldest by ${days} ${days === 1 ? 'day' : 'days'}.` : '.'),
     suggests: "This suggests your list has more dated work than you can do. Decide today: do the oldest, move it, or drop it. Late tasks lose XP each day they wait.",
     basis: `From open tasks with a due date.`,
+    claim: 'count',
     weight: 32 + Math.min(20, late.length),
   };
 }
@@ -448,6 +487,8 @@ function fromWin(win: Win): Change {
     suggests: win.suggests,
     move: win.figure.includes('→') ? win.figure : undefined,
     basis: win.figure.includes('→') ? undefined : win.figure,
+    strength: win.strength,
+    claim: win.strength ? 'before-after' : 'count',
     weight: 20,
   };
 }
@@ -469,6 +510,9 @@ function fromDiagnosis(row: Diagnosis): Change {
     family: row.id === 'levelling-up' ? 'difficulty' : row.id,
     text: `${row.headline}${/[.!?]$/.test(row.headline) ? '' : '.'} ${row.detail}`,
     suggests: `${row.means} ${row.action}`,
+    /* A plain count has no sample to doubt, so it wears no label. */
+    strength: row.claim === 'count' ? undefined : row.strength,
+    claim: row.claim,
     weight: row.weight,
   };
 }
@@ -484,6 +528,7 @@ function fromPattern(row: Pattern): Change {
     move: `${row.lift >= 0 ? '+' : '−'}${pct(row.lift)}`,
     basis: row.basis,
     strength: row.strength,
+    claim: 'correlation',
     weight: row.weight,
   };
 }

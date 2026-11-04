@@ -24,6 +24,7 @@ import { Panel, PanelNote } from '@/components/Analytics/charts';
 import { Figures } from '@/components/Analytics/Figures';
 import { Suggestion } from '@/components/Analytics/Suggestion';
 import { STRENGTH_TEXT } from '@/utils/insight';
+import { CLAIM_LABEL, CLAIM_NOTE } from '@/utils/evidence';
 import { CHANGE_TITLE, type Change, type ChangeKind } from '@/utils/changed';
 
 /** The mark each kind wears, and the tone it is drawn in. */
@@ -80,11 +81,16 @@ export function ChangedPanel({ changes, window: days }: ChangedPanelProps) {
                   {change.move && <span className="ax-change-move">{change.move}</span>}
                 </div>
                 <p className="ax-change-text"><Figures text={change.text} /></p>
-                {(change.basis || change.strength) && (
+                {(change.basis || change.strength || change.claim) && (
                   <p className="ax-change-basis">
                     {change.basis}
                     {change.strength && (
                       <span className="ax-change-strength">{STRENGTH_TEXT[change.strength]}</span>
+                    )}
+                    {change.claim && change.claim !== 'count' && (
+                      <span className="ax-change-claim" title={CLAIM_NOTE[change.claim]}>
+                        {CLAIM_LABEL[change.claim]}
+                      </span>
                     )}
                   </p>
                 )}

@@ -92,9 +92,57 @@ def test_bands_and_the_headline():
     assert (bands['good']['days'], bands['good']['tasks_avg']) == (6, 6.0)
     assert bands['okay']['days'] == 0 and not bands['okay']['enough']
     assert found['headline']['tone'] == 'insight'
-    assert found['headline']['text'] == ('On good days you finish 6 tasks. On rough days, just 1. '
+    assert found['headline']['text'] == ('On good days you finish 6 tasks. On rough days, 1. '
                                          "That's 6 times as many.")
-    assert found['headline']['confidence'] == 'pattern'
+    assert found['headline']['confidence'] == 'preliminary'
+    # Six days a side can only be something to test, and it never says which came first.
+    assert found['headline']['suggests'].startswith("It's early, but this may mean")
+    assert "can't say which comes first" in found['headline']['suggests']
+
+
+def test_three_good_days_are_not_a_finding():
+    """This one told somebody that feeling good "gets in the way"."""
+    entries = ([_entry(back, 'such a good day') for back in (1, 2, 3)]
+               + [_entry(back, 'normal stuff') for back in range(4, 12)])
+    tasks = []
+    for back in (1, 2, 3):
+        tasks += _tasks(back, 9)
+    for back in range(4, 12):
+        tasks += _tasks(back, 20)
+    found = _read(entries, tasks)
+    good = next(row for row in found['feelings'] if row['kind'] == 'good')
+    assert not good['enough'] and good['need'] == 4
+    assert found['headline']['tone'] == 'building'
+    assert found['headline']['confidence'] == 'insufficient'
+    assert 'suggests' not in found['headline']
+
+
+def test_a_gap_inside_the_ordinary_swing_of_the_days_is_not_a_finding():
+    entries = ([_entry(back, 'so tired today') for back in range(1, 11)]
+               + [_entry(back, 'normal day') for back in range(11, 21)])
+    tasks = []
+    for back, count in zip(range(1, 11), [1, 12, 3, 15, 2, 9, 1, 14, 2, 12]):
+        tasks += _tasks(back, count)
+    for back, count in zip(range(11, 21), [2, 14, 2, 16, 1, 11, 3, 13, 2, 15]):
+        tasks += _tasks(back, count)
+    found = _read(entries, tasks)
+    tired = next(row for row in found['feelings'] if row['kind'] == 'tired')
+    assert tired['enough'] and not tired['clear']
+    assert found['headline']['tone'] == 'building'
+
+
+def test_a_good_mood_on_a_light_day_is_not_called_the_cause():
+    entries = ([_entry(back, 'such a good day') for back in range(1, 16)]
+               + [_entry(back, 'normal stuff') for back in range(16, 31)])
+    tasks = []
+    for back in range(1, 16):
+        tasks += _tasks(back, 3 + back % 2)
+    for back in range(16, 31):
+        tasks += _tasks(back, 9 + back % 2)
+    head = _read(entries, tasks)['headline']
+    assert head['confidence'] == 'emerging'
+    assert 'lighter days simply feel better' in head['suggests']
+    assert 'gets in the way' not in head['suggests']
 
 
 def test_too_few_days_say_nothing():
@@ -138,7 +186,13 @@ def test_deep_focus_is_not_called_overrated():
 
 def test_brief_lines_skip_early_reads():
     assert mood.brief_lines(_read([_entry(1, said=1)], _tasks(1, 1))) == []
-    lines = mood.brief_lines(_read(*_month()))
+    # Preliminary isn't worth a model's attention either.
+    assert mood.brief_lines(_read(*_month())) == []
+    entries, tasks = [], []
+    for back in range(1, 25):
+        entries.append(_entry(back, said=1 if back % 2 else 5))
+        tasks += _tasks(back, 1 if back % 2 else 6)
+    lines = mood.brief_lines(_read(entries, tasks))
     assert lines and lines[0].startswith('Mood vs output:')
 
 

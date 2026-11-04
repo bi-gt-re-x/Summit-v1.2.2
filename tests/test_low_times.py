@@ -44,10 +44,10 @@ class TestLowEnergy:
         mark = low['energy']['latest'][0]
         assert mark['label'] == 'Low energy' and 'Essay draft' in mark['detail'] and mark['time'] == '19:00'
 
-    def test_the_worst_part_of_the_day_needs_three_and_no_tie(self):
-        evening = [_task(day, hour=18, reason='low-energy') for day in (1, 2)]
+    def test_the_worst_part_of_the_day_needs_four_and_no_tie(self):
+        evening = [_task(day, hour=18, reason='low-energy') for day in (1, 2, 3)]
         assert _low(tasks=evening)['energy']['worst_part'] is None
-        evening.append(_task(3, hour=18, reason='low-energy'))
+        evening.append(_task(4, hour=18, reason='low-energy'))
         assert _low(tasks=evening)['energy']['worst_part'] == 'Evening'
 
     def test_nothing_outside_the_window_counts(self):
@@ -73,11 +73,11 @@ class TestLowProductivity:
         assert _low(tasks=tasks)['output']['slow_days'] == 0
 
     def test_low_ratings_are_recorded_by_part_of_day_as_a_share(self):
-        tasks = [_task(day, hour=9, execution=5) for day in (1, 2, 3)] + \
-                [_task(day, hour=20, execution=2) for day in (1, 2, 3)]
+        tasks = [_task(day, hour=9, execution=5) for day in range(1, 7)] + \
+                [_task(day, hour=20, execution=2) for day in range(1, 7)]
         low = _low(tasks=tasks)
         parts = {row['name']: row for row in low['output']['parts']}
-        assert low['output']['low_rated'] == 3
+        assert low['output']['low_rated'] == 6
         assert parts['Evening']['share'] == 100 and parts['Morning']['share'] == 0
         assert low['output']['worst_part'] == 'Evening'
 

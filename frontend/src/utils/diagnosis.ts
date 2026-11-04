@@ -49,6 +49,8 @@ import type { GrowthDay, Task } from '@/types';
 import { isActiveDay } from './activeDay';
 import { RECENT_FLOOR, mean, pctChange } from './recent';
 import { secondsSpent } from '@/utils/timeSpent';
+import { strengthOf, type Strength } from './insight';
+import { compareRates, counted, EVIDENCE_FLOOR, hedge, speaks, type ClaimKind, type EvidenceRead } from './evidence';
 
 /** Fewest finished tasks in a window before a per-task mean is worth taking. */
 const MIN_TASKS = 6;
@@ -114,6 +116,8 @@ export interface Vitals {
   gapCount: number;
   /** Mean XP on the first day back after a gap of two or more days. */
   returnXp: number | null;
+  /** How many returns that mean is over. */
+  returnCount: number;
   /** Subject of the last task finished before the longest gap began. */
   beforeGap: string | null;
   /** Per weekday (0 is Sunday): days in the window, and days worked. */
@@ -298,6 +302,7 @@ export function vitals(days: GrowthDay[], tasks: Task[]): Vitals {
     gapTo,
     gapCount,
     returnXp: returns.length ? mean(returns) : null,
+    returnCount: returns.length,
     beforeGap: before?.subject ?? null,
     weekdays,
     busiest,
@@ -339,7 +344,14 @@ export interface Diagnosis {
   points: string[];
   /** Ranking weight — how loudly this wants to be heard. */
   weight: number;
+  /** How much it can claim, from the counts behind it. See utils/evidence. */
+  strength: Strength;
+  /** What sort of claim it is. */
+  claim: ClaimKind;
 }
+
+/** What a rule hands in. The evidence is added as it's pushed. */
+type DiagnosisDraft = Omit<Diagnosis, 'strength' | 'claim'>;
 
 const round = (value: number) => Math.round(value).toLocaleString('en-US');
 const one = (value: number) => (Math.round(value * 10) / 10).toFixed(1);
@@ -422,7 +434,22 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
   const enough = now.days >= RECENT_FLOOR && now.activeDays >= MIN_ACTIVE;
   if (!enough) return found;
 
-  const push = (item: Diagnosis) => found.push({ ...item, points: item.points.filter(Boolean) });
+  /* Every card has to clear the evidence bar, and says only what its tier allows.
+     Days are counted across both stretches, so a card about a change has both sides. */
+  const push = (item: DiagnosisDraft, read: EvidenceRead, claim: ClaimKind = 'before-after') => {
+    if (!speaks(read)) return;
+    found.push({
+      ...item,
+      /* A count says what happened, so there's nothing in it to hedge or test. */
+      means: claim === 'count' ? item.means : hedge(item.means, read.tier),
+      points: item.points.filter(Boolean),
+      strength: strengthOf(read),
+      claim,
+    });
+  };
+  const rated = counted(Math.min(now.ratedCount, before.ratedCount));
+  const worked = counted(Math.min(now.activeDays, before.activeDays));
+  const timedRead = counted(Math.min(now.timedCount, before.timedCount));
   const top = topSubject(now);
   const missed = missedWeekday(now);
   const strong = strongWeekday(now);
@@ -450,7 +477,7 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
         : `Time your next 3 sessions at ${round(before.minutesPerTask!)} min. If a task doesn't fit, split it.`,
       watch: 'Minutes per task',
       weight: 92,
-    });
+    }, timedRead);
   }
 
   /* Doing more, doing it worse. */
@@ -477,7 +504,7 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
         : 'Drop one task tomorrow and spend that time on the hardest one.',
       watch: `Execution rating back above ${one(before.execution!)}`,
       weight: 95,
-    });
+    }, rated);
   }
 
   /* The clearest good sign: harder work, quality holding. */
@@ -503,7 +530,7 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
         : 'Keep this level for another two weeks before adding more.',
       watch: `Difficulty holding at ${one(now.difficulty!)}`,
       weight: 88,
-    });
+    }, rated);
   }
 
   if (harder !== null && harder <= -MOVE && now.ratedCount >= MIN_RATED) {
@@ -528,7 +555,7 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
         : 'Start tomorrow with one task you expect to rate 4 or 5 for difficulty.',
       watch: 'One task a day rated 4+ for difficulty',
       weight: 84,
-    });
+    }, rated);
   }
 
   /* Turning up, doing less each time. */
@@ -550,7 +577,7 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
         : 'Pick two days this week for one long session each.',
       watch: 'XP on your two best days',
       weight: 80,
-    });
+    }, worked);
   }
 
   /* The same work squeezed into fewer days. */
@@ -572,7 +599,7 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
         : 'Move one task from your busiest day to your quietest.',
       watch: `Working days back above ${round(before.activeRate)}%`,
       weight: 78,
-    });
+    }, worked);
   }
 
   /* More time in, nothing more out. */
@@ -613,7 +640,7 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
           : 'Note what you do in the first 20 minutes of your next session.',
       watch: 'XP per hour of focus',
       weight: 82,
-    });
+    }, worked);
   }
 
   /* Getting it done, getting it done late. */
@@ -642,7 +669,12 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
         : "Set due dates a day earlier this week, and drop dates from tasks that don't need one.",
       watch: 'On-time rate back above 60%',
       weight: 86,
-    });
+    }, compareRates(
+      Math.round((now.deadlineRate / 100) * now.deadlineCount),
+      now.deadlineCount,
+      Math.round((before.deadlineRate! / 100) * before.deadlineCount),
+      before.deadlineCount,
+    ));
   }
 
   /* Breaks long enough to cost momentum. */
@@ -655,21 +687,26 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
       detail: `Your longest break was ${now.longestGap} days${now.gapFrom && now.gapTo ? `, ${day(now.gapFrom)} to ${day(now.gapTo)}` : ''}, and you had ${now.gapCount} ${now.gapCount === 1 ? 'break' : 'breaks'} of 2+ days. On days you worked, you averaged ${round(now.xpPerActiveDay)} XP.`,
       points: [
         missed ? `${missed.name} is the day you miss most: worked ${missed.worked} of ${missed.total}.` : '',
-        now.returnXp !== null ? `Your first day back after a break averaged ${round(now.returnXp)} XP, against ${round(now.xpPerActiveDay)} on a usual day.` : '',
+        now.returnCount >= EVIDENCE_FLOOR && now.returnXp !== null ? `Your first day back after a break averaged ${round(now.returnXp)} XP, against ${round(now.xpPerActiveDay)} on a usual day.` : '',
         now.beforeGap ? `Before the longest break you were on ${nameOf(now.beforeGap)}.` : '',
       ],
+      /* The breaks themselves are facts. What they do to the day after takes more
+         returns than a two-week window usually holds, and this card once told
+         somebody "you come back strong" from two of them. */
       means:
-        now.returnXp !== null && now.returnXp < now.xpPerActiveDay * 0.8
-          ? "This suggests restarting is the expensive part. You come back slower, so a shorter break saves more than pushing hard after one."
-          : now.returnXp !== null && now.returnXp > now.xpPerActiveDay * 1.2
-            ? "You come back strong, which suggests the breaks aren't hurting your sessions. What they cost you is the days themselves."
-            : 'This suggests the lost days are the real cost here, since your sessions hold up once you restart.',
+        now.returnCount < EVIDENCE_FLOOR
+          ? `Each break takes days out of your week. With ${now.returnCount === 1 ? 'one return' : `${now.returnCount} returns`} to look at, it's too soon to say if they slow you down too.`
+          : now.returnXp !== null && now.returnXp < now.xpPerActiveDay * 0.8
+            ? 'This suggests restarting is the expensive part. You come back slower, so a shorter break saves more than pushing hard after one.'
+            : now.returnXp !== null && now.returnXp > now.xpPerActiveDay * 1.2
+              ? 'This suggests your first day back holds up, so what breaks cost is the days themselves.'
+              : 'This suggests the lost days are the real cost, since your first day back looks like any other.',
       action: missed
         ? `Put a 15-minute ${subject ? `${nameOf(subject)} ` : ''}task on ${missed.name}, so a break can't run past one day.`
         : 'Plan 15 minutes for the day after your next session.',
       watch: 'Longest gap under 3 days',
       weight: 90,
-    });
+    }, counted(now.activeDays), 'count');
   }
 
   /* Nothing moving either way. */
@@ -701,7 +738,7 @@ export function diagnose(now: Vitals, before: Vitals, nameOf: (id: string) => st
         : 'Tweak one thing, like the difficulty. Leave the rest alone.',
       watch: 'The one thing you changed',
       weight: 40,
-    });
+    }, worked);
   }
 
   return found.sort((a, b) => b.weight - a.weight);

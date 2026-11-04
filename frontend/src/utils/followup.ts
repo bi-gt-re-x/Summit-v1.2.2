@@ -820,7 +820,9 @@ export function summarise(reviews: Review[]): ReviewSummary {
         }.`
       : 'Nothing here to check yet.';
   } else {
-    headline = `${improved} of ${judged} worked.`;
+    /* "Worked" would claim the change did it. A before and after can only say which
+       way the figure went. */
+    headline = `${improved} of ${judged} moved the right way.`;
   }
 
   return { total: reviews.length, judged, improved, worsened, held, waiting, headline };

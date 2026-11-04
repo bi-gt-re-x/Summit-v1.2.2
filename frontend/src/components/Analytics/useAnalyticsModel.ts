@@ -817,8 +817,8 @@ export function useAnalyticsModel(data: AnalyticsData, subjects: SubjectIndex, h
   const weeks = useMemo(() => weekBlocks(all, 8), [all]);
   const thisWeek = useMemo(() => weekMove(weeks), [weeks]);
   const slump = useMemo(
-    () => findSlump({ blocks: weeks, all, tasks, nameOf }),
-    [all, nameOf, tasks, weeks],
+    () => findSlump({ blocks: weeks, all, tasks, nameOf, focus: plan.priority?.focus ?? null }),
+    [all, nameOf, plan.priority?.focus, tasks, weeks],
   );
   const moves = useMemo(
     () => trackChanges({ current: recent.current, previous: recent.previous, tasks, nameOf }),

@@ -28,6 +28,19 @@ import type { GrowthDay, Task } from '@/types';
 import { activeRate } from './activeDay';
 import type { BalanceShape, ClockShape, RhythmShape, WeekShape } from './behaviour';
 import { hourLabel } from './behaviour';
+import {
+  EVIDENCE_FLOOR,
+  EVIDENCE_LABEL,
+  compareMeans,
+  compareRates,
+  correlationEvidence,
+  counted,
+  hedge,
+  speaks,
+  type ClaimKind,
+  type EvidenceRead,
+  type EvidenceTier,
+} from './evidence';
 
 const num = (value: unknown) => Number(value) || 0;
 
@@ -37,19 +50,25 @@ const BOTH_FELL_AT = 10;
 // --------------------------------------------------------------------------
 // Evidence
 // --------------------------------------------------------------------------
-export type Strength = 'strong' | 'likely' | 'weak';
+/* A finding that can't claim anything isn't drawn at all, so the tiers a card can
+   wear are the three that can. See utils/evidence. */
+export type Strength = Exclude<EvidenceTier, 'insufficient'>;
 
 export const STRENGTH_TEXT: Record<Strength, string> = {
-  strong: 'Pretty sure',
-  likely: 'Likely',
-  weak: 'Just a hint',
+  reliable: EVIDENCE_LABEL.reliable,
+  emerging: EVIDENCE_LABEL.emerging,
+  preliminary: EVIDENCE_LABEL.preliminary,
 };
 
 export const STRENGTH_HUE: Record<Strength, string> = {
-  strong: 'green',
-  likely: 'blue',
-  weak: 'amber',
+  reliable: 'green',
+  emerging: 'blue',
+  preliminary: 'amber',
 };
+
+/** The tier a card wears, once `speaks` has said it can be drawn. */
+export const strengthOf = (found: EvidenceRead): Strength =>
+  found.tier === 'insufficient' ? 'preliminary' : found.tier;
 
 /**
  * Pearson's r over paired observations, with the pairs counted.
@@ -76,21 +95,6 @@ export function correlate(pairs: Array<[number, number]>): { r: number; n: numbe
   });
   const bottom = Math.sqrt(leftSq * rightSq);
   return { r: bottom === 0 ? 0 : top / bottom, n };
-}
-
-/**
- * How much weight a coefficient can carry, from its size and its sample.
- *
- * Both matter and neither alone is enough: r = 0.9 over four days is a
- * coincidence with a decimal point, and r = 0.2 over four hundred is real and
- * too small to act on. The thresholds are conventional rather than derived,
- * which is why they are stated in one place a reader can find and argue with.
- */
-export function strengthOf(r: number, n: number): Strength {
-  const size = Math.abs(r);
-  if (n >= 30 && size >= 0.55) return 'strong';
-  if (n >= 15 && size >= 0.32) return 'likely';
-  return 'weak';
 }
 
 // --------------------------------------------------------------------------
@@ -132,6 +136,8 @@ export interface Finding {
   /** What the figures suggest, and what to try next. */
   suggests: string;
   strength: Strength;
+  /** What sort of claim it is. Only arithmetic can say "because". */
+  claim: ClaimKind;
   tone: string;
 }
 
@@ -179,7 +185,7 @@ export function whyFindings(days: GrowthDay[], window = 30): Finding[] {
   const perDayWas = wasTotal / wasActive.length;
   const perDayChange = ((perDayNow - perDayWas) / perDayWas) * 100;
 
-  if (Math.abs(totalChange) >= 8) {
+  if (Math.abs(totalChange) >= 8 && Math.min(nowActive.length, wasActive.length) >= EVIDENCE_FLOOR) {
     const byDays = Math.abs(daysChange) >= Math.abs(perDayChange);
     /* Both fell by real amounts, so neither one is "the" cause. Picking the
        bigger of 23% and 24% told a reader who'd lost a quarter of their days
@@ -208,7 +214,8 @@ export function whyFindings(days: GrowthDay[], window = 30): Finding[] {
           : byDays
             ? "This suggests how often you work is the first thing to fix. Getting those days back will do more than pushing harder on the days you already work."
             : "This suggests showing up isn't the problem. The next opportunity is one longer session a week, on the task that matters most.",
-      strength: 'strong',
+      strength: 'reliable',
+      claim: 'arithmetic',
       tone: totalChange > 0 ? 'green' : 'amber',
     });
   }
@@ -224,7 +231,12 @@ export function whyFindings(days: GrowthDay[], window = 30): Finding[] {
   };
   const shareNow = weekendShare(now);
   const shareWas = weekendShare(before);
-  if (Math.abs(shareNow - shareWas) >= 6) {
+  const weekendDays = (rows: GrowthDay[]) =>
+    rows
+      .filter((day) => [0, 6].includes(new Date(`${day.date}T00:00:00`).getDay()))
+      .map((day) => num(day.xp_earned));
+  const weekendRead = compareMeans(weekendDays(now), weekendDays(before));
+  if (Math.abs(shareNow - shareWas) >= 6 && speaks(weekendRead)) {
     out.push({
       id: 'why-weekend',
       headline:
@@ -234,11 +246,14 @@ export function whyFindings(days: GrowthDay[], window = 30): Finding[] {
       detail: `Weekends made up ${Math.round(shareNow)}% of your XP in the last ${window} days, compared with ${Math.round(
         shareWas,
       )}% before.`,
-      suggests:
+      suggests: hedge(
         shareNow > shareWas
           ? "This suggests your weeks are leaving work for later. If weekends are simply when you've got time, that's fine. If you're catching up, move one task back to midweek."
           : "This suggests weekends are turning into rest, or slipping away. If you want them off, great. If you don't, plan one task for Saturday.",
-      strength: now.length >= 28 ? 'likely' : 'weak',
+        weekendRead.tier,
+      ),
+      strength: strengthOf(weekendRead),
+      claim: 'before-after',
       tone: 'blue',
     });
   }
@@ -267,14 +282,19 @@ export function whyFindings(days: GrowthDay[], window = 30): Finding[] {
   };
   if (spreadNow !== null && spreadWas !== null && Math.abs(spreadNow - spreadWas) >= 0.15) {
     const steadier = spreadNow < spreadWas;
+    const spreadRead = counted(Math.min(activeOf(now).length, activeOf(before).length));
     out.push({
       id: 'why-variance',
       headline: steadier ? 'Your days are evening out' : 'Your days are swinging more',
       detail: `Your biggest days earn about ${ends(now).high} XP and your smallest about ${ends(now).low}. Before, it was ${ends(before).high} and ${ends(before).low}.`,
-      suggests: steadier
-        ? "This suggests you've got a routine that doesn't depend on the day going well. Now you can raise the floor: add one small task to your smallest days."
-        : "This suggests you're working in bursts. They feel productive, but they're hard to plan around. A small task on your light days would smooth it out.",
-      strength: 'likely',
+      suggests: hedge(
+        steadier
+          ? "This suggests you've got a routine that doesn't depend on the day going well. Now you can raise the floor: add one small task to your smallest days."
+          : "This suggests you're working in bursts. They feel productive, but they're hard to plan around. A small task on your light days would smooth it out.",
+        spreadRead.tier,
+      ),
+      strength: strengthOf(spreadRead),
+      claim: 'before-after',
       tone: steadier ? 'green' : 'amber',
     });
   }
@@ -315,10 +335,13 @@ export function howFindings(
       mean(rows.map((day) => num(day.xp_earned) / Math.max(1, num(day.focus_minutes))));
     const shortRate = perMinute(short);
     const longRate = perMinute(long);
-    const { r, n } = correlate(
-      focusDays.map((day) => [num(day.focus_minutes), num(day.xp_earned)] as [number, number]),
+    /* The comparison the sentence makes: minutes earned on the short third of days
+       against the long third. Not `r`, which says something else entirely. */
+    const sessionRead = compareMeans(
+      short.map((day) => num(day.xp_earned) / Math.max(1, num(day.focus_minutes))),
+      long.map((day) => num(day.xp_earned) / Math.max(1, num(day.focus_minutes))),
     );
-    out.push({
+    if (speaks(sessionRead)) out.push({
       id: 'how-session',
       headline: `Your ${longRate >= shortRate ? 'longer' : 'shorter'} focus days earn more per minute`,
       detail: `Over ${focusDays.length.toLocaleString()} days, days with the ${
@@ -333,10 +356,14 @@ export function howFindings(
       suggests:
         Math.max(longRate, shortRate) / Math.max(0.0001, Math.min(longRate, shortRate)) >= 3
           ? "A gap this big is mostly work you didn't put on the timer, so don't read much into it. Time your sessions for a week and this will get more reliable."
-          : longRate >= shortRate
-            ? 'This suggests you need time to warm up. Protect a long block for your hardest work, and keep small tasks for the gaps.'
-            : 'This suggests you run out of steam on long days. Try splitting them into two sittings with a real break between.',
-      strength: strengthOf(r, n),
+          : hedge(
+              longRate >= shortRate
+                ? 'This suggests you need time to warm up, or that long days are the ones with bigger tasks. Try protecting a long block for your hardest work and see if it holds.'
+                : 'This suggests long days earn less a minute, which could be running out of steam or could be slower work. Try splitting one into two sittings and see if it changes.',
+              sessionRead.tier,
+            ),
+      strength: strengthOf(sessionRead),
+      claim: 'correlation',
       tone: 'green',
     });
   }
@@ -349,7 +376,9 @@ export function howFindings(
       (list.filter((task) => task.status === 'done').length / list.length) * 100;
     const scheduled = rate(withDate);
     const spontaneous = rate(without);
-    if (Math.abs(scheduled - spontaneous) >= 5) {
+    const finishedOf = (list: Task[]) => list.filter((task) => task.status === 'done').length;
+    const dateRead = compareRates(finishedOf(withDate), withDate.length, finishedOf(without), without.length);
+    if (Math.abs(scheduled - spontaneous) >= 5 && speaks(dateRead)) {
       out.push({
         id: 'how-scheduled',
         headline: `Tasks with a due date are ${pct(scheduled - spontaneous)} ${
@@ -358,11 +387,14 @@ export function howFindings(
         detail: `You finished ${Math.round(scheduled)}% of ${withDate.length} dated tasks and ${Math.round(
           spontaneous,
         )}% of ${without.length} without a date.`,
-        suggests:
+        suggests: hedge(
           scheduled > spontaneous
-            ? 'This suggests a date is what makes you follow through. Put one on anything you really want finished.'
-            : "This suggests dates aren't helping. You may be saving them for the hard stuff. Try fewer of them and see if the hard tasks still slip.",
-        strength: strengthOf(0.4, Math.min(withDate.length, without.length)),
+            ? 'This suggests dated tasks get finished more often, though you may only date the ones you already mean to do. Put a date on one task you keep avoiding and see if it moves.'
+            : "This suggests dates aren't the difference, and you may be saving them for the hard stuff. Try fewer of them and see if the hard tasks still slip.",
+          dateRead.tier,
+        ),
+        strength: strengthOf(dateRead),
+        claim: 'correlation',
         tone: 'violet',
       });
     }
@@ -377,42 +409,53 @@ export function howFindings(
       (list.filter((task) => task.status === 'done').length / list.length) * 100;
     const hard = rate(high);
     const easy = rate(low);
-    if (Math.abs(hard - easy) >= 8) {
+    const doneOf = (list: Task[]) => list.filter((task) => task.status === 'done').length;
+    const priorityRead = compareRates(doneOf(high), high.length, doneOf(low), low.length);
+    if (Math.abs(hard - easy) >= 8 && speaks(priorityRead)) {
       out.push({
         id: 'how-difficulty',
         headline: hard >= easy ? 'You follow through on what you mark high priority' : 'Your high-priority tasks are slipping',
         detail: `You finish ${Math.round(hard)}% of high-priority tasks and ${Math.round(
           easy,
         )}% of low-priority ones.`,
-        suggests:
+        suggests: hedge(
           hard >= easy
             ? 'This suggests your priorities are honest. Save that label for the few tasks that really need it, so it keeps working.'
             : "This suggests the label isn't changing what you do. Start tomorrow with one high-priority task before anything else.",
-        strength: strengthOf(0.4, Math.min(high.length, low.length)),
+          priorityRead.tier,
+        ),
+        strength: strengthOf(priorityRead),
+        claim: 'correlation',
         tone: 'amber',
       });
     }
   }
 
   // ---- the window it happens in ------------------------------------------
-  if (clock.coreWindow && clock.coreWindow.share >= 45) {
+  const windowRead = counted(tasks.filter((task) => task.status === 'done').length);
+  if (clock.coreWindow && clock.coreWindow.share >= 45 && speaks(windowRead)) {
     out.push({
       id: 'how-window',
       headline: `You get most done between ${hourLabel(
         clock.coreWindow.from,
       )} and ${hourLabel(clock.coreWindow.to)}`,
       detail: `${clock.coreWindow.share}% of your tasks are finished in this window. The rest are spread across the day.`,
-      suggests:
+      suggests: hedge(
         clock.coreWindow.share >= 60
           ? 'This suggests this is your real working time. Put your hardest task here and guard it from everything else.'
           : "This suggests a loose rhythm, with plenty of work outside it. Try your hardest task in this window for a week and compare how it goes.",
-      strength: clock.coreWindow.share >= 60 ? 'strong' : 'likely',
+        windowRead.tier,
+      ),
+      strength: strengthOf(windowRead),
+      claim: 'count',
       tone: 'blue',
     });
   }
 
   // ---- what a gap costs ---------------------------------------------------
-  if (rhythm.gapCount > 0 && rhythm.span >= 60) {
+  /* Only with enough returns to compare. Two breaks can't say what a break does to
+     anybody, and this card used to draw a conclusion from one. */
+  if (rhythm.gapCount >= EVIDENCE_FLOOR && rhythm.span >= 60) {
     /* The first working day after 3+ days off, against every other working day.
        This used to say "the first day back is usually slower" whatever the
        record showed, which made it a claim about people in general. */
@@ -428,11 +471,12 @@ export function howFindings(
       (idle >= 3 ? firsts : others).push(xp);
       idle = 0;
     });
-    const backXp = firsts.length >= 2 ? mean(firsts) : null;
-    const usualXp = others.length >= 5 ? mean(others) : null;
-    const slower = backXp !== null && usualXp !== null && backXp < usualXp * 0.85;
-    const stronger = backXp !== null && usualXp !== null && backXp > usualXp * 1.15;
-    out.push({
+    const gapRead = compareMeans(firsts, others);
+    const backXp = firsts.length >= EVIDENCE_FLOOR ? mean(firsts) : null;
+    const usualXp = others.length >= EVIDENCE_FLOOR ? mean(others) : null;
+    const slower = speaks(gapRead) && backXp !== null && usualXp !== null && backXp < usualXp * 0.85;
+    const stronger = speaks(gapRead) && backXp !== null && usualXp !== null && backXp > usualXp * 1.15;
+    if (backXp !== null) out.push({
       id: 'how-gaps',
       headline: slower
         ? 'Breaks cost you more than the days you miss'
@@ -444,12 +488,16 @@ export function howFindings(
           ? ` Your first day back averaged ${Math.round(backXp).toLocaleString()} XP, vs. ${Math.round(usualXp).toLocaleString()} on a usual day.`
           : ''
       }`,
-      suggests: slower
-        ? 'This suggests restarting is the costly part. When a break is coming, leave yourself one small, easy task to come back to.'
-        : stronger
-          ? "This suggests rest isn't hurting your work. Breaks only cost you the days themselves, so plan them on purpose and they won't cost much."
-          : "This suggests the lost days are the only real cost. Keep breaks short, and don't worry about making up for them when you're back.",
-      strength: rhythm.gapCount >= 4 ? 'likely' : 'weak',
+      suggests: hedge(
+        slower
+          ? 'This suggests restarting is the costly part. When a break is coming, leave yourself one small, easy task to come back to.'
+          : stronger
+            ? 'This suggests your first day back holds up, so breaks only cost you the days themselves. Plan them on purpose.'
+            : 'This suggests your first day back looks like any other, so the lost days are the only real cost. Keep breaks short.',
+        speaks(gapRead) ? gapRead.tier : counted(firsts.length).tier,
+      ),
+      strength: strengthOf(speaks(gapRead) ? gapRead : counted(firsts.length)),
+      claim: 'correlation',
       tone: 'pink',
     });
   }
@@ -467,6 +515,8 @@ export interface Win {
   /** What it suggests, and what to do with it. */
   suggests: string;
   tone: string;
+  /** How much it can claim. Absent on a plain count, like a streak. */
+  strength?: Strength;
 }
 
 /**
@@ -502,12 +552,16 @@ export function whatsWorking(
       if (b <= 0 || a <= b) return;
       const change = ((a - b) / b) * 100;
       if (change < 5) return;
+      /* A rise inside the ordinary swing of the days isn't a win. */
+      const found = compareMeans(now.map(read), before.map(read));
+      if (!speaks(found)) return;
       out.push({
         id,
         text: `${label} is up ${pct(change)} on the previous ${window} days`,
         figure: `${format(b)} → ${format(a)}`,
-        suggests: next,
+        suggests: hedge(next, found.tier),
         tone,
+        strength: strengthOf(found),
       });
     };
 
@@ -539,19 +593,29 @@ export function whatsWorking(
     const rate = activeRate;
     const nowRate = rate(now);
     const wasRate = rate(before);
-    if (nowRate - wasRate >= 4) {
+    const daysRead = compareRates(
+      Math.round((nowRate / 100) * now.length),
+      now.length,
+      Math.round((wasRate / 100) * before.length),
+      before.length,
+    );
+    if (nowRate - wasRate >= 4 && speaks(daysRead)) {
       out.push({
         id: 'win-consistency',
         text: `You're working on more days`,
         figure: `${Math.round(wasRate)}% → ${Math.round(nowRate)}% of days worked`,
-        suggests: 'This suggests showing up is becoming less of a problem. The next opportunity is getting more out of each session.',
+        suggests: hedge(
+          'This suggests showing up is becoming less of a problem. The next opportunity is getting more out of each session.',
+          daysRead.tier,
+        ),
         tone: 'amber',
+        strength: strengthOf(daysRead),
       });
     }
   }
 
   habits
-    .filter((habit) => habit.strength === 'strong' && habit.streak >= 3)
+    .filter((habit) => habit.strength === 'strong' && habit.streak >= EVIDENCE_FLOOR)
     .slice(0, 2)
     .forEach((habit) => {
       out.push({
@@ -576,6 +640,8 @@ export interface Relationship {
   r: number;
   n: number;
   strength: Strength;
+  /** Whether the two really move together. When false, `reading` says so. */
+  clear: boolean;
   /** What it means, hedged. Never a mechanism. */
   reading: string;
   /** The scatter, already normalised to 0-1 on both axes. */
@@ -610,19 +676,19 @@ export function relationships(days: GrowthDay[], tasks: Task[], week: WeekShape)
   ) => {
     if (raw.length < 8) return;
     const { r, n } = correlate(raw);
-    const strength = strengthOf(r, n);
+    const found = correlationEvidence(r, n);
     out.push({
       id,
       pair,
       r: Math.round(r * 100) / 100,
       n,
-      strength,
-      reading:
-        strength === 'weak'
-          ? `No clear link yet (${n} days so far).`
-          : r >= 0
-            ? positive
-            : negative,
+      strength: strengthOf(found),
+      clear: speaks(found),
+      reading: !speaks(found)
+        ? `No clear link yet (${n} days so far).`
+        : r >= 0
+          ? positive
+          : negative,
       points: normalise(raw),
       tone,
     });
@@ -639,8 +705,8 @@ export function relationships(days: GrowthDay[], tasks: Task[], week: WeekShape)
     active
       .filter((day) => num(day.focus_minutes) > 0)
       .map((day) => [num(day.focus_minutes), num(day.xp_earned)] as [number, number]),
-    'More focus time means more XP.',
-    "More focus time isn't bringing more XP. Some of it isn't turning into finished tasks.",
+    'Days with more focus tend to have more XP.',
+    "Days with more focus tend to have less XP. Some of that time may not be turning into finished tasks.",
     'green',
   );
 
@@ -648,8 +714,8 @@ export function relationships(days: GrowthDay[], tasks: Task[], week: WeekShape)
     'rel-tasks-xp',
     'Tasks finished and XP',
     active.map((day) => [num(day.tasks_completed), num(day.xp_earned)] as [number, number]),
-    'More tasks done means more XP.',
-    'A few large tasks make up most of your XP.',
+    'Days with more tasks have more XP. XP comes from tasks, so this one is expected.',
+    'Days with fewer tasks have more XP, so a few large tasks may make up most of it.',
     'violet',
   );
 
@@ -673,7 +739,9 @@ export function relationships(days: GrowthDay[], tasks: Task[], week: WeekShape)
     const values = weekPairs.map(([, xp]) => xp);
     const top = Math.max(...values);
     const bottom = Math.min(...values);
-    out.push({
+    /* The weakest weekday's count, since every average has to hold up. */
+    const dayRead = counted(Math.min(...week.stats.filter((stat) => stat.days > 0).map((stat) => stat.days)));
+    if (speaks(dayRead)) out.push({
       id: 'rel-weekday',
       pair: 'Day of the week and XP',
       r: 0,
@@ -683,12 +751,11 @@ export function relationships(days: GrowthDay[], tasks: Task[], week: WeekShape)
       // it badly, because each of those points is an average over dozens of
       // occurrences rather than a single reading.
       n: week.stats.reduce((sum, stat) => sum + stat.days, 0),
-      strength: top > 0 && bottom / top <= 0.5 ? 'strong' : 'likely',
+      strength: strengthOf(dayRead),
+      clear: true,
       reading:
         top > 0 && bottom / top <= 0.5
-          ? `Your best weekday has ${(top / Math.max(bottom, 1)).toFixed(
-              1,
-            )}× the XP of your worst. Plan around that.`
+          ? `Your best weekday has ${(top / Math.max(bottom, 1)).toFixed(1)}× the XP of your worst.`
           : 'Your weekdays are fairly even.',
       points: normalise(weekPairs),
       tone: 'amber',
@@ -713,8 +780,8 @@ export function relationships(days: GrowthDay[], tasks: Task[], week: WeekShape)
     'rel-planning',
     'Tasks planned and tasks done',
     [...byWeek.values()].map((entry) => [entry.dated, entry.done] as [number, number]),
-    'Weeks with more scheduled tasks are weeks you finish more.',
-    "Scheduling more tasks doesn't mean you finish more.",
+    'Weeks with more scheduled tasks tend to be weeks you finish more.',
+    "Weeks with more scheduled tasks don't tend to be weeks you finish more.",
     'pink',
   );
 

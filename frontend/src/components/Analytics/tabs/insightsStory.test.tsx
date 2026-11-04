@@ -102,7 +102,7 @@ describe('what changed', () => {
           changes: [
             change({ id: 'a', kind: 'gain' }),
             change({ id: 'b', kind: 'problem', text: 'Your hardest tasks go badly more often.' }),
-            change({ id: 'c', kind: 'pattern', text: 'You rate your work higher before 5pm.', strength: 'likely' }),
+            change({ id: 'c', kind: 'pattern', text: 'You rate your work higher before 5pm.', strength: 'emerging' }),
           ],
         })}
         subjects={subjects}
@@ -112,7 +112,7 @@ describe('what changed', () => {
     expect(screen.getByText('New problem')).toBeInTheDocument();
     expect(screen.getByText('Pattern')).toBeInTheDocument();
     // The chip only where the source graded itself.
-    expect(screen.getByText('Likely')).toBeInTheDocument();
+    expect(screen.getByText('Emerging pattern')).toBeInTheDocument();
   });
 
   it('says so plainly when nothing has moved', () => {
@@ -129,7 +129,7 @@ describe('what changed', () => {
   it('sits above the evidence groups', () => {
     draw(<InsightsTab model={model()} subjects={subjects} />);
     const changed = screen.getByText('What changed');
-    const first = screen.getByText('Why it happens');
+    const first = screen.getByText('What goes together');
     expect(positionOf(changed)).toBeLessThan(positionOf(first));
   });
 });
@@ -147,8 +147,8 @@ describe('what the tab no longer draws', () => {
     expect(screen.queryByRole('heading', { name: new RegExp(`^${title}`) })).not.toBeInTheDocument();
   });
 
-  it('opens why it happens, right under what changed', () => {
+  it('opens what goes together, right under what changed', () => {
     draw(<InsightsTab model={model()} subjects={subjects} />);
-    expect(screen.getByRole('button', { name: /Why it happens/ })).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.getByRole('button', { name: /What goes together/ })).toHaveAttribute('aria-expanded', 'true');
   });
 });

@@ -99,15 +99,15 @@ function energyNext(energy: LowTimes['energy'], output: LowTimes['output']): str
   const where = slot(energy.worst_part, energy.worst_day);
   if (!where) return null;
   if (energy.worst_part && energy.worst_part === output.worst_part) {
-    return `Your energy and your work drop at the same time, which suggests your plan is asking too much ${slot(energy.worst_part, null)}. Move your hardest task out of it, and keep something easy there.`;
+    return `Your energy and your work drop at the same time, which may mean your plan is asking too much ${slot(energy.worst_part, null)}. Move your hardest task out of it, and keep something easy there.`;
   }
-  return `This suggests you should plan lighter work ${where}. Save your hardest task for another time, and keep something easy ready.`;
+  return `This may mean ${where} is a poor time for your hardest work. Try keeping something easy ready and see if it helps.`;
 }
 
 function outputNext(output: LowTimes['output']): string | null {
   const where = slot(output.worst_part, output.worst_day);
   if (!where) return null;
-  return `This suggests your plan doesn't fit how you work ${where}. Move your hardest task out of that time for a week, and see if your ratings change.`;
+  return `This may mean your plan doesn't fit how you work ${where}, though it can't say why. Move your hardest task out of that time for a week, and see if your ratings change.`;
 }
 
 export function LowTimesPanel({ low, windowDays }: { low: LowTimes; windowDays: number }) {

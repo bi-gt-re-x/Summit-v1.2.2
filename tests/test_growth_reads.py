@@ -28,7 +28,9 @@ def test_a_topic_whose_ratings_climbed_is_named():
              for i in range(10)]
     found = _items(growth_reads.reads(tasks, TODAY, 90))
     item = found['topic:competition-math:recursive-counting']
-    assert item['title'] == 'You improved at recursive counting'
+    # Five sessions on each side: a preliminary signal, so it says "may".
+    assert item['title'] == 'You may be improving at recursive counting'
+    assert item['evidence_label'] == 'Preliminary signal'
     assert item['detail'] == 'Rated 2.0 → 4.0 over your last 10 sessions (Competition Mathematics).'
     assert item['tone'] == 'good'
 
@@ -37,7 +39,22 @@ def test_a_topic_whose_ratings_fell_goes_under_watch_out():
     tasks = [_task(60 - 4 * i, 16, 'AIME geometry set', 'mathematics', 4 if i < 4 else 2) for i in range(8)]
     result = growth_reads.reads(tasks, TODAY, 90)
     watch = next(group for group in result['groups'] if group['id'] == 'watch')
-    assert watch['items'][0]['title'] == 'Geometry is slipping'
+    assert watch['items'][0]['title'] == 'Geometry may be slipping'
+
+
+def test_only_a_long_run_gets_to_say_it_flat_out():
+    tasks = [_task(120 - i * 2, 16, 'AMC 10 recursive counting set', 'mathematics', 2 + (i % 2) if i < 30 else 4 + (i % 2))
+             for i in range(60)]
+    item = _items(growth_reads.reads(tasks, TODAY, 130))['topic:competition-math:recursive-counting']
+    assert item['title'] == 'You improved at recursive counting'
+    assert item['evidence_label'] == 'Potentially reliable'
+
+
+def test_ratings_that_only_wobble_say_nothing():
+    swing = [1, 5, 2, 4, 1, 5, 2, 4]
+    tasks = [_task(60 - 4 * i, 16, 'AMC 10 recursive counting set', 'mathematics', rating)
+             for i, rating in enumerate(swing + [2, 5, 1, 5, 2, 5, 1, 5])]
+    assert 'topic:competition-math:recursive-counting' not in _items(growth_reads.reads(tasks, TODAY, 90))
 
 
 def test_harder_work_with_ratings_held_counts_as_growth():

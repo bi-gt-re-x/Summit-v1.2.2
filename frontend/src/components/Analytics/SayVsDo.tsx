@@ -34,12 +34,9 @@ import type {
 import { Panel, PanelNote } from './charts';
 import { SaidVsDid } from './SaidVsDid';
 import { Suggestion } from './Suggestion';
+import { EVIDENCE_LABEL } from '@/utils/evidence';
 
-const CONFIDENCE: Record<Confidence, string> = {
-  early: 'Early read',
-  pattern: 'Pattern',
-  solid: 'Solid',
-};
+const CONFIDENCE: Record<Confidence, string> = EVIDENCE_LABEL;
 
 const BAND_ICON = { rough: Frown, okay: Meh, good: Laugh } as const;
 
@@ -238,10 +235,14 @@ function MoodHero({ mood }: { mood: MoodVsOutput }) {
               {plural(usual.tasks, 'task')} (the middle of your last {usual.days} active days).
             </li>
             <li>
-              A comparison needs {mood.min_days} days on each side, and a gap under {mood.small_change}%
-              counts as about the same. Today gets added once it's done.
+              A comparison needs {mood.min_days} days on each side and a gap bigger than your days' usual
+              swing. A gap under {mood.small_change}% counts as about the same. Today gets added once it's done.
             </li>
-            <li>Early read is under 6 days, a pattern is 6 to 11, solid is 12 or more.</li>
+            <li>
+              Under 4 days on either side is insufficient evidence, 4 to 9 is a preliminary signal, 10 to 29 is
+              an emerging pattern, and 30 or more is potentially reliable.
+            </li>
+            <li>However many days there are, this shows what goes together. It can't say which one causes the other.</li>
           </ul>
         </PanelNote>
       }
@@ -293,10 +294,10 @@ function FeelingsPanel({ feelings, small, recovery, energy, energyReady, weekday
                 <span className="ax-sv-feeling-head">
                   <b>{row.label}</b>
                   {row.words && row.words.length > 0 && <small>{row.words.join(', ')}</small>}
-                  <Sure level={row.confidence ?? 'early'} days={row.days} />
+                  <Sure level={row.confidence ?? 'insufficient'} days={row.days} />
                 </span>
                 <span className={`ax-sv-feeling-that is-${tone}`}>
-                  That day: {changeWords(row.change, small)}{' '}
+                  That day: {row.clear === false ? 'no clear difference' : changeWords(row.change, small)}{' '}
                   <small>({row.tasks_avg} vs {row.other_avg})</small>
                 </span>
                 <span className="ax-sv-feeling-next">
@@ -310,7 +311,7 @@ function FeelingsPanel({ feelings, small, recovery, energy, energyReady, weekday
       {building.length > 0 && (
         <p className="ax-sv-building">
           Still collecting:{' '}
-          {building.map((row) => `${row.label.toLowerCase()} (${row.days} of ${row.need ?? 3} days)`).join(', ')}.
+          {building.map((row) => `${row.label.toLowerCase()} (${row.days} of ${row.need ?? 4} days)`).join(', ')}.
         </p>
       )}
       {(recovery || energyReady || weekdays.length > 0) && (

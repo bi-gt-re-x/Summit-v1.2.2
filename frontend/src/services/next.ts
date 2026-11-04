@@ -71,6 +71,68 @@ export interface Plan {
   planned: number;
   /** The single best suggestion, whatever it costs — the dashboard's line. */
   top: NextAction | null;
+  /** Where the time should go and why. backend/tracking/priority.py. */
+  priority?: PriorityDecision;
+}
+
+/** How pressing things are: a date inside two weeks, one that's behind, or neither. */
+export type PriorityMode = 'none' | 'balance' | 'push' | 'crunch';
+
+export interface PriorityAllotment {
+  goal_id: string;
+  title: string;
+  minutes: number;
+  /** The next open step, by the reader's own title. */
+  step: string | null;
+  days_left: number | null;
+  state: string;
+  percent: number;
+  /** Checkpoints that come after this one. */
+  waiting: number;
+  /** The weakest part of the goal to spend it on, when the record can name one. */
+  best_use: string | null;
+}
+
+export interface PriorityGoal {
+  goal_id: string;
+  title: string;
+  days_left: number | null;
+  state: string;
+  percent: number;
+  priority: number;
+  gets_time: boolean;
+  needs: number | null;
+  pace: number | null;
+  /** Percent of the goal a session has moved so far, when there's enough to say. */
+  gain: number | null;
+  gain_evidence: string | null;
+  matters: string;
+}
+
+export interface PriorityDecision {
+  mode: PriorityMode;
+  headline: string | null;
+  warning?: string | null;
+  /** Why nothing could be decided, when `mode` is 'none'. */
+  note?: string | null;
+  focus: {
+    goal_id: string;
+    title: string;
+    days_left: number | null;
+    percent: number;
+    next: string | null;
+    state: string;
+    subject: string | null;
+  } | null;
+  until: string | null;
+  allocation: PriorityAllotment[];
+  /** Goals that move anyway, because they're the same work. */
+  also?: string[];
+  answers: { key: string; question: string; answer: string }[];
+  /** What to deliberately leave alone, and why. */
+  not_now: { key: string; title: string; why: string }[];
+  counters: number;
+  goals: PriorityGoal[];
 }
 
 export interface NextResult {

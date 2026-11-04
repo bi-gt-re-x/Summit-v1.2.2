@@ -47,7 +47,7 @@ from statistics import median
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
 
 from backend.config.subjects import BY_ID
-from backend.tracking import topics
+from backend.tracking import evidence, topics
 
 #: Dated entries before a trend is said at all, and before it stops being an
 #: early read. The same gates as frontend/src/utils/records.ts (`NEED`).
@@ -691,7 +691,10 @@ def by_subject(records: Sequence[Dict[str, Any]]) -> List[Dict[str, Any]]:
 
 
 def _stalled(record: Dict[str, Any]) -> bool:
-    return (record['entries'] >= NEED_TREND and record['after_best'] >= 1
+    """A best that hasn't moved, with enough tries since to say so. One or two tries
+    that fell short are a bad day, and "try a different kind of session" off the back
+    of them is advice from nothing (backend/tracking/evidence.py)."""
+    return (record['entries'] >= NEED_TREND and record['after_best'] >= evidence.FLOOR
             and record['days_since_best'] >= STALL_DAYS)
 
 

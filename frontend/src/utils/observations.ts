@@ -41,6 +41,7 @@
  * `completed_at`, `met_deadline` or `priority`, and nothing else.
  */
 import { DIFFICULTY_WORDS } from './ratings';
+import { EVIDENCE_FLOOR, EVIDENCE_LABEL } from './evidence';
 
 /**
  * The columns a finding is counted off, and nothing else.
@@ -64,11 +65,10 @@ export interface Observable {
 /**
  * Observations a finding needs before it is said out loud at all.
  *
- * Five. Below it there is no finding of any strength — a four-task run that is
- * all evenings is a week, not a habit, and saying so at "Early observation"
- * would still be saying it.
+ * The evidence floor, shared with every other claim on the page. Below it there
+ * is no finding of any strength. See utils/evidence.
  */
-export const OBSERVATION_FLOOR = 5;
+export const OBSERVATION_FLOOR = EVIDENCE_FLOOR;
 
 export type Confidence = 'low' | 'moderate' | 'high';
 
@@ -81,9 +81,9 @@ export type Confidence = 'low' | 'moderate' | 'high';
  * may tend to…", which is the register that makes a reader stop reading.
  */
 export const CONFIDENCE_LABEL: Record<Confidence, string> = {
-  low: 'Early hint',
-  moderate: 'Pattern forming',
-  high: 'Clear pattern',
+  low: EVIDENCE_LABEL.preliminary,
+  moderate: EVIDENCE_LABEL.emerging,
+  high: EVIDENCE_LABEL.reliable,
 };
 
 /**
@@ -118,13 +118,13 @@ export interface Observation {
 /**
  * Both a sample and an effect, or it does not move up a tier.
  *
- * The thresholds are deliberately steep. `high` means twenty observations
+ * The thresholds are deliberately steep. `high` means thirty observations
  * *and* a strong effect, which on an account doing a few tasks a day is a
- * month of work — and that is the point: "Established pattern" should be
+ * month of work — and that is the point: "Potentially reliable" should be
  * something a reader earns rather than something they see in week one.
  */
 function confidenceFor(n: number, strength: number): Confidence {
-  if (n >= 20 && strength >= 0.6) return 'high';
+  if (n >= 30 && strength >= 0.6) return 'high';
   if (n >= 10 && strength >= 0.4) return 'moderate';
   return 'low';
 }

@@ -53,7 +53,8 @@
 import type { GrowthDay, Task } from '@/types';
 import type { Habit } from './habits';
 import { stemOf } from './habits';
-import type { Strength } from './insight';
+import { strengthOf, type Strength } from './insight';
+import { compareMeans, speaks } from './evidence';
 import { mean, pctChange } from './recent';
 
 /** Fewest tasks on each side of a split before it is read. */
@@ -83,12 +84,6 @@ function hourOf(task: Task): number | null {
 
 const dayOf = (task: Task) => String(task.completed_at ?? '').slice(0, 10);
 
-function strengthFor(smaller: number, lift: number): Strength {
-  if (smaller >= 20 && Math.abs(lift) >= 15) return 'strong';
-  if (smaller >= 12 && Math.abs(lift) >= 12) return 'likely';
-  return 'weak';
-}
-
 /** This week's completions and last week's. */
 export interface HabitWeek {
   now: number;
@@ -104,6 +99,8 @@ export interface HabitCondition {
   /** Signed percentage against the habit's other tasks. */
   lift: number;
   basis: string;
+  /** How much the comparison can claim. See utils/evidence. */
+  strength: Strength;
 }
 
 /** What the habit is associated with, and on which measure. */
@@ -147,12 +144,13 @@ function conditionFor(mine: Task[], focusByDay: Map<string, number>): HabitCondi
 
   const compare = (label: string, inside: Task[], outside: Task[], basis: string) => {
     if (inside.length < MIN_GROUP || outside.length < MIN_GROUP) return;
-    const lift = pctChange(
-      mean(inside.map((task) => num(task.execution))),
-      mean(outside.map((task) => num(task.execution))),
-    );
+    const insideRatings = inside.map((task) => num(task.execution));
+    const outsideRatings = outside.map((task) => num(task.execution));
+    const lift = pctChange(mean(insideRatings), mean(outsideRatings));
     if (lift === null || lift < MIN_LIFT) return;
-    found.push({ label, lift, basis });
+    const read = compareMeans(insideRatings, outsideRatings);
+    if (!speaks(read)) return;
+    found.push({ label, lift, basis, strength: strengthOf(read) });
   };
 
   // ---- The day's focus, in bands ------------------------------------------
@@ -223,16 +221,16 @@ function effectFor(
   const othersRated = others.filter(isRated);
 
   if (mineRated.length >= MIN_GROUP && othersRated.length >= MIN_GROUP) {
-    const lift = pctChange(
-      mean(mineRated.map((task) => num(task.execution))),
-      mean(othersRated.map((task) => num(task.execution))),
-    );
-    if (lift !== null && Math.abs(lift) >= MIN_LIFT) {
+    const mineRatings = mineRated.map((task) => num(task.execution));
+    const otherRatings = othersRated.map((task) => num(task.execution));
+    const lift = pctChange(mean(mineRatings), mean(otherRatings));
+    const read = compareMeans(mineRatings, otherRatings);
+    if (lift !== null && Math.abs(lift) >= MIN_LIFT && speaks(read)) {
       return {
         lift,
         measure: 'how the work goes',
         basis: `${mineRated.length} rated tasks here vs. ${othersRated.length} others.`,
-        strength: strengthFor(Math.min(mineRated.length, othersRated.length), lift),
+        strength: strengthOf(read),
       };
     }
     return null;
@@ -248,12 +246,13 @@ function effectFor(
     mean(on.map((day) => num(day.tasks_completed))),
     mean(off.map((day) => num(day.tasks_completed))),
   );
-  if (lift === null || Math.abs(lift) < MIN_LIFT) return null;
+  const read = compareMeans(on.map((day) => num(day.tasks_completed)), off.map((day) => num(day.tasks_completed)));
+  if (lift === null || Math.abs(lift) < MIN_LIFT || !speaks(read)) return null;
   return {
     lift,
     measure: 'tasks finished a day',
     basis: `${on.length} days with it vs. ${off.length} days without.`,
-    strength: strengthFor(Math.min(on.length, off.length), lift),
+    strength: strengthOf(read),
   };
 }
 

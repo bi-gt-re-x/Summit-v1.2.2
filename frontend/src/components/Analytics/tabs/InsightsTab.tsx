@@ -180,7 +180,7 @@ export function InsightsTab({
       {/* Why, straight under what. It's the tab's whole claim, so it opens. */}
       {insightsReady && (
         <section className="ax-section">
-          <PanelGroup title="Why it happens" note="What lines up with your best and worst work" defaultOpen>
+          <PanelGroup title="What goes together" note="What lines up with your best and worst work. These show a link, not a cause" defaultOpen>
             <div className="ax-grid ax-grid-halves-even">
               <WhyPanel
                 findings={why.slice(0, findings)}

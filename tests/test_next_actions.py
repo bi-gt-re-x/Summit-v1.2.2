@@ -449,12 +449,12 @@ def test_good_scores_and_old_scores_say_nothing():
 
 def test_a_reason_picked_again_and_again_comes_back_with_its_fix():
     rough = [task(status='done', subject='maths', execution=2, reason='unclear',
-                  completed_at=iso(back) + 'T12:00:00') for back in (1, 3, 5)]
+                  completed_at=iso(back) + 'T12:00:00') for back in (1, 3, 5, 7)]
     rough.append(task(status='done', subject='maths', execution=1, reason='no-time',
                       completed_at=iso(6) + 'T12:00:00'))
     item = first(plan(rough, budget=120), 'stuck')
     assert item['title'] == 'Next maths session: start with one worked example before you try one yourself'
-    assert item['because'].startswith('You picked "Did not know where to start" on 3 of your last 4 rough sessions.')
+    assert item['because'].startswith('You picked "Did not know where to start" on 4 of your last 5 rough sessions.')
 
 
 def test_a_near_date_leads_even_when_the_lens_leans_toward_overdue_work():

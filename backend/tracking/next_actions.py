@@ -49,7 +49,7 @@ from collections import Counter
 from datetime import date, datetime, timedelta
 from decimal import ROUND_HALF_UP, Decimal
 
-from backend.tracking import record, time_spent
+from backend.tracking import evidence, priority, record, time_spent
 from backend.tracking.goal_health import evidence_for, js_round, measure_of
 
 BUDGETS = (15, 30, 45, 60, 90, 120)
@@ -79,12 +79,13 @@ RECENT_DAYS = 14
 # time: a subject rated badly a year ago and fine since is not weak any more,
 # and reading every rating ever made named the same subject every single day.
 RATING_DAYS = 45
-# Rated tasks a subject needs inside RATING_DAYS to be called weak.
-RATED_FLOOR = 3
+# Rated tasks a subject needs inside RATING_DAYS to be called weak. Under this is
+# insufficient evidence (backend/tracking/evidence.py).
+RATED_FLOOR = evidence.FLOOR
 # A subject earning this much less than in the two weeks before is slipping.
 SLIP = 0.4
 # Tasks a subject needs in the two weeks before to be called slipping.
-SLIP_FLOOR = 3
+SLIP_FLOOR = evidence.FLOOR
 # A live goal with nothing finished toward it for this long has gone quiet.
 QUIET_DAYS = 10
 # How far the soft suggestions are shuffled each day, in weight. Enough to
@@ -541,7 +542,13 @@ def gather(tasks, goals, days, name_of, now, stamp, lens=None, daily_goal=None, 
         ratings.sort(key=lambda row: row['execution'])
         average = sum(row['execution'] for row in ratings) / len(ratings)
         worst = next((row for row in ratings if row['subject'] not in worked_today), None)
-        if worst and worst['execution'] < average - 0.3:
+        # Its ratings have to differ from the others' by more than their ordinary
+        # swing. A low average over a few tasks is often just a bad week.
+        weak_read = None
+        if worst:
+            others = [_num(task.get('execution')) for row in ratings if row is not worst for task in row['rated']]
+            weak_read = evidence.means([_num(task.get('execution')) for task in worst['rated']], others)
+        if worst and worst['execution'] < average - 0.3 and evidence.speaks(weak_read):
             lowest = min(worst['rated'], key=lambda task: (_num(task.get('execution')),
                                                            str(task.get('completed_at') or '')))
             found.append(_action(
@@ -859,14 +866,48 @@ def _deadline_row(read, name_of, slot):
         weight=1100 - min(left, record.DEADLINE_DAYS))
 
 
+def _focus_rows(decision, goals, tasks, now, name_of, sittings):
+    """The row each goal getting time leads with, keyed by goal id."""
+    slot = typical_minutes([task for task in tasks if task.get('status') == 'done']) or FALLBACK_TASK_MINUTES
+    by_id = {str(goal.get('id')): goal for goal in goals}
+    rows = {}
+    for allot in decision['allocation']:
+        goal = by_id.get(allot['goal_id'])
+        if goal is None:
+            continue
+        if allot['days_left'] is not None:
+            rows[allot['goal_id']] = _deadline_row(
+                record.read_goal(goal, tasks, now, allot['days_left'], sittings), name_of, slot)
+            continue
+        step = allot['step']
+        rows[allot['goal_id']] = _action(
+            id='focus-{}'.format(allot['goal_id']), kind='goal',
+            title='Do "{}" for {}'.format(step, allot['title']) if step else 'Plan the next step for {}'.format(allot['title']),
+            because='It has no date, but nothing else on your list comes ahead of it.',
+            minutes=allot['minutes'], goalId=allot['goal_id'], subject=allot['subject'], weight=800)
+    return rows
+
+
+def public_decision(decision):
+    """The decision as the page gets it, without the server's working rows."""
+    return {key: value for key, value in decision.items() if key != 'stakes'}
+
+
 def build_plan(tasks, goals, days, name_of, budget, now=None, stamp=None, lens=None,
-               daily_goal=None, best_streak=None, sittings=(), review=None, skills=(), checks=()):
-    """The candidates packed into `budget` minutes, and what did not fit."""
+               daily_goal=None, best_streak=None, sittings=(), review=None, skills=(), checks=(),
+               decision=None):
+    """The candidates arranged around what matters most, packed into `budget`
+    minutes, with what didn't fit and what was set down on purpose."""
     now = now or datetime.now()
     stamp = stamp if stamp is not None else day_stamp(now.date())
     actions, more, left = [], [], budget
     candidates = gather(tasks, goals, days, name_of, now, stamp, lens, daily_goal, best_streak, sittings,
                         review, skills, checks)
+    if decision is None:
+        decision = priority.decide(goals, tasks, now, budget, sittings, name_of)
+    candidates, set_down = priority.arrange(decision, candidates, tasks,
+                                            _focus_rows(decision, goals, tasks, now, name_of, sittings), name_of)
+    decision = dict(decision, not_now=decision['not_now'] + set_down)
     for item in candidates:
         if item['minutes'] <= left:
             actions.append(item)
@@ -889,4 +930,4 @@ def build_plan(tasks, goals, days, name_of, budget, now=None, stamp=None, lens=N
     # budget, and the line that answers "what next" should not skip it for that.
     top = candidates[0] if candidates else None
     return {'budget': budget, 'actions': actions, 'spare': max(0, budget - planned),
-            'more': more, 'planned': planned, 'top': top}
+            'more': more, 'planned': planned, 'top': top, 'priority': public_decision(decision)}

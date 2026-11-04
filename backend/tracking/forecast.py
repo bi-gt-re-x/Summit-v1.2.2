@@ -163,7 +163,7 @@ def forecast(goal, tasks, sittings, today, name_of=lambda key: key):
            'deadline': ends.isoformat(), 'days_left': days_left, 'state': 'missing',
            'missing': None, 'line': due, 'facts': None, 'per_week': None, 'need_per_week': None,
            'more_per_week': None, 'finish': None, 'done': None, 'total': None, 'unit': None,
-           'history_days': 0, 'to_book': 0, 'booked_this_week': 0,
+           'history_days': 0, 'sessions': 0, 'to_book': 0, 'booked_this_week': 0,
            'week_target': None, 'pace_line': None, 'out_of_reach': False}
 
     def missing(key, text):
@@ -214,7 +214,7 @@ def forecast(goal, tasks, sittings, today, name_of=lambda key: key):
     per_unit = len(since_start) / done
     needed = left * per_unit
     need_per_week = needed * 7.0 / max(1, days_left)
-    out.update(per_week=round(per_week, 1), need_per_week=round(need_per_week, 1))
+    out.update(per_week=round(per_week, 1), need_per_week=round(need_per_week, 1), sessions=len(since_start))
     out['facts'] += ' About {:g} {} a week lately.'.format(
         round(per_week, 1), 'session' if round(per_week, 1) == 1 else 'sessions')
 

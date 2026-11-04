@@ -80,6 +80,8 @@ describe('What changed lays out what moved', () => {
     action: 'Try one thing.',
     watch: 'A number.',
     points: [],
+    strength: 'emerging',
+    claim: 'before-after',
     weight: 1,
   });
   const panel = (diagnoses: Diagnosis[]) => (

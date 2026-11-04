@@ -22,9 +22,10 @@
  * built on somebody's record must never be.
  *
  * So: `MIN_GROUP` tasks on *both* sides of every split, `MIN_LIFT` before a
- * difference is spoken about at all, and a `strength` on every finding that
- * says plainly how much weight it can carry. A pattern with 8 tasks behind it
- * is labelled as such rather than printed in the same voice as one with 60.
+ * difference is spoken about at all, a gap bigger than the ordinary swing of the
+ * ratings (utils/evidence), and a `strength` on every finding that says plainly how
+ * much weight it can carry. A pattern with 8 tasks behind it is labelled as such
+ * rather than printed in the same voice as one with 60.
  *
  * Nothing here is a correlation coefficient dressed up in a sentence. Two
  * groups, one measure, one difference, and the counts printed beside it.
@@ -38,7 +39,8 @@
  * suggestion to test rather than a conclusion to accept.
  */
 import type { GrowthDay, Task } from '@/types';
-import type { Strength } from './insight';
+import { strengthOf, type Strength } from './insight';
+import { compareMeans, counted, hedge, speaks, type EvidenceRead } from './evidence';
 import { PATTERN_DAYS, mean, pctChange } from './recent';
 import { isGoalWork } from '@/utils/goalLinks';
 
@@ -82,27 +84,16 @@ const hourOf = (task: Task): number | null => {
   return Number.isNaN(at.getTime()) ? null : at.getHours();
 };
 
-/**
- * How much weight a two-group finding can carry.
- *
- * Sample size first, because a large difference over ten tasks is still ten
- * tasks. A finding only reaches `strong` when both groups are properly
- * populated *and* the gap is wide enough that a couple of tasks moving between
- * them would not close it.
- */
-function strengthFor(smaller: number, lift: number): Strength {
-  const size = Math.abs(lift);
-  if (smaller >= 20 && size >= 15) return 'strong';
-  if (smaller >= 12 && size >= 12) return 'likely';
-  return 'weak';
-}
-
 interface Split {
   withCount: number;
   withoutCount: number;
   lift: number;
   smaller: number;
+  read: EvidenceRead;
 }
+
+/** A "what it means" line, as strong as its evidence. See utils/evidence. */
+const says = (read: EvidenceRead, text: string) => hedge(text, read.tier);
 
 /**
  * Compare one measure across a condition, or return null if it cannot be said.
@@ -128,11 +119,14 @@ function split(
   if (yes.length < MIN_GROUP || no.length < MIN_GROUP) return null;
   const lift = pctChange(mean(yes), mean(no));
   if (lift === null || Math.abs(lift) < MIN_LIFT) return null;
+  const read = compareMeans(yes, no);
+  if (!speaks(read)) return null;
   return {
     withCount: yes.length,
     withoutCount: no.length,
     lift,
     smaller: Math.min(yes.length, no.length),
+    read,
   };
 }
 
@@ -174,11 +168,13 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
       text: `You rate your own work ${pct(evening.lift)} ${upDown(evening.lift)} on tasks you finish before 5pm.`,
       basis: `${evening.withCount} tasks finished before 5pm, ${evening.withoutCount} after.`,
       lift: evening.lift,
-      strength: strengthFor(evening.smaller, evening.lift),
-      means:
+      strength: strengthOf(evening.read),
+      means: says(
+        evening.read,
         evening.lift > 0
-          ? 'This suggests your best work happens earlier in the day.'
+          ? 'This suggests your best work happens earlier in the day, or that easier tasks land then.'
           : 'This suggests you do better later on, or that your mornings are going to the wrong tasks.',
+      ),
       soWhat:
         evening.lift > 0
           ? 'Try moving one important task earlier in the day.'
@@ -200,11 +196,13 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
       text: `Your morning tasks are ${pct(morning.lift)} ${morning.lift >= 0 ? 'harder' : 'easier'} than your afternoon ones.`,
       basis: `${morning.withCount} tasks finished in the morning, ${morning.withoutCount} later.`,
       lift: morning.lift,
-      strength: strengthFor(morning.smaller, morning.lift),
-      means:
+      strength: strengthOf(morning.read),
+      means: says(
+        morning.read,
         morning.lift > 0
           ? "This suggests you already save your hard work for when you're fresh."
           : "This suggests you're putting off the hard stuff until later in the day.",
+      ),
       soWhat:
         morning.lift > 0
           ? 'Keep your mornings free for hard work.'
@@ -229,15 +227,17 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
       text: `Your work goes ${pct(weekend.lift)} ${upDown(weekend.lift)} on weekends than weekdays.`,
       basis: `${weekend.withCount} tasks on weekends, ${weekend.withoutCount} on weekdays.`,
       lift: weekend.lift,
-      strength: strengthFor(weekend.smaller, weekend.lift),
-      means:
+      strength: strengthOf(weekend.read),
+      means: says(
+        weekend.read,
         weekend.lift > 0
-          ? 'This suggests you do better with more room around your work.'
+          ? 'This suggests you do better with more room around your work, or that weekend tasks are easier.'
           : "This suggests weekends are harder to focus on, or they're when the leftovers get done.",
+      ),
       soWhat:
         weekend.lift > 0
-          ? 'You do your best work on weekends. Save hard tasks for then.'
-          : 'Keep hard work for weekdays, and use weekends for lighter tasks.',
+          ? 'Try one hard task on a weekend and see how it goes.'
+          : 'Try keeping hard work for weekdays and see if the gap closes.',
       weight: weekend.smaller + Math.abs(weekend.lift),
     });
   }
@@ -255,14 +255,16 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
       text: `Tasks linked to a goal are rated ${pct(linked.lift)} ${upDown(linked.lift)} than other tasks.`,
       basis: `${linked.withCount} tasks linked to a goal, ${linked.withoutCount} unlinked.`,
       lift: linked.lift,
-      strength: strengthFor(linked.smaller, linked.lift),
-      means:
+      strength: strengthOf(linked.read),
+      means: says(
+        linked.read,
         linked.lift > 0
-          ? "This suggests work goes better when you know what it's for."
-          : "This suggests linking alone isn't lifting the work.",
+          ? "This suggests work goes better when you know what it's for, or that you link the work you already like."
+          : "This suggests linking alone isn't lifting the work, or your goal tasks are simply harder.",
+      ),
       soWhat:
         linked.lift > 0
-          ? 'Link more tasks to your goals. You can do this from the Goals page.'
+          ? 'Try linking one more task a day and see if the gap holds.'
           : 'Check whether your goal tasks are simply harder before you read much into this.',
       weight: linked.smaller + Math.abs(linked.lift),
     });
@@ -282,22 +284,28 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
         mean(long.map((day) => num(day.tasks_completed))),
         mean(short.map((day) => num(day.tasks_completed))),
       );
-      if (lift !== null && Math.abs(lift) >= MIN_LIFT) {
+      const dayRead = compareMeans(
+        long.map((day) => num(day.tasks_completed)),
+        short.map((day) => num(day.tasks_completed)),
+      );
+      if (lift !== null && Math.abs(lift) >= MIN_LIFT && speaks(dayRead)) {
         found.push({
           id: 'long-days',
           kind: 'context',
           text: `On days with over ${Math.round(median)} minutes of focus, you finish ${pct(lift)} ${lift >= 0 ? 'more' : 'fewer'} tasks.`,
           basis: `${long.length} longer days vs. ${short.length} shorter ones.`,
           lift,
-          strength: strengthFor(Math.min(long.length, short.length), lift),
-          means:
+          strength: strengthOf(dayRead),
+          means: says(
+            dayRead,
             lift > 0
-              ? 'This suggests longer sittings help you get more done.'
+              ? 'This suggests longer sittings go with more done, though busy days also just take longer.'
               : 'This suggests long days are going to fewer, slower tasks.',
+          ),
           soWhat:
             lift > 0
-              ? `Longer focus days work well for you. Aim for ${Math.round(median)}+ minutes.`
-              : "More time won't fix that, so decide what you'll finish before you sit down.",
+              ? `Try one ${Math.round(median)}+ minute day this week and compare.`
+              : "Try deciding what you'll finish before you sit down, and see if the count moves.",
           weight: Math.min(long.length, short.length) + Math.abs(lift),
         });
       }
@@ -327,6 +335,8 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
     if (mine.length < MIN_GROUP || rest.length < MIN_GROUP) return;
     const lift = pctChange(mean(mine), mean(rest));
     if (lift === null || Math.abs(lift) < MIN_LIFT) return;
+    const read = compareMeans(mine, rest);
+    if (!speaks(read)) return;
     const smaller = Math.min(mine.length, rest.length);
     subjectRows.push({
       id: `subject-exec-${subject}`,
@@ -334,15 +344,17 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
       text: `You rate ${nameOf(subject)} ${pct(lift)} ${lift >= 0 ? 'higher' : 'lower'} than your other subjects.`,
       basis: `${mine.length} rated ${nameOf(subject)} tasks vs. ${rest.length} others.`,
       lift,
-      strength: strengthFor(smaller, lift),
-      means:
+      strength: strengthOf(read),
+      means: says(
+        read,
         lift < 0
-          ? `This suggests something about how you work on ${nameOf(subject)} isn't clicking.`
-          : `This suggests ${nameOf(subject)} is a strength.`,
+          ? `This suggests something about how you work on ${nameOf(subject)} isn't clicking, or that its tasks are harder.`
+          : `This suggests ${nameOf(subject)} is a strength, or that its tasks are easier.`,
+      ),
       soWhat:
         lift < 0
-          ? `Try a different approach to ${nameOf(subject)}.`
-          : 'Try its harder material next, since it can take it.',
+          ? `Try one different approach to ${nameOf(subject)} and compare.`
+          : 'Try its harder material next and see if the ratings hold.',
       weight: smaller + Math.abs(lift),
     });
   });
@@ -363,7 +375,8 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
       if (weekly[at]!.value > weekly[at - 1]!.value) run += 1;
       else break;
     }
-    if (run >= MIN_RUN) {
+    const runRead = counted(weekly.slice(-run - 1).reduce((sum, week) => sum + week.count, 0));
+    if (run >= MIN_RUN && speaks(runRead)) {
       const first = weekly[weekly.length - 1 - run]!.value;
       const last = weekly[weekly.length - 1]!.value;
       found.push({
@@ -372,9 +385,9 @@ export function discoverPatterns({ days, finished, nameOf }: PatternInput): Patt
         text: `Your ratings have risen ${run} weeks in a row, from ${first.toFixed(1)} to ${last.toFixed(1)} out of 5.`,
         basis: `${weekly.slice(-run - 1).reduce((sum, week) => sum + week.count, 0)} rated tasks across ${run + 1} weeks.`,
         lift: pctChange(last, first) ?? 0,
-        strength: run >= 4 ? 'strong' : 'likely',
-        means: 'This suggests something you changed recently is working.',
-        soWhat: 'Work out what it was and keep doing it.',
+        strength: strengthOf(runRead),
+        means: says(runRead, 'This suggests something changed for the better, or your recent tasks were easier.'),
+        soWhat: 'Check which it was before you change anything else.',
         weight: 60 + run * 8,
       });
     }

@@ -15,14 +15,14 @@ function mood(over: Partial<MoodVsOutput> = {}): MoodVsOutput {
     ],
     feelings: [
       { kind: 'tired', label: 'Tired', days: 5, enough: true, other_days: 13, tasks_avg: 2, other_avg: 5,
-        change: -60, next_day_avg: 4, next_change: -20, words: ['exhausted'], confidence: 'early' },
+        change: -60, next_day_avg: 4, next_change: -20, words: ['exhausted'], confidence: 'preliminary' },
       { kind: 'stressed', label: 'Stressed', days: 1, enough: false, need: 3 },
     ],
     checks: [{ day: '2026-10-14', side: 'low', quote: 'Got nothing done today.', tasks: 7, focus_min: 0, usual: 5, verdict: 'harsher' }],
     harsher: 1, energy: [], energy_ready: false, recovery: { days: 2, lows: 6 }, weekdays: [],
     series: [{ day: '2026-10-17', mood: 1, source: 'said', tasks: 6, focus_min: 30 }],
     min_days: 3, small_change: 15,
-    headline: { text: 'On good days you finish 7 tasks. On rough days, just 2.', tone: 'insight', confidence: 'pattern' },
+    headline: { text: 'On good days you finish 7 tasks. On rough days, just 2.', tone: 'insight', confidence: 'emerging' },
     ...over,
   };
 }
@@ -38,7 +38,7 @@ describe('What you say vs. what you do', () => {
   it('leads with the headline and its confidence', () => {
     draw(mood());
     expect(screen.getByText('On good days you finish 7 tasks. On rough days, just 2.')).toBeInTheDocument();
-    expect(screen.getByText(/Pattern · 18 days/)).toBeInTheDocument();
+    expect(screen.getByText(/Emerging pattern · 18 days/)).toBeInTheDocument();
     expect(screen.getByText(/10 tapped, 8 from your words/)).toBeInTheDocument();
   });
 
@@ -71,7 +71,7 @@ describe('What you say vs. what you do', () => {
 
   it('opens only when it has something to say', () => {
     expect(sayVsDoHasNews(mood(), null)).toBe(true);
-    expect(sayVsDoHasNews(mood({ headline: { text: 'x', tone: 'building', confidence: 'early' } }), null)).toBe(false);
+    expect(sayVsDoHasNews(mood({ headline: { text: 'x', tone: 'building', confidence: 'preliminary' } }), null)).toBe(false);
     expect(sayVsDoHasNews(null, null)).toBe(false);
   });
 });

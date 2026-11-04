@@ -3,16 +3,17 @@
 One read (tests/test_get_requests_do_not_write.py). The rules, and why the four are
 kept apart, are in backend/tracking/measures.py.
 """
-from datetime import date
+from datetime import date, datetime
 
 from fastapi import APIRouter, Depends
 
 from backend.api.guard import current_username
-from backend.api.next import _ready_checks, _record
+from backend.api.next import _name_of, _ready_checks, _record, _sittings
 from backend.api.reply import fail, ok
 from backend.database import connection as db
 from backend.tracking import analytics as analytics_tracking
 from backend.tracking import measures as measures_tracking
+from backend.tracking import priority
 from backend.tracking import skill_progress
 from backend.tracking.auth import load_user
 
@@ -40,4 +41,5 @@ def get_measures(username: str = Depends(current_username)):
         date.today(),
         ready=_ready_checks(username),
         name_of_node=name_of_node,
+        focus=priority.decide(goals, tasks, datetime.now(), 60, _sittings(username), _name_of(username))['focus'],
     ))

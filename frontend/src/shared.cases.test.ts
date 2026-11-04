@@ -17,6 +17,8 @@ import overdueCases from '@shared/cases/overdue.json';
 import problemCountCases from '@shared/cases/problem_count.json';
 import spacePanelCases from '@shared/cases/space_panels.json';
 import livePickCases from '@shared/cases/live_picks.json';
+import evidenceCases from '@shared/cases/evidence.json';
+import { compareMeans, compareRates, correlationEvidence, hedge, tierFor, type EvidenceTier } from '@/utils/evidence';
 import { cleanPanel } from '@/components/Spaces/panels';
 import { cleanLive } from '@/components/Spaces/live';
 import { problemCount } from '@/utils/problemCount';
@@ -30,6 +32,27 @@ import { BLOCK_KINDS } from '@/components/Spaces/blocks';
 import { GRADE_BANDS } from '@/utils/analyticalScore';
 import { STRUGGLE_REASONS } from '@/utils/ratings';
 import { XP_BANDS, MIN_TASK_XP } from '@/utils/priority';
+
+describe('how much a figure may claim, as the server works it out', () => {
+  it.each(evidenceCases.tiers.map((one) => [one.n, one.tier] as const))('%i observations', (n, tier) => {
+    expect(tierFor(n)).toBe(tier);
+  });
+  it.each(evidenceCases.means.map((one) => [one.why, one] as const))('%s', (_why, one) => {
+    const found = compareMeans(one.a, one.b);
+    expect([found.tier, found.noise, found.n]).toEqual([one.tier, one.noise, one.n]);
+  });
+  it.each(evidenceCases.rates.map((one) => [one.why, one] as const))('%s', (_why, one) => {
+    const found = compareRates(one.hits_a, one.n_a, one.hits_b, one.n_b);
+    expect([found.tier, found.noise, found.n]).toEqual([one.tier, one.noise, one.n]);
+  });
+  it.each(evidenceCases.correlations.map((one) => [one.why, one] as const))('%s', (_why, one) => {
+    const found = correlationEvidence(one.r, one.n);
+    expect([found.tier, found.noise]).toEqual([one.tier, one.noise]);
+  });
+  it.each(evidenceCases.hedges.map((one) => [`${one.tier}: ${one.text}`, one] as const))('%s', (_why, one) => {
+    expect(hedge(one.text, one.tier as EvidenceTier)).toBe(one.says);
+  });
+});
 
 describe('time spent, as the server works it out', () => {
   it.each(timeSpentCases.cases.map((one) => [one.why, one] as const))('%s', (_why, one) => {

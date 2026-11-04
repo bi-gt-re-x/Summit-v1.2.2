@@ -21,9 +21,10 @@ start when it has one, else the finish time less its length.
 Each kind has its own floor (enough sessions, a gap bigger than a rating's
 everyday wobble, a share well above even), and each surviving finding gets a
 weight: how big the effect is times how much record is behind it. The tab
-shows the strongest few in each group. Nothing is said that a handful of
-tasks could have produced by chance, and nothing calls a model, so a finding
-always matches the record under it.
+shows the strongest few in each group. Every comparison also goes through
+backend/tracking/evidence.py: under its floor, or inside the ordinary swing of
+the ratings, nothing is said, and short of "potentially reliable" the title
+says "may". Nothing calls a model, so a finding always matches the record under it.
 
 Pure: `reads` takes the tasks and the day, and backend/api/analytics.py's
 `/api/growth_reads` is the only caller that touches the database.
@@ -34,7 +35,7 @@ from datetime import date, datetime, timedelta
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 from backend.config.subjects import BY_ID
-from backend.tracking import topics
+from backend.tracking import evidence, topics
 
 #: The catalog groups that are life rather than study. Their sessions still
 #: count toward everything else, but "laundry is slipping" and "planning is
@@ -159,9 +160,22 @@ def _subject(name: str) -> str:
     return {'mathematics': 'math', 'computer science': 'computer science'}.get(lowered, lowered)
 
 
-def _finding(kind: str, key: str, tone: str, title: str, detail: str, weight: float, group: str) -> Dict[str, Any]:
-    return {'id': '{}:{}'.format(kind, key), 'kind': kind, 'tone': tone, 'title': title,
-            'detail': detail, 'weight': round(weight, 3), 'group': group}
+def _finding(kind: str, key: str, tone: str, title: str, detail: str, weight: float, group: str,
+             read: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
+    found = {'id': '{}:{}'.format(kind, key), 'kind': kind, 'tone': tone, 'title': title,
+             'detail': detail, 'weight': round(weight, 3), 'group': group}
+    if read:
+        found['evidence'] = read['tier']
+        found['evidence_label'] = read['label']
+    return found
+
+
+def _split(rows: List[Dict[str, Any]], field: str) -> Tuple[List[float], List[float]]:
+    """The first half of a run of sessions and the second, as `field`'s readings."""
+    rows = sorted(rows, key=lambda s: s['start'])
+    half = len(rows) // 2
+    return ([s[field] for s in rows[:half] if s[field] is not None],
+            [s[field] for s in rows[half:] if s[field] is not None])
 
 
 def _strength(effect: float, count: int) -> float:
@@ -198,22 +212,26 @@ def improvements(sessions: List[Dict[str, Any]], since: date, tax) -> List[Dict[
         label = tax.label(topic_id)
         area = tax.trees.get(tax.topics[topic_id]['tree'], '')
         was, now = _halves(rows, 'rating')
-        if was is not None and now is not None and abs(now - was) >= MOVE:
+        read = evidence.means(*_split(rows, 'rating'))
+        if was is not None and now is not None and abs(now - was) >= MOVE and evidence.speaks(read):
             up = now > was
+            sure = read['tier'] == evidence.RELIABLE
             out.append(_finding(
                 'topic', topic_id, 'good' if up else 'bad',
-                ('You improved at {}' if up else '{} is slipping').format(topics.lower(label) if up else label),
+                (('You improved at {}' if sure else 'You may be improving at {}') if up
+                 else ('{} is slipping' if sure else '{} may be slipping')).format(topics.lower(label) if up else label),
                 'Rated {:.1f} → {:.1f} over your last {} sessions ({}).'.format(was, now, len(rows), area),
-                _strength(now - was, len(rows)) + (0.3 if up else 0), 'improved' if up else 'watch'))
+                _strength(now - was, len(rows)) + (0.3 if up else 0), 'improved' if up else 'watch', read))
             continue
         hard_was, hard_now = _halves(rows, 'difficulty')
+        harder = evidence.means(*_split(rows, 'difficulty'))
         if (hard_was is not None and hard_now is not None and hard_now - hard_was >= 0.5
-                and was is not None and now is not None and now - was > -0.15):
+                and was is not None and now is not None and now - was > -0.15 and evidence.speaks(harder)):
             out.append(_finding(
                 'harder', topic_id, 'good',
                 'You took on harder {}'.format(topics.lower(label)),
                 'Difficulty {:.1f} → {:.1f}, and your ratings held at {:.1f}.'.format(hard_was, hard_now, now),
-                _strength(hard_now - hard_was, len(rows)), 'improved'))
+                _strength(hard_now - hard_was, len(rows)), 'improved', harder))
             continue
         # Plenty of work and no movement, on something that isn't going well.
         if (len(rows) >= STUCK_SESSIONS and was is not None and now is not None
@@ -221,20 +239,23 @@ def improvements(sessions: List[Dict[str, Any]], since: date, tax) -> List[Dict[
             out.append(_finding(
                 'stuck', topic_id, 'bad', '{} isn\'t moving'.format(label),
                 'Rated {:.1f} → {:.1f} over your last {} sessions ({}).'.format(was, now, len(rows), area),
-                _strength(STUCK_BELOW - (was + now) / 2, len(rows)), 'watch'))
+                _strength(STUCK_BELOW - (was + now) / 2, len(rows)), 'watch', evidence.counted(len(rows))))
 
     for (subject, area), rows in by_area.items():
         if len(rows) < 10:
             continue
         was, now = _halves(rows, 'rating')
-        if was is not None and now is not None and abs(now - was) >= MOVE:
+        read = evidence.means(*_split(rows, 'rating'))
+        if was is not None and now is not None and abs(now - was) >= MOVE and evidence.speaks(read):
             up = now > was
             label = tax.trees.get(area, area)
+            sure = read['tier'] == evidence.RELIABLE
             out.append(_finding(
                 'area', area, 'good' if up else 'bad',
-                ('Your {} work got better' if up else 'Your {} work is slipping').format(label),
+                (('Your {} work got better' if sure else 'Your {} work may be getting better') if up
+                 else ('Your {} work is slipping' if sure else 'Your {} work may be slipping')).format(label),
                 'Rated {:.1f} → {:.1f} over {} sessions.'.format(was, now, len(rows)),
-                _strength(now - was, len(rows)) * 0.8, 'improved' if up else 'watch'))
+                _strength(now - was, len(rows)) * 0.8, 'improved' if up else 'watch', read))
     return out
 
 
@@ -280,7 +301,7 @@ def favorite_times(sessions: List[Dict[str, Any]], since: date) -> List[Dict[str
                 'slot', '{}:{}'.format(slot, subject), 'flat',
                 '{} is your favorite thing to do at {}'.format(name, clock(slot)),
                 '{:.0%} of what you do between {} and {} is {}.'.format(share, clock(slot), clock(slot + 2), _subject(name)),
-                _strength(share - 0.25, total) * 1.2, 'when'))
+                _strength(share - 0.25, total) * 1.2, 'when', evidence.counted(n)))
 
     by_subject = defaultdict(list)
     for s in recent:
@@ -299,13 +320,14 @@ def favorite_times(sessions: List[Dict[str, Any]], since: date) -> List[Dict[str
             best = max(rated, key=rated.get)
             worst = min(rated, key=rated.get)
             gap = rated[best] - rated[worst]
-            if gap >= 0.4:
+            read = evidence.means(parts[best], parts[worst])
+            if gap >= 0.4 and evidence.speaks(read):
                 words = dict((key, w) for key, w, _l, _h in PARTS)
                 out.append(_finding(
                     'best-time', subject, 'good',
                     'Your {} goes best {}'.format(_subject(name), words[best]),
                     'Rated {:.1f} {}, vs. {:.1f} {}.'.format(rated[best], words[best], rated[worst], words[worst]),
-                    _strength(gap, len(rows)), 'when'))
+                    _strength(gap, len(rows)), 'when', read))
         # Its day of the week.
         days = Counter(s['start'].weekday() for s in rows)
         weekday, n = days.most_common(1)[0]
@@ -315,7 +337,7 @@ def favorite_times(sessions: List[Dict[str, Any]], since: date) -> List[Dict[str
                 'weekday', subject, 'flat',
                 '{} is {} day'.format(WEEKDAYS[weekday], _subject(name)),
                 '{:.0%} of your {} sessions lately fall on a {}.'.format(share, _subject(name), WEEKDAYS[weekday]),
-                _strength(share - 1 / 7, len(rows)) * 0.8, 'when'))
+                _strength(share - 1 / 7, len(rows)) * 0.8, 'when', evidence.counted(n)))
     return out
 
 
@@ -334,13 +356,14 @@ def session_lengths(sessions: List[Dict[str, Any]], since: date) -> List[Dict[st
     best = max(rated, key=rated.get)
     worst = min(rated, key=rated.get)
     gap = rated[best] - rated[worst]
-    if gap < 0.25:
+    read = evidence.means(buckets[best], buckets[worst])
+    if gap < 0.25 or not evidence.speaks(read):
         return []
     plural = 'sessions ' + best if best.endswith('minutes') else best + ' sessions'
     worse = 'sessions ' + worst if worst.endswith('minutes') else worst + ' sessions'
     return [_finding('length', best, 'good', 'Your best work comes in {}'.format(plural),
                      'Rated {:.1f} there, vs. {:.1f} for {}.'.format(rated[best], rated[worst], worse),
-                     _strength(gap, sum(len(v) for v in buckets.values())) * 0.9, 'when')]
+                     _strength(gap, sum(len(v) for v in buckets.values())) * 0.9, 'when', read)]
 
 
 def reason_times(sessions: List[Dict[str, Any]], since: date) -> List[Dict[str, Any]]:
@@ -357,7 +380,7 @@ def reason_times(sessions: List[Dict[str, Any]], since: date) -> List[Dict[str, 
     return [_finding('reason', reason, 'bad',
                      '"{}" shows up most {}'.format(REASONS[reason].capitalize(), words[part]),
                      '{} of the {} times you picked it.'.format(m, n),
-                     _strength(m / n - 0.25, n), 'watch')]
+                     _strength(m / n - 0.25, n), 'watch', evidence.counted(n))]
 
 
 def steady(sessions: List[Dict[str, Any]], today: date) -> List[Dict[str, Any]]:
@@ -373,7 +396,8 @@ def steady(sessions: List[Dict[str, Any]], today: date) -> List[Dict[str, Any]]:
             name = topics.subject_name(subject)
             out.append(_finding('steady', subject, 'good', 'You kept {} going'.format(_subject(name)),
                                 'Worked on it {} of the last 28 days.'.format(len(worked)),
-                                0.5 * len(worked) / 28 * math.log(1 + len(worked)), 'improved'))
+                                0.5 * len(worked) / 28 * math.log(1 + len(worked)), 'improved',
+                                evidence.counted(len(worked))))
     return out
 
 

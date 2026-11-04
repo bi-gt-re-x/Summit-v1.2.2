@@ -150,6 +150,8 @@ describe('the order', () => {
     action: 'Do a thing.',
     watch: 'Watch a thing.',
     points: [],
+    strength: 'emerging',
+    claim: 'before-after',
     weight,
   });
   const pattern = (id: string): Pattern => ({
@@ -158,7 +160,7 @@ describe('the order', () => {
     text: 'You rate your work 12% higher before 5pm.',
     basis: '20 tasks before 5pm, 18 after.',
     lift: 12,
-    strength: 'likely',
+    strength: 'emerging',
     weight: 30,
   });
 

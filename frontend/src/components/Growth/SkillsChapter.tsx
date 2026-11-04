@@ -641,6 +641,7 @@ function InsightCard({ insight }: { insight: SubjectInsight }) {
         </dl>
       )}
       <Suggestion text={insight.suggests} />
+      {insight.evidence && <p className="ax-change-basis"><span className="ax-change-strength">{insight.evidence}</span></p>}
     </li>
   );
 }

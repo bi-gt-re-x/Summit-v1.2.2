@@ -9,6 +9,7 @@
 import type { Task } from '@/types';
 import type { SkillCard } from './growthSkills';
 import { secondsSpent } from './timeSpent';
+import { compareMeans, compareRates, counted, EVIDENCE_LABEL, hedge, speaks, type EvidenceRead } from './evidence';
 
 /** Days without a finished task before a subject reads as cooling off. */
 export const COOLING_DAYS = 14;
@@ -146,6 +147,8 @@ export interface SubjectInsight {
   suggests: string;
   figures: InsightFigure[];
   bars?: InsightBar[];
+  /** How much a comparison can claim. Absent on a plain count. */
+  evidence?: string;
 }
 
 /** How many insights a picked card shows before the reader asks for more. */
@@ -281,6 +284,10 @@ export function subjectInsights(
   const others = tasks.filter((task) => task.status === 'done' && task.subject !== card.key && dayOf(task));
   const candidates: Array<SubjectInsight & { weight: number }> = [];
   const add = (weight: number, insight: SubjectInsight) => candidates.push({ ...insight, weight });
+  /* What each comparison below can claim, by the card's key. Read once at the end:
+     a card without enough behind it, or whose gap is inside the ordinary swing of
+     the figures, isn't drawn, and the rest say only what their tier allows. */
+  const reads = new Map<string, EvidenceRead>();
   const when = (iso: string) => dateText(iso, todayIso);
 
   const last = mine[mine.length - 1];
@@ -537,7 +544,10 @@ export function subjectInsights(
   };
   const strongShare = share(ratedHere.filter((task) => ratingOf(task, 'execution')! >= 4).length, ratedHere.length);
 
+  const ratingsOf = (list: Task[], field: 'execution' | 'difficulty') =>
+    list.map((task) => ratingOf(task, field)).filter((value): value is number => value !== null);
   if (Math.abs(execGap) >= 0.4 && Math.abs(execGap) >= Math.abs(hardGap)) {
+    reads.set('ratings', compareMeans(ratingsOf(mine, 'execution'), ratingsOf(others, 'execution')));
     add(55 + Math.abs(execGap) * 20, {
       key: 'ratings',
       tone: execGap > 0 ? 'up' : 'down',
@@ -563,6 +573,7 @@ export function subjectInsights(
       ],
     });
   } else if (Math.abs(hardGap) >= 0.4) {
+    reads.set('ratings', compareMeans(ratingsOf(mine, 'difficulty'), ratingsOf(others, 'difficulty')));
     add(50 + Math.abs(hardGap) * 20, {
       key: 'ratings',
       tone: 'note',
@@ -598,12 +609,13 @@ export function subjectInsights(
     const then = mean(earlier);
     if (Math.abs(now - then) >= 0.4) {
       const rising = now > then;
+      reads.set('trend', compareMeans(latest, earlier));
       add(50 + Math.abs(now - then) * 20, {
         key: 'trend',
         tone: rising ? 'up' : 'down',
         head: rising ? 'Your ratings here are climbing' : 'Your ratings here are slipping',
         suggests: rising
-          ? 'This suggests practice here is paying off. The last stretch went well, so it\'s a good time to try something harder.'
+          ? 'This suggests your recent work here went better, or your recent tasks were easier. It\'s a good time to try something harder and see.'
           : "This suggests something's changed. If your tasks got harder, that's normal. If they didn't, slow down and redo the one that went worst.",
         detail: `Your last ${stretch} rated tasks average ${outOf5(now)} out of 5 for how they went. The ${stretch} before that averaged ${outOf5(
           then,
@@ -633,6 +645,10 @@ export function subjectInsights(
     const drop = easyGoes - hardGoes;
     const holds = drop <= 0.2 && hardOnes.length / bothRated.length >= 0.2;
     if (drop >= 0.7 || holds) {
+      const hardRatings = hardOnes.map((task) => ratingOf(task, 'execution')!);
+      const easyRatings = easyOnes.map((task) => ratingOf(task, 'execution')!);
+      /* "Holds" is a claim that there's no gap, so it needs a sample and not a gap. */
+      reads.set('pressure', holds ? counted(Math.min(hardOnes.length, easyOnes.length)) : compareMeans(hardRatings, easyRatings));
       add(holds ? 40 : 48 + drop * 10, {
         key: 'pressure',
         tone: holds ? 'up' : 'down',
@@ -642,7 +658,7 @@ export function subjectInsights(
             ? 'Hard tasks go better here'
             : 'Hard tasks go just as well here',
         suggests: !holds
-          ? 'This suggests the jump to hard is too steep. Put a medium task right before your next hard one, so you\'re warmed up.'
+          ? 'This suggests the jump to hard is too steep. Put a medium task right before your next hard one and see if it helps.'
           : 'This suggests you can take on more hard work here. Try making one more task a week Hard.',
         detail: `When you rate a task Hard or Brutal, it goes ${outOf5(hardGoes)} out of 5. Easier ones go ${outOf5(
           easyGoes,
@@ -726,6 +742,9 @@ export function subjectInsights(
     const hours30 =
       timedHere.filter((entry) => dayOf(entry.task) >= from30).reduce((sum, entry) => sum + entry.seconds, 0) / 3600;
     const typicalTime = minutesText(median(minutes));
+    const hourly = (list: Array<{ task: Task; seconds: number }>) =>
+      list.filter((entry) => entry.seconds > 0).map((entry) => xpOf(entry.task) / (entry.seconds / 3600));
+    if (elseRate && Math.abs(rateGap) >= 0.2) reads.set('time', compareMeans(hourly(timedHere), hourly(timedElse)));
     add(Math.abs(rateGap) >= 0.2 ? 46 : 28, {
       key: 'time',
       tone: !elseRate || Math.abs(rateGap) < 0.2 ? 'note' : rateGap > 0 ? 'up' : 'down',
@@ -742,7 +761,7 @@ export function subjectInsights(
       suggests: !elseRate
         ? `This suggests you should block at least ${typicalTime} when you sit down for it. Less than that and you'll likely stop partway through.`
         : rateGap >= 0.2
-          ? `This suggests this work suits how you study. When you're short on time, it'll give you the most back. The next opportunity is working out what makes it click and trying that on a slower subject.`
+          ? `This suggests this work suits how you study, or that its tasks pay more XP for the time. XP is one measure, so check it against whether you're getting better here.`
           : rateGap <= -0.2
             ? `This suggests tasks here run long for what they earn. You may be stuck on them, or they may be too big. Split your next one into pieces under ${typicalTime} and see if the rate moves.`
             : "This suggests time isn't the problem here. If it's moving slowly, look at how hard the tasks are before you add more hours.",
@@ -774,6 +793,12 @@ export function subjectInsights(
     if (Math.abs(rateHere - rateElse) >= 8 || rateHere <= 75) {
       const better = rateHere >= rateElse;
       const lastLate = lateHere[lateHere.length - 1];
+      reads.set('deadlines', compareRates(
+        datedHere.length - lateHere.length,
+        datedHere.length,
+        datedElse.filter((task) => task.met_deadline).length,
+        datedElse.length,
+      ));
       add(40 + Math.min(20, Math.abs(rateHere - rateElse)), {
         key: 'deadlines',
         tone: better ? 'up' : 'down',
@@ -1026,5 +1051,17 @@ export function subjectInsights(
     ],
   });
 
-  return candidates.sort((a, b) => b.weight - a.weight).map(({ weight: _weight, ...insight }) => insight);
+  return candidates
+    .filter((insight) => {
+      const read = reads.get(insight.key);
+      return !read || speaks(read);
+    })
+    .map((insight) => {
+      const read = reads.get(insight.key);
+      return read
+        ? { ...insight, suggests: hedge(insight.suggests, read.tier), evidence: EVIDENCE_LABEL[read.tier] }
+        : insight;
+    })
+    .sort((a, b) => b.weight - a.weight)
+    .map(({ weight: _weight, ...insight }) => insight);
 }

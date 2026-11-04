@@ -367,7 +367,7 @@ export function NextActions({
         <PanelNote label="How this is chosen">
           <p className="ax-tips-head">First up</p>
           <ul className="ax-tips">
-            <li><b>Beat the deadline:</b> Your next goal date gets the sessions it needs this week.</li>
+            <li><b>The goal that needs you:</b> The goal getting your time leads, with the sessions its date needs this week.</li>
             <li><b>Clear the pile:</b> Old routines you missed get one row, so you can clear them fast.</li>
             <li><b>Redo your misses:</b> Anything you got wrong comes back after 1, 3, 7 and 14 days until it sticks.</li>
             <li><b>Your skill trees:</b> If a skill keeps going badly you're sent back to what it builds on. Doing well? You move up.</li>
@@ -376,9 +376,9 @@ export function NextActions({
           <p className="ax-tips-head">Then</p>
           <ul className="ax-tips">
             <li><b>Finish what's due:</b> Overdue tasks, then tasks due today.</li>
-            <li><b>Catch up:</b> Goals falling behind and subjects you've let slide.</li>
+            <li><b>Catch up:</b> Subjects you've let slide, when no goal is pressing. When one is, they wait and it says so above.</li>
             <li><b>Do or drop:</b> Old tasks with no due date.</li>
-            <li><b>Keep it going:</b> Your streak, if nothing's done today.</li>
+            <li><b>Keep it going:</b> Your streak, if nothing's done today and nothing is pressing.</li>
           </ul>
           <p className="ax-tips-head">Good to know</p>
           <ul className="ax-tips">

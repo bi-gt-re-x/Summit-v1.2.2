@@ -2,6 +2,7 @@
  * Said vs did: what the reader told Summit (About you, the Log) held up
  * against what they actually did. Rules: backend/tracking/said_did.py.
  */
+import type { EvidenceTier } from '@/utils/evidence';
 import { get, post } from './api';
 import type { ApiResult } from '@/types';
 
@@ -95,7 +96,7 @@ export function fileInferred(subject: string, ids: string[]): Promise<ApiResult<
 // Mood vs output: how the days felt (the Log) against what they did.
 // Rules: backend/tracking/mood.py.
 // ---------------------------------------------------------------------------
-export type Confidence = 'early' | 'pattern' | 'solid';
+export type Confidence = EvidenceTier;
 
 export interface MoodBand {
   key: 'rough' | 'okay' | 'good';
@@ -124,6 +125,8 @@ export interface FeelingRead {
   next_change?: number | null;
   words?: string[];
   confidence?: Confidence;
+  /** Whether the gap is bigger than the ordinary swing of the days. */
+  clear?: boolean;
   need?: number;
 }
 

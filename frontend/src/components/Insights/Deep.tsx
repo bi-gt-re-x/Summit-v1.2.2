@@ -7,7 +7,7 @@
  * that danger rather than around the layout.
  *
  * **Every finding wears its evidence.** The strength chip is not decoration and
- * is never assigned by hand — `strengthOf` computes it from the sample size and
+ * is never assigned by hand — utils/evidence works it out from the sample size and
  * the coefficient, and it is printed in the same place on every card so a
  * reader can discount a whole panel at a glance.
  *
@@ -31,6 +31,7 @@ import {
   type Relationship,
   type Unlock,
 } from '@/utils/insight';
+import { CLAIM_LABEL, CLAIM_NOTE } from '@/utils/evidence';
 
 // --------------------------------------------------------------------------
 // Shared furniture
@@ -43,15 +44,24 @@ function axes(pair: string): [string, string] {
   return [x.trim(), y.trim().replace(/^./, (c) => c.toUpperCase())];
 }
 
-function StrengthChip({ strength }: { strength: Finding['strength'] }) {
+function StrengthChip({ strength, claim }: { strength: Finding['strength']; claim?: Finding['claim'] }) {
   const hue = STRENGTH_HUE[strength];
+  /* Arithmetic has no sample to doubt, so it wears what it is instead. */
+  const label = claim === 'arithmetic' ? CLAIM_LABEL.arithmetic : STRENGTH_TEXT[strength];
   return (
-    <span
-      className="ax-evidence"
-      style={{ color: toneVar(hue), borderColor: toneVar(hue) }}
-      title="How sure this is"
-    >
-      {STRENGTH_TEXT[strength]}
+    <span className="ax-evidence-row">
+      <span
+        className="ax-evidence"
+        style={{ color: toneVar(hue), borderColor: toneVar(hue) }}
+        title={claim === 'arithmetic' ? CLAIM_NOTE.arithmetic : 'How much this can claim, from how many times it was seen'}
+      >
+        {label}
+      </span>
+      {claim && claim !== 'arithmetic' && (
+        <span className="ax-evidence-kind" title={CLAIM_NOTE[claim]}>
+          {CLAIM_LABEL[claim]}
+        </span>
+      )}
     </span>
   );
 }
@@ -96,7 +106,7 @@ export function FindingCard({ finding }: { finding: Finding }) {
         <div>
           <p className="ax-prose"><Figures text={finding.detail} /></p>
           <Suggestion text={finding.suggests} />
-          <StrengthChip strength={finding.strength} />
+          <StrengthChip strength={finding.strength} claim={finding.claim} />
         </div>
       </div>
     </li>
@@ -116,7 +126,7 @@ export function WhyPanel({
   return (
     <Panel
       title="Why your last stretch went the way it did"
-      note="What caused the change"
+      note="What the change breaks down into, and what went with it"
     >
       {!notice.ready ? (
         <Waiting notice={notice} />
@@ -175,8 +185,7 @@ export function HowPanel({
  *
  * The reader picks a pair and gets the cloud, the coefficient, the sample size
  * and a sentence that never says "because". The line of fit appears only where
- * the strength chip is not "possible, not established" — see the note on
- * `Scatter`.
+ * the two really move together — see the note on `Scatter`.
  */
 export function RelationshipsPanel({
   relationships,
@@ -227,7 +236,7 @@ export function RelationshipsPanel({
               tone={asTone(active.tone)}
               xLabel={axes(active.pair)[0]}
               yLabel={axes(active.pair)[1]}
-              trend={active.strength !== 'weak' && active.r !== 0}
+              trend={active.clear && active.r !== 0}
             />
             <div className="ax-relationship-read">
               <div className="ax-figures ax-figures-tight">
@@ -242,7 +251,7 @@ export function RelationshipsPanel({
                   <span className="ax-muted ax-small">days compared</span>
                 </div>
               </div>
-              <StrengthChip strength={active.strength} />
+              {active.clear && <StrengthChip strength={active.strength} claim="correlation" />}
               <p className="ax-prose">{active.reading}</p>
             </div>
           </div>

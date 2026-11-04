@@ -1,0 +1,59 @@
+{
+  "_about": "How much a figure may claim. Run by tests/test_shared_cases.py and frontend/src/shared.cases.test.ts.",
+  "tiers": [
+    { "n": 0, "tier": "insufficient" },
+    { "n": 1, "tier": "insufficient" },
+    { "n": 3, "tier": "insufficient" },
+    { "n": 4, "tier": "preliminary" },
+    { "n": 9, "tier": "preliminary" },
+    { "n": 10, "tier": "emerging" },
+    { "n": 29, "tier": "emerging" },
+    { "n": 30, "tier": "reliable" },
+    { "n": 500, "tier": "reliable" }
+  ],
+  "means": [
+    { "why": "three good-mood days can't claim anything, however big the gap",
+      "a": [9, 10, 10], "b": [20, 21, 20, 22, 19, 21, 20], "tier": "insufficient", "noise": false, "n": 3 },
+    { "why": "a clear gap over five each is a preliminary signal",
+      "a": [5, 5, 6, 5, 6], "b": [9, 8, 9, 10, 9], "tier": "preliminary", "noise": false, "n": 5 },
+    { "why": "a clear gap over twelve each is an emerging pattern",
+      "a": [5, 5, 6, 5, 6, 5, 5, 6, 5, 6, 5, 5], "b": [9, 8, 9, 10, 9, 9, 8, 9, 10, 9, 9, 8], "tier": "emerging", "noise": false, "n": 12 },
+    { "why": "a large sample with a small, noisy gap can't be told apart",
+      "a": [1, 9, 2, 8, 1, 9, 2, 8, 1, 9, 2, 8, 1, 9, 2, 8, 1, 9, 2, 8, 1, 9, 2, 8, 1, 9, 2, 8, 1, 9, 2, 8],
+      "b": [2, 9, 2, 8, 1, 9, 2, 8, 2, 9, 2, 8, 1, 9, 2, 8, 2, 9, 2, 8, 1, 9, 2, 8, 2, 9, 2, 8, 1, 9, 2, 8],
+      "tier": "insufficient", "noise": true, "n": 32 },
+    { "why": "a large sample with a gap inside two standard errors stays preliminary",
+      "a": [1, 9, 2, 8, 1, 9, 2, 8, 1, 9, 2, 8, 1, 9, 2, 8, 1, 9, 2, 8, 1, 9, 2, 8, 1, 9, 2, 8, 1, 9, 2, 8],
+      "b": [2, 10, 3, 9, 2, 10, 3, 9, 2, 10, 3, 9, 2, 10, 3, 9, 2, 10, 3, 9, 2, 10, 3, 9, 2, 10, 3, 9, 2, 10, 3, 9],
+      "tier": "preliminary", "noise": false, "n": 32 },
+    { "why": "two identical groups show nothing",
+      "a": [3, 3, 3, 3, 3], "b": [3, 3, 3, 3, 3], "tier": "insufficient", "noise": true, "n": 5 },
+    { "why": "two flat groups that differ are as clear as it gets",
+      "a": [3, 3, 3, 3, 3], "b": [4, 4, 4, 4, 4], "tier": "preliminary", "noise": false, "n": 5 }
+  ],
+  "rates": [
+    { "why": "too few on one side", "hits_a": 2, "n_a": 3, "hits_b": 10, "n_b": 40, "tier": "insufficient", "noise": false, "n": 3 },
+    { "why": "a wide gap over 40 each", "hits_a": 34, "n_a": 40, "hits_b": 12, "n_b": 40, "tier": "reliable", "noise": false, "n": 40 },
+    { "why": "a narrow gap over 40 each can't be told apart", "hits_a": 21, "n_a": 40, "hits_b": 20, "n_b": 40, "tier": "insufficient", "noise": true, "n": 40 },
+    { "why": "a middling gap over 40 each stays preliminary", "hits_a": 24, "n_a": 40, "hits_b": 18, "n_b": 40, "tier": "preliminary", "noise": false, "n": 40 }
+  ],
+  "correlations": [
+    { "why": "too few pairs", "r": 0.9, "n": 3, "tier": "insufficient", "noise": false },
+    { "why": "strong over forty", "r": 0.6, "n": 40, "tier": "reliable", "noise": false },
+    { "why": "real but tiny isn't a link", "r": 0.15, "n": 400, "tier": "insufficient", "noise": true },
+    { "why": "a big r over a short run is still only emerging", "r": 0.7, "n": 12, "tier": "emerging", "noise": false },
+    { "why": "a middling r over a short run stays preliminary", "r": 0.4, "n": 12, "tier": "preliminary", "noise": false }
+  ],
+  "hedges": [
+    { "text": "This suggests your best work is early. Try one task sooner.", "tier": "reliable",
+      "says": "This suggests your best work is early. Try one task sooner." },
+    { "text": "This suggests your best work is early. Try one task sooner.", "tier": "emerging",
+      "says": "This may mean your best work is early. Try one task sooner." },
+    { "text": "This suggests your best work is early. Try one task sooner.", "tier": "preliminary",
+      "says": "It's early, but this may mean your best work is early. Try one task sooner. Treat it as something to test." },
+    { "text": "Try one task sooner.", "tier": "preliminary",
+      "says": "It's early. Try one task sooner. Treat it as something to test." },
+    { "text": "Try one task sooner.", "tier": "emerging", "says": "Try one task sooner." },
+    { "text": "This suggests anything at all.", "tier": "insufficient", "says": "" }
+  ]
+}

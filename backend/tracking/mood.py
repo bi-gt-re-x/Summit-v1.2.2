@@ -39,12 +39,14 @@ tasks, focus minutes, and the execution rating of rated tasks. Then:
 
 ## What it won't say
 
-Nothing from fewer than MIN_DAYS days on either side of a comparison, and a
-difference under SMALL_CHANGE percent is reported as "about the same", not as
-a finding. Every result carries its day counts and a confidence word from
-those counts, the same way the Observations on the Insights tab do. It never
-reads health from the words (no illness, no diagnoses), the rule the Log's
-own reader keeps (backend/tracking/journal.py).
+Nothing from fewer than MIN_DAYS days on either side of a comparison, nothing where
+the gap is inside the ordinary swing of the days, and a difference under SMALL_CHANGE
+percent is "about the same". Every result carries its day counts and how much they can
+claim (backend/tracking/evidence.py). This page once told someone that feeling good
+"gets in the way", from three good days. A mood and a day's work go together, and a
+few diary entries can't say which came first, so the sentences here never say one
+causes the other. It never reads health from the words (no illness, no diagnoses), the
+rule the Log's own reader keeps (backend/tracking/journal.py).
 
 `usual` is the median tasks on the reader's active days in the last USUAL_DAYS
 days, the same "a day you worked" rule the rest of Analytics uses.
@@ -55,6 +57,7 @@ from datetime import date, timedelta
 from statistics import mean, median
 from typing import Dict, Iterable, List, Optional, Tuple
 
+from backend.tracking import evidence
 from backend.tracking.review_sessions import reviewable
 
 #: How far back logged days are read.
@@ -62,7 +65,7 @@ WINDOW_DAYS = 180
 #: The stretch the "usual day" is measured over.
 USUAL_DAYS = 90
 #: The fewest days either side of a comparison may have.
-MIN_DAYS = 3
+MIN_DAYS = evidence.FLOOR
 #: A difference smaller than this, in percent, is "about the same".
 SMALL_CHANGE = 15
 #: Days drawn on the timeline.
@@ -268,15 +271,6 @@ def _empty_day() -> dict:
     return {'tasks': 0, 'xp': 0, 'focus_min': 0, 'execution': None}
 
 
-def _confidence(*counts: int) -> str:
-    low = min(counts)
-    if low >= 12:
-        return 'solid'
-    if low >= 6:
-        return 'pattern'
-    return 'early'
-
-
 def _change(value: float, base: float) -> Optional[int]:
     if base <= 0:
         return None
@@ -403,11 +397,17 @@ def low_times(entries: Iterable[dict], tasks: Iterable[dict], output: Dict[str, 
     fair = [row for row in low_parts if row['rated'] >= MIN_DAYS and row['count']]
     worst_rated = max(fair, key=lambda row: row['share'], default=None)
     tied = worst_rated and sum(1 for row in fair if row['share'] == worst_rated['share']) > 1
-    # A couple of points over the rest isn't a finding, the same floor as
-    # every other comparison here.
+    # Against everything else, and it has to clear the same bar as any comparison:
+    # a part of the day with a few more low ratings than the rest may just be chance.
     rated_total = sum(row['rated'] for row in low_parts)
-    overall = 100 * len(low_rated) / rated_total if rated_total else 0
-    clear = worst_rated and worst_rated['share'] >= overall * (1 + SMALL_CHANGE / 100)
+    clear = worst_rated and evidence.rates(
+        worst_rated['count'], worst_rated['rated'],
+        len(low_rated) - worst_rated['count'], rated_total - worst_rated['rated'])['clear']
+    # A weekday's slow days against the other six, for the same reason.
+    slowest = max(slow_by_day, key=lambda row: row['count'], default=None)
+    slow_total = sum(row['of'] for row in slow_by_day)
+    slow_clear = slowest and slowest['count'] >= MIN_DAYS and evidence.rates(
+        slowest['count'], slowest['of'], len(slow_days) - slowest['count'], slow_total - slowest['of'])['clear']
     marks = said_low + low_rated + slow_days
     return {
         'energy': {
@@ -426,7 +426,7 @@ def low_times(entries: Iterable[dict], tasks: Iterable[dict], output: Dict[str, 
             'parts': low_parts,
             'weekdays': slow_by_day,
             'worst_part': worst_rated['name'] if clear and not tied else None,
-            'worst_day': _worst(slow_by_day, 'count'),
+            'worst_day': _worst(slow_by_day, 'count') if slow_clear else None,
             'latest': newest(marks)[:LOW_SHOWN],
         },
     }
@@ -475,6 +475,8 @@ def readings(entries: Iterable[dict], tasks: Iterable[dict], focus: Dict[str, di
             'enough': len(days) >= MIN_DAYS,
         })
     by_band = {band['key']: band for band in bands}
+    band_tasks = {key: [day_of(day)['tasks'] for day, row in rated.items() if test(row['mood'])]
+                  for key, _label, test in BANDS}
 
     # ---- feelings ----------------------------------------------------------
     feelings = []
@@ -486,8 +488,11 @@ def readings(entries: Iterable[dict], tasks: Iterable[dict], focus: Dict[str, di
                 feelings.append({'kind': kind, 'label': label, 'days': len(with_days),
                                  'enough': False, 'need': MIN_DAYS})
             continue
-        on = _avg([day_of(day)['tasks'] for day in with_days])
-        off = _avg([day_of(day)['tasks'] for day in without])
+        on_tasks = [day_of(day)['tasks'] for day in with_days]
+        off_tasks = [day_of(day)['tasks'] for day in without]
+        read = evidence.means(on_tasks, off_tasks)
+        on = _avg(on_tasks)
+        off = _avg(off_tasks)
         after = _avg([day_of(_shift(day, 1))['tasks'] for day in with_days
                       if _shift(day, 1) < today_iso])
         words = sorted({word for day in with_days for word in moods[day]['words']
@@ -495,9 +500,10 @@ def readings(entries: Iterable[dict], tasks: Iterable[dict], focus: Dict[str, di
         feelings.append({
             'kind': kind, 'label': label, 'sign': sign, 'days': len(with_days),
             'other_days': len(without), 'tasks_avg': on, 'other_avg': off,
-            'change': _change(on, off), 'next_day_avg': after,
+            # A gap inside the ordinary swing of the days isn't one.
+            'change': _change(on, off), 'clear': evidence.speaks(read), 'next_day_avg': after,
             'next_change': _change(after, usual_tasks),
-            'words': words, 'confidence': _confidence(len(with_days), len(without)),
+            'words': words, 'confidence': read['tier'] if evidence.speaks(read) else evidence.tier_for(read['n']),
             'enough': True,
         })
     feelings.sort(key=lambda row: (not row['enough'], -abs(row.get('change') or 0)))
@@ -552,7 +558,7 @@ def readings(entries: Iterable[dict], tasks: Iterable[dict], focus: Dict[str, di
     if len(rated) >= 10:
         for index, name in enumerate(WEEKDAYS):
             values = by_weekday.get(index, [])
-            if len(values) >= 2:
+            if len(values) >= MIN_DAYS:
                 weekdays.append({'day': name, 'mood': round(mean(values), 2), 'days': len(values)})
 
     # ---- the timeline ------------------------------------------------------
@@ -587,7 +593,7 @@ def readings(entries: Iterable[dict], tasks: Iterable[dict], focus: Dict[str, di
         'min_days': MIN_DAYS,
         'small_change': SMALL_CHANGE,
     }
-    found['headline'] = headline(found, by_band)
+    found['headline'] = headline(found, by_band, band_tasks)
     return found
 
 
@@ -621,64 +627,84 @@ def _times(high: float, low: float) -> str:
     return '{} times as many'.format(_num(ratio)) if ratio >= 1.5 else ''
 
 
-def headline(found: dict, by_band: Dict[str, dict]) -> Optional[dict]:
-    """The one sentence the section opens on: the strongest thing the days
-    show, or what's still needed if they show nothing yet."""
+def _still_needed(by_band: Dict[str, dict]) -> str:
+    """Which side of the comparison is short, in days. Empty when none is."""
     rough, good = by_band['rough'], by_band['good']
+    short = [(band['label'].lower(), MIN_DAYS - band['days']) for band in (rough, good)
+             if band['days'] < MIN_DAYS]
+    return ' and '.join('{} more {}'.format(count, label if count > 1 else label[:-1])
+                        for label, count in short)
+
+
+def headline(found: dict, by_band: Dict[str, dict], band_tasks: Optional[Dict[str, List[int]]] = None) -> Optional[dict]:
+    """The one sentence the section opens on: the strongest thing the days can
+    support, or what's still needed if they can't support anything yet."""
+    rough, good = by_band['rough'], by_band['good']
+    band_tasks = band_tasks or {}
     if rough['enough'] and good['enough'] and rough['tasks_avg'] != good['tasks_avg']:
+        read = evidence.means(band_tasks.get('rough') or [], band_tasks.get('good') or [])
         gap = _change(good['tasks_avg'], rough['tasks_avg']) if rough['tasks_avg'] else None
-        sure = _confidence(rough['days'], good['days'])
-        if gap is None or abs(gap) >= SMALL_CHANGE:
+        sure = evidence.tier_for(read['n'])
+        if evidence.speaks(read) and (gap is None or abs(gap) >= SMALL_CHANGE):
             if good['tasks_avg'] > rough['tasks_avg']:
                 times = _times(good['tasks_avg'], rough['tasks_avg'])
-                text = 'On good days you finish {} tasks. On rough days, just {}.{}'.format(
+                text = 'On good days you finish {} tasks. On rough days, {}.{}'.format(
                     _num(good['tasks_avg']), _num(rough['tasks_avg']),
                     ' That\'s {}.'.format(times) if times else '')
+                suggests = ('This suggests the two go together, though it can\'t say which comes first: a good '
+                            'day can lift your mood as easily as the other way round. Keep one small, easy task '
+                            'ready for rough days and see if it changes anything.')
             else:
-                text = ('You get more done on rough days: {} tasks vs. {} on good days. '
-                        'Hard days seem to push you to work.').format(
-                            _num(rough['tasks_avg']), _num(good['tasks_avg']))
-            suggests = ('This suggests your mood is setting your output more than your plan is. Keep one '
-                        'small, easy task ready for rough days, so they still count.'
-                        if good['tasks_avg'] > rough['tasks_avg'] else
-                        'This suggests pressure gets you moving. Just check you\'re not relying on bad days '
-                        'to get things done, and plan one real session for a good day.')
-            return {'text': text, 'tone': 'insight', 'confidence': sure, 'suggests': suggests}
-        return {'text': 'Rough days and good days look about the same: '
-                        '{} tasks vs. {}. Bad days don\'t seem to slow you down.'.format(
-                            _num(rough['tasks_avg']), _num(good['tasks_avg'])),
+                text = 'You finish more on rough days: {} tasks vs. {} on good days.'.format(
+                    _num(rough['tasks_avg']), _num(good['tasks_avg']))
+                suggests = ('This suggests big days simply feel rougher, or rough days push you to work. '
+                            'It can\'t say which, so check you\'re not counting on bad days to get things done.')
+            return {'text': text, 'tone': 'insight', 'confidence': read['tier'],
+                    'suggests': evidence.hedge(suggests, read['tier'])}
+        return {'text': 'Rough days and good days look about the same: {} tasks vs. {}.'.format(
+                    _num(rough['tasks_avg']), _num(good['tasks_avg'])),
                 'tone': 'steady', 'confidence': sure,
-                'suggests': ('This suggests your mood isn\'t what\'s driving your output. If you want more '
-                             'done, look at your plan before you look at how you feel.')}
+                'suggests': evidence.hedge(
+                    'This suggests how much you get done isn\'t tied to how the day feels. If you want more '
+                    'done, look at your plan before you look at your mood.', sure)}
 
-    strong = [row for row in found['feelings'] if row.get('enough') and row.get('change') is not None
-              and abs(row['change']) >= SMALL_CHANGE]
+    strong = [row for row in found['feelings'] if row.get('enough') and row.get('clear')
+              and row.get('change') is not None and abs(row['change']) >= SMALL_CHANGE]
     if strong:
         row = strong[0]
-        direction = 'more' if row['change'] > 0 else 'fewer'
+        fewer = row['change'] < 0
+        if fewer and row.get('sign', 0) > 0:
+            suggests = ('This suggests lighter days simply feel better, rather than the feeling slowing you '
+                        'down. It can\'t say which comes first, so there\'s nothing here to change yet.')
+        elif fewer:
+            suggests = ('This suggests the two go together, though it can\'t say which comes first. On those days, '
+                        'try starting with your easiest task and see if it helps.')
+        elif row.get('sign', 0) < 0:
+            suggests = ('This suggests busy days leave you feeling this way, rather than the feeling getting '
+                        'you moving. Keep an eye on whether the load is one you can hold.')
+        else:
+            suggests = ('This suggests the two go together, though it can\'t say which comes first. Note what was '
+                        'different about those days and try setting it up on purpose.')
         return {'text': 'On days you write that you feel {}, you finish {}% {} tasks.'.format(
-                    row['label'].lower(), abs(row['change']), direction),
+                    row['label'].lower(), abs(row['change']), 'fewer' if fewer else 'more'),
                 'tone': 'insight', 'confidence': row['confidence'],
-                'suggests': ('This suggests that feeling gets in the way. On those days, start with your easiest '
-                             'task, so you\'re moving before it can stop you.'
-                             if row['change'] < 0 else
-                             'This suggests that feeling helps you work. Note what brings it on, and try to '
-                             'set it up before your hardest sessions.')}
+                'suggests': evidence.hedge(suggests, row['confidence'])}
 
-    if found['harsher'] >= 2:
-        return {'text': 'You\'re harder on yourself than your numbers are. {} times you wrote that '
-                        'the day was a write-off and still did your usual or more.'.format(found['harsher']),
-                'tone': 'insight', 'confidence': 'early',
-                'suggests': ('This suggests a day can feel worse than it was. Check your task count before '
-                             'you write one off.')}
+    if found['harsher'] >= MIN_DAYS:
+        tier = evidence.tier_for(found['harsher'])
+        return {'text': '{} times you wrote that the day was a write-off and still did your usual or more.'.format(
+                    found['harsher']),
+                'tone': 'insight', 'confidence': tier,
+                'suggests': evidence.hedge('This suggests a day can feel worse than it was. Check your task count '
+                                           'before you write one off.', tier)}
 
-    need = max(0, MIN_DAYS * 2 - found['mood_days'])
     if found['mood_days'] == 0:
         return None
-    return {'text': '{} days with a mood so far. A few more{} and this starts showing how your '
-                    'mood and your work move together.'.format(
-                        found['mood_days'], ' ({} or so)'.format(need) if need else ''),
-            'tone': 'building', 'confidence': 'early'}
+    short = _still_needed(by_band)
+    return {'text': 'Not enough yet to compare your mood with your work. You have {} {} with a mood{}.'.format(
+                found['mood_days'], 'day' if found['mood_days'] == 1 else 'days',
+                ', and it needs {}'.format(short) if short else ''),
+            'tone': 'building', 'confidence': evidence.INSUFFICIENT}
 
 
 def brief_lines(found: dict) -> List[str]:
@@ -688,11 +714,12 @@ def brief_lines(found: dict) -> List[str]:
     """
     lines = []
     head = found.get('headline')
-    if head and head.get('tone') != 'building' and head.get('confidence') != 'early':
+    settled = (evidence.EMERGING, evidence.RELIABLE)
+    if head and head.get('tone') != 'building' and head.get('confidence') in settled:
         lines.append('Mood vs output: {}'.format(head['text']))
     for row in found.get('feelings') or []:
-        if row.get('enough') and row.get('confidence') != 'early' and row.get('change') is not None \
-                and abs(row['change']) >= SMALL_CHANGE:
+        if row.get('enough') and row.get('clear') and row.get('confidence') in settled \
+                and row.get('change') is not None and abs(row['change']) >= SMALL_CHANGE:
             lines.append('On days they write about feeling {}, they finish {}% {} tasks ({} days).'.format(
                 row['label'].lower(), abs(row['change']), 'more' if row['change'] > 0 else 'fewer',
                 row['days']))

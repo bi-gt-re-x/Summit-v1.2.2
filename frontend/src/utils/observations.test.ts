@@ -120,9 +120,9 @@ describe('confidence', () => {
   });
 
   it('has a label for every tier', () => {
-    expect(CONFIDENCE_LABEL.low).toBe('Early hint');
-    expect(CONFIDENCE_LABEL.moderate).toBe('Pattern forming');
-    expect(CONFIDENCE_LABEL.high).toBe('Clear pattern');
+    expect(CONFIDENCE_LABEL.low).toBe('Preliminary signal');
+    expect(CONFIDENCE_LABEL.moderate).toBe('Emerging pattern');
+    expect(CONFIDENCE_LABEL.high).toBe('Potentially reliable');
   });
 });
 

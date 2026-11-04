@@ -23,7 +23,7 @@ AMC = _rows('AMC 8', 'Competitive Math', 'points', 'higher', 25, [
     (21, '2026-06-20'), (24, '2026-07-25'), (25, '2026-09-12')])
 MILE = _rows('Mile run', 'Running', 'minutes', 'lower', 0, [
     (8.5, '2026-05-01'), (8.33, '2026-06-01'), (7.75, '2026-07-15'),
-    (7.7, '2026-08-01'), (7.9, '2026-10-20'), (7.95, '2026-10-25')])
+    (7.7, '2026-08-01'), (7.8, '2026-08-20'), (7.85, '2026-09-10'), (7.9, '2026-10-20'), (7.95, '2026-10-25')])
 CF = _rows('Codeforces rating', 'Coding', 'rating', 'higher', 0, [
     (800, '2026-01-10'), (900, '2026-05-01'), (1150, '2026-10-01')])
 
@@ -210,6 +210,12 @@ def test_a_stalled_record_is_said_and_not_also_called_a_new_best():
     mile = [item['kind'] for item in reads if item['record'] == 'Mile run']
     assert 'stalled' in mile
     assert 'fresh' not in mile
+
+
+def test_a_couple_of_tries_since_a_best_is_not_a_stall():
+    rows = _rows('Mile run', 'Running', 'minutes', 'lower', 0, [
+        (8.5, '2026-05-01'), (7.7, '2026-08-01'), (7.9, '2026-10-20')])
+    assert 'stalled' not in [item['kind'] for item in _read(rows=rows)['reads']]
 
 
 def test_work_is_named_by_the_contest_family():

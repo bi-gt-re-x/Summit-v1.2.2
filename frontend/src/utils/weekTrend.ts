@@ -28,6 +28,7 @@
  * absolute minimum (so 2 tasks becoming 3 isn't called 50% growth). Small
  * moves that clear both are kept, because a steady 15% is worth knowing about.
  */
+import { EVIDENCE_FLOOR } from './evidence';
 import type { GrowthDay, Task } from '@/types';
 import { isActiveDay } from './activeDay';
 import { pctChange } from './recent';
@@ -179,6 +180,8 @@ export interface SlumpInput {
   nameOf: (id: string) => string;
   /** Today, ISO. Defaults to the last day of the series. */
   today?: string;
+  /** The goal the plan says comes first, when there is one. */
+  focus?: { title: string; days_left: number | null; next: string | null } | null;
 }
 
 /**
@@ -190,7 +193,7 @@ export interface SlumpInput {
  * read on its own so a week off doesn't halve it. Under WEEK_FLOOR it's noise
  * rather than a usual: an account that never had one can't fall below it.
  */
-export function findSlump({ blocks, all, tasks, nameOf, today }: SlumpInput): Slump | null {
+export function findSlump({ blocks, all, tasks, nameOf, today, focus }: SlumpInput): Slump | null {
   if (blocks.length < 2) return null;
   const now = blocks[blocks.length - 1]!;
   const prior = blocks.slice(-5, -1);
@@ -213,7 +216,7 @@ export function findSlump({ blocks, all, tasks, nameOf, today }: SlumpInput): Sl
   const lastWorked = [...all].reverse().find(isActiveDay)?.date ?? '';
   const idle = lastWorked ? Math.max(0, daysBetween(lastWorked, todayIso)) : 0;
 
-  const steps = slumpSteps({ blocks, prior, now, tasks, nameOf, todayIso, idle });
+  const steps = slumpSteps({ blocks, prior, now, tasks, nameOf, todayIso, idle, focus });
   return {
     now: now.xp,
     usual,
@@ -231,7 +234,9 @@ function slumpSteps({
   nameOf,
   todayIso,
   idle,
+  focus,
 }: {
+  focus?: SlumpInput['focus'];
   blocks: WeekBlock[];
   prior: WeekBlock[];
   now: WeekBlock;
@@ -273,7 +278,18 @@ function slumpSteps({
     bySubject.set(task.subject, (bySubject.get(task.subject) ?? 0) + 1);
   });
   const top = [...bySubject.entries()].sort((a, b) => b[1] - a[1])[0];
-  if (top && top[1] >= 3) {
+  /* With a goal that needs the time, that's where the way back should lead. Your
+     biggest subject is only a fair place to restart when nothing is waiting on you. */
+  if (focus) {
+    const left = focus.days_left === null ? '' : ` It has ${focus.days_left} ${focus.days_left === 1 ? 'day' : 'days'} left.`;
+    steps.push({
+      id: 'best-subject',
+      title: `Put your first real session on ${focus.title}`,
+      detail: `It's what your goals need most right now.${left}${focus.next ? ` Your next step is "${focus.next}".` : ''} Coming back on the work that matters means the slump costs you less.`,
+      to: '/recommendations',
+      link: 'See the plan',
+    });
+  } else if (top && top[1] >= EVIDENCE_FLOOR) {
     steps.push({
       id: 'best-subject',
       title: `Start with ${nameOf(top[0])}`,

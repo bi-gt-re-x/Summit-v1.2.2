@@ -11,7 +11,7 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
 from backend.api import booking
-from backend.api.goals import _measure_of, _milestones_of
+from backend.api.goals import _measure_of, _milestones_of, sync_counter_goals, sync_focus_goals
 from backend.api.guard import current_username
 from backend.api.reply import fail, ok
 from backend.config import subjects as catalogue
@@ -19,7 +19,7 @@ from backend.database import connection as db
 from backend.goal_matcher import store as goal_store
 from backend.api.tasks import CreateTask, _create as create_task
 from backend.tracking import growth
-from backend.tracking import next_actions
+from backend.tracking import next_actions, priority
 from backend.tracking import record
 from backend.tracking import session_plan
 from backend.tracking.auth import load_user
@@ -58,6 +58,9 @@ def _record(username):
     tasks = goal_store.with_goal_ids(username, db.columns_for('tasks', username, TASK_FIELDS))
     goals = db.rows_for('goals', username)
     stones = db.rows_for('goal_milestones', username)
+    # On these rows only: a GET never writes, and the Goals page saves them.
+    sync_focus_goals(username, goals, persist=False)
+    sync_counter_goals(username, goals, persist=False)
     for goal in goals:
         goal['measure'] = _measure_of(goal)
         goal['milestones'] = _milestones_of(stones, goal.get('id'))
@@ -112,13 +115,20 @@ def get_next_actions(budget: int = next_actions.DEFAULT_BUDGET,
     series = growth.series(username, RECENT_DAYS) or {}
     days = series.get('growth_data') or []
 
-    lens = next_actions.leading_lens(goals, tasks)
+    now = datetime.now()
+    name_of = _name_of(username)
+    sittings = _sittings(username)
+    decision = priority.decide(goals, tasks, now, budget, sittings, name_of, db.topic_library_for(username)[0])
+    # The goal that's getting the time is the one to read the page through.
+    leading = next((goal for goal in goals if decision['focus']
+                    and str(goal.get('id')) == decision['focus']['goal_id']), None)
+    lens = (next_actions.goal_lens(leading, tasks) if leading else None) or next_actions.leading_lens(goals, tasks)
     review, skills = _practice(username)
-    plan = next_actions.build_plan(tasks, goals, days, _name_of(username), budget,
-                                   now=datetime.now(), lens=lens,
+    plan = next_actions.build_plan(tasks, goals, days, name_of, budget,
+                                   now=now, lens=lens,
                                    daily_goal=user.get('daily_goal'), best_streak=user.get('best_streak'),
-                                   sittings=_sittings(username), review=review, skills=skills,
-                                   checks=_ready_checks(username))
+                                   sittings=sittings, review=review, skills=skills,
+                                   checks=_ready_checks(username), decision=decision)
     return ok(plan=plan, lens=lens, budgets=list(next_actions.BUDGETS))
 
 

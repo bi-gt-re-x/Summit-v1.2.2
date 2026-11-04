@@ -31,7 +31,8 @@ import type { AnalyticsModel } from './useAnalyticsModel';
  * ends in something to do, and doing is that tab's job.
  */
 export function useKnows(model: AnalyticsModel): Knowledge[] {
-  const { breakdown, maturity, nameOf, tasks, toIso } = model;
+  const { breakdown, maturity, nameOf, plan, tasks, toIso } = model;
+  const priority = plan.priority?.focus?.title ?? null;
   return useMemo(() => {
     /* The recent leader, for the "current focus" line. Fourteen days rather
        than the picker's window, because the point of the line is that it can
@@ -74,8 +75,9 @@ export function useKnows(model: AnalyticsModel): Knowledge[] {
       })),
       recentTop,
       recentDays: workedDays.size,
+      priority,
     });
-  }, [breakdown.rows, maturity.activeDays, maturity.spanDays, nameOf, tasks, toIso]);
+  }, [breakdown.rows, maturity.activeDays, maturity.spanDays, nameOf, priority, tasks, toIso]);
 }
 
 export function Knows({ facts }: { facts: Knowledge[] }) {

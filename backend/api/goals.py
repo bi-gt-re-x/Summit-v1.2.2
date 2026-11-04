@@ -818,6 +818,60 @@ def sync_focus_goals(username, goals=None, persist=True):
             _save_goal(goal, username)
 
 
+#: A goal that says it counts everything, rather than from the day it was set.
+LIFETIME = re.compile(r'\b(lifetime|all[- ]time|in total)\b', re.I)
+
+
+def _counts_from(goal):
+    """The moment a counter goal starts counting, as an ISO string. Empty means
+    the whole record."""
+    if LIFETIME.search(str(goal.get('title') or '')):
+        return ''
+    return str(goal.get('start_date') or goal.get('created_at') or '')
+
+
+def sync_counter_goals(username, goals=None, persist=True):
+    """Bring XP and task goals up to what the record says was earned.
+
+    These counters are added to as tasks finish, so anything that reaches the
+    ledger another way leaves them behind for good: an import, a seed, a task
+    finished before this code path existed. Alpha's "Earn 250,000 XP" read 70%
+    with 622,730 XP earned since it was set, and a figure like that makes a reader
+    doubt every other number on the page. So the ledger decides.
+
+    It only ever raises a counter. The reader can set one by hand, and a goal
+    that's moved past what the ledger holds was moved on purpose.
+    """
+    rows = db.rows_for('goals', username) if goals is None else goals
+    pending = (_goals_of(rows, username, 'xp', unfinished=True)
+               + _goals_of(rows, username, 'tasks', unfinished=True))
+    if not pending:
+        return
+    events = xp_tracking.events_for(username)
+
+    def earned_since(stamp):
+        xp = tasks = 0
+        for event in events:
+            when = str(event.get('timestamp') or xp_tracking.event_day(event) or '')
+            if when and when >= stamp:
+                xp += event.get('amount', 0) or 0
+                tasks += event.get('tasks_completed', 1) or 0
+        return xp, tasks
+
+    for goal in pending:
+        xp, tasks = earned_since(_counts_from(goal))
+        current_field, target_field = GOAL_FIELDS[_measure_of(goal)]
+        value = xp if current_field == 'current_xp' else tasks
+        target = float(goal.get(target_field) or 0)
+        best = max(float(goal.get(current_field) or 0), min(value, target) if target else value)
+        before = (goal.get(current_field), goal.get('status'), goal.get('progress'), goal.get('target_value'))
+        goal[current_field] = best
+        _recompute(goal)
+        if persist and (goal.get(current_field), goal.get('status'),
+                        goal.get('progress'), goal.get('target_value')) != before:
+            _save_goal(goal, username)
+
+
 # --------------------------------------------------------------------------
 # The API
 # --------------------------------------------------------------------------
@@ -955,6 +1009,7 @@ def get_goals(username: str = Depends(current_username)):
     mine = db.rows_for('goals', username)
     sync_streak_goals(username, mine, persist=False)
     sync_focus_goals(username, mine, persist=False)
+    sync_counter_goals(username, mine, persist=False)
     return _goals_reply(username, mine)
 
 
@@ -963,6 +1018,7 @@ def settle_goals(username: str = Depends(current_username)):
     """Every goal, with the self-tracking ones brought up to date and saved."""
     sync_streak_goals(username)
     sync_focus_goals(username)
+    sync_counter_goals(username)
     return _goals_reply(username, db.rows_for('goals', username))
 
 

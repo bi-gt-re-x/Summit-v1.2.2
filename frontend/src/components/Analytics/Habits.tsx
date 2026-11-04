@@ -28,6 +28,7 @@ import {
   type HabitStrength,
   type HabitSummary,
 } from '@/utils/habits';
+import { STRENGTH_TEXT } from '@/utils/insight';
 import type { HabitFacts } from '@/utils/habitEffects';
 import { Suggestion } from './Suggestion';
 
@@ -215,7 +216,7 @@ export function HabitCard({
           {facts.condition && (
             <p className="ax-habit-cond">
               <span className="ax-habit-cond-label">Best</span> {facts.condition.label}
-              <span className="ax-muted"> · {Math.round(facts.condition.lift)}% better</span>
+              <span className="ax-muted"> · {Math.round(facts.condition.lift)}% better · {STRENGTH_TEXT[facts.condition.strength]}</span>
             </p>
           )}
           {facts.effect && (
@@ -357,7 +358,7 @@ export function PatternsPanel({
   return (
     <Panel
       title="Patterns in what you do"
-      note='What you repeat and how often. See "Why it happens" for why it matters.'
+      note='What you repeat and how often. See "What goes together" for what lines up with it.'
     >
       {patterns.length === 0 ? (
         <p className="ax-empty">

@@ -15,6 +15,7 @@ import { ReviewPanel } from '../ReviewPanel';
 import { SkillTreesPanel } from '../SkillTreesPanel';
 import { XpPulse } from '../XpPulse';
 import { LensCard } from '../Lens';
+import { PriorityPanel } from '../PriorityPanel';
 import { Knows, useKnows } from '../Knows';
 import type { AnalyticsData } from '../useAnalyticsData';
 import type { AnalyticsModel } from '../useAnalyticsModel';
@@ -49,9 +50,12 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
 
       {/* Above the plan, because it is the reason the plan is in this order.
           A reader who meets the ranking first and the explanation second has
-          already decided the ranking is arbitrary. The XP card beside it is
-          the figure the lens is about. */}
-      {(lens || all.length > 0) && (
+          already decided the ranking is arbitrary. */}
+      {plan.priority && (plan.priority.mode !== 'none' || plan.priority.note) ? (
+        <section className="ax-section">
+          <PriorityPanel decision={plan.priority} />
+        </section>
+      ) : (lens || all.length > 0) && (
         <section className="ax-section">
           <div className={`ax-panel ax-rec-top${lens ? '' : ' is-solo'}`}>
             {lens && <LensCard lens={lens} />}

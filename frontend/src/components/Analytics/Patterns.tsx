@@ -39,9 +39,9 @@ const KIND_LABEL: Record<PatternKind, string> = {
 };
 
 const STRENGTH_CLASS: Record<Strength, string> = {
-  strong: 'is-strong',
-  likely: 'is-likely',
-  weak: 'is-weak',
+  reliable: 'is-strong',
+  emerging: 'is-likely',
+  preliminary: 'is-weak',
 };
 
 export interface PatternsProps {
@@ -64,8 +64,9 @@ export function Patterns({ items, window: days }: PatternsProps) {
         <PanelNote label="How patterns are found">
           <ul className="ax-tips">
             <li><b>Two groups:</b> Each one compares two sets of your tasks, like before and after 5pm.</li>
-            <li><b>High bar:</b> Both sets need 6+ tasks and a 10% gap, so luck can't fake it.</li>
-            <li><b>Just a hint:</b> A pattern doesn't prove a cause. Treat "Worth trying" as a test.</li>
+            <li><b>High bar:</b> Both sets need 6+ tasks, a 10% gap and a difference bigger than your ratings' usual swing.</li>
+            <li><b>How sure:</b> Under 10 on either side is a preliminary signal, under 30 is an emerging pattern, and 30+ is potentially reliable.</li>
+            <li><b>Not a cause:</b> These show two things go together. Treat "Worth trying" as a test.</li>
           </ul>
         </PanelNote>
       }
@@ -80,8 +81,8 @@ export function Patterns({ items, window: days }: PatternsProps) {
             <li key={item.id} className={`ax-pat-row ${STRENGTH_CLASS[item.strength]}`}>
               <div className="ax-pat-top">
                 <span className="ax-pat-kind">{KIND_LABEL[item.kind]}</span>
-                <span className="ax-pat-strength" title={STRENGTH_TEXT[item.strength]}>
-                  {item.strength}
+                <span className="ax-pat-strength" title="How much this can claim, from how many times it was seen">
+                  {STRENGTH_TEXT[item.strength]}
                 </span>
                 <span className="ax-pat-lift">
                   {item.lift >= 0 ? '+' : '−'}

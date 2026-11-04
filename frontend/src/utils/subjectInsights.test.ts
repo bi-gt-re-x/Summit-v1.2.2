@@ -143,13 +143,24 @@ describe('subjectInsights', () => {
 
   it('compares ratings against the other subjects when there are enough', () => {
     const rated = [
-      ...['2026-10-01', '2026-10-03', '2026-10-05'].map((day) => done('chem', day, 20, { execution: 5 })),
-      ...['2026-10-02', '2026-10-04', '2026-10-06'].map((day) => done('maths', day, 20, { execution: 2 })),
+      ...['2026-10-01', '2026-10-03', '2026-10-05', '2026-10-07', '2026-10-09'].map((day) => done('chem', day, 20, { execution: 5 })),
+      ...['2026-10-02', '2026-10-04', '2026-10-06', '2026-10-08', '2026-10-10'].map((day) => done('maths', day, 20, { execution: 2 })),
     ];
     const ratedCards = skillCards(rated, subjects, TODAY);
     const chem = ratedCards.find((entry) => entry.key === 'chem')!;
     const insight = subjectInsights(chem, ratedCards, rated, TODAY).find((entry) => entry.key === 'ratings');
     expect(insight?.head).toBe('It goes better than your other work');
+    expect(insight?.evidence).toBe('Preliminary signal');
+  });
+
+  it('says nothing about ratings from three tasks a side', () => {
+    const rated = [
+      ...['2026-10-01', '2026-10-03', '2026-10-05'].map((day) => done('chem', day, 20, { execution: 5 })),
+      ...['2026-10-02', '2026-10-04', '2026-10-06'].map((day) => done('maths', day, 20, { execution: 2 })),
+    ];
+    const ratedCards = skillCards(rated, subjects, TODAY);
+    const chem = ratedCards.find((entry) => entry.key === 'chem')!;
+    expect(subjectInsights(chem, ratedCards, rated, TODAY).find((entry) => entry.key === 'ratings')).toBeUndefined();
   });
 
   it('gives every card a suggestion, and never the same one for two cards', () => {
@@ -175,7 +186,8 @@ describe('subjectInsights', () => {
         (entry) => entry.key === 'time',
       );
     expect(read('chem')?.head).toBe('Your time pays off more here than in your other work');
-    expect(read('chem')?.suggests).toContain('short on time');
+    // XP an hour is a proxy, so this doesn't get to say the time is well spent.
+    expect(read('chem')?.suggests).toContain('XP is one measure');
     expect(read('maths')?.head).toBe('Your time pays off less here than in your other work');
     expect(read('maths')?.suggests).toContain('Split your next one');
   });

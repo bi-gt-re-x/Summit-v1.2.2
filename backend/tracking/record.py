@@ -36,8 +36,9 @@ SCORE_FLOOR = 8
 SCORE_BAR = 0.8
 #: The rough sessions read for a pattern in why they went badly.
 STUCK_WINDOW = 8
-#: The same reason this many times in that window is a pattern.
-STUCK_FLOOR = 3
+#: The same reason this many times in that window is a pattern. Three is
+#: insufficient evidence (backend/tracking/evidence.py).
+STUCK_FLOOR = 4
 #: How far ahead a goal's date pulls the plan toward it.
 DEADLINE_DAYS = 120
 #: Days without work after which a goal's subject counts as cold.

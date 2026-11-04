@@ -116,6 +116,9 @@ export interface GrowthReadItem {
   title: string;
   detail: string;
   weight: number;
+  /** How much it can claim, where it's a comparison. backend/tracking/evidence.py. */
+  evidence?: string;
+  evidence_label?: string;
 }
 
 export interface GrowthReads {

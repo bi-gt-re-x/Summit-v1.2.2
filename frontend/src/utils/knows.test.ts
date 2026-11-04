@@ -177,7 +177,9 @@ describe('the advice turns on the figure', () => {
   it('tells a heavy list to cut and a light one to add', () => {
     const heavy = adviceOf('workload', { activeDays: 10, finished: HEAVY_LOAD * 10 });
     const light = adviceOf('workload', { activeDays: 10, finished: (LIGHT_LOAD - 1) * 10 });
-    expect(heavy).toMatch(/three tasks max/i);
+    expect(heavy).toMatch(/three tasks/i);
+    // It tries something. It doesn't claim to know what the long list does.
+    expect(heavy).not.toMatch(/gets left until last/);
     expect(light).toMatch(/add/i);
     expect(heavy).not.toBe(light);
   });

@@ -70,6 +70,9 @@ export interface Knowledge {
 }
 
 export interface KnowsInput {
+  /** The goal the priority engine says comes first, by name. Never a guess at a
+   *  subject: "pick one" with nothing behind it is advice for anybody. */
+  priority?: string | null;
   /** Tasks finished in the window. */
   finished: number;
   /** Days in the window with work on them. */
@@ -167,7 +170,7 @@ export const SCATTERED_SHARE = 25;
 export const RECENT_FLOOR = 8;
 
 export function whatSummitKnows(input: KnowsInput): Knowledge[] {
-  const { finished, activeDays, spanDays, subjects, recentTop, recentDays } = input;
+  const { finished, activeDays, spanDays, subjects, recentTop, recentDays, priority } = input;
   const found: Knowledge[] = [];
 
   /* First, because it frames every figure under it: the others are rates and
@@ -189,13 +192,16 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
         : held >= HELD_RATIO
           ? "Showing up isn't what's holding you back"
           : 'Your days are hit and miss',
-      text: `You've used Summit for ${spanDays.toLocaleString()} days.`,
+      text:
+        fallenOff && recentDays !== undefined
+          ? `You worked ${recentDays} of the last 14 days. Your record goes back ${spanDays.toLocaleString()} days.`
+          : `You've used Summit for ${spanDays.toLocaleString()} days.`,
       /* An unbroken record is the one case where the useful advice is to stop
          protecting it: a reader who has not missed a day in three years is
          being held back by the safe day they take to keep the run alive, not
          by the run. */
       advice: fallenOff
-        ? 'This suggests something changed recently. Getting back to your usual rhythm will do more than anything else on this page.'
+        ? 'This suggests something changed recently. Getting back to your usual rhythm is the first thing to try.'
         : held >= HELD_RATIO
           ? "This suggests more days won't be your next gain. You show up plenty, so push yourself with something tough next."
           : 'This suggests your routine depends on the day going well. Pick the day you skip most and make sure you work that day.',
@@ -218,7 +224,7 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
       text: `You average ${perDay.toFixed(1)} tasks on the days you work.`,
       advice:
         perDay >= HEAVY_LOAD
-          ? 'This suggests the hard stuff gets left until last. Three tasks max next time, hardest first.'
+          ? "That's a lot for one day, and nothing here says the count is the problem. Try three tasks with the hardest first, and see if your ratings change."
           : perDay < LIGHT_LOAD
             ? "This suggests you're being careful, and a short list is fine if it's the right one. Add one task you're not sure you can finish."
             : 'This suggests the size is right, so keep it. The next thing to check is whether the right tasks make the list.',
@@ -251,10 +257,16 @@ export function whatSummitKnows(input: KnowsInput): Knowledge[] {
          the advice misreading its own figure. */
       advice:
         share >= DOMINANT_SHARE
-          ? `This suggests one subject is getting most of your attention. If that's the plan, great. If not, take an hour off it this week.`
+          ? priority
+            ? `This suggests one subject is getting most of your attention. Check that against what needs you: ${priority} comes first right now.`
+            : `This suggests one subject is getting most of your attention. If that's the plan, great. If not, take an hour off it this week.`
           : share <= SCATTERED_SHARE && real.length >= 3
-            ? `This suggests no subject is getting enough to move fast. Your top one is just ${share}%, so pick one and give it more hours.`
-            : `This suggests a split you can keep. Hold onto it and go deeper on ${top.name}.`,
+            ? priority
+              ? `This suggests your time is spread across a lot of subjects. Most of them don't need more right now, so give the extra hours to ${priority}.`
+              : `This suggests no subject is getting enough to move fast. Your top one is just ${share}%. Set a goal with a date and the plan can say which one needs you.`
+            : priority
+              ? `This suggests a split you can keep. If you've got spare time, it goes to ${priority} first.`
+              : `This suggests a split you can keep. A goal with a date would say where any spare time should go.`,
     });
   }
 

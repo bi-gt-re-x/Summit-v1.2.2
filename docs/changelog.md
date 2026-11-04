@@ -2,6 +2,47 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-11-03 — A priority engine, and a strict evidence hierarchy
+
+### Where your time should go
+
+The plan used to order whatever the record could point at. Asked about a student with
+an AMC 10 in three days, it would say to practice their weakest subject. Now goals get
+ranked first and tasks second (backend/tracking/priority.py), on what matters (the
+goal's own priority), what's time-sensitive (the date and the pace it asks for) and what
+a session has really moved. Only goals with a number or checkpoints can lead.
+
+Recommendations opens with the decision: which goal gets the minutes, what each of those
+questions comes to, what it costs, and what to deliberately leave alone with the reason
+for each. When a date is pressing, rows that don't serve it leave the plan and get named
+there. The slump card, What we notice and the Mastery card all follow the same decision,
+so they can't send a reader somewhere else.
+
+### What a figure is allowed to claim
+
+Every finding now goes through one table (shared/rules.json, pinned on both sides by
+shared/cases/evidence.json):
+
+| Observations | Label | What it can say |
+|---|---|---|
+| 1-3 | Insufficient evidence | Nothing, except what's missing |
+| 4-9 | Preliminary signal | Something to test |
+| 10-29 | Emerging pattern | "This may mean" |
+| 30+ | Potentially reliable | "This suggests" |
+
+For a comparison the count is the smaller side, and the gap is read in standard errors:
+inside the ordinary swing of the figures nothing is claimed, and short of a clear gap it
+stays preliminary. Cards also say what kind of claim they make (adds up exactly, counted,
+before and after, goes together), and only arithmetic gets to say "because". This replaced
+labels that were hard-coded or came from a made-up correlation, and removed findings like
+"feeling good gets in the way" (three good days) and "you come back strong" (two breaks).
+
+### Goal progress reads the record
+
+XP and task goals now count from the ledger instead of a stored counter that could drift,
+so "Earn 250,000 XP" no longer reads 70% with 622,730 XP earned since it was set.
+scripts/repair_focus_goals.py put focus targets stored in seconds back in minutes.
+
 ## 2026-11-03 — Activity, output, progress and mastery; Analytics stops disagreeing with itself
 
 ### Busy, or getting closer?

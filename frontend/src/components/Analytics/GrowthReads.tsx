@@ -27,7 +27,7 @@ export function readDays(span: WindowKey): number {
   return Math.max(30, Math.min(730, days));
 }
 
-function Row({ tone, title, detail }: { tone: 'good' | 'bad' | 'flat'; title: string; detail: string }) {
+function Row({ tone, title, detail, evidence }: { tone: 'good' | 'bad' | 'flat'; title: string; detail: string; evidence?: string }) {
   return (
     <li className={`is-${tone === 'good' ? 'up' : tone === 'bad' ? 'down' : 'flat'}`}>
       <span className="ax-period-mark" aria-hidden="true">
@@ -35,6 +35,7 @@ function Row({ tone, title, detail }: { tone: 'good' | 'bad' | 'flat'; title: st
       </span>
       <span>
         <b>{title}.</b> <Figures text={detail} />
+        {evidence && <span className="ax-change-strength">{evidence}</span>}
       </span>
     </li>
   );
@@ -97,7 +98,7 @@ export function GrowthReadsPanel({ span, tracks = [] }: { span: WindowKey; track
                 />
               ))}
               {worse.map((item) => (
-                <Row key={item.id} tone={item.tone} title={item.title} detail={item.detail} />
+                <Row key={item.id} tone={item.tone} title={item.title} detail={item.detail} evidence={item.evidence_label} />
               ))}
             </ul>
           )}
@@ -109,7 +110,7 @@ export function GrowthReadsPanel({ span, tracks = [] }: { span: WindowKey; track
           ) : (
             <ul className="ax-period-list">
               {better.map((item) => (
-                <Row key={item.id} tone={item.tone} title={item.title} detail={item.detail} />
+                <Row key={item.id} tone={item.tone} title={item.title} detail={item.detail} evidence={item.evidence_label} />
               ))}
             </ul>
           )}

@@ -1,6 +1,19 @@
 {
   "_about": "Rules the browser and the server both apply, kept once. Read by backend/config/shared.py and imported in the browser as '@shared/rules.json'. Change a value here and both sides change; never copy one into code. shared/README.md says more.",
 
+  "evidence": {
+    "_about": "How much a figure is allowed to claim, by how many observations stand behind it. For a comparison the count is the smaller side. These are starting points and not a statistical law: backend/tracking/evidence.py and frontend/src/utils/evidence.ts also read how big the gap is against how noisy the figures are, using `weak_gap` and `clear_gap` as a count of standard errors. Under `weak_gap` the two sides can't be told apart, so nothing is claimed. Under `clear_gap` the claim stays preliminary however large the sample. shared/cases/evidence.json pins both copies.",
+    "tiers": [
+      { "key": "insufficient", "from": 0, "label": "Insufficient evidence" },
+      { "key": "preliminary", "from": 4, "label": "Preliminary signal" },
+      { "key": "emerging", "from": 10, "label": "Emerging pattern" },
+      { "key": "reliable", "from": 30, "label": "Potentially reliable" }
+    ],
+    "weak_gap": 1.0,
+    "clear_gap": 2.0,
+    "min_correlation": 0.2
+  },
+
   "task_xp": {
     "min": 10,
     "max": 250,
