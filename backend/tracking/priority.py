@@ -450,6 +450,68 @@ def _row_out(row: Dict[str, Any], given: set) -> Dict[str, Any]:
 
 
 # ---------------------------------------------------------------------------
+# Sessions written for the goal
+# ---------------------------------------------------------------------------
+def session_tasks(goal: Dict[str, Any], tasks: Sequence[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """The study work that's on this goal, for a model to plan its sessions from.
+
+    The same rule the forecast uses: tasks linked to it or named for it, and every task
+    in its subjects too until there are enough of those. What the model can't see, it
+    can't suggest, which holds better than asking it to leave things out.
+    """
+    terms = goal_why.goal_terms(goal)
+    direct = [task for task in tasks if goal_why.is_direct(task, goal, terms)]
+    done = sum(1 for task in direct if task.get('status') == 'done' and task.get('completed_at'))
+    found = list(direct)
+    if done < forecast.MIN_DIRECT:
+        seen = {task.get('id') for task in direct}
+        subjects = _subjects(goal)
+        found += [task for task in tasks if task.get('subject') in subjects and task.get('id') not in seen]
+    return [task for task in found if kind_of(task) == 'study']
+
+
+def _topic_line(row: Dict[str, Any]) -> str:
+    """One topic the goal tests, and only as much as its tasks can support."""
+    label = row.get('label') or 'A topic'
+    if row.get('status') == 'untouched':
+        return '{}: not started'.format(label)
+    tasks = int(row.get('tasks') or 0)
+    if not evidence.speaks(evidence.counted(tasks)):
+        return '{}: {} so far, too few to say how it is going'.format(label, _sessions(tasks).replace('session', 'task'))
+    rated = ', rated {:g} of 5'.format(row['execution']) if row.get('execution') is not None else ''
+    return '{}: {} over {}{}'.format(label, row.get('status') or 'steady', _sessions(tasks).replace('session', 'task'), rated)
+
+
+def session_block(decision: Dict[str, Any], goal: Dict[str, Any], topic_rows: Sequence[Dict[str, Any]]) -> str:
+    """The section of a model's brief that says what the sessions are for."""
+    focus = decision['focus']
+    urgent = next((row['answer'] for row in decision['answers'] if row['key'] == 'urgent'), '')
+    lines = ['Goal: {}'.format(focus['title']),
+             'Where it stands: {}% done. {}'.format(focus['percent'], urgent)]
+    if str(goal.get('why') or '').strip():
+        lines.append('Why they want it: {}'.format(str(goal['why']).strip()[:200]))
+    if focus['next']:
+        lines.append('The next step on it: {}'.format(focus['next']))
+    if focus['days_left'] is not None and focus['days_left'] <= CRUNCH_DAYS:
+        lines.append('The date is close, so no new material: only timed practice and going over what they '
+                     'already know is worth doing, and every session has to fit before the date.')
+    plan = topics.plan(goal, topic_rows)
+    if plan.get('contexts'):
+        lines.append('What it is: {}'.format(', '.join(plan['contexts'])))
+    position = plan.get('position') or []
+    if position:
+        lines.append('What it tests, and how each part is going:')
+        lines += ['  {}'.format(_topic_line(row)) for row in position[:10]]
+    for move in (plan.get('moves') or [])[:2]:
+        lines.append('Practice that fits: {}'.format(move['title']))
+    out = '\n\n<priority_goal>\n{}\n</priority_goal>'.format('\n'.join(lines))
+    leave = [row['title'] for row in decision['not_now'] if str(row.get('key')).startswith('goal-')][:5]
+    if leave:
+        out += '\n\n<leave_alone>\n{}\n</leave_alone>'.format('\n'.join('  - {}'.format(title) for title in leave))
+    return out
+
+
+# ---------------------------------------------------------------------------
 # Applying it to the plan
 # ---------------------------------------------------------------------------
 def _serves(item: Dict[str, Any], stakes_given: List[Dict[str, Any]], task_goals: Dict[Any, List[str]]) -> bool:

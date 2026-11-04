@@ -86,19 +86,49 @@ function show(mutate = vi.fn()) {
   return mutate;
 }
 
-describe('beside the plan', () => {
-  it("says these sessions don't follow the plan's decision", async () => {
-    renderWithProviders(<NextSessionsPanel where="analytics" focusTitle="AMC 10 cutoff" />, {
-      auth: { username: 'alpha' },
-      userData: { mutate: vi.fn() },
-    });
-    expect(await screen.findByText(/don't follow the plan above, so AMC 10 cutoff still comes first/)).toBeInTheDocument();
+describe('around the goal that comes first', () => {
+  const goal = { goal_id: 'g1', title: 'AMC 10 cutoff', days_left: 3, next: 'Mock 4' };
+  const scoped = (written_for: string | null = 'g1') => ({
+    ...onScreen(), steps: [step(1)], goal, scoped: true, written_for, subject: 'All subjects',
   });
 
-  it('says nothing about it where there is no plan', async () => {
+  it('says which goal they are for', async () => {
+    vi.mocked(analytics.nextSessions).mockImplementation(async () => scoped());
+    show();
+    expect(await screen.findByText('AMC 10 cutoff')).toBeInTheDocument();
+    expect(screen.getByText(/the goal that comes first right now/)).toBeInTheDocument();
+    expect(screen.queryByText(/written before/)).toBeNull();
+  });
+
+  it('owns up when the saved three are from before it', async () => {
+    vi.mocked(analytics.nextSessions).mockImplementation(async () => scoped(null));
+    show();
+    expect(await screen.findByText(/written before AMC 10 cutoff came first/)).toBeInTheDocument();
+  });
+
+  it('lets the reader ask for every subject, and go back', async () => {
+    vi.mocked(analytics.nextSessions).mockImplementation(async (_subject = '', _kind = 'general', _picked = [], across = false) => (
+      across ? { ...onScreen(), goal, scoped: false, written_for: null } : scoped()
+    ));
+    show();
+    fireEvent.click(await screen.findByRole('button', { name: 'Use all my subjects instead' }));
+    expect(await screen.findByRole('button', { name: 'Back to AMC 10 cutoff' })).toBeInTheDocument();
+    expect(screen.getByText(/in all your subjects/)).toBeInTheDocument();
+    await waitFor(() => expect(analytics.nextSessions).toHaveBeenLastCalledWith('', 'general', [], true));
+  });
+
+  it('sends the same choice when asking for new ones', async () => {
+    vi.mocked(analytics.nextSessions).mockImplementation(async () => ({ ...onScreen(), goal, scoped: false }));
+    localStorage.setItem('nsPicks:alpha', JSON.stringify({ across: true }));
+    show();
+    await suggest();
+    expect(analytics.suggestNextSessions).toHaveBeenCalledWith('', expect.objectContaining({ across: true }));
+  });
+
+  it('has no switch when there is no goal to go back to', async () => {
     show();
     await screen.findByRole('button', { name: 'Suggest 3 sessions' });
-    expect(screen.queryByText(/don't follow the plan above/)).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Use all my subjects instead' })).toBeNull();
   });
 });
 
@@ -122,23 +152,23 @@ describe('three next sessions', () => {
       'General', 'Expansion', 'Weakness', 'Review', 'New topics',
     ]);
     expect(within(kinds).getByRole('radio', { name: 'General' })).toHaveAttribute('aria-checked', 'true');
-    await waitFor(() => expect(analytics.nextSessions).toHaveBeenCalledWith('', 'general', []));
+    await waitFor(() => expect(analytics.nextSessions).toHaveBeenCalledWith('', 'general', [], false));
     expect(await screen.findByText(/Nothing suggested yet/)).toBeInTheDocument();
   });
 
   it('suggests three across every subject', async () => {
     show();
     await suggest();
-    expect(analytics.suggestNextSessions).toHaveBeenCalledWith('', { kind: 'general', subjects: [], topics: [] });
+    expect(analytics.suggestNextSessions).toHaveBeenCalledWith('', { kind: 'general', subjects: [], topics: [], across: false });
     expect(screen.getAllByRole('button', { name: 'Plan my next session' })).toHaveLength(3);
   });
 
   it('asks for the kind that is picked, and remembers it', async () => {
     show();
     fireEvent.click(await screen.findByRole('radio', { name: 'Weakness' }));
-    await waitFor(() => expect(analytics.nextSessions).toHaveBeenLastCalledWith('', 'weakness', []));
+    await waitFor(() => expect(analytics.nextSessions).toHaveBeenLastCalledWith('', 'weakness', [], false));
     await suggest();
-    expect(analytics.suggestNextSessions).toHaveBeenCalledWith('', { kind: 'weakness', subjects: [], topics: [] });
+    expect(analytics.suggestNextSessions).toHaveBeenCalledWith('', { kind: 'weakness', subjects: [], topics: [], across: false });
     expect(JSON.parse(localStorage.getItem('nsPicks:alpha') || '{}').kind).toBe('weakness');
   });
 
@@ -165,9 +195,9 @@ describe('three next sessions', () => {
     show();
     await screen.findByText(/Nothing suggested yet/);
     await pickFrom('Subjects', 'Mathematics');
-    await waitFor(() => expect(analytics.nextSessions).toHaveBeenLastCalledWith('mathematics', 'general', ['mathematics']));
+    await waitFor(() => expect(analytics.nextSessions).toHaveBeenLastCalledWith('mathematics', 'general', ['mathematics'], false));
     await suggest();
-    expect(analytics.suggestNextSessions).toHaveBeenCalledWith('mathematics', { kind: 'general', subjects: [], topics: [] });
+    expect(analytics.suggestNextSessions).toHaveBeenCalledWith('mathematics', { kind: 'general', subjects: [], topics: [], across: false });
   });
 
   it('several subjects share the three across every subject', async () => {
@@ -175,10 +205,10 @@ describe('three next sessions', () => {
     await screen.findByText(/Nothing suggested yet/);
     await pickFrom('Subjects', 'Mathematics');
     await pickFrom('Subjects', 'Music');
-    await waitFor(() => expect(analytics.nextSessions).toHaveBeenLastCalledWith('', 'general', ['mathematics', 'music']));
+    await waitFor(() => expect(analytics.nextSessions).toHaveBeenLastCalledWith('', 'general', ['mathematics', 'music'], false));
     await suggest();
     expect(analytics.suggestNextSessions).toHaveBeenCalledWith('', {
-      kind: 'general', subjects: ['mathematics', 'music'], topics: [],
+      kind: 'general', subjects: ['mathematics', 'music'], topics: [], across: false,
     });
   });
 
@@ -192,7 +222,7 @@ describe('three next sessions', () => {
     await pickFrom('Topics', 'Casework');
     await suggest();
     expect(analytics.suggestNextSessions).toHaveBeenCalledWith('', {
-      kind: 'general', subjects: [], topics: ['competition-math:counting', 'competition-math:casework'],
+      kind: 'general', subjects: [], topics: ['competition-math:counting', 'competition-math:casework'], across: false,
     });
 
     fireEvent.click(screen.getByRole('button', { name: 'Remove Counting' }));

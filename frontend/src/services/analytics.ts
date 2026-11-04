@@ -1044,6 +1044,8 @@ export interface NextSessions {
   /** '' for every subject. */
   subject_id: string;
   steps: SuggestedSession[];
+  /** The goal these were written for, when they were written for one. */
+  written_for?: string | null;
 }
 
 /** What the three sessions are for: backend/tracking/session_kinds.py. */
@@ -1069,6 +1071,17 @@ export interface SessionsOnScreen extends NextSessions {
   /** How much this kind has to work from. Null for general, which reads everything. */
   due: number | null;
   available: boolean;
+  /** The goal the plan puts first. Null with a subject picked or no goal that can lead. */
+  goal?: SessionGoal | null;
+  /** Whether these sessions are for that goal, rather than every subject. */
+  scoped?: boolean;
+}
+
+export interface SessionGoal {
+  goal_id: string;
+  title: string;
+  days_left: number | null;
+  next: string | null;
 }
 
 /**
@@ -1081,11 +1094,13 @@ export function nextSessions(
   subjectId = '',
   kind: SessionKind = 'general',
   picked: string[] = [],
+  across = false,
 ): Promise<ApiResult<SessionsOnScreen>> {
   return get<SessionsOnScreen>('/api/next_sessions', {
     ...(subjectId ? { subject_id: subjectId } : {}),
     ...(kind !== 'general' ? { kind } : {}),
     ...(picked.length > 1 ? { subjects: picked.join(',') } : {}),
+    ...(across ? { across: 'true' } : {}),
   });
 }
 
@@ -1095,7 +1110,7 @@ export function nextSessions(
  */
 export function suggestNextSessions(
   subjectId = '',
-  { kind = 'general', subjects = [], topics = [] }: { kind?: SessionKind; subjects?: string[]; topics?: string[] } = {},
+  { kind = 'general', subjects = [], topics = [], across = false }: { kind?: SessionKind; subjects?: string[]; topics?: string[]; across?: boolean } = {},
 ): Promise<ApiResult<NextSessions>> {
-  return post<NextSessions>('/api/next_sessions', { subject_id: subjectId, kind, subjects, topics });
+  return post<NextSessions>('/api/next_sessions', { subject_id: subjectId, kind, subjects, topics, across });
 }

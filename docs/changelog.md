@@ -18,6 +18,12 @@ for each. When a date is pressing, rows that don't serve it leave the plan and g
 there. The slump card, What we notice and the Mastery card all follow the same decision,
 so they can't send a reader somewhere else.
 
+Next sessions follow it too. With no subject picked they're written for the goal that
+comes first: the model only sees work on that goal, gets told what to leave alone, and a
+booked session is linked to the goal and lands before its date. "Use all my subjects
+instead" still gets the old spread, and picking a subject still wins. Saved sessions from
+before the goal came first stay on screen and say so.
+
 ### What a figure is allowed to claim
 
 Every finding now goes through one table (shared/rules.json, pinned on both sides by

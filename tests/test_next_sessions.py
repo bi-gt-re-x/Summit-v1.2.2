@@ -250,3 +250,131 @@ def test_the_briefs_labels_are_put_in_the_readers_words():
     assert subject_ai.reader_words('avg execution 3.8') == 'average rating 3.8'
     assert subject_ai.reader_words('rises to ≥4') == 'rises to 4 or more'
     assert subject_ai.reader_words('Executive summary') == 'Executive summary'
+
+
+# ---- Written for the goal the plan puts first --------------------------------
+def _goal(username='tester', title='Reach AIME', days=20, **extra):
+    goal_id = 'g{}'.format(int(datetime.now().timestamp() * 1000))
+    db.insert_row('goals', {
+        'id': goal_id, 'user_id': username, 'title': title, 'description': '', 'goal_type': 'xp',
+        'measure': 'number', 'current_value': 5, 'target_number': 15, 'target_value': 15, 'progress': 33,
+        'priority': 9, 'status': 'active', 'deadline': (date.today() + timedelta(days=days)).isoformat(),
+        'start_date': (date.today() - timedelta(days=60)).isoformat(),
+        'created_at': (date.today() - timedelta(days=60)).isoformat(), 'subject_ids': 'mathematics', **extra})
+    return goal_id
+
+
+def _stub_goal(monkeypatch, record):
+    def plan(state, model_id='', overall=False, starter=False, **extra):
+        record.update(state=state, overall=overall, extra=extra)
+        return [dict(step) for step in STEPS]
+
+    monkeypatch.setattr(subject_ai, 'configured', lambda: True)
+    monkeypatch.setattr(subject_ai, 'plan', plan)
+
+
+def _work(username='tester'):
+    """Math tied to the goal, music that isn't, and a routine."""
+    _seed(username)
+    day = (date.today() - timedelta(days=2)).isoformat()
+    for at, (title, subject) in enumerate((('AIME number theory set', 'mathematics'),
+                                            ('AIME geometry set', 'mathematics'),
+                                            ('AIME mock', 'mathematics'),
+                                            ('AIME counting set', 'mathematics'),
+                                            ('Evening review', 'planning'),
+                                            ('Etudes', 'music'))):
+        db.insert_row('tasks', {
+            'id': 'nsw{}{}'.format(int(datetime.now().timestamp() * 1000), at),
+            'user_id': username, 'title': title, 'subject': subject, 'status': 'done', 'priority': 'low',
+            'xp_value': 10, 'completed_at': day + 'T10:00:00', 'created_at': day + 'T09:00:00',
+            'difficulty': 3, 'execution': 4})
+
+
+def test_with_a_goal_that_leads_the_sessions_are_for_it(client, monkeypatch):
+    _work()
+    goal_id = _goal()
+    seen = {}
+    _stub_goal(monkeypatch, seen)
+    shown = client.get('/api/next_sessions').json()
+    assert shown['scoped'] is True and shown['goal']['goal_id'] == goal_id
+    body = client.post('/api/next_sessions', json={}).json()
+    assert body['success'] is True, body
+    assert body['written_for'] == goal_id
+    assert '<priority_goal>' in seen['extra']['goal'] and 'Reach AIME' in seen['extra']['goal']
+    assert 'days left' in seen['extra']['goal']
+
+
+def test_the_model_only_sees_work_on_that_goal(client, monkeypatch):
+    _work()
+    _goal()
+    seen = {}
+    _stub_goal(monkeypatch, seen)
+    client.post('/api/next_sessions', json={})
+    titles = ' '.join(row['title'] for row in seen['state']['recent_work'])
+    assert 'AIME' in titles
+    assert 'Scales' not in titles and 'Etudes' not in titles and 'Evening review' not in titles
+
+
+def test_a_booked_session_counts_toward_the_goal_and_lands_before_its_date(client, monkeypatch):
+    _work()
+    goal_id = _goal(days=10)
+    _stub_goal(monkeypatch, {})
+    steps = client.post('/api/next_sessions', json={}).json()['steps']
+    booked = client.post('/api/subject_recommendation/plan', json={'id': steps[0]['id']}).json()
+    assert booked['success'] is True, booked
+    task = db.find_row('tasks', booked['task']['id'], user_id='tester')
+    assert str(task['goal_id']) == goal_id
+    assert booked['task']['end'][:10] <= (date.today() + timedelta(days=10)).isoformat()
+
+
+def test_a_reader_can_still_ask_for_every_subject(client, monkeypatch):
+    _work()
+    _goal()
+    seen = {}
+    _stub_goal(monkeypatch, seen)
+    shown = client.get('/api/next_sessions?across=true').json()
+    assert shown['scoped'] is False and shown['goal'] is not None
+    body = client.post('/api/next_sessions', json={'across': True}).json()
+    assert body['written_for'] is None
+    assert 'goal' not in seen['extra']
+    assert 'Scales' in ' '.join(row['title'] for row in seen['state']['recent_work'])
+
+
+def test_picking_a_subject_wins_over_the_goal(client, monkeypatch):
+    _work()
+    _goal()
+    seen = {}
+    _stub_goal(monkeypatch, seen)
+    shown = client.get('/api/next_sessions?subject_id=music').json()
+    assert shown['scoped'] is False and shown['goal'] is None
+    body = client.post('/api/next_sessions', json={'subject_id': 'music'}).json()
+    assert body['success'] is True and 'goal' not in seen['extra']
+
+
+def test_it_says_which_goal_the_saved_three_were_for(client, monkeypatch):
+    _work()
+    _stub_goal(monkeypatch, {})
+    client.post('/api/next_sessions', json={})
+    assert client.get('/api/next_sessions').json()['written_for'] is None
+    goal_id = _goal()
+    # From before the goal, so the page can say they may not serve it.
+    assert client.get('/api/next_sessions').json()['written_for'] is None
+    client.post('/api/next_sessions', json={})
+    assert client.get('/api/next_sessions').json()['written_for'] == goal_id
+
+
+def test_an_xp_goal_doesnt_scope_them(client, monkeypatch):
+    _work()
+    _goal(title='Earn 250,000 XP', measure='xp', goal_type='xp', target_xp=250000)
+    shown = client.get('/api/next_sessions').json()
+    assert shown['scoped'] is False and shown['goal'] is None
+
+
+def test_a_kind_stays_inside_the_goal(client, monkeypatch):
+    _work()
+    _goal()
+    _stub_goal(monkeypatch, {})
+    # No topic filed under the goal is weak, so it says so instead of reaching elsewhere.
+    body = client.post('/api/next_sessions', json={'kind': 'weakness'}).json()
+    if not body['success']:
+        assert 'for Reach AIME' in body['message']

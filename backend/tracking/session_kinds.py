@@ -95,12 +95,20 @@ def strongest(rows: Sequence[Dict[str, Any]]) -> List[Dict[str, Any]]:
     return sorted(found, key=lambda row: (-(row.get('gap') or 0), -row.get('tasks', 0)))
 
 
+def tied_to(rows: Iterable[Dict[str, Any]], goal: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """The topic rows this goal counts, for sessions written for that goal."""
+    goal_id = str(goal.get('id'))
+    return [row for row in rows if goal_id in [str(one) for one in (row.get('goal_ids') or [])]]
+
+
 def untouched(rows: Sequence[Dict[str, Any]], subjects: Sequence[str],
-              goals: Sequence[Dict[str, Any]] = (), most: int = MOST_NEW) -> List[Dict[str, Any]]:
+              goals: Sequence[Dict[str, Any]] = (), most: int = MOST_NEW,
+              only_goals: bool = False) -> List[Dict[str, Any]]:
     """Topics the account hasn't done yet, best first: what its goals need,
     then topics it's ready for in the trees it already works in, then the rest
     of those trees. Trees it has never opened are left out, except each
-    subject's own main one, so Mathematics doesn't offer all thirteen."""
+    subject's own main one, so Mathematics doesn't offer all thirteen. With
+    `only_goals`, just what the goals need."""
     tax = topic_tracking.taxonomy()
     done = {row['topic'] for row in rows if row.get('topic')}
     done_names = {tax.label(topic).lower() for topic in done}
@@ -123,6 +131,8 @@ def untouched(rows: Sequence[Dict[str, Any]], subjects: Sequence[str],
             subject = in_family.get(tax.topics.get(topic_id, {}).get('tree', ''))
             if subject:
                 add(topic_id, subject, 'goal: {}'.format(str(goal.get('title') or '')[:80]))
+    if only_goals:
+        return out[:most]
 
     ready, later = [], []
     for subject in subjects:
@@ -143,14 +153,16 @@ def untouched(rows: Sequence[Dict[str, Any]], subjects: Sequence[str],
 
 
 def options(kind: str, rows: Sequence[Dict[str, Any]], subjects: Optional[Sequence[str]],
-            goals: Sequence[Dict[str, Any]] = (), fallback: Sequence[str] = ()) -> List[Dict[str, Any]]:
+            goals: Sequence[Dict[str, Any]] = (), fallback: Sequence[str] = (),
+            only_goals: bool = False) -> List[Dict[str, Any]]:
     """The topics the panel offers to filter by, the ones this kind cares about
     first. One entry per topic, however many subjects it's filed under.
 
     `fallback` is the subjects a new-topic list reads when none are picked.
     """
     if kind == NEW:
-        return [_option(row) for row in untouched(studied(rows), list(subjects or fallback), goals)]
+        return [_option(row) for row in untouched(studied(rows), list(subjects or fallback), goals,
+                                                  only_goals=only_goals)]
     # Laundry isn't a topic to filter by, unless you picked the subject it's in.
     mine = [row for row in in_scope(rows, subjects) if row.get('topic')] if kind == GENERAL and subjects \
         else in_scope(studied(rows), subjects)
@@ -171,7 +183,8 @@ def _option(row: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def count(kind: str, rows: Sequence[Dict[str, Any]], subjects: Optional[Sequence[str]],
-          goals: Sequence[Dict[str, Any]] = (), fallback: Sequence[str] = ()) -> Optional[int]:
+          goals: Sequence[Dict[str, Any]] = (), fallback: Sequence[str] = (),
+          only_goals: bool = False) -> Optional[int]:
     """How much this kind has to work from, for all but general and review."""
     mine = in_scope(studied(rows), subjects)
     if kind == WEAKNESS:
@@ -179,7 +192,7 @@ def count(kind: str, rows: Sequence[Dict[str, Any]], subjects: Optional[Sequence
     if kind == EXPANSION:
         return len(strongest(mine))
     if kind == NEW:
-        return len(untouched(studied(rows), list(subjects or fallback), goals))
+        return len(untouched(studied(rows), list(subjects or fallback), goals, only_goals=only_goals))
     return None
 
 
@@ -227,13 +240,13 @@ def _block(tag: str, lines: Sequence[str]) -> str:
 
 def brief_block(kind: str, rows: Sequence[Dict[str, Any]], subjects: Optional[Sequence[str]],
                 picked: Sequence[str] = (), goals: Sequence[Dict[str, Any]] = (),
-                fallback: Sequence[str] = ()) -> str:
+                fallback: Sequence[str] = (), only_goals: bool = False) -> str:
     """The section of the brief this kind plans from. Topics the reader picked
     win over the ones this would have chosen. Empty when there's nothing to
     plan from, which the API turns into a message."""
     wanted = set(picked)
     if kind == NEW:
-        pool = untouched(studied(rows), list(subjects or fallback), goals)
+        pool = untouched(studied(rows), list(subjects or fallback), goals, only_goals=only_goals)
         chosen = [row for row in pool if row['topic'] in wanted] if wanted else pool
         return _block('new_topics', [_new_line(row) for row in chosen])
 

@@ -34,6 +34,7 @@ import {
   suggestNextSessions,
   takeRecommendation,
   type NextStep,
+  type SessionGoal,
   type SessionKind,
   type SessionSubject,
   type SessionTopic,
@@ -49,13 +50,6 @@ import '@/styles/next-sessions.css';
 export interface NextSessionsPanelProps {
   /** Which page it is on — only the heading's wording and the class change. */
   where: 'dashboard' | 'analytics';
-  /**
-   * The goal the plan says comes first (backend/tracking/priority.py). These
-   * sessions are written from recent work across subjects and not from that
-   * decision, so with no subject picked the panel says so rather than sit under
-   * "Leave these alone" and appear to recommend one of them.
-   */
-  focusTitle?: string | null;
 }
 
 const KINDS: Array<{ id: SessionKind; label: string; line: string; nothing: string }> = [
@@ -98,9 +92,11 @@ interface Picks {
   kind: SessionKind;
   subjects: PickOption[];
   topics: PickOption[];
+  /** Every subject on purpose, rather than the goal the plan puts first. */
+  across: boolean;
 }
 
-const NOTHING_PICKED: Picks = { kind: 'general', subjects: [], topics: [] };
+const NOTHING_PICKED: Picks = { kind: 'general', subjects: [], topics: [], across: false };
 
 /** Where the kind, subjects and topics picked are remembered. */
 const picksKey = (username: string) => `nsPicks:${username}`;
@@ -113,6 +109,7 @@ function readPicks(username: string | null): Picks {
       kind: KINDS.some((one) => one.id === saved.kind) ? saved.kind! : 'general',
       subjects: Array.isArray(saved.subjects) ? saved.subjects : [],
       topics: Array.isArray(saved.topics) ? saved.topics : [],
+      across: saved.across === true,
     };
   } catch {
     return NOTHING_PICKED;
@@ -133,14 +130,14 @@ function topicHint(topic: SessionTopic) {
   return [topic.area || topic.subject_label, standing].filter(Boolean).join(' · ');
 }
 
-export function NextSessionsPanel({ where, focusTitle = null }: NextSessionsPanelProps) {
+export function NextSessionsPanel({ where }: NextSessionsPanelProps) {
   /* Read without `useAuth`, which throws outside a provider: a page drawn
      with nobody signed in (or in a test of the page around it) simply has
      no panel. */
   const username = useContext(AuthContext)?.username ?? null;
   const shared = useContext(UserDataContext);
   const [picks, setPicks] = useState<Picks>(() => readPicks(username));
-  const { kind } = picks;
+  const { kind, across } = picks;
   const [worked, setWorked] = useState<SessionSubject[]>([]);
   const [topics, setTopics] = useState<SessionTopic[]>([]);
   /* Every subject in the catalog, so the search can plan first sessions for
@@ -148,6 +145,11 @@ export function NextSessionsPanel({ where, focusTitle = null }: NextSessionsPane
   const catalog = useSubjects(username);
   const [steps, setSteps] = useState<SuggestedSession[]>([]);
   const [due, setDue] = useState<number | null>(null);
+  /* The goal the plan puts first, and whether these sessions are for it. The server
+     decides both, so the dashboard and Recommendations can't name different goals. */
+  const [goal, setGoal] = useState<SessionGoal | null>(null);
+  const [scoped, setScoped] = useState(false);
+  const [writtenFor, setWrittenFor] = useState<string | null>(null);
   const [available, setAvailable] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
   const [asking, setAsking] = useState(false);
@@ -179,7 +181,7 @@ export function NextSessionsPanel({ where, focusTitle = null }: NextSessionsPane
     let live = true;
     setLoading(true);
     setError('');
-    void nextSessions(subjectId, kind, scopeKey ? scopeKey.split(',') : []).then((result) => {
+    void nextSessions(subjectId, kind, scopeKey ? scopeKey.split(',') : [], across).then((result) => {
       if (!live) return;
       setLoading(false);
       if (!result.success) {
@@ -190,6 +192,9 @@ export function NextSessionsPanel({ where, focusTitle = null }: NextSessionsPane
       setSteps(result.steps);
       setAvailable(result.available);
       setDue(result.due ?? null);
+      setGoal(result.goal ?? null);
+      setScoped(Boolean(result.scoped));
+      setWrittenFor(result.written_for ?? null);
       if (result.subjects.length || !subjectId) setWorked(result.subjects);
       const offered = result.topics ?? [];
       setTopics(offered);
@@ -207,7 +212,7 @@ export function NextSessionsPanel({ where, focusTitle = null }: NextSessionsPane
     return () => {
       live = false;
     };
-  }, [kind, scopeKey, subjectId, update, username]);
+  }, [across, kind, scopeKey, subjectId, update, username]);
 
   /** Subjects with work first, then the whole catalog. */
   const subjectOptions = useMemo<PickOption[]>(() => {
@@ -247,6 +252,7 @@ export function NextSessionsPanel({ where, focusTitle = null }: NextSessionsPane
       kind,
       subjects: subjectIds.length > 1 ? subjectIds : [],
       topics: topicIds,
+      across,
     });
     setAsking(false);
     if (!result.success) {
@@ -254,6 +260,7 @@ export function NextSessionsPanel({ where, focusTitle = null }: NextSessionsPane
       return;
     }
     setSteps(result.steps);
+    setWrittenFor(result.written_for ?? null);
   };
 
   /** Book one. Returns whether it was booked, for "Plan all". */
@@ -330,11 +337,27 @@ export function NextSessionsPanel({ where, focusTitle = null }: NextSessionsPane
         <div className="ns-title">
           <h2>{heading}</h2>
           <p>
-            {about.line} in {scope}.{dueLine} Add one to your calendar or add all three.
-            {focusTitle && subjectIds.length === 0
-              ? ` These don't follow the plan above, so ${focusTitle} still comes first.`
-              : ''}
+            {scoped && goal ? (
+              <>
+                {about.line} for <b>{goal.title}</b>, the goal that comes first right now.
+              </>
+            ) : (
+              <>
+                {about.line} in {scope}.
+              </>
+            )}
+            {dueLine} Add one to your calendar or add all three.
           </p>
+          {goal && subjectIds.length === 0 && (
+            <button
+              type="button"
+              className="ns-scope"
+              onClick={() => update((was) => ({ ...was, across: !was.across, topics: [] }))}
+              disabled={working}
+            >
+              {scoped ? 'Use all my subjects instead' : `Back to ${goal.title}`}
+            </button>
+          )}
         </div>
       </header>
 
@@ -450,6 +473,14 @@ export function NextSessionsPanel({ where, focusTitle = null }: NextSessionsPane
       {error && (
         <p className="ns-error" role="alert">
           {error}
+        </p>
+      )}
+
+      {/* Saved sessions stay on screen, since some may be booked already, but they
+          shouldn't pass for the plan's when they're from before it. */}
+      {!loading && scoped && goal && steps.length > 0 && writtenFor !== goal.goal_id && (
+        <p className="ns-note ns-stale">
+          These were written before {goal.title} came first, so they may not serve it. Press Suggest for three that do.
         </p>
       )}
 

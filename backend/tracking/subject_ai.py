@@ -1618,6 +1618,25 @@ one done most — and do not put the brackets in your titles. Set `focus` to \
 the subject's name exactly as the brackets write it, so the app can file the \
 session under that subject."""
 
+#: Used instead of OVERALL_NOTE when the sessions are for the goal the plan says
+#: comes first (backend/tracking/priority.py).
+GOAL_NOTE = """
+
+THESE SESSIONS ARE FOR ONE GOAL
+The reader's plan has decided this goal comes first right now, and <priority_goal> \
+says what it is and why. All three sessions must directly move it. Start from the \
+next step it names, then go after the parts it lists as weak or not started. If it \
+says the date is close, do what it says about that. Nothing from <leave_alone> \
+belongs here, however much work the reader has done on it. The work below has been \
+narrowed to this goal, and each title starts with its subject in brackets: \
+"[Mathematics] Problem set #". Do not put the brackets in your titles. Set `focus` to \
+the subject's name exactly as the brackets write it, so the app can file the session \
+under that subject, or to the subject the goal belongs to if there is no work yet. \
+The `reason` says how this session moves the goal, using the figures in \
+<priority_goal> in your own words rather than copying its lines. It says what the \
+session is for, and it never claims the session will work."""
+
+
 def _steps_item() -> Dict[str, Any]:
     """A step as the steps call asks for it: the reading's step, with a timed
     `plan` and checkable `success` criteria in place of `drills` and
@@ -1748,13 +1767,14 @@ ANGLE_WORDS = {'expansion': 'expansion sessions', 'weakness': 'weakness sessions
 
 def plan(state: Dict[str, Any], model_id: str = '',
          overall: bool = False, starter: bool = False,
-         review: str = '', angle: str = '', focus: str = '') -> List[Dict[str, Any]]:
+         review: str = '', angle: str = '', focus: str = '', goal: str = '') -> List[Dict[str, Any]]:
     """Three recommendations for this subject, and nothing else — or, with
     `overall`, three across every subject in the brief (OVERALL_NOTE), or with
     `starter`, three first sessions for a subject with no work yet, or with
     `review` (a <review_due> block), three review sessions (REVIEW_NOTE), or
     with `angle` and `focus` (its section of the brief), three of that kind
-    (ANGLE_NOTES).
+    (ANGLE_NOTES), or with `goal` (the priority goal's section of the brief), all
+    three for that goal (GOAL_NOTE).
 
     Raises `BriefUnavailable` for everything the page should say out loud, as
     `read` does.
@@ -1767,16 +1787,18 @@ def plan(state: Dict[str, Any], model_id: str = '',
     # Reference facts about the subject (backend/tracking/sources.py) go in
     # the brief itself, so the figure check below allows their numbers too.
     brief = (steps_brief_from(state) + sources.brief_block(str(state.get('subject') or ''))
-             + (review or '') + (focus or ''))
+             + (review or '') + (focus or '') + (goal or ''))
     what = 'review sessions' if review else ANGLE_WORDS.get(angle, 'sessions')
     try:
         text = planner.from_provider(
             brief,
-            system=STEPS_SYSTEM + (OVERALL_NOTE if overall else '')
+            system=STEPS_SYSTEM + (GOAL_NOTE if goal else OVERALL_NOTE if overall else '')
             + (STARTER_NOTE if starter else '') + (REVIEW_NOTE if review else '')
             + (ANGLE_NOTES.get(angle, '') if focus else ''),
             schema=STEPS_SCHEMA,
-            instruction=('Plan the next three {} across these subjects '
+            instruction=('Plan the next three {} for the goal in <priority_goal>, '
+                         'from the sections below.'.format(what) if goal else
+                         'Plan the next three {} across these subjects '
                          'from the sections below.'.format(what) if overall else
                          'Plan the next three {} for this subject from '
                          'the sections below.'.format(what)),

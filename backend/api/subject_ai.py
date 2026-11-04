@@ -50,6 +50,7 @@ from backend.api import subjects as user_subjects
 from backend.config import subjects as subject_catalogue
 from backend.tracking import free_resources
 from backend.tracking import next_sessions
+from backend.tracking import priority
 from backend.tracking import review_sessions
 from backend.tracking import session_kinds
 from backend.tracking import session_plan
@@ -58,6 +59,7 @@ from backend.tracking import topics as topic_tracking
 from backend.tracking import background as about_you
 from backend.tracking import journal
 from backend.api import background as background_api
+from backend.goal_matcher import store as goal_store
 from backend.tracking.auth import load_user
 from backend.config.shared import RULES
 
@@ -877,11 +879,18 @@ def plan_session(body: PlanSession, username: str = Depends(current_username)):
     if not subject_id and row.get('subject') in ACROSS:
         subject_id = next_sessions.subject_named(row.get('focus'), _subject_names(username)) or ''
 
+    # A session written for a goal is work on that goal: it has to land before the
+    # date and it has to count toward it, or the plan can't see that it happened.
+    aim, stone = _goal_of(username, row)
+    before = booking.ends_by(aim.get('deadline')) if aim and aim.get('deadline') else None
+
     # When: the best opening for this reader, spaced from every session a
     # planner has booked for the same subject (backend/api/booking.py).
     slot = booking.Planner(username, exclude_recommendation=row['id']).place(
-        minutes, row.get('difficulty'), _spacing_key(subject_id, row))
+        minutes, row.get('difficulty'), _spacing_key(subject_id, row), before)
     if not slot:
+        if before:
+            return fail("There's no free {}-minute slot before {}.".format(minutes, aim.get('title')))
         return fail("There's no free {}-minute slot in the next two weeks.".format(minutes))
     start, end, why = slot['start'], slot['end'], slot['why']
 
@@ -893,6 +902,8 @@ def plan_session(body: PlanSession, username: str = Depends(current_username)):
         created_at=start.isoformat(timespec='seconds'),
         show_on_calendar=True,
         subject=subject_id or None,
+        goal_id=str(aim.get('id')) if aim else None,
+        milestone_id=stone,
     ), username)
     task_id = made.get('task_id') if isinstance(made, dict) else None
     if not task_id:
@@ -922,6 +933,23 @@ def plan_session(body: PlanSession, username: str = Depends(current_username)):
                                   'end': end.isoformat(timespec='seconds'),
                                   'xp': xp, 'subject': subject_id, 'why': why},
               minutes=minutes)
+
+
+def _goal_of(username: str, row: dict) -> tuple:
+    """(the live goal this session was written for, its next checkpoint's id), or
+    (None, None) for a session that wasn't written for one, or whose goal is over."""
+    if row.get('subject') not in ACROSS:
+        return None, None
+    goal_id = _saved_reading(username, row.get('subject') or '').get('for_goal')
+    goal = db.find_row('goals', goal_id, user_id=username) if goal_id else None
+    if not goal or goal.get('status') != 'active':
+        return None, None
+    if goal.get('deadline') and str(goal['deadline'])[:10] < datetime.now().date().isoformat():
+        return None, None
+    stones = sorted((one for one in db.rows_for('goal_milestones', username)
+                     if str(one.get('goal_id')) == str(goal_id) and one.get('status') != 'done'),
+                    key=lambda one: one.get('position') or 0)
+    return goal, stones[0].get('id') if stones else None
 
 
 def _spacing_key(subject_id: str, row: dict) -> str:
@@ -1032,6 +1060,14 @@ def _topic_rows(username: str) -> tuple:
     return topic_tracking.library(tasks, goals, matches), goals
 
 
+def _with_links(username: str, tasks: list) -> list:
+    """These tasks with the goals they're linked to, for reading what's on a goal."""
+    links = {task.get('id'): task for task in goal_store.with_goal_ids(
+        username, db.columns_for('tasks', username, ('id', 'goal_id')))}
+    return [{**task, **{key: value for key, value in links.get(task.get('id'), {}).items()
+                        if key in ('goal_id', 'goal_ids')}} for task in tasks]
+
+
 def _subject_list(raw: List[str], names: dict) -> List[str]:
     """The subject ids the page picked that belong to this account, in order."""
     seen = dict.fromkeys(_text(one, 64) for one in raw[:64])
@@ -1045,13 +1081,41 @@ def _fallback(tasks: list, names: dict) -> List[str]:
             if review_sessions.reviewable(entry['id'])][:session_kinds.BUSIEST]
 
 
+def _priority_goal(username: str, rows: list) -> tuple:
+    """(the plan's decision, the goal it puts first), or (None, None) with no goal
+    that can lead. The same decision the plan and the dashboard read, so these
+    sessions can't be about something the plan says to leave alone. Imported here:
+    backend/api/next.py reaches this module through the booking path."""
+    from backend.api.next import _name_of, _record, _sittings
+    tasks, goals = _record(username)
+    decision = priority.decide(goals, tasks, datetime.now(), DECISION_MINUTES, _sittings(username),
+                               _name_of(username), rows)
+    if not decision['focus']:
+        return None, None
+    wanted = decision['focus']['goal_id']
+    return decision, next((goal for goal in goals if str(goal.get('id')) == wanted), None)
+
+
+#: Which goal comes first doesn't depend on the minutes, so any budget will do.
+DECISION_MINUTES = 60
+
+
+def _goal_subjects(goal: dict, fallback: List[str]) -> List[str]:
+    """The subjects a new-topic list reads for this goal."""
+    return list(topic_tracking.scope(goal).get('subjects') or []) or fallback
+
+
 @router.get('/api/next_sessions')
-def list_next_sessions(subject_id: str = '', kind: str = '', subjects: str = '',
+def list_next_sessions(subject_id: str = '', kind: str = '', subjects: str = '', across: bool = False,
                        username: str = Depends(current_username)):
     """The sessions on screen for one kind and a subject (or every subject,
     with no id), the subjects and topics to choose from, how much this kind
     has to work from, and whether a model is there to suggest more. `subjects`
-    is every picked subject, comma-separated, for the topics and the count."""
+    is every picked subject, comma-separated, for the topics and the count.
+
+    With nothing picked, these are for the goal the plan puts first (`goal`,
+    `scoped`), unless the reader asked for every subject with `across`. Which goal
+    the three on screen were written for is `written_for`."""
     _, user = load_user(username)
     if not user:
         return fail('User not found')
@@ -1069,16 +1133,29 @@ def list_next_sessions(subject_id: str = '', kind: str = '', subjects: str = '',
                            else ('status', 'title', 'subject', 'completed_at'))
     rows, goals = _topic_rows(username)
     fallback = _fallback(tasks, names)
+    decision, aim = (None, None) if scope else _priority_goal(username, rows)
+    scoped = aim is not None and not across
+    if scoped:
+        topic_rows = rows if kind == session_kinds.NEW else session_kinds.tied_to(rows, aim)
+        reach = {'goals': [aim], 'fallback': _goal_subjects(aim, fallback), 'only_goals': True}
+    else:
+        topic_rows, reach = rows, {'goals': goals, 'fallback': fallback}
     if reviewing:
-        mine = [task for task in tasks if not scope or task.get('subject') in scope]
+        if scoped:
+            mine = priority.session_tasks(aim, _with_links(username, tasks))
+        else:
+            mine = [task for task in tasks if not scope or task.get('subject') in scope]
         due = review_sessions.count(review_sessions.due(mine, None))
     else:
-        due = session_kinds.count(kind, rows, scope, goals, fallback)
+        due = session_kinds.count(kind, topic_rows, scope, **reach)
     return ok(subject=key, subject_id=subject_id, kind=kind,
               steps=_steps_with_state(username, key),
               subjects=next_sessions.subjects_in(tasks, names),
-              topics=session_kinds.options(kind, rows, scope, goals, fallback),
+              topics=session_kinds.options(kind, topic_rows, scope, **reach),
               due=due,
+              goal=decision['focus'] if decision and aim is not None else None,
+              scoped=scoped,
+              written_for=_saved_reading(username, key).get('for_goal'),
               available=subject_ai.configured())
 
 
@@ -1090,6 +1167,8 @@ class NextSessionsBody(BaseModel):
     subjects: List[str] = []
     #: The topics picked. Empty means this kind chooses.
     topics: List[str] = []
+    #: Every subject on purpose, rather than the goal the plan puts first.
+    across: bool = False
 
 
 #: What to say when a kind has nothing to plan from.
@@ -1121,22 +1200,37 @@ def suggest_next_sessions(body: NextSessionsBody, username: str = Depends(curren
         return fail('None of those subjects are yours.')
     scope = [subject_id] if subject_id else chosen
     picked = [one for one in dict.fromkeys(_text(topic, 120) for topic in body.topics[:24]) if one]
-    where = 'in {} '.format(subject) if subject_id else 'in the subjects chosen ' if chosen else ''
 
     every = db.columns_for('tasks', username, TASK_COLUMNS)
-    tasks = [task for task in every if task.get('subject') in scope] if chosen else every
+    rows, goals = _topic_rows(username)
+    fallback = _fallback(every, names)
+    # With nothing picked and no "every subject", they're for the goal that comes first.
+    decision, aim = (None, None) if scope or body.across else _priority_goal(username, rows)
+    where = ('for {} '.format(aim.get('title')) if aim else 'in {} '.format(subject) if subject_id
+             else 'in the subjects chosen ' if chosen else '')
+
+    if aim:
+        tasks = priority.session_tasks(aim, _with_links(username, every))
+    else:
+        tasks = [task for task in every if task.get('subject') in scope] if chosen else every
     if kind != session_kinds.GENERAL:
         tasks = [task for task in tasks if review_sessions.reviewable(task.get('subject'))]
     on_topic = session_kinds.on_topics(tasks, picked) if picked else tasks
 
-    rows, goals = _topic_rows(username)
-    block = session_kinds.brief_block(kind, rows, scope, picked, goals, _fallback(every, names))
+    if aim:
+        block = session_kinds.brief_block(
+            kind, rows if kind == session_kinds.NEW else session_kinds.tied_to(rows, aim), scope, picked,
+            [aim], _goal_subjects(aim, fallback), only_goals=True)
+    else:
+        block = session_kinds.brief_block(kind, rows, scope, picked, goals, fallback)
     extra: Dict[str, Any] = {'angle': kind, 'focus': block} if block else {}
+    if aim:
+        extra['goal'] = priority.session_block(decision, aim, rows)
     if kind == session_kinds.REVIEW:
         found = review_sessions.due(on_topic, subject_id or None, None if subject_id else names)
         if not review_sessions.count(found):
             return fail(NOTHING[kind].format(where + ('on those topics ' if picked else '')))
-        extra = {'review': review_sessions.brief_block(found)}
+        extra = {'review': review_sessions.brief_block(found), **({'goal': extra['goal']} if aim else {})}
     elif kind != session_kinds.GENERAL and not block:
         return fail(NOTHING[kind].format(where + ('on those topics ' if picked else '')))
 
@@ -1144,7 +1238,7 @@ def suggest_next_sessions(body: NextSessionsBody, username: str = Depends(curren
     # A subject with no work yet gets first sessions (subject_ai.STARTER_NOTE):
     # the picker offers every subject, not only ones with a record.
     starter = kind == session_kinds.GENERAL and bool(subject_id) and not state['finished'] and not picked
-    if kind == session_kinds.GENERAL and not state['finished'] and not starter and not block:
+    if kind == session_kinds.GENERAL and not state['finished'] and not starter and not block and not aim:
         return fail("There's no finished work {}in the last {} days to plan from yet.".format(
             where or 'anywhere ', next_sessions.WINDOW_DAYS))
 
@@ -1184,7 +1278,8 @@ def suggest_next_sessions(body: NextSessionsBody, username: str = Depends(curren
 
     now = datetime.now().isoformat(timespec='seconds')
     kept = _record(username, key, steps[:subject_ai.NEXT_STEPS], now)
-    _keep_reading(username, key, {**_saved_reading(username, key), 'next_steps': kept},
+    written_for = str(aim.get('id')) if aim else None
+    _keep_reading(username, key, {**_saved_reading(username, key), 'next_steps': kept, 'for_goal': written_for},
                   now, state['span'])
-    return ok(subject=key, subject_id=subject_id, kind=kind,
+    return ok(subject=key, subject_id=subject_id, kind=kind, written_for=written_for,
               steps=[{**step, 'state': 'open', 'task': None} for step in kept])

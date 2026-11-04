@@ -203,3 +203,19 @@ html[data-theme="dark"] .ns-error { color: #F08C78; }
 @media (max-width: 640px) {
     .ns-finder { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* Which goal these are for, and the way out of it: the panel defaults to the goal the
+   plan puts first (backend/tracking/priority.py). */
+.ns-scope {
+  margin-top: var(--space-1);
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--text-xs);
+  color: var(--color-ink-muted);
+  text-decoration: underline;
+  cursor: pointer;
+}
+.ns-scope:disabled { cursor: default; opacity: 0.6; }
+.ns-stale { color: var(--color-ink); }

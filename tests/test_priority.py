@@ -232,3 +232,43 @@ def test_nothing_is_told_to_wait_after_a_date():
     tasks, goals = amc_student()
     plan = plan_for(tasks + [task('history', 40, 'Old essay', status='todo', created_at=back(40) + 'T09:00:00')], goals)
     assert not [row for row in plan['priority']['not_now'] if 'wait after' in row['why']]
+
+
+# ---- What a goal's sessions are written from ---------------------------------
+def test_a_goals_sessions_read_only_its_own_study_work():
+    tasks = [task('mathematics', 1, 'AMC 10 counting set'), task('mathematics', 2, 'AMC 10 geometry set'),
+             task('mathematics', 3, 'AMC 10 mock'), task('mathematics', 4, 'AMC 10 number theory'),
+             task('mathematics', 5, 'Math 55 lecture'), task('computer_science', 6, 'CLRS exercises'),
+             task('planning', 7, 'AMC 10 planning')]
+    aim = goal('AMC 10 cutoff', 'mathematics', ahead(3))
+    titles = [row['title'] for row in priority.session_tasks(aim, tasks)]
+    assert 'AMC 10 mock' in titles
+    assert 'CLRS exercises' not in titles and 'Math 55 lecture' not in titles
+    assert 'AMC 10 planning' not in titles
+
+
+def test_with_little_named_for_it_the_goals_subject_counts_too():
+    tasks = [task('mathematics', 1, 'Problem set'), task('computer_science', 2, 'CLRS exercises')]
+    titles = [row['title'] for row in priority.session_tasks(goal('Reach AIME', 'mathematics', ahead(60)), tasks)]
+    assert titles == ['Problem set']
+
+
+def test_the_brief_says_what_its_for_and_what_to_leave():
+    tasks, goals = amc_student()
+    decision = priority.decide(goals, tasks, NOW, 60)
+    block = priority.session_block(decision, goals[0], [])
+    assert '<priority_goal>' in block and 'AMC 10 cutoff' in block
+    assert '3 days left' in block
+    assert 'no new material' in block
+    assert '<leave_alone>' in block and 'Finish CS project' in block
+
+
+def test_a_far_off_goal_can_still_take_new_material():
+    far = goal('Far exam', 'mathematics', ahead(200), priority_=9)
+    decision = priority.decide([far], [], NOW, 60)
+    assert 'no new material' not in priority.session_block(decision, far, [])
+
+
+def test_a_topic_with_too_few_tasks_isnt_called_weak():
+    assert 'too few to say' in priority._topic_line({'label': 'Geometry', 'status': 'weak', 'tasks': 2, 'execution': 1.5})
+    assert 'weak over 8 tasks' in priority._topic_line({'label': 'Geometry', 'status': 'weak', 'tasks': 8, 'execution': 2.4})
