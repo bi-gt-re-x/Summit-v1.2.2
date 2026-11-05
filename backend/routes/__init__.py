@@ -48,7 +48,7 @@ API_MODULES = (
     'quests',
     'topics',
     'forecast',
-    'measures',
+    'measures', 'subject_read',
     'review',
     'skill_plan',
 )

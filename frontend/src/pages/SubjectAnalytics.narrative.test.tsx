@@ -1,29 +1,11 @@
 /**
- * The subject page's narrative, end to end, in the order a reader meets it.
+ * The subject page, end to end, in the order a reader meets it.
  *
- * ## Why this test exists as well as the unit tests beside it
- *
- * `components/Subject/objective.test`, `verdict.test` and `Opening.test` each
- * pin one piece: the arithmetic picks the right bottleneck, the verdict keeps
- * untaken apart from failed, the claim ends up in the heading. All of that can
- * be true while the page itself is broken — a memo wired to the wrong value, a
- * section rendered above the one it is supposed to answer, a reading that
- * arrives and changes nothing because it was never threaded through.
- *
- * So this mounts the real page with real tasks and asserts the five questions
- * come out in order and in the right relationship to each other:
- *
- *     what am I trying to do  →  what bears on it  →  what is in the way
- *       →  what to do about it  →  did the last lot work
- *
- * and that everything underneath is named as the evidence it is.
- *
- * ## The fixture
- *
- * One account, one subject, and a shape chosen to make the arithmetic say
- * something definite: work that lands at Fair and falls apart at Hard, which
- * is the case the difficulty curve exists for and the one most of the page's
- * counted sentences are written against.
+ * What it promises: it opens on what the subject is for and what the plan says about
+ * it, the readings read against that goal with the bad news first, then sessions for
+ * that goal. Everything else is "The numbers", one tab over. The ring, the count cards,
+ * the AI summary and the second copy of the goal's pace were cut, and stay cut. What the
+ * read says is tested in tests/test_subject_read.py; this is about what reaches the page.
  */
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -33,6 +15,14 @@ import { renderWithProviders } from '@/test/render';
 
 const tasks: unknown[] = [];
 const goals: unknown[] = [];
+let goalRead: Record<string, unknown>;
+const updateGoal = vi.fn(async () => ({ success: true }));
+const askReadSubject = vi.fn(async () => ({
+  success: true,
+  reading: { diagnosis: [], priorities: [], insights: [], next_steps: [], for_goal: 'g1' },
+}));
+let canRead = false;
+let saved: unknown = null;
 const recommendations: unknown[] = [];
 const outcomes: unknown[] = [];
 
@@ -78,22 +68,35 @@ vi.mock('@/services/analytics', async (original) => {
   return {
     ...real,
     analyticsTasks: async () => ({ success: true, tasks }),
-    subjectMilestones: async () => ({ success: true, milestones: [] }),
-    subjectBriefAvailable: async () => ({ success: true, available: false }),
-    suggestSubjectGoal: async () => ({ success: true, draft: null }),
-    subjectReadingAvailable: async () => ({ success: true, available: false }),
+    subjectReadingAvailable: async () => ({ success: true, available: canRead }),
     savedSubjectReading: async () => ({
-      success: true, reading: null, written_at: '', span: '',
+      success: true, reading: saved, written_at: '', span: '',
     }),
+    readSubject: () => askReadSubject(),
     subjectRecommendations: async () => ({
       success: true, recommendations, outcomes,
     }),
   };
 });
+vi.mock('@/services/topics', async (original) => {
+  const real = await original<Record<string, unknown>>();
+  return {
+    ...real,
+    topicLibrary: async () => ({ success: false, message: 'none here' }),
+    buildTopics: async () => ({ success: false, message: 'none here' }),
+  };
+});
 vi.mock('@/services/goals', async (original) => {
   const real = await original<Record<string, unknown>>();
-  return { ...real, getGoals: async () => ({ success: true, goals }) };
+  return {
+    ...real,
+    getGoals: async () => ({ success: true, goals }),
+    updateGoal: (...args: unknown[]) => (updateGoal as (...a: unknown[]) => unknown)(...args),
+  };
 });
+vi.mock('@/services/subjectGoal', () => ({
+  subjectGoalRead: async () => ({ success: true, ...goalRead }),
+}));
 vi.mock('react-router-dom', async (original) => {
   const real = await original<Record<string, unknown>>();
   return { ...real, useParams: () => ({ subjectId: 'algebra' }) };
@@ -115,13 +118,76 @@ vi.mock('@/hooks/useSubjects', async (original) => {
 
 const SubjectAnalytics = (await import('./SubjectAnalytics')).default;
 
+/** The read for a subject no goal needs. */
+const noGoal = () => ({
+  subject: 'algebra',
+  stance: 'none',
+  top: null,
+  lead: null,
+  card: {
+    tone: 'flat',
+    title: 'None of your goals depends on Algebra.',
+    figures: '8 tasks here in the last 30 days, 8 of them study work.',
+    suggests: "This suggests it's upkeep, or there's a goal here you haven't written down.",
+  },
+  goals: [],
+  misfiled: [],
+  insights: [],
+});
+
+const reading = (id: string, tone: string, title: string, evidence: string | null = null) => ({
+  id, tone, title, evidence, resource: null,
+  figures: `Figures for ${id}.`,
+  suggests: `This suggests something about ${id}.`,
+});
+
+/** The read for a subject the plan needs most, with a goal filed somewhere wrong. */
+const feedsTopGoal = () => ({
+  subject: 'algebra',
+  stance: 'first',
+  top: { goal_id: 'g1', title: 'Reach AIME', days_left: 27 },
+  lead: 'g1',
+  card: {
+    tone: 'bad',
+    title: 'Algebra is what your top goal runs on, but most of the work here is going elsewhere.',
+    figures: 'Reach AIME needs 5.8 sessions a week and you do 1.8, with 27 days left.',
+    suggests: 'This suggests the time is there and the aim is off. Swap your next "Drills" for "Mock exam".',
+  },
+  goals: [
+    {
+      goal_id: 'g1', title: 'Reach AIME', state: 'behind', days_left: 27, percent: 40, needs: 5.8, pace: 1.8,
+      gets_time: true, filed: false, work_here: 136, work_total: 176, next: 'Mock exam', note: '',
+    },
+    {
+      goal_id: 'g2', title: 'AMC 12 cutoff', state: 'on_track', days_left: 200, percent: 60, needs: 0.5, pace: 0.8,
+      gets_time: false, filed: true, work_here: 40, work_total: 40, next: '', note: 'It moves when Reach AIME does.',
+    },
+  ],
+  misfiled: [{ goal_id: 'g3', title: 'Ship the app', work_here: 1, work_total: 160, home: 'programming', home_name: 'Programming' }],
+  insights: [
+    reading('topic', 'bad', 'Your weakest part of Reach AIME here is geometry.', 'Emerging pattern'),
+    reading('level', 'bad', 'Your work on Reach AIME falls off once it gets hard.'),
+    reading('coverage', 'flat', 'You only reach 5 of its 23 topics.'),
+    reading('attended', 'flat', 'You sat through more Algebra than you practiced.'),
+    reading('works', 'good', 'Your good sessions have something in common.'),
+  ],
+});
+
 async function show({
   rows = ceilingRecord(),
   theGoals = [] as unknown[],
   past = [] as unknown[],
   kinds = [] as unknown[],
   prefs = {} as Record<string, unknown>,
+  read = noGoal() as Record<string, unknown>,
+  ai = false,
+  savedReading = null as unknown,
 } = {}) {
+  goalRead = read;
+  canRead = ai;
+  saved = savedReading;
+  updateGoal.mockClear();
+  askReadSubject.mockClear();
   tasks.length = 0;
   tasks.push(...rows);
   goals.length = 0;
@@ -139,205 +205,208 @@ async function show({
   await act(async () => { await new Promise((r) => { setTimeout(r, 60); }); });
 }
 
-/** Where a section starts, so an assertion cannot pass on a match elsewhere. */
-const section = (label: string) =>
-  screen.getByRole('region', { name: label })
-  ?? screen.getByLabelText(label);
-
-/**
- * The same, for a `Panel`.
- *
- * `Panel` renders a bare `<section>` with its title as a heading rather than
- * as an `aria-label`, and an unnamed `<section>` is not a `region` — so the
- * helper above cannot find one. Scoping to the heading's own panel is the
- * honest way to ask "inside this card" without adding an attribute to the
- * component for the tests' convenience.
- */
-const panel = (title: string) =>
-  within(screen.getByRole('heading', { name: title }).closest('.ax-panel') as HTMLElement);
+const section = (label: string) => within(screen.getByRole('region', { name: label }));
 
 // ---------------------------------------------------------------------------
 describe('the page opens on what the subject is for', () => {
-  it('leads with the goal rather than with a figure', async () => {
+  it('leads with the reading: the headline, the figures, what they suggest', async () => {
+    await show({ read: feedsTopGoal() });
+
+    const lead = section('What this subject is for');
+    expect(lead.getByRole('heading', { name: /what your top goal runs on/ })).toBeInTheDocument();
+    expect(lead.getByText(/with/).textContent).toContain('needs 5.8 sessions a week');
+    expect(lead.getByText(/Swap your next "Drills" for "Mock exam"/)).toBeInTheDocument();
+    // Nothing comes before it but the page's own heading and tabs.
+    expect(document.querySelector('.ax-panel')).toBe(screen.getByRole('region', { name: 'What this subject is for' }));
+  });
+
+  it('says what the plan calls the goal, how it is going and what is next', async () => {
+    await show({ read: feedsTopGoal() });
+
+    const lead = section('What this subject is for');
+    expect(lead.getByText("Your plan's top goal")).toBeInTheDocument();
+    expect(lead.getByRole('link', { name: 'Reach AIME' })).toBeInTheDocument();
+    expect(lead.getByText('Behind')).toBeInTheDocument();
+    expect(lead.getByText('Mock exam')).toBeInTheDocument();
+    expect(lead.getByLabelText('40% done')).toBeInTheDocument();
+  });
+
+  it('names the other goals this work moves', async () => {
+    await show({ read: feedsTopGoal() });
+
+    const others = within(screen.getByRole('list', { name: 'Other goals this work feeds' }));
+    expect(others.getByText('AMC 12 cutoff')).toBeInTheDocument();
+    expect(others.getByText('It moves when Reach AIME does.')).toBeInTheDocument();
+  });
+
+  it('files a goal whose work is here, keeping what it already names', async () => {
     await show({
-      prefs: {
-        analytics_ambitions: {
-          algebra: { aim: 'Get to AIME', level: 'AMC 10 at 96' },
-        },
-      },
+      read: feedsTopGoal(),
+      theGoals: [{ id: 'g1', title: 'Reach AIME', status: 'active', measure: 'number', subject_ids: 'geometry', milestones: [] }],
     });
 
-    const band = within(section('Your goal for this subject'));
-    expect(band.getByRole('heading', { name: 'Get to AIME' })).toBeInTheDocument();
-    expect(band.getByText('Algebra')).toBeInTheDocument();
+    await userEvent.click(section('What this subject is for').getAllByRole('button', { name: 'File it here' })[0]!);
+    expect(updateGoal).toHaveBeenCalledWith('g1', { subject_ids: 'geometry,algebra' });
   });
 
-  it('says nobody has set one rather than leaving the question unanswered', async () => {
-    await show();
+  it('offers to move a goal filed here to where its work is', async () => {
+    await show({
+      read: feedsTopGoal(),
+      theGoals: [{ id: 'g3', title: 'Ship the app', status: 'active', measure: 'number', subject_ids: 'algebra', milestones: [] }],
+    });
 
-    const band = within(section('Your goal for this subject'));
-    expect(band.getByRole('heading', { name: /no goal set/i })).toBeInTheDocument();
+    const wrong = within(screen.getByRole('list', { name: 'Goals filed here with their work elsewhere' }));
+    expect(wrong.getByText(/1 of its 160 tasks is here/)).toBeInTheDocument();
+    await userEvent.click(wrong.getByRole('button', { name: 'Move to Programming' }));
+    expect(updateGoal).toHaveBeenCalledWith('g3', { subject_ids: 'programming' });
   });
 
-  it('offers the outcome goals to aim at, and leaves the counters out', async () => {
-    // "Earn 250,000 XP" is fed by every task on the account, so aiming a
-    // subject at one says nothing about the subject. See components/Goals/
-    // numbers for the split, and components/Subject/LinkGoal for the cap.
+  it('offers a goal only when nothing feeds this subject, and leaves counters out', async () => {
     await show({
       theGoals: [
-        {
-          id: 'g1', title: 'Reach AIME', status: 'active', goal_type: 'xp',
-          measure: 'number', subject_ids: 'geometry', milestones: [],
-        },
-        {
-          id: 'g2', title: 'Earn 250,000 XP', status: 'active', goal_type: 'xp',
-          measure: '', subject_ids: '', milestones: [],
-        },
+        { id: 'g1', title: 'Reach AIME', status: 'active', goal_type: 'xp', measure: 'number', subject_ids: 'geometry', milestones: [] },
+        { id: 'g2', title: 'Earn 250,000 XP', status: 'active', goal_type: 'xp', measure: '', subject_ids: '', milestones: [] },
       ],
     });
+    expect(section('What this subject is for').getByRole('heading', { name: /None of your goals/ })).toBeInTheDocument();
 
     const picker = within(screen.getByLabelText('Link a goal'));
     await userEvent.click(picker.getByRole('button', { name: /Choose a goal/ }));
-
     expect(picker.getByText('Reach AIME')).toBeInTheDocument();
     expect(picker.queryByText('Earn 250,000 XP')).not.toBeInTheDocument();
   });
 
-  it('draws no goal-kind chip, because arithmetic cannot know the kind', async () => {
-    await show({
-      prefs: { analytics_ambitions: { algebra: { aim: 'Get to AIME' } } },
-    });
-
-    const band = within(section('Your goal for this subject'));
-    expect(band.queryByText('Competition')).not.toBeInTheDocument();
+  it('has no chooser when goals already feed it', async () => {
+    await show({ read: feedsTopGoal() });
+    expect(screen.queryByLabelText('Link a goal')).not.toBeInTheDocument();
   });
 });
 
-describe('what the record says', () => {
-  it('draws the work calendar before anybody has asked a model anything', async () => {
-    /* The section used to be the model's reading and nothing else, so on a
-       page nobody had pressed the button on it did not exist — a section
-       called "what the record says" that says nothing until a model is asked
-       has the relationship backwards. The record says something from the
-       first task. */
-    await show();
+describe('what the work says about the goal', () => {
+  it('reads against the goal by name, each with its three parts and how sure it is', async () => {
+    await show({ read: feedsTopGoal() });
 
-    const said = panel('What your work shows');
-    expect(said.getByRole('heading', { name: 'How much you work on this' }))
-      .toBeInTheDocument();
-    // It follows the page's range picker; it has none of its own.
-    expect(said.queryByRole('group', { name: 'Heatmap window' })).not.toBeInTheDocument();
+    const reads = section('What the work says');
+    expect(reads.getByRole('heading', { name: 'What your work says about Reach AIME' })).toBeInTheDocument();
+    expect(reads.getByText('Your weakest part of Reach AIME here is geometry.')).toBeInTheDocument();
+    expect(reads.getByText('Figures for topic.')).toBeInTheDocument();
+    expect(reads.getByText('This suggests something about topic.')).toBeInTheDocument();
+    expect(reads.getByText('How sure: emerging pattern')).toBeInTheDocument();
   });
 
-  it('counts this subject and not the whole account', async () => {
-    /* `SubjectHeat` deliberately does not filter — it counts what it is
-       handed, and this is the guard that the page hands it the right list.
-       Without it, another subject's work draws as this one's and nothing
-       else on the page contradicts it. */
-    await show({
-      rows: [
-        ...ceilingRecord(),
-        did('other1', '2026-09-02', 3, 4, { subject: 'history' }),
-        did('other2', '2026-09-03', 3, 4, { subject: 'history' }),
-      ],
-    });
+  it('shows four and folds the rest', async () => {
+    await show({ read: feedsTopGoal() });
 
-    // The eight tasks of `ceilingRecord` sit on eight separate days; the two
-    // history tasks land on days already in that run, so a page counting
-    // them would still say eight days and ten tasks.
-    expect(panel('What your work shows').getByRole('img').getAttribute('aria-label'))
-      .toMatch(/^8 of /);
+    const reads = section('What the work says');
+    expect(reads.queryByText(/good sessions/)).not.toBeInTheDocument();
+    await userEvent.click(reads.getByRole('button', { name: 'Show 1 more' }));
+    expect(reads.getByText(/good sessions/)).toBeInTheDocument();
+  });
+
+  it('draws nothing when nothing cleared the evidence table', async () => {
+    await show();
+    expect(screen.queryByRole('region', { name: 'What the work says' })).not.toBeInTheDocument();
   });
 });
 
-describe('the order of the page', () => {
-  it('puts where the subject stands above what it is for', async () => {
-    await show();
+describe('the sessions are for the goal', () => {
+  const steps = [{ id: 'r1', title: 'Old plan', type: 'targeted', difficulty: 3, minutes: 30, focus: '', reason: '', plan: [], success: [] }];
+  const old = { diagnosis: [], priorities: [], insights: [], next_steps: steps };
 
-    const order = Array.from(document.querySelectorAll('[aria-label]'))
-      .map((node) => node.getAttribute('aria-label'));
-    const at = (label: string) => order.indexOf(label);
-
-    expect(at('How this subject is going')).toBeLessThan(at('Your goal for this subject'));
+  it('names the goal on the section', async () => {
+    await show({ read: feedsTopGoal(), ai: true });
+    expect(section('Recommendations').getByRole('heading', { name: 'Sessions for Reach AIME' })).toBeInTheDocument();
   });
 
-  it('opens the three counts under the verdict, before anything is interpreted', async () => {
-    /* They need none of what the verdict needs: counts are true from the
-       first task, where the ring says "unrated" until something is rated.
+  it('says when the ones on screen were not written for it, and starts over', async () => {
+    await show({ read: feedsTopGoal(), ai: true, savedReading: old });
 
-       Three, not four. A "Completed" card printed the same figure the ring
-       above prints under itself. */
-    await show();
+    const box = section('Recommendations');
+    expect(box.getByText("These weren't written for Reach AIME")).toBeInTheDocument();
+    await userEvent.click(box.getByRole('button', { name: 'Start over with 3' }));
+    expect(askReadSubject).toHaveBeenCalled();
+  });
 
-    const cards = within(document.querySelector('.sb-cards') as HTMLElement);
-    expect(cards.getByText('Total tasks')).toBeInTheDocument();
-    expect(cards.getByText('Current streak')).toBeInTheDocument();
-    expect(cards.getByText('Focus area')).toBeInTheDocument();
-    expect(cards.queryByText('Completed')).not.toBeInTheDocument();
+  it('says nothing when they were', async () => {
+    await show({ read: feedsTopGoal(), ai: true, savedReading: { ...old, for_goal: 'g1' } });
+    expect(section('Recommendations').queryByText(/weren't written for/)).not.toBeInTheDocument();
   });
 });
 
-describe('the evidence is a tab', () => {
+describe('what was cut stays cut', () => {
+  it('has no grade, no count cards, no second goal band and no AI summary', async () => {
+    await show({ read: feedsTopGoal(), ai: true });
+
+    expect(screen.queryByLabelText('How this subject is going')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Your goal for this subject')).not.toBeInTheDocument();
+    expect(document.querySelector('.sb-cards')).toBeNull();
+    expect(screen.queryByText('Total tasks')).not.toBeInTheDocument();
+    expect(screen.queryByText('Focus area')).not.toBeInTheDocument();
+    expect(screen.queryByText(/Summarize/)).not.toBeInTheDocument();
+    expect(screen.queryByText('AI tips')).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'What your work shows' })).not.toBeInTheDocument();
+  });
+
+  it('keeps the window picker off the overview, since nothing there follows it', async () => {
+    await show();
+    expect(screen.queryByRole('group', { name: 'Time window' })).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'The numbers' }));
+    expect(screen.getByRole('group', { name: 'Time window' })).toBeInTheDocument();
+  });
+});
+
+describe('the numbers are a tab', () => {
   it('keeps the working off the overview entirely', async () => {
-    /* Shut was already right — the page ran to fourteen panels before the
-       folds existed — but a shut fold is still a row to read past, and
-       there were nine of them between the last thing a reader came for and
-       the bottom of the page. */
     await show();
-
-    expect(screen.queryByRole('button', { name: /Where you stand/ }))
-      .not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Where you stand/ })).not.toBeInTheDocument();
   });
 
   it('shows the folds once the tab is chosen, and hides the overview', async () => {
-    await show();
-
+    await show({ read: feedsTopGoal() });
     await userEvent.click(screen.getByRole('button', { name: 'The numbers' }));
 
     expect(screen.getByRole('button', { name: /Where you stand/ })).toBeInTheDocument();
-    expect(screen.queryByLabelText('How this subject is going')).not.toBeInTheDocument();
+    expect(screen.queryByRole('region', { name: 'What this subject is for' })).not.toBeInTheDocument();
   });
 
-  it('states each fold\'s answer on its shut row', async () => {
-    // The whole point of the folds: a reader who opens nothing still learns
-    // where the work falls off, so they open the one that surprised them
-    // rather than all nine. See components/Subject/Fold.
+  it("states each fold's answer on its shut row", async () => {
     await show();
     await userEvent.click(screen.getByRole('button', { name: 'The numbers' }));
 
     const difficulty = screen.getByRole('button', { name: /Difficulty/ });
     expect(difficulty).toHaveAttribute('aria-expanded', 'false');
     expect(within(difficulty).getByText('Falls off at')).toBeInTheDocument();
-
-    // One is open on arrival, and it is the one a reader who opens nothing
-    // else would have wanted.
-    expect(screen.getByRole('button', { name: /Where you stand/ }))
-      .toHaveAttribute('aria-expanded', 'true');
   });
-});
 
-describe('what to do is not this page\'s job', () => {
-  it('draws no advice, no session plan and no follow-up on it', async () => {
-    // All three are the Recommendations tab's. See the note where "Do this
-    // next" used to be in pages/SubjectAnalytics.
-    await show();
-    expect(screen.queryByLabelText('What to do next')).not.toBeInTheDocument();
-    expect(screen.queryByText('Do this next')).not.toBeInTheDocument();
-    expect(screen.queryByText(/Plan my next sessions/)).not.toBeInTheDocument();
-    expect(screen.queryByLabelText('Did your last advice work')).not.toBeInTheDocument();
+  it('has no fold repeating the goal, its pace or its checkpoints', async () => {
+    await show({ read: feedsTopGoal() });
+    await userEvent.click(screen.getByRole('button', { name: 'The numbers' }));
+
+    expect(screen.queryByRole('button', { name: /^Goals/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Checkpoints/ })).not.toBeInTheDocument();
   });
-});
 
-describe('the skill tree', () => {
-  it('reads what has been practiced back on the shut row', async () => {
-    // The fold's lead is the reading. It used to be printed twice — once as
-    // the lead and once under a "What this says" heading with three more
-    // paragraphs of curriculum description beneath it.
+  it('draws the work calendar under Over time, for this subject only', async () => {
+    await show({
+      prefs: { analytics_window: 'all' },
+      rows: [
+        ...ceilingRecord(),
+        did('other1', '2026-09-02', 3, 4, { subject: 'history' }),
+        did('other2', '2026-09-03', 3, 4, { subject: 'history' }),
+      ],
+    });
+    await userEvent.click(screen.getByRole('button', { name: 'The numbers' }));
+    await userEvent.click(screen.getByRole('button', { name: /Over time/ }));
+
+    // Eight tasks on eight days. The other subject's two land on days already in that
+    // run, so a page counting them would still say eight days and ten tasks.
+    expect(screen.getByRole('img', { name: /days with work in Algebra/ }).getAttribute('aria-label')).toMatch(/^8 of /);
+  });
+
+  it('reads what has been practiced back on the skill tree row', async () => {
     await show();
-
     await userEvent.click(screen.getByRole('button', { name: 'The numbers' }));
     const fold = screen.getByRole('button', { name: /Skill tree/ }).closest('section')!;
     expect(within(fold).getByText(/practiced/i)).toBeInTheDocument();
-    expect(within(fold).queryByText('What this says')).not.toBeInTheDocument();
   });
 });

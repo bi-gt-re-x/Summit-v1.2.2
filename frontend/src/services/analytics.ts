@@ -634,6 +634,8 @@ export interface SubjectReading {
   diagnosis: Diagnosis[];
   priorities: Priority[];
   next_steps: NextStep[];
+  /** The goal these sessions were written for. Absent on older ones. */
+  for_goal?: string | null;
   insights: Insight[];
 }
 

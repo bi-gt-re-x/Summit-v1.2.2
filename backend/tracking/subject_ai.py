@@ -1637,6 +1637,20 @@ The `reason` says how this session moves the goal, using the figures in \
 session is for, and it never claims the session will work."""
 
 
+#: The same job on one subject's page, where the goal isn't always the one the plan
+#: puts first and the work below carries no brackets.
+SUBJECT_GOAL_NOTE = """
+
+THESE SESSIONS ARE FOR ONE GOAL
+This subject's work feeds the goal in <priority_goal>, which says what it is and how \
+it's going. All three sessions must directly move it. Start from the next step it \
+names, then go after the parts it lists as weak or not started. If it says the date \
+is close, do what it says about that. The work below has been narrowed to this goal. \
+The `reason` says how this session moves the goal, using the figures in \
+<priority_goal> in your own words rather than copying its lines. It says what the \
+session is for, and it never claims the session will work."""
+
+
 def _steps_item() -> Dict[str, Any]:
     """A step as the steps call asks for it: the reading's step, with a timed
     `plan` and checkable `success` criteria in place of `drills` and
@@ -1767,14 +1781,15 @@ ANGLE_WORDS = {'expansion': 'expansion sessions', 'weakness': 'weakness sessions
 
 def plan(state: Dict[str, Any], model_id: str = '',
          overall: bool = False, starter: bool = False,
-         review: str = '', angle: str = '', focus: str = '', goal: str = '') -> List[Dict[str, Any]]:
+         review: str = '', angle: str = '', focus: str = '', goal: str = '',
+         goal_note: str = '') -> List[Dict[str, Any]]:
     """Three recommendations for this subject, and nothing else — or, with
     `overall`, three across every subject in the brief (OVERALL_NOTE), or with
     `starter`, three first sessions for a subject with no work yet, or with
     `review` (a <review_due> block), three review sessions (REVIEW_NOTE), or
     with `angle` and `focus` (its section of the brief), three of that kind
     (ANGLE_NOTES), or with `goal` (the priority goal's section of the brief), all
-    three for that goal (GOAL_NOTE).
+    three for that goal (`goal_note`, or GOAL_NOTE without one).
 
     Raises `BriefUnavailable` for everything the page should say out loud, as
     `read` does.
@@ -1792,7 +1807,7 @@ def plan(state: Dict[str, Any], model_id: str = '',
     try:
         text = planner.from_provider(
             brief,
-            system=STEPS_SYSTEM + (GOAL_NOTE if goal else OVERALL_NOTE if overall else '')
+            system=STEPS_SYSTEM + ((goal_note or GOAL_NOTE) if goal else OVERALL_NOTE if overall else '')
             + (STARTER_NOTE if starter else '') + (REVIEW_NOTE if review else '')
             + (ANGLE_NOTES.get(angle, '') if focus else ''),
             schema=STEPS_SCHEMA,

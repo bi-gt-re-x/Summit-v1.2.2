@@ -55,6 +55,7 @@ from backend.tracking import review_sessions
 from backend.tracking import session_kinds
 from backend.tracking import session_plan
 from backend.tracking import subject_ai
+from backend.tracking import subject_read
 from backend.tracking import topics as topic_tracking
 from backend.tracking import background as about_you
 from backend.tracking import journal
@@ -606,15 +607,20 @@ def write_reading(body: SubjectStateBody, username: str = Depends(current_userna
 
     # The record's button asks for the whole reading. The Recommendations
     # panel asks for steps alone, from a smaller brief, and keeps whatever
-    # reading is already saved around them — see `subject_ai.plan`.
+    # reading is already saved around them — see `subject_ai.plan`. Those steps
+    # are written for the goal this subject feeds, so they can't be about
+    # something else the page has just said isn't the point.
+    block, written_for = ('', None) if mode == 'read' else _aim_at_goal(username, state, _text(body.subject_id, 64))
     try:
         if mode == 'read':
             read = subject_ai.read(state)
         else:
             read = {**_saved_reading(username, subject),
-                    'next_steps': subject_ai.plan(state)}
+                    'next_steps': subject_ai.plan(state, goal=block, goal_note=subject_ai.SUBJECT_GOAL_NOTE if block else '')}
     except subject_ai.BriefUnavailable as exc:
         return fail(str(exc))
+    if mode != 'read':
+        read['for_goal'] = written_for
 
     # Free links only, on the new steps and on the ones already showing.
     read['next_steps'] = _guarded(username, read.get('next_steps') or [], catalog_id)
@@ -647,6 +653,30 @@ def write_reading(body: SubjectStateBody, username: str = Depends(current_userna
     read['next_steps'] = (on_screen + kept) if mode == 'more' else kept
     _keep_reading(username, subject, read, now, span)
     return ok(reading=read)
+
+
+def _aim_at_goal(username: str, state: dict, subject_id: str) -> tuple:
+    """(the goal's section of the brief, its id) for the goal this subject feeds, or
+    ('', None) with none. Narrows what the model sees to that goal's work in place: what
+    it can't see, it can't suggest. Imported here for the reason `_priority_goal` gives."""
+    if not subject_id:
+        return '', None
+    from backend.api.next import _name_of, _record, _sittings
+    now = datetime.now()
+    tasks, goals = _record(username)
+    sittings = _sittings(username)
+    name_of = _name_of(username)
+    rows = db.topic_library_for(username)[0]
+    decision = priority.decide(goals, tasks, now, DECISION_MINUTES, sittings, name_of, rows)
+    lead = subject_read.lead_goal(subject_id, tasks, goals, decision, sittings, now.date())
+    if not lead:
+        return '', None
+    state['goals'] = []
+    state['work_groups'] = subject_read.narrowed(state['work_groups'], lead, subject_id)
+    state['recent_work'] = subject_read.narrowed(state['recent_work'], lead, subject_id, key='title')
+    block = priority.session_block(
+        subject_read.session_decision(lead, decision, tasks, sittings, now.date(), name_of), lead['goal'], rows)
+    return block, str(lead['goal'].get('id'))
 
 
 def _record(username: str, subject: str, steps: list, now: str,
@@ -938,8 +968,6 @@ def plan_session(body: PlanSession, username: str = Depends(current_username)):
 def _goal_of(username: str, row: dict) -> tuple:
     """(the live goal this session was written for, its next checkpoint's id), or
     (None, None) for a session that wasn't written for one, or whose goal is over."""
-    if row.get('subject') not in ACROSS:
-        return None, None
     goal_id = _saved_reading(username, row.get('subject') or '').get('for_goal')
     goal = db.find_row('goals', goal_id, user_id=username) if goal_id else None
     if not goal or goal.get('status') != 'active':

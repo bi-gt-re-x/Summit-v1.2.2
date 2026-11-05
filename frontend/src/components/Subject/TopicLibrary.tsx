@@ -78,13 +78,8 @@ export function TopicLibrary({
   const base = library.rows.find((row) => row.base !== null)?.base ?? null;
 
   return (
-    <section className="ax-panel sb-panel stl-panel" aria-label="Topics">
-      <div className="ax-panel-head">
-        <div className="ax-panel-title">
-          <h2>Topics</h2>
-        </div>
-        {busy && <span className="stl-busy">Updating…</span>}
-      </div>
+    <div className="stl-panel">
+      {busy && <span className="stl-busy">Updating…</span>}
       <p className="ax-panel-note">
         Based on your task names. {named.toLocaleString('en-US')} of {library.total.toLocaleString('en-US')} tasks
         here name a topic, and {library.filed.toLocaleString('en-US')} at least name the area or contest.
@@ -136,6 +131,6 @@ export function TopicLibrary({
           {all ? 'Show fewer' : `Show all ${areas.length} areas`}
         </button>
       )}
-    </section>
+    </div>
   );
 }

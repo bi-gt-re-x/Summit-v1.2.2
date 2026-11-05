@@ -1,8 +1,8 @@
 /**
  * The subject page's Recommendations section.
  *
- * What it promises: it sits right above the calendar heatmap; it holds the
- * model's sessions and nothing else; they come three at a time, each a
+ * What it promises: it holds the model's sessions and nothing else; they come
+ * three at a time, each a
  * dropdown that says exactly what to work, how fast and from where, with
  * "Plan my next session" and "I did this" inside; "Generate 3 more" adds three under
  * the ones on screen, up to six; and every finished task, grouped by name, is
@@ -64,7 +64,7 @@ const readSubject = vi.fn(async (payload: { mode?: string }) => {
   if (payload.mode === 'more') {
     if (onScreen.length >= 6) return { success: false, message: 'Six is the most this holds at once.' };
     onScreen = [...onScreen, ...batch()];
-  } else if (payload.mode !== 'read') {
+  } else {
     onScreen = batch();
   }
   return { success: true, reading: { diagnosis: [], priorities: [], insights: [], next_steps: onScreen } };
@@ -84,9 +84,6 @@ vi.mock('@/services/analytics', async (original) => {
   return {
     ...real,
     analyticsTasks: async () => ({ success: true, tasks }),
-    subjectMilestones: async () => ({ success: true, milestones: [] }),
-    subjectBriefAvailable: async () => ({ success: true, available: false }),
-    suggestSubjectGoal: async () => ({ success: true, draft: null }),
     subjectReadingAvailable: async () => ({ success: true, available: true }),
     savedSubjectReading: async () => ({ success: true, reading: null, written_at: '', span: '' }),
     subjectRecommendations: async () => ({
@@ -97,6 +94,29 @@ vi.mock('@/services/analytics', async (original) => {
     readSubject: (payload: { mode?: string }) => readSubject(payload),
     takeRecommendation: (id: string) => takeRecommendation(id),
     planSession: (id: string, subjectId: string) => planSession(id, subjectId),
+  };
+});
+/** The goal read for a subject no goal needs: nothing here is about it. */
+const NOTHING_FEEDS_IT = vi.hoisted(() => ({
+  subject: 'algebra',
+  stance: 'none',
+  top: null,
+  lead: null,
+  card: { tone: 'flat', title: 'None of your goals depends on Algebra.', figures: 'Nothing here.', suggests: 'This suggests it can stay parked.' },
+  goals: [],
+  misfiled: [],
+  insights: [],
+}));
+
+vi.mock('@/services/subjectGoal', () => ({
+  subjectGoalRead: async () => ({ success: true, ...NOTHING_FEEDS_IT }),
+}));
+vi.mock('@/services/topics', async (original) => {
+  const real = await original<Record<string, unknown>>();
+  return {
+    ...real,
+    topicLibrary: async () => ({ success: false, message: 'none here' }),
+    buildTopics: async () => ({ success: false, message: 'none here' }),
   };
 });
 vi.mock('@/services/goals', async (original) => {
@@ -150,21 +170,6 @@ beforeEach(() => {
 });
 
 describe('the subject Recommendations section', () => {
-  it('sits right above the calendar heatmap', async () => {
-    await show();
-    const record = screen.getByRole('heading', { name: 'What your work shows' });
-    // DOCUMENT_POSITION_FOLLOWING: the record section comes after.
-    expect(section().compareDocumentPosition(record) & 4).toBeTruthy();
-    // And no other section's heading sits between them.
-    const between = [...document.querySelectorAll('h2')].filter(
-      (h) =>
-        !section().contains(h)
-        && (section().compareDocumentPosition(h) & 4)
-        && (h.compareDocumentPosition(record) & 4),
-    );
-    expect(between).toEqual([]);
-  });
-
   it('holds the model\'s sessions and nothing else', async () => {
     await show();
     // No ranked advice from the app's own arithmetic above the invitation.
@@ -226,15 +231,6 @@ describe('the subject Recommendations section', () => {
     expect(readSubject).toHaveBeenLastCalledWith(expect.objectContaining({ mode: 'fresh' }));
     expect(section().querySelectorAll('.sx-step-fold')).toHaveLength(3);
     expect(within(section()).getByText('Session 7')).toBeInTheDocument();
-  });
-
-  it('leaves the steps alone when the record is read again', async () => {
-    await show();
-    await generate();
-    await userEvent.click(screen.getByRole('button', { name: 'Summarize again' }));
-    expect(readSubject).toHaveBeenLastCalledWith(expect.objectContaining({ mode: 'read' }));
-    expect(section().querySelectorAll('.sx-step-fold')).toHaveLength(3);
-    expect(within(section()).getByText('Session 1')).toBeInTheDocument();
   });
 
   it('plans a step as a session filed under the subject, and locks it', async () => {

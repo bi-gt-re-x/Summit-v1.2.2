@@ -2,6 +2,25 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-11-04 — Subject pages read against the goal
+
+The per-subject analytics pages knew a goal only by the subject it was filed under, and
+that field is mostly empty or wrong. A violin goal with 844 tasks in Music got "no goal
+set", and Computer Science led with a math contest that had none of its work there. Now a
+goal counts where its work is (backend/tracking/subject_read.py), and its order and pace
+come from the plan, so the page can't disagree with it.
+
+The Overview opens on what the subject is for: whether the plan needs it right now, the
+pace, how much of the recent work was on the goal, and how many sessions could move if the
+goal has room to spare. A goal filed in the wrong place gets a one-click move. Readings
+follow the insight shape and the evidence table, worst news first, and each is about the
+goal's own work. AI sessions are written for that goal, with older ones saying they weren't.
+
+Cut from the Overview: the score ring and letter grade, the count cards, the deadline
+observation, the mission line, the "what to do" list and the AI summary with its tips.
+Topics and the work calendar moved to The numbers, which lost its radar, standings,
+scatter, Goals fold and Checkpoints fold. Stored checkpoints stay in the database.
+
 ## 2026-11-03 — A priority engine, and a strict evidence hierarchy
 
 ### Where your time should go

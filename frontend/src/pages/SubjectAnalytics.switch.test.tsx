@@ -58,12 +58,36 @@ vi.mock('@/services/analytics', async (original) => {
   return {
     ...real,
     analyticsTasks: async () => ({ success: true, tasks: rows }),
-    subjectMilestones: async () => ({ success: true, milestones: [] }),
-    subjectBriefAvailable: async () => ({ success: true, available: false }),
-    suggestSubjectGoal: async () => ({ success: true, draft: null }),
     subjectReadingAvailable: async () => ({ success: true, available: false }),
     savedSubjectReading: async () => ({ success: true, reading: null, written_at: '', span: '' }),
     subjectRecommendations: async () => ({ success: true, recommendations: [], outcomes: [] }),
+  };
+});
+/** The goal read for a subject no goal needs: nothing here is about it. */
+const NOTHING_FEEDS_IT = vi.hoisted(() => ({
+  subject: 'algebra',
+  stance: 'none',
+  top: null,
+  lead: null,
+  card: { tone: 'flat', title: 'None of your goals depends on Algebra.', figures: 'Nothing here.', suggests: 'This suggests it can stay parked.' },
+  goals: [],
+  misfiled: [],
+  insights: [],
+}));
+
+vi.mock('@/services/subjectGoal', () => ({
+  subjectGoalRead: async (id: string) => ({
+    success: true,
+    ...NOTHING_FEEDS_IT,
+    card: { ...NOTHING_FEEDS_IT.card, title: `None of your goals depends on ${id}.` },
+  }),
+}));
+vi.mock('@/services/topics', async (original) => {
+  const real = await original<Record<string, unknown>>();
+  return {
+    ...real,
+    topicLibrary: async () => ({ success: false, message: 'none here' }),
+    buildTopics: async () => ({ success: false, message: 'none here' }),
   };
 });
 vi.mock('@/services/goals', async (original) => {
