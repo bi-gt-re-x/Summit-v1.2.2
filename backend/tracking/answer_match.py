@@ -107,6 +107,9 @@ def stem(token: str) -> str:
     return token
 
 
+_GREEK_WORDS = {'α': 'alpha', 'β': 'beta', 'γ': 'gamma', 'Γ': 'gamma', 'δ': 'delta', 'Δ': 'delta',
+                'θ': 'theta', 'λ': 'lambda', 'μ': 'mu', 'σ': 'sigma', 'Σ': 'sum', 'π': 'pi',
+                'ρ': 'rho', 'ω': 'omega', 'φ': 'phi', 'ε': 'epsilon', 'τ': 'tau', 'χ': 'chi'}
 _INFINITY = ((re.compile(r'(?:-|minus |negative )\s*(?:∞|infinity\b|inf\b)'), ' neginf '),
              (re.compile(r'(?:\+|plus |positive )\s*(?:∞|infinity\b|inf\b)'), ' posinf '),
              (re.compile(r'∞'), ' infinity '))
@@ -116,6 +119,12 @@ _NOTES = ((re.compile(r'\b([a-g]) ?flat\b'), r'\1b'), (re.compile(r'\b([a-g]) ?s
 def _fold(text: str) -> str:
     text = str(text or '').translate(_QUOTES).lower()
     text = text.replace('>=', '≥').replace('<=', '≤').replace('!=', '≠').replace('=<', '≤').replace('=>', '≥')
+    text = text.replace('²', '^2').replace('³', '^3')
+    # Greek reads as its name, so "α + 1" and "alpha + 1" are the same words.
+    for mark, name in _GREEK_WORDS.items():
+        text = text.replace(mark, ' {} '.format(name))
+    # 33,898 is one number.
+    text = re.sub(r'(?<=\d),(?=\d{3}(?!\d))', '', text)
     for pattern, word in _INFINITY:
         text = pattern.sub(word, text + ' ').strip()
     for pattern, note in _NOTES:
@@ -134,10 +143,13 @@ def tokens(text: str, typed: bool = False) -> List[str]:
     out = []
     for raw in _TOKEN.findall(_fold(plain)):
         raw = _SAME.get(raw, raw)
-        raw = _NUMBER_WORDS.get(raw, raw)
         if raw in ARTICLES:
             continue
-        out.append(stem(raw))
+        if raw in _NUMBER_WORDS:
+            out.append(_NUMBER_WORDS[raw])
+            continue
+        word = stem(raw)
+        out.append(_NUMBER_WORDS.get(word, word))
     return out
 
 
@@ -753,7 +765,14 @@ def _split_top(text: str) -> List[str]:
 def statements(text: str) -> List[Any]:
     """Every part of a math answer. A bare value after an equation reuses the
     equation's left side: "x = 3 or -3" is x = 3 and x = -3."""
-    parts = _split_top(_prepare(text))
+    parts = []
+    for part in _split_top(_prepare(text)):
+        # x = -1 ± √3 is two answers.
+        part = re.sub(r'\+\s*/\s*-|\bplus or minus\b', '±', part)
+        if '±' in part:
+            parts.extend([part.replace('±', '+', 1), part.replace('±', '-', 1)])
+        else:
+            parts.append(part)
     out = []
     lead = None
     for part in parts:
@@ -1099,7 +1118,7 @@ GRADING_FIELDS = frozenset(('accept', 'keys', 'need', 'choices', 'reject', 'orde
 
 #: What `form` can ask of math, on top of its value. Value alone would pass a
 #: "factor this" question answered with the question.
-FORMS = ('product', 'expanded', 'exact', 'short', 'log')
+FORMS = ('product', 'expanded', 'exact', 'short', 'log', 'nofraction')
 
 
 def _is_sum(node) -> bool:
@@ -1148,6 +1167,8 @@ def in_form(form: str, answer: str, given: str) -> bool:
         return not re.fullmatch(r'\s*[-+]?\d*\.\d+\s*', text) and not re.search(r'\d\.\d{3,}', text)
     if form == 'log':
         return len(re.findall(r'\b(?:log|ln)', text)) == 1
+    if form == 'nofraction':
+        return '/' not in text and '÷' not in text
     if form == 'short':
         try:
             return len(_lex(_prepare(text))) <= len(_lex(_prepare(_stored(answer)))) + 2
@@ -1199,7 +1220,8 @@ def grading_failures(kind: str, answer: str, grading: Optional[Dict[str, Any]]) 
         bad.append('grading:the worked answer says none of the accepted answers')
     if accepted and kind in ('integer', 'decimal', 'fraction', 'percent'):
         want = _number_of(accepted[0].rstrip('.'))
-        found = [_number_of(one) for one in re.findall(r'-?\d[\d,]*(?:\.\d+)?(?:/\d+)?', _stored(answer).replace(',', ''))]
+        text = to_plain(answer) + ' ' + _stored(answer)
+        found = [_number_of(one) for one in re.findall(r'-?\d[\d,]*(?:\.\d+)?(?:/\d+)?', text.replace(',', ''))]
         if want is None or not any(one is not None and _close(one, want) for one in found):
             bad.append('grading:the worked answer does not say the accepted number')
     return bad
