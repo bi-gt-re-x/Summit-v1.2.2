@@ -1157,6 +1157,11 @@ def grade(kind: str, answer: str, given: str, grading: Optional[Dict[str, Any]],
     if kind == 'choice':
         choices = grading.get('choices') or []
         wanted = accept or cores(answer)
+        # A button sends its own words. Taken exactly, they decide, even where
+        # two options differ only by case: Homo sapiens and homo Sapiens.
+        exact = [one for one in choices if given.strip() == one.strip()]
+        if exact:
+            return exact[0].strip() in [one.strip() for one in wanted]
         # A pick is one of the buttons, so the question's words don't pad it:
         # with "-4, 1/4, -1/4 or 4" asked, "-1/4" must not read as "4".
         return matches_one(given, wanted, SLACK['choice']) and not any(
