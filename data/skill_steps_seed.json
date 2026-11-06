@@ -37730,6 +37730,528 @@
         }
       ]
     },
+    "db.constraint": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "NOT NULL",
+          "mastery": "Use NOT NULL on every column that must always have a value.",
+          "practice": "Mark 4 columns of a users table NOT NULL, then try inserting a user with no email.",
+          "detail": "NULL means unknown, and most columns shouldn't allow it. Marking a column NOT NULL means the database refuses any row without it. Leave it off only for things that truly can be missing, like a middle name.",
+          "proof": "The insert without an email fails.",
+          "pitfall": "Leaving every column nullable by default.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A column is NOT NULL. What happens if an insert leaves it out and it has no default?",
+              "answer": "The insert fails.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Should a user's 'middle_name' be NOT NULL?",
+              "answer": "No. Many people don't have one.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which is stronger: a NOT NULL constraint or a check in the app?",
+              "answer": "The constraint, since nothing can skip it.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "UNIQUE",
+          "mastery": "Use UNIQUE to stop duplicate values, like 2 accounts with the same email.",
+          "practice": "Add UNIQUE(email) to users, and insert 2 rows with the same email to see the error.",
+          "detail": "UNIQUE refuses a second row with the same value. It can cover several columns together, like a student and course pair. In PostgreSQL, NULLs don't count as equal, so several rows can have a NULL in a unique column.",
+          "proof": "The 2nd insert fails with a duplicate key error.",
+          "pitfall": "Checking for duplicates in app code only.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Can 2 rows have NULL in a UNIQUE column in PostgreSQL?",
+              "answer": "Yes. NULLs aren't equal to each other.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 1 column that should usually be UNIQUE.",
+              "answer": "email or username",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Can UNIQUE cover 2 columns together?",
+              "answer": "Yes, like UNIQUE(student_id, course_id).",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "CHECK",
+          "mastery": "Use CHECK constraints for rules about values, like a price above 0.",
+          "practice": "Add CHECK (price > 0) and CHECK (quantity >= 1) to an order_items table, then try inserting a price of -5.",
+          "detail": "A CHECK is any condition a row must pass. It can compare a column to a number or two columns to each other, like an end date after a start date. It catches nonsense values at the door, whatever code wrote them.",
+          "proof": "The insert with a price of -5 fails.",
+          "pitfall": "Trusting every script and app to remember the rule.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write a CHECK that keeps age between 0 and 120.",
+              "answer": "CHECK (age BETWEEN 0 AND 120)",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "An insert has price = 0, with CHECK (price > 0). What happens?",
+              "answer": "It fails.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Can a CHECK compare 2 columns, like end_date > start_date?",
+              "answer": "Yes.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Foreign Key Actions",
+          "mastery": "Choose what happens to child rows when a parent is deleted: restrict, cascade or set null.",
+          "practice": "Create pets with owner_id REFERENCES owners ON DELETE CASCADE, delete 1 owner who has 2 pets, and count the pets left.",
+          "detail": "RESTRICT refuses to delete a parent with children. CASCADE deletes the children too. SET NULL keeps the children and clears the link. Pick based on whether a child makes sense without its parent.",
+          "proof": "Both of that owner's pets are gone after the delete.",
+          "pitfall": "Using CASCADE everywhere and deleting far more than you meant.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "With ON DELETE CASCADE, deleting an owner with 2 pets removes how many pets?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does ON DELETE RESTRICT do?",
+              "answer": "Refuses to delete a parent that still has children.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "When might ON DELETE SET NULL fit, like for 1 forum post?",
+              "answer": "When a child can exist without its parent, like a post whose author left.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Rules Belong in the Database",
+          "mastery": "Put data rules in the database, since every app and script that writes data must then obey them.",
+          "practice": "List 3 rules your app checks in code, and write each one as a database constraint.",
+          "detail": "App code isn't the only thing that writes data: scripts, admin tools and other services do too. Constraints apply to all of them. Two servers checking 'is this email free?' at the same instant can both say yes, but a UNIQUE constraint can't be raced.",
+          "proof": "3 rules rewritten as constraints.",
+          "pitfall": "Keeping rules only in app code and trusting every writer to follow them.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "1 cleanup script skips the app and writes directly. Which rules still apply?",
+              "answer": "Only the database's constraints.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why keep checks in a 'signup' form too?",
+              "answer": "They give users friendly error messages early.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "2 app servers check 'email is unused' at the same instant. What stops a duplicate?",
+              "answer": "A UNIQUE constraint.",
+              "answer_kind": "word"
+            }
+          ]
+        }
+      ]
+    },
+    "db.index": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "What an Index Does",
+          "mastery": "Explain an index as a sorted structure that finds rows without reading the whole table.",
+          "practice": "Create a 1-million-row table in SQLite, time a query on an unindexed column, then add an index and time it again.",
+          "detail": "Without an index, finding a row means checking every one. An index keeps the column's values sorted in a B-tree with pointers to the rows, so the engine jumps to the right place in a few steps, like using the index at the back of a book.",
+          "proof": "The query time drops sharply after the index is added.",
+          "pitfall": "Thinking an index changes the table itself. It's a separate structure.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Without an index, finding 1 email among 1 million rows reads about how many rows?",
+              "answer": "All 1 million",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What structure do most PostgreSQL indexes use: a B-tree or a linked list?",
+              "answer": "A B-tree",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A B-tree over 1 million rows finds a row in about how many steps: 20 or 500,000?",
+              "answer": "About 20",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Choose Columns to Index",
+          "mastery": "Spend indexes only where your real queries will use them.",
+          "practice": "List the WHERE and JOIN columns of your 5 most common queries, and pick which 2 to index first.",
+          "detail": "Indexes help the queries that use them. Look at what your app actually asks: lookups by email, joins on foreign keys, sorting by date. Index those. A column nobody filters or sorts by gains nothing from an index.",
+          "proof": "2 columns chosen from the 5 queries, with a reason for each.",
+          "pitfall": "Indexing columns just in case.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A query runs WHERE email = ? 1000 times a minute. Should email be indexed?",
+              "answer": "Yes.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Should you index a column that's never used in WHERE, JOIN or ORDER BY?",
+              "answer": "No.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Is a foreign key column like orders.customer_id usually worth indexing?",
+              "answer": "Yes. Joins and lookups use it.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Indexes Cost Writes",
+          "mastery": "Know that every index slows inserts and updates and takes space, so add indexes on purpose.",
+          "practice": "Time inserting 100,000 rows into a table with 0 indexes and then with 4 indexes, and compare.",
+          "detail": "Each index is another structure that has to be updated on every insert, update and delete. That's the trade: faster reads for slower writes and more disk. A table that's written constantly and read rarely wants few indexes.",
+          "proof": "2 timings showing the inserts slow down with 4 indexes.",
+          "pitfall": "Adding an index for every column and wondering why inserts crawl.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A table has 6 indexes. How many index structures does 1 insert have to update?",
+              "answer": "6",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why not index all 20 columns of a table?",
+              "answer": "Writes get slower and the indexes take space.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A table takes 10,000 writes a minute and is rarely read. Many indexes or few?",
+              "answer": "Few",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Composite Indexes",
+          "mastery": "Use a multi-column index in the right order, since it helps queries that use its leading columns.",
+          "practice": "Create an index on (last_name, first_name) and test it on WHERE last_name = 'Lee' and on WHERE first_name = 'Ana'.",
+          "detail": "A composite index is sorted by its first column, then by the second within each first value, like a phone book. So it helps searches on the first column, or the first two, but not the second column alone. Put equality filters before range filters.",
+          "proof": "The index helps the last_name query and not the first_name one.",
+          "pitfall": "Putting a rarely filtered column first in a composite index.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "An index is on (last_name, first_name). Does it help WHERE last_name = 'Lee'?",
+              "answer": "Yes.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Does that same index help WHERE first_name = 'Ana' on its own?",
+              "answer": "Usually not, since first_name isn't the leading column.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "For WHERE status = 'open' AND created_at > '2025-01-01', which column usually goes first?",
+              "answer": "status, the equality check.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Unique Indexes",
+          "mastery": "Use unique indexes to enforce that no 2 rows share a value, like an email.",
+          "practice": "Add a UNIQUE index on users.email, and try inserting 2 users with the same email.",
+          "detail": "A unique index both speeds up lookups and refuses duplicates. Primary keys get one automatically. For case-insensitive values like emails, index the lowercased value, so Ana@x.com and ana@x.com count as the same.",
+          "proof": "The 2nd insert fails with a duplicate key error.",
+          "pitfall": "Checking for duplicates only in app code, which two servers can race past.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does CREATE UNIQUE INDEX on email prevent?",
+              "answer": "2 rows having the same email.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In PostgreSQL, is a primary key automatically indexed?",
+              "answer": "Yes.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Ana@x.com and ana@x.com should count as duplicates. How can a unique index do that?",
+              "answer": "Index lower(email) as unique.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "db.isolation": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Dirty Reads",
+          "mastery": "Explain a dirty read, seeing another transaction's uncommitted change, and which level prevents it.",
+          "practice": "Write a 2-column timeline where transaction A updates a balance and B reads it before A rolls back, and mark the dirty read.",
+          "detail": "A dirty read means seeing a change that was never committed and might be rolled back. Read Uncommitted allows it in the SQL standard. Read Committed and above prevent it, and PostgreSQL never allows dirty reads at any level.",
+          "proof": "A timeline with B's read of the uncommitted value marked.",
+          "pitfall": "Assuming every database behaves the same at each level.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Of 2 transactions, B reads A's change, then A rolls back. What did B see?",
+              "answer": "A dirty read of data that never really existed.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which level allows dirty reads: Read Uncommitted or Read Committed?",
+              "answer": "Read Uncommitted",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Does PostgreSQL ever allow dirty reads?",
+              "answer": "No. Even Read Uncommitted behaves as Read Committed there.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Non-Repeatable Reads",
+          "mastery": "Explain a non-repeatable read, where the same row reads differently twice within one transaction.",
+          "practice": "Draw a timeline where transaction A reads a $10 price twice and B commits a change in between, and say which level stops it.",
+          "detail": "At Read Committed, each statement sees the latest committed data, so a second read can differ from the first. Repeatable Read gives the transaction one snapshot, so the row stays the same. For many simple apps, the difference doesn't matter.",
+          "proof": "A timeline showing the 2 different reads, and Repeatable Read as the fix.",
+          "pitfall": "Treating every anomaly as a bug, even where it causes no harm.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A reads a price of $10, B commits $12, and A reads again. What does A see at Read Committed?",
+              "answer": "$12",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which level makes A see $10 both times?",
+              "answer": "Repeatable Read",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Is a non-repeatable read ever acceptable, at Read Committed in 1 simple app?",
+              "answer": "Yes, for many simple apps.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Phantom Rows",
+          "mastery": "Explain phantom rows, new rows that appear when a range query is repeated.",
+          "practice": "Draw a timeline where A counts orders over $100 twice and B inserts 1 such order in between.",
+          "detail": "A phantom is a new row that matches a query the second time it runs. It differs from a non-repeatable read, which is about a changed existing row. Serializable prevents phantoms in the SQL standard, and PostgreSQL's Repeatable Read prevents them too.",
+          "proof": "A timeline where A's 2nd count is 1 higher than its first.",
+          "pitfall": "Confusing phantoms with changes to existing rows.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A counts 5 orders, B inserts 1 and commits, and A counts again and gets 6. What's this called?",
+              "answer": "A phantom read",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which level prevents phantoms in the SQL standard?",
+              "answer": "Serializable",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Phantoms are about new rows. What are non-repeatable reads about, in 1 phrase?",
+              "answer": "Changed existing rows.",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Serializable",
+          "mastery": "Use Serializable when correctness depends on transactions acting one at a time, and be ready to retry.",
+          "practice": "Run 2 Serializable transactions that each read a total and insert based on it, and watch 1 fail with a serialization error.",
+          "detail": "Serializable promises the result is the same as if the transactions had run one after another. To keep that promise, the database sometimes aborts one, and your code must retry it. It's the safest level, and it costs more retries.",
+          "proof": "1 of the 2 transactions fails and succeeds on retry.",
+          "pitfall": "Using Serializable without any retry logic.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does the Serializable level promise?",
+              "answer": "Results as if transactions ran one at a time.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What must apps do when a Serializable transaction fails?",
+              "answer": "Retry it.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why not use Serializable for all 100% of transactions?",
+              "answer": "It causes more retries and can be slower.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Pick a Level",
+          "mastery": "Pick the isolation level for a task by weighing which anomalies matter against speed.",
+          "practice": "Pick a level for 3 tasks, a page view counter, a bank transfer and an end-of-day report, and justify each one.",
+          "detail": "Most apps run fine at Read Committed. A report that must see one consistent picture across many queries wants Repeatable Read. Rules that span several rows, like 'at least one doctor stays on call', want Serializable to stop write skew.",
+          "proof": "3 tasks, each with a level and a reason.",
+          "pitfall": "Picking the highest level everywhere without thinking about retries.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is PostgreSQL's default isolation level?",
+              "answer": "Read Committed",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A report must see 1 consistent snapshot across 10 queries. Which level?",
+              "answer": "Repeatable Read",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "2 doctors must never both go off call at once. Which level is safest?",
+              "answer": "Serializable",
+              "answer_kind": "word"
+            }
+          ]
+        }
+      ]
+    },
     "db.joins": {
       "model": "claude-opus-5-5",
       "verifier": "rules+authored",
@@ -38078,6 +38600,528 @@
         }
       ]
     },
+    "db.migrate": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Version the Schema",
+          "mastery": "Keep schema changes as numbered migration files in version control, applied in order.",
+          "practice": "Write 2 migration files, 001_create_users.sql and 002_add_email.sql, and apply them in order to an empty database.",
+          "detail": "Every schema change becomes a file with a number, committed with the code. A tool records which ones have run, so every copy of the database, from your laptop to production, gets the same changes in the same order. Never edit one that already ran.",
+          "proof": "Both migrations applied, and the tool shows 2 as the current version.",
+          "pitfall": "Making schema changes by hand on the production database.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why number migration files, like 001 and 002?",
+              "answer": "So they always run in the same order.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Should you edit migration 003 after it already ran in production?",
+              "answer": "No. Write a new one.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 migration tool.",
+              "answer": "Alembic, Flyway or Rails migrations.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Up and Down",
+          "mastery": "Write every migration with a forward step and a way back.",
+          "practice": "Write an up migration that adds a 'phone' column and a down migration that drops it, then run both.",
+          "detail": "The up step changes the schema, and the down step reverses it, so a bad release can be rolled back. Not everything is reversible: dropping a column deletes its data for good. Test the down step before you need it.",
+          "proof": "The column appears after up and disappears after down.",
+          "pitfall": "Never testing the down step until a release has already gone wrong.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "An up migration adds a 'phone' column. What should down do?",
+              "answer": "Drop that column.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Can a down migration restore the data in 1 dropped column?",
+              "answer": "No. Dropping a column loses its data for good.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why test the down migration before release 2.0?",
+              "answer": "So you can roll back safely if the release goes wrong.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Safe Changes on Live Tables",
+          "mastery": "Make changes in safe steps on tables with traffic, like adding a nullable column before making it required.",
+          "practice": "Plan adding a required email column to a 10-million-row users table in 3 steps: add it nullable, backfill it, then add NOT NULL.",
+          "detail": "Adding a required column in one step fails or locks the table, because existing rows have no value. So add it as nullable, fill it in batches, then add the constraint once every row has a value. Small batches keep the table usable throughout.",
+          "proof": "A 3-step plan with the backfill done in batches.",
+          "pitfall": "Running one giant update that locks a busy table for minutes.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why add the column as nullable first, with 10 million existing rows?",
+              "answer": "Existing rows have no value yet.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "After the backfill, what's the last step?",
+              "answer": "Add the NOT NULL constraint.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why backfill 10 million rows in batches?",
+              "answer": "Huge single updates lock the table and slow everything.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Rename Without Downtime",
+          "mastery": "Rename a column in steps: add the new one, write to both, move the reads, then drop the old one, so running code never breaks.",
+          "practice": "Plan renaming users.name to full_name in 4 steps that keep the old app version working.",
+          "detail": "During a deploy, old and new versions of the app run at the same time. A one-step rename breaks the old one. The expand and contract pattern adds the new column first, keeps both in sync, moves all reads over, and only then removes the old column.",
+          "proof": "A 4-step plan where no step breaks either app version.",
+          "pitfall": "Renaming a column in one step while old code still uses it.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why not rename a column in 1 step during a deploy?",
+              "answer": "Running code still uses the old name and breaks.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In the 4-step expand and contract pattern, which comes first: adding the new column or dropping the old?",
+              "answer": "Adding the new column",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "When is it safe to drop the old 'users.name' column after the rename?",
+              "answer": "Once no running code reads or writes it.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Test on Real Data",
+          "mastery": "Test migrations on a copy of production data before running them for real.",
+          "practice": "Restore last night's backup into a test database, run your new migration on it, and time how long it takes.",
+          "detail": "A migration that takes 2 seconds on a laptop can take an hour on a table with millions of rows, and lock it the whole time. Testing on a production-sized copy shows the real time and any errors from real data. It also tests that your backups restore.",
+          "proof": "The migration's real run time on production-sized data.",
+          "pitfall": "Testing only on a tiny development database.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A migration takes 2 seconds on your laptop and 40 minutes in production. What went wrong in testing?",
+              "answer": "It wasn't tested on production-sized data.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why time a migration on 10 million rows before running it live?",
+              "answer": "To plan for any locking or downtime.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Should migration 005 ever run untested against production?",
+              "answer": "No.",
+              "answer_kind": "yesno"
+            }
+          ]
+        }
+      ]
+    },
+    "db.normal": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Spot Repeated Facts",
+          "mastery": "Find facts stored more than once in a table, the sign that it needs splitting.",
+          "practice": "In an orders table with customer_name, customer_email and product columns across 6 rows, circle every fact that repeats.",
+          "detail": "When the same fact sits on many rows, every change has to find them all, and a missed one leaves the data disagreeing with itself. That's an update anomaly. Deleting the last row can also lose a fact you wanted to keep, which is a delete anomaly.",
+          "proof": "Every repeat of each customer's name and email circled.",
+          "pitfall": "Thinking repetition is harmless because disk space is cheap.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A customer's email appears on all 12 of their order rows. How many places must change if the email changes?",
+              "answer": "12",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is an 'update anomaly'?",
+              "answer": "A fact changed in some rows but not others.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Deleting a customer's only 1 order also loses their address. What is this called?",
+              "answer": "A delete anomaly",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "First Normal Form",
+          "mastery": "Put a table in first normal form, with one value per cell and no repeating column groups.",
+          "practice": "Convert a table with a tags column like 'red,blue' and columns color1 to color3 into 1NF, using a separate table.",
+          "detail": "First normal form means every cell holds a single value. Lists inside a cell and groups like color1, color2 and color3 both break it. The fix is the same: a separate table with one row per value, linked back by a key.",
+          "proof": "A tags table with one row per tag, linked to the original rows.",
+          "pitfall": "Adding color4 when someone needs a 4th value.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Is a cell holding 'Math, Art' in 1NF?",
+              "answer": "No. It holds 2 values.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How do you fix the columns phone1, phone2 and phone3 for 1NF?",
+              "answer": "Move phones to their own table, 1 row per number.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does 1NF stand for?",
+              "answer": "First normal form",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Second and Third Normal Form",
+          "mastery": "Remove facts that depend on only part of a key, for 2NF, or on another non-key column, for 3NF.",
+          "practice": "In enrollments(student_id, course_id, course_title, grade), move course_title to a courses table and say which rule it broke.",
+          "detail": "In 2NF, every non-key column depends on the whole key. course_title depends only on course_id, so it belongs in courses. In 3NF, nothing depends on another non-key column, so a dept_name that follows from dept_id moves to a departments table.",
+          "proof": "course_title moved to courses, because it broke 2NF.",
+          "pitfall": "Leaving a fact where it depends on another non-key column.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In enrollments(student_id, course_id, course_title), course_title depends on which part of the key?",
+              "answer": "Only course_id",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In employees(id, dept_id, dept_name), why does dept_name break 3NF?",
+              "answer": "It depends on dept_id, not on the employee's id.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Is 3NF enough for most applications?",
+              "answer": "Yes.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Normalize a Real Table",
+          "mastery": "Take a flat, spreadsheet-style table and normalize it into 3 or 4 linked tables.",
+          "practice": "Normalize a 7-column sales sheet with customer, product and order details into customers, products, orders and order_items.",
+          "detail": "Pick out each kind of thing in the sheet and give it a table. Link them with foreign keys, and put facts about the pairing, like the quantity, in the join table. Facts that change over time, like the price at the moment of sale, are stored where they happened.",
+          "proof": "4 linked tables with no fact stored twice.",
+          "pitfall": "Storing the current product price on old orders, which rewrites history when it changes.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A flat sheet mixes customers, products and orders. How many tables do you usually end up with, counting order_items?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Of the 4 tables, which holds the quantity of each product in an order?",
+              "answer": "order_items",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Where does a product's price at the time of sale belong in those 4 tables?",
+              "answer": "In order_items, since prices change.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "When to Denormalize",
+          "mastery": "Know when to copy data on purpose for speed, like a stored total, and how to keep it correct.",
+          "practice": "Add an order_total column to orders, kept in sync with order_items, and write down every time it must be updated.",
+          "detail": "Sometimes recomputing a value on every read is too slow, so you store a copy. That's denormalizing. It's fine if you measure first and keep the copy correct, with a trigger or by updating it in the same transaction as the items.",
+          "proof": "order_total added, with a list of the events that must update it.",
+          "pitfall": "Denormalizing before measuring whether anything is slow.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why might you store order_total even though it can be computed?",
+              "answer": "To avoid summing items on every read.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What's the risk of a stored 'order_total'?",
+              "answer": "It can drift out of sync with the items.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Should you denormalize before you've measured 1 slow query?",
+              "answer": "No. Normalize first, then denormalize only where you must.",
+              "answer_kind": "yesno"
+            }
+          ]
+        }
+      ]
+    },
+    "db.plan": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Run EXPLAIN",
+          "mastery": "Use EXPLAIN to see what the engine plans to do with a query.",
+          "practice": "Run EXPLAIN on SELECT * FROM users WHERE email = 'a@b.com' in PostgreSQL, before and after adding an index on email.",
+          "detail": "EXPLAIN shows the plan: which tables are read, how, in what order, and the estimated cost and rows. EXPLAIN ANALYZE actually runs the query and adds real times and counts. Reading the plan turns 'it's slow' into a specific step to fix.",
+          "proof": "The plan changes from Seq Scan to Index Scan after the index.",
+          "pitfall": "Guessing why a query is slow instead of reading its plan.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In PostgreSQL, which keyword shows a query's plan without running it?",
+              "answer": "EXPLAIN",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does EXPLAIN ANALYZE add?",
+              "answer": "It runs the query and shows real times and row counts.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Before the index, the plan says Seq Scan. What does that mean?",
+              "answer": "It reads every row of the table.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Sequential and Index Scans",
+          "mastery": "Tell a sequential scan from an index scan, and know when each is the right choice.",
+          "practice": "Query a 1-million-row table for 1 row and then for 90% of the rows, and compare the 2 plans.",
+          "detail": "An index scan is fast for finding a few rows. But jumping back and forth through the index for most of a table is slower than just reading it straight through. So the planner sometimes skips your index, and that's often correct.",
+          "proof": "Index scan for 1 row, and a seq scan for 90% of the rows.",
+          "pitfall": "Assuming a seq scan is always a problem.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Fetching 1 row by id from 1 million: seq scan or index scan?",
+              "answer": "Index scan",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Fetching 90% of a 1-million-row table: which is often faster?",
+              "answer": "A seq scan",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "For a query that returns 90% of rows, why might the engine ignore your index?",
+              "answer": "It estimates that reading the whole table is cheaper.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Join Methods",
+          "mastery": "Recognize nested loop, hash and merge joins in a plan, and when each one is used.",
+          "practice": "EXPLAIN a join of a 10-row table to a 1-million-row table, then a join of 2 large tables, and note the join method each time.",
+          "detail": "A nested loop looks up matches for each outer row, which is great when the outer side is small and the inner side is indexed. A hash join builds an in-memory lookup of one side. A merge join walks two sorted inputs together. The planner picks by estimated size.",
+          "proof": "A nested loop for the small join and a hash join for the large one.",
+          "pitfall": "Assuming one join method is always best.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which join method suits a 10-row table joined to an indexed large table?",
+              "answer": "Nested loop",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which join method builds an in-memory lookup of 1 table?",
+              "answer": "Hash join",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Of the 3 join methods, which needs both inputs sorted?",
+              "answer": "Merge join",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Check the Row Estimates",
+          "mastery": "Compare the planner's estimated rows with the actual rows, since big gaps cause bad plans.",
+          "practice": "Run EXPLAIN ANALYZE on a slow query and find any step where the estimated and actual rows differ by more than 10 times.",
+          "detail": "The planner chooses based on estimates from table statistics. If it thinks a filter returns 10 rows and it really returns 50,000, it may pick a nested loop that crawls. Refreshing statistics with ANALYZE, or rewriting the filter, often fixes it.",
+          "proof": "Any step with a 10 times gap marked as the likely cause.",
+          "pitfall": "Ignoring the estimates and only reading the total time.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "The plan estimates 10 rows and 50,000 come back. What does that suggest?",
+              "answer": "Stale statistics or a misjudged filter.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which PostgreSQL command refreshes table statistics?",
+              "answer": "ANALYZE",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Estimated 100 rows, actual 120. Is that a big problem?",
+              "answer": "No. That's close enough.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Fix a Slow Query",
+          "mastery": "Use the plan to find the slowest step, then fix it with an index, a rewrite or fresh statistics.",
+          "practice": "Take 1 slow query, find its most expensive plan step, apply 1 fix, and record the before and after times.",
+          "detail": "Find the step with the biggest time, then ask why. A seq scan over a big table with a selective filter wants an index. A function around a column can stop index use. Bad estimates want ANALYZE. Change one thing at a time and measure.",
+          "proof": "Before and after times for 1 query, with the fix named.",
+          "pitfall": "Changing several things at once and not knowing what helped.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A query takes 800 ms and drops to 40 ms after a fix. How many times faster is it?",
+              "answer": "20",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A plan shows a seq scan on a 5-million-row table filtered by user_id. What's the likely fix?",
+              "answer": "Add an index on user_id.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "WHERE lower(email) = 'x' stops the email index being used. What's a fix?",
+              "answer": "Create an index on lower(email).",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
     "db.select": {
       "model": "claude-opus-5-5",
       "verifier": "rules+authored",
@@ -38420,6 +39464,180 @@
               "weight": "stretch",
               "prompt": "Why run a SELECT with the same WHERE before a DELETE?",
               "answer": "To check exactly which rows will be removed.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "db.tx": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "All or Nothing",
+          "mastery": "Wrap related changes in a transaction so they all happen or none do.",
+          "practice": "Move $50 from account 1 to account 2 inside BEGIN and COMMIT, then repeat it with ROLLBACK and check both balances.",
+          "detail": "A transfer is two updates: subtract here, add there. If the server crashes between them, money vanishes. Inside a transaction, either both changes are saved at COMMIT or neither is. ROLLBACK undoes everything since BEGIN.",
+          "proof": "COMMIT moves the $50, and ROLLBACK leaves both balances unchanged.",
+          "pitfall": "Running the 2 updates separately and hoping nothing fails between them.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A transfer subtracts $50 from 1 account, then the server crashes before adding it to the other. With no transaction, where is the $50?",
+              "answer": "Gone. It left 1 account and never arrived.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does ROLLBACK do?",
+              "answer": "Undoes every change since BEGIN.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does COMMIT do?",
+              "answer": "Makes the changes permanent.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Learn ACID",
+          "mastery": "Name the 4 ACID properties and what each one guarantees.",
+          "practice": "Write 1 sentence for each of atomicity, consistency, isolation and durability, using the bank transfer as the example.",
+          "detail": "Atomicity is all or nothing. Consistency means the rules and constraints hold before and after. Isolation keeps transactions from seeing each other's half-done work. Durability means a committed change survives a crash.",
+          "proof": "4 sentences, one per property.",
+          "pitfall": "Mixing up consistency and isolation.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does the D in ACID mean?",
+              "answer": "Durability: committed changes survive a crash.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which ACID property means all or nothing?",
+              "answer": "Atomicity",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which ACID property keeps 2 transactions from seeing each other's half-done work?",
+              "answer": "Isolation",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Keep Transactions Short",
+          "mastery": "Keep transactions short, since open transactions hold locks that block other users.",
+          "practice": "Open a transaction in 1 terminal and update a row, try to update the same row from a 2nd terminal, then commit and watch it unblock.",
+          "detail": "Rows you change stay locked until you commit or roll back. Anyone else who needs them waits. So do the work, commit, and only then do slow things like sending an email or calling another service. Never leave a transaction open while waiting for a user.",
+          "proof": "The 2nd terminal waits, then continues as soon as the first commits.",
+          "pitfall": "Holding a transaction open across a network call or a user's click.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Should a transaction wait 30 seconds for a user to click a button?",
+              "answer": "No. It holds locks the whole time.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Session 1 updates row 5 and hasn't committed. Session 2 tries to update row 5. What happens?",
+              "answer": "Session 2 waits until session 1 commits or rolls back.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 thing to keep out of a transaction.",
+              "answer": "Slow network calls, like sending an email.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Errors Inside a Transaction",
+          "mastery": "Handle errors by rolling back the whole transaction, then retrying or reporting.",
+          "practice": "Write a 2-account transfer in code that catches an error halfway, rolls back, and checks that neither balance changed.",
+          "detail": "When something fails partway, roll back so nothing half-done sticks. In PostgreSQL, a failed statement aborts the transaction, and you must roll back before doing anything else. Some failures, like deadlocks, are worth retrying automatically.",
+          "proof": "Both balances are unchanged after the error and rollback.",
+          "pitfall": "Catching the error and committing whatever had already run.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "An error happens after 2 of 3 updates. What should the code do?",
+              "answer": "Roll back, so none of the 3 stick.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In PostgreSQL, after an error inside a transaction, can you keep running statements?",
+              "answer": "No. You must roll back first.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why retry some failed transactions, like 1 that hit a deadlock?",
+              "answer": "Conflicts like deadlocks often succeed on a 2nd try.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Deadlocks",
+          "mastery": "Recognize a deadlock, 2 transactions each waiting on the other, and avoid it by locking in a fixed order.",
+          "practice": "In 2 terminals, update row 1 then row 2 in one, and row 2 then row 1 in the other, and watch the database report a deadlock.",
+          "detail": "Each transaction holds a lock the other needs, so neither can move. Databases detect this and cancel one of them. You avoid it by always touching rows in the same order, such as by id, so the circular wait can't form.",
+          "proof": "A deadlock error in one terminal while the other completes.",
+          "pitfall": "Locking rows in whatever order the code happens to reach them.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A holds row 1 and wants row 2. B holds row 2 and wants row 1. What is this?",
+              "answer": "A deadlock",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does PostgreSQL do when it finds a deadlock between 2 transactions?",
+              "answer": "Cancels 1 so the other can finish.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 way to avoid deadlocks.",
+              "answer": "Always lock rows in the same order, like by id.",
               "answer_kind": "phrase"
             }
           ]
