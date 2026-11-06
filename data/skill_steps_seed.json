@@ -11797,6 +11797,2442 @@
         }
       ]
     },
+    "bi.cells": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Prokaryote or Eukaryote",
+          "mastery": "Tell prokaryotic cells from eukaryotic ones by the nucleus and the membrane-bound organelles.",
+          "practice": "Sort 4 cells, E. coli, yeast, a leaf cell and a human skin cell, into prokaryotes and eukaryotes.",
+          "detail": "Prokaryotes, bacteria and archaea, have no nucleus. Their DNA floats in the cytoplasm, and they have no mitochondria or other membrane-bound organelles. Eukaryotes keep their DNA in a nucleus and have organelles. Prokaryotes are usually about a tenth the length.",
+          "proof": "E. coli is a prokaryote. Yeast, leaf and skin cells are eukaryotes.",
+          "pitfall": "Thinking yeast is a bacterium. It's a fungus, so it's eukaryotic.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Does 1 E. coli cell have a nucleus?",
+              "answer": "No. It's a prokaryote.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A typical bacterium is 2 micrometers long and a typical animal cell is 20. How many times longer is the animal cell?",
+              "answer": "10",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 thing both prokaryotes and eukaryotes have.",
+              "answer": "Ribosomes, a cell membrane, cytoplasm or DNA.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Organelles and Their Jobs",
+          "mastery": "Match the main organelles to their jobs: nucleus, mitochondria, ribosomes, ER, Golgi and lysosomes.",
+          "practice": "Make a 6-row table of organelles and their jobs, then compare each one to a part of a factory.",
+          "detail": "The nucleus holds the plans, like a head office. Ribosomes build proteins, the ER moves and modifies them, and the Golgi packages and ships them. Mitochondria release energy, like a power plant. Lysosomes break down waste, like a recycling crew.",
+          "proof": "A table with each of the 6 organelles, its job and a factory match.",
+          "pitfall": "Saying mitochondria make energy. They release energy stored in food.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which organelle makes most of a cell's ATP?",
+              "answer": "The mitochondrion",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which organelle builds proteins from mRNA?",
+              "answer": "The ribosome",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Proteins leave the ER and go to which organelle to be packaged for export?",
+              "answer": "The Golgi apparatus",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Plant and Animal Cells",
+          "mastery": "List 3 structures plant cells have that animal cells lack, and say what each one does.",
+          "practice": "Draw a plant cell and an animal cell side by side, and label the 3 plant-only parts: cell wall, chloroplasts and large vacuole.",
+          "detail": "The cell wall is made of cellulose and keeps the cell's shape. Chloroplasts capture light for photosynthesis. The large central vacuole stores water and presses outward, keeping the plant firm. Both cell types share a nucleus, membrane, cytoplasm and mitochondria.",
+          "proof": "Two labeled drawings, with the 3 plant-only parts clearly marked.",
+          "pitfall": "Leaving mitochondria out of plant cells. Plants respire too.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which of the 3 extra plant structures carries out photosynthesis?",
+              "answer": "Chloroplasts",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name the 1 carbohydrate that makes up most of a plant cell wall.",
+              "answer": "Cellulose",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A plant's cells lose 30% of their water and it wilts. Why does it wilt?",
+              "answer": "The vacuoles shrink, so the cells stop pushing against their walls.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Use a Microscope",
+          "mastery": "Use a light microscope to view cells, and work out the total magnification.",
+          "practice": "Look at onion skin cells at 40x, then at 400x, sketch one cell at each, and work out the total magnification.",
+          "detail": "Total magnification is the eyepiece times the objective. Start on the lowest power, focus with the coarse knob, then switch up and use only the fine knob. Real size is image size divided by magnification, so convert units carefully.",
+          "proof": "Two sketches, labeled 40x and 400x, with a nucleus and cell wall visible at 400x.",
+          "pitfall": "Using the coarse focus at high power and cracking the slide.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "An eyepiece is 10x and the objective is 40x. What is the total magnification?",
+              "answer": "400",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "At 100x, a cell looks 5 mm wide. How wide is it really, in micrometers?",
+              "answer": "50",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why add 1 drop of iodine to onion cells before viewing?",
+              "answer": "It stains them, so the nucleus and walls stand out.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Why Cells Stay Small",
+          "mastery": "Explain why cells stay small, using the ratio of surface area to volume.",
+          "practice": "Work out the surface area, volume and their ratio for cubes of side 1, 2 and 4 cm, and say which would feed its center best.",
+          "detail": "Food and oxygen enter through the surface, but the whole volume needs them. When a cell grows, its volume rises faster than its surface, so each bit of surface has more inside to supply. Small cells, and flat or folded shapes, keep the ratio high.",
+          "proof": "Ratios of 6, 3 and 1.5, so the 1 cm cube feeds its center best.",
+          "pitfall": "Thinking bigger cells are better because they hold more.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A cube cell has a side of 3 µm. What is its ratio of surface area to volume?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "When a cell's side doubles, by what factor does its volume grow?",
+              "answer": "8",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A cell's side triples. Why does it struggle to get enough oxygen?",
+              "answer": "Its volume grows faster than its surface, so too little surface feeds too much inside.",
+              "answer_kind": "sentence"
+            }
+          ]
+        }
+      ]
+    },
+    "bi.division": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Stages of Mitosis",
+          "mastery": "Name the stages of mitosis in order and say what the chromosomes do in each one.",
+          "practice": "Draw a cell with 4 chromosomes in prophase, metaphase, anaphase and telophase.",
+          "detail": "In prophase the chromosomes coil up and become visible. In metaphase they line up in the middle. In anaphase the sister chromatids are pulled to opposite ends. In telophase new nuclei form, and then the cell splits in two.",
+          "proof": "4 drawings showing coiling, lining up, separating and two new nuclei.",
+          "pitfall": "Putting anaphase before metaphase. They have to line up before they split.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Of the 4 stages of mitosis, in which do chromosomes line up in the middle?",
+              "answer": "Metaphase",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A cell with 46 chromosomes divides by mitosis. How many chromosomes does each daughter cell get?",
+              "answer": "46",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which of the 4 stages pulls sister chromatids to opposite ends?",
+              "answer": "Anaphase",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "The Cell Cycle",
+          "mastery": "Describe the cell cycle, G1, S, G2 and mitosis, and what happens in each phase.",
+          "practice": "Draw the cell cycle as a pie chart, with interphase taking about 90% of the time, and label what happens in G1, S and G2.",
+          "detail": "Most of a cell's life is interphase. In G1 it grows and works, in S it copies its DNA, and in G2 it checks the copies and gets ready. Mitosis is the short final step. Checkpoints stop the cycle if something is wrong, and failed checkpoints can lead to cancer.",
+          "proof": "A pie mostly labeled interphase, with G1 growth, S copying and G2 checking.",
+          "pitfall": "Thinking a cell spends most of its time dividing.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In which phase is DNA copied: G1, S or G2?",
+              "answer": "S",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A cycle takes 24 hours and mitosis takes 1. What fraction of the time is mitosis?",
+              "answer": "1/24",
+              "answer_kind": "fraction"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why must all 46 chromosomes be copied before mitosis?",
+              "answer": "So each daughter cell gets a full set.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Meiosis",
+          "mastery": "Explain how meiosis makes 4 cells with half the chromosomes, and why sex cells need that.",
+          "practice": "Track a cell with 2 pairs of chromosomes through meiosis I and II, drawing the 4 cells at the end.",
+          "detail": "Meiosis I separates each pair of matching chromosomes, halving the number. Meiosis II separates the sister chromatids, like mitosis. The result is 4 cells, each with one chromosome from every pair. When two sex cells fuse, the full number comes back.",
+          "proof": "4 cells, each with 2 chromosomes, one from each pair.",
+          "pitfall": "Drawing 2 cells at the end, as if meiosis were one division.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A human cell with 46 chromosomes goes through meiosis. How many chromosomes does each sperm get?",
+              "answer": "23",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many cells does meiosis make from 1 cell?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why do sex cells need half the 46 chromosomes?",
+              "answer": "So fertilization restores the full 46 instead of doubling it.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Where Variation Comes From",
+          "mastery": "Explain how crossing over and independent assortment make every sex cell different.",
+          "practice": "Work out how many different sex cells a species with 3 chromosome pairs can make by independent assortment alone.",
+          "detail": "Each pair lines up in meiosis I without regard to the others, so each pair has 2 ways to split. With n pairs that's 2 multiplied by itself n times. Crossing over then swaps pieces between matching chromosomes, multiplying the variety even further.",
+          "proof": "2 times 2 times 2 is 8 kinds of sex cell.",
+          "pitfall": "Adding the pairs instead of multiplying the choices.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "With 2 chromosome pairs, how many combinations can independent assortment make?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "With 23 pairs, the count is 2 multiplied by itself 23 times. About how many million is that?",
+              "answer": "8",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In which stage of meiosis does crossing over happen, with 4 chromatids side by side?",
+              "answer": "Prophase I",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Compare Mitosis and Meiosis",
+          "mastery": "Compare mitosis and meiosis by divisions, cells made, chromosome count and purpose.",
+          "practice": "Fill in a 4-row table comparing mitosis and meiosis, and give 1 example of where each one happens in your body.",
+          "detail": "Mitosis is one division making 2 identical cells with the full count, for growth and repair. Meiosis is two divisions making 4 different cells with half the count, for reproduction. Skin and bone marrow use mitosis, and the testes and ovaries use meiosis.",
+          "proof": "A table with 1 against 2 divisions, 2 against 4 cells, full against half, and growth against sex cells.",
+          "pitfall": "Saying meiosis makes identical cells. Crossing over makes each one different.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many divisions does meiosis have, 1 or 2?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Is 1 new skin cell made by mitosis or meiosis?",
+              "answer": "Mitosis",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Are the 2 cells from mitosis genetically identical?",
+              "answer": "Yes.",
+              "answer_kind": "yesno"
+            }
+          ]
+        }
+      ]
+    },
+    "bi.dna": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Pair the Bases",
+          "mastery": "Pair bases with A to T and C to G, and write the complementary strand.",
+          "practice": "Write the complementary strand for ATGCCGTA and check each pair.",
+          "detail": "A always pairs with T and C always pairs with G, so one strand fixes the other. This is what lets DNA copy itself and lets cells read genes. It also means the amount of A in double-stranded DNA always equals T, and C equals G.",
+          "proof": "TACGGCAT.",
+          "pitfall": "Pairing A with G because both are the bigger bases.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which base pairs with A in DNA?",
+              "answer": "T",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write the complement of GGATC.",
+              "answer": "CCTAG",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A DNA sample is 30% A. What percent is G?",
+              "answer": "20%",
+              "answer_kind": "percent"
+            }
+          ]
+        },
+        {
+          "title": "The Double Helix",
+          "mastery": "Describe DNA's structure: 2 strands, a sugar-phosphate backbone outside and paired bases inside.",
+          "practice": "Build a paper model of 6 base pairs, color-coding A, T, C and G, and twist it into a helix.",
+          "detail": "The sides of the ladder are sugar and phosphate. The rungs are base pairs held by hydrogen bonds, 2 for A with T and 3 for C with G. The two strands run in opposite directions. Watson and Crick built the model in 1953, using X-ray images made by Rosalind Franklin.",
+          "proof": "A twisted ladder with the bases on the inside and the backbone outside.",
+          "pitfall": "Putting the bases on the outside of the helix.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What holds paired bases together in DNA: hydrogen bonds or peptide bonds?",
+              "answer": "Hydrogen bonds",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many hydrogen bonds join C to G in DNA?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Who used Rosalind Franklin's X-ray image to build the 1953 DNA model?",
+              "answer": "Watson and Crick",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "DNA Replication",
+          "mastery": "Explain semi-conservative replication, where the strands unzip and each one templates a new partner.",
+          "practice": "Draw a DNA molecule of 4 base pairs unzipping, and write the 2 new molecules with old and new strands in different colors.",
+          "detail": "Helicase unzips the helix by breaking the hydrogen bonds. DNA polymerase then adds matching nucleotides to each old strand. Each new molecule keeps one old strand and gains one new one, which is what semi-conservative means.",
+          "proof": "2 molecules, each with one old strand and one new one.",
+          "pitfall": "Drawing one all-old molecule and one all-new molecule.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "After 1 round of replication, how many of the 2 molecules contain an old strand?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which enzyme adds new nucleotides during DNA replication?",
+              "answer": "DNA polymerase",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Starting from 1 molecule, after 2 rounds, how many molecules have only new strands?",
+              "answer": "2",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Genes and Chromosomes",
+          "mastery": "Explain how DNA is organized into genes on chromosomes, wound around proteins in the nucleus.",
+          "practice": "Write the 4 levels from nucleotide to gene to chromosome to genome, with a human number for each where you can.",
+          "detail": "A gene is a stretch of DNA that codes for a protein or an RNA. Each chromosome is one very long DNA molecule wrapped around proteins called histones. Humans have 46 chromosomes in most cells, about 20,000 genes and about 3 billion base pairs.",
+          "proof": "Nucleotides build about 20,000 genes, spread over 46 chromosomes, in a genome of about 3 billion base pairs.",
+          "pitfall": "Thinking each chromosome is one gene. Each holds hundreds or thousands.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many chromosomes does 1 typical human body cell hold?",
+              "answer": "46",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "About how many base pairs are in the human genome: 3 million or 3 billion?",
+              "answer": "3 billion",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In 1 sentence, what is a gene?",
+              "answer": "A stretch of DNA that codes for one protein or RNA.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Read a Sequence",
+          "mastery": "Work with sequences: count the bases, find the GC content and spot repeats.",
+          "practice": "For ATGCGCGATTAGC, count each base and work out the GC content as a percent.",
+          "detail": "GC content is the share of bases that are G or C. It matters because GC pairs have 3 hydrogen bonds, so GC-rich DNA holds together more tightly. Count carefully in small groups, since a long string is easy to misread.",
+          "proof": "A 3, T 3, G 4 and C 3, so the GC content is 7 of 13, about 54%.",
+          "pitfall": "Counting only G, or only C, instead of both together.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the GC content of GGCCAATT?",
+              "answer": "50%",
+              "answer_kind": "percent"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A strand reads ATGCGT. How many base pairs does the double-stranded version have?",
+              "answer": "6",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A strand reads AAAAAAAAGC. What is its GC content?",
+              "answer": "20%",
+              "answer_kind": "percent"
+            }
+          ]
+        }
+      ]
+    },
+    "bi.enzymes": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Lock and Key",
+          "mastery": "Explain how an enzyme's active site fits its substrate, and why each enzyme is specific.",
+          "practice": "Draw amylase in 3 stages: starch fitting its active site, the reaction, and maltose leaving.",
+          "detail": "The active site is a pocket shaped to fit one kind of substrate. When the substrate binds, the reaction happens faster, the products leave, and the enzyme is ready again. Most enzymes flex slightly to grip the substrate, which is the induced fit idea.",
+          "proof": "A drawing with starch in the active site and maltose leaving.",
+          "pitfall": "Drawing the enzyme changing into the product. It comes out unchanged.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Amylase breaks down starch. What is starch called in this reaction?",
+              "answer": "The substrate",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why can't amylase digest the protein in 1 egg?",
+              "answer": "Protein doesn't fit its active site.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does the 'induced fit' model say?",
+              "answer": "The active site changes shape slightly to grip the substrate.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Lower the Activation Energy",
+          "mastery": "Explain that enzymes speed up reactions by lowering the activation energy, and aren't used up.",
+          "practice": "Sketch 2 energy curves, with and without catalase, marking the activation energy on each one.",
+          "detail": "Every reaction needs a push to get started, called the activation energy. Enzymes hold the substrate in a way that lowers that push, so far more molecules react at body temperature. The start and end energies don't change, so neither does the final amount of product.",
+          "proof": "Two curves with the same start and end, and a lower hump for the catalase one.",
+          "pitfall": "Drawing the enzyme curve ending at a different energy level.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Catalase splits 2H2O2 into water and oxygen. Is the catalase used up?",
+              "answer": "No. It's reused again and again.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "An enzyme makes a reaction finish in 1 minute instead of 1 year. Does it change the amount of product?",
+              "answer": "No. It only makes it happen faster.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "One catalase molecule handles about 40 million peroxide molecules a second. About how many in 3 seconds?",
+              "answer": "120 million",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Temperature Effects",
+          "mastery": "Predict enzyme activity across temperatures, rising to an optimum and dropping as the enzyme denatures.",
+          "practice": "Time how long amylase takes to digest starch at 20, 37 and 60°C, then plot rate against temperature.",
+          "detail": "Warmer molecules move faster and collide more, so the rate climbs. Past the optimum, bonds holding the enzyme's shape start to break, the active site changes, and the rate falls fast. Denaturing is usually permanent. Human enzymes peak near body temperature.",
+          "proof": "A curve that rises to a peak near 37°C and falls steeply by 60°C.",
+          "pitfall": "Saying the enzyme is killed. Enzymes aren't alive, so they denature.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Human enzymes work best near what temperature, in °C?",
+              "answer": "37°C",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "An enzyme loses its shape at 60°C. What is this called?",
+              "answer": "Denaturing",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Going from 20°C to 30°C roughly doubles an enzyme's rate. Why?",
+              "answer": "Molecules move faster, so they hit the active site more often.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "pH Effects",
+          "mastery": "Predict how pH affects an enzyme, and match each enzyme to the pH where it works.",
+          "practice": "Look up the optimum pH of pepsin, amylase and trypsin, and match each to the part of the gut where it works.",
+          "detail": "pH changes the charges on the amino acids around the active site. Too far from the optimum and the substrate no longer binds well, or the enzyme unfolds. Each enzyme suits its home: stomach enzymes like strong acid and gut enzymes like mild alkali.",
+          "proof": "Pepsin near pH 2 in the stomach, amylase near 7 in the mouth, trypsin near 8 in the small intestine.",
+          "pitfall": "Assuming every enzyme works best at pH 7.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Pepsin works in the stomach. Is its optimum pH near 2 or near 8?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What happens to pepsin when it reaches the small intestine at pH 8?",
+              "answer": "It stops working as its shape changes.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does a pH far from the optimum slow an enzyme down?",
+              "answer": "It changes the charges in the active site, so the substrate no longer fits.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Measure a Rate",
+          "mastery": "Calculate an enzyme reaction rate from data and compare rates fairly.",
+          "practice": "Collect oxygen from catalase and peroxide every 30 seconds for 3 minutes, then work out the rate in mL per minute.",
+          "detail": "Rate is product made divided by time, so use the early, steep part of the curve, before the substrate runs low. Change one variable at a time and keep enzyme amount, substrate amount, volume and pH fixed. Repeat each run and average.",
+          "proof": "A rate in mL per minute from the first minute's data.",
+          "pitfall": "Using the whole run, including the flat end, which understates the rate.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A reaction makes 24 mL of oxygen in 4 minutes. What is the rate in mL per minute?",
+              "answer": "6",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "At 20°C, 10 mL forms in 2 minutes. At 30°C, 18 mL forms in 2 minutes. How many times faster is it at 30°C?",
+              "answer": "1.8",
+              "answer_kind": "decimal"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "To compare 3 temperatures fairly, what must you keep the same?",
+              "answer": "Enzyme amount, substrate amount, pH and volume.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "bi.evolution": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Natural Selection Step by Step",
+          "mastery": "Explain natural selection in 4 steps: variation, inheritance, overproduction and different survival.",
+          "practice": "Write Darwin's 4 steps for why moths in a sooty city became mostly dark.",
+          "detail": "Individuals differ, and some differences are inherited. More young are born than can survive. Those whose traits suit the surroundings survive and breed more, so their alleles become more common. Repeat over many generations and the population changes.",
+          "proof": "Moths vary in color, color is inherited, birds eat most moths, and dark ones on sooty trees survive to breed.",
+          "pitfall": "Saying moths turned dark because they needed to. No moth chose anything.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name the 4 conditions for natural selection.",
+              "answer": "Variation, inheritance, more offspring than survive, and different survival.",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Does 1 giraffe that stretches its neck pass a longer neck to its young?",
+              "answer": "No. Acquired traits aren't inherited.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In 1848 most Manchester moths were pale. By 1895, 98% were dark. What changed their survival?",
+              "answer": "Soot darkened the trees, so birds spotted pale moths more easily.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Evidence for Evolution",
+          "mastery": "Name 4 lines of evidence for evolution: fossils, anatomy, DNA and change seen happening.",
+          "practice": "Find 1 example each of fossils, homologous structures, DNA comparison and evolution observed directly.",
+          "detail": "Fossils show forms changing through time in rock layers. Shared bone layouts in different limbs point to a common ancestor. DNA similarity matches the family tree drawn from anatomy. And we can watch it now, as bacteria evolve resistance within years.",
+          "proof": "Tiktaalik, the bones of a bat wing, human and chimp DNA, and resistant bacteria.",
+          "pitfall": "Treating any one line of evidence as the whole case. They agree with each other, which is the point.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "The forelimbs of 3 species, human, bat and whale, share the same bones. What are they called?",
+              "answer": "Homologous structures",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why is MRSA, a resistant bacterium, good evidence of evolution?",
+              "answer": "We can watch the population change within years.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Tiktaalik is a fossil about 375 million years old. What does it show?",
+              "answer": "A step between fish and four-legged animals.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "How New Species Form",
+          "mastery": "Explain how isolation and divergence split one species into two.",
+          "practice": "Describe in 4 steps how a river splitting a squirrel population could lead to 2 species.",
+          "detail": "First a barrier stops the two groups mixing. Then each side gains different mutations and faces different selection. Over many generations they drift apart. Eventually they can't interbreed to make fertile young even if the barrier goes, and they're separate species.",
+          "proof": "Split, separate mutations, different selection, then no fertile offspring together.",
+          "pitfall": "Thinking any visible difference makes a new species.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What makes 2 groups separate species?",
+              "answer": "They can't interbreed to make fertile offspring.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A horse and a donkey make a mule, which is sterile. Are horses and donkeys 1 species?",
+              "answer": "No.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Galapagos finches have different beaks on different islands. What drove that?",
+              "answer": "Each island's food selected for different beaks.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Fix the Misconceptions",
+          "mastery": "Correct the common misreadings: evolution has no goal, no trying, and humans didn't come from chimps.",
+          "practice": "Rewrite 3 wrong statements, like 'giraffes grew long necks to reach leaves', as correct ones.",
+          "detail": "Selection works on variation that's already there, so nothing evolves on purpose. Individuals don't evolve, populations do. Humans and chimps are cousins with a shared ancestor, not ancestor and descendant. And a scientific theory is a well-tested explanation, not a guess.",
+          "proof": "Giraffes with longer necks reached more leaves and left more young.",
+          "pitfall": "Using words like 'wanted' or 'needed' to explain a trait.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Humans and chimps share about 98% of their DNA. Did humans evolve from chimps?",
+              "answer": "No. We share a common ancestor from about 6 million years ago.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Is evolution 'just a theory' in the everyday sense of a guess?",
+              "answer": "No. A scientific theory is a well-tested explanation.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Does 1 rabbit evolve during its lifetime?",
+              "answer": "No. Populations evolve over generations.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Selection in Numbers",
+          "mastery": "Use simple numbers to show how a small survival edge changes a population over generations.",
+          "practice": "Start with 100 beetles, 10 green and 90 brown. If green ones survive twice as well, work out the share of green after 1 generation.",
+          "detail": "Multiply each group by its survival rate, then divide each by the new total to get its share. Even a small edge compounds, generation after generation, like interest on savings. That's how slight differences turn into big changes over thousands of years.",
+          "proof": "Green goes from 10% to about 18%.",
+          "pitfall": "Comparing raw survivor counts without dividing by the new total.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In 200 mice, 50 are dark. What percent are dark?",
+              "answer": "25%",
+              "answer_kind": "percent"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Dark mice survive at 80% and light ones at 40%. Of 50 dark and 150 light, how many survive in total?",
+              "answer": "100",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Of the 100 survivors from 50 dark mice at 80% and 150 light mice at 40%, what percent are dark?",
+              "answer": "40%",
+              "answer_kind": "percent"
+            }
+          ]
+        }
+      ]
+    },
+    "bi.genetics": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Alleles and Genotypes",
+          "mastery": "Use the words allele, genotype and phenotype correctly, and write genotypes with letters.",
+          "practice": "Write all 3 genotypes for a gene with alleles B and b, and give each one's phenotype if B is dominant for brown eyes.",
+          "detail": "An allele is one version of a gene. Your genotype is the pair you carry, like Bb, and your phenotype is the trait that shows. A dominant allele shows with one copy. A recessive one only shows when both copies are recessive.",
+          "proof": "BB and Bb give brown eyes, and bb gives blue.",
+          "pitfall": "Thinking dominant means more common. A dominant allele can be rare.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Is the genotype 'Bb' homozygous or heterozygous?",
+              "answer": "Heterozygous",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "With B dominant for brown and b for blue, what eye color does 'bb' give?",
+              "answer": "Blue",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "2 brown-eyed parents have a blue-eyed child. What are the parents' genotypes?",
+              "answer": "Both Bb.",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Punnett Squares",
+          "mastery": "Draw a Punnett square for one gene and read off the offspring ratios.",
+          "practice": "Cross Bb with Bb in a Punnett square and give the genotype and phenotype ratios.",
+          "detail": "Put one parent's two alleles across the top and the other's down the side. Fill each box with one from each. The 4 boxes are 4 equally likely outcomes, so the counts become ratios. Real families vary, since each child is a separate draw.",
+          "proof": "1 BB to 2 Bb to 1 bb, so 3 brown to 1 blue.",
+          "pitfall": "Treating the ratio as a promise, like expecting exactly 1 blue child in 4.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In a 'Bb x bb' cross, what fraction of the offspring are bb?",
+              "answer": "1/2",
+              "answer_kind": "fraction"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Cross Tt with Tt. What percent are tall if T is dominant?",
+              "answer": "75%",
+              "answer_kind": "percent"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Cross AA with aa. What percent of the offspring are Aa?",
+              "answer": "100%",
+              "answer_kind": "percent"
+            }
+          ]
+        },
+        {
+          "title": "Mendel's Laws",
+          "mastery": "State Mendel's laws of segregation and independent assortment, and link them to meiosis.",
+          "practice": "Explain Mendel's 3:1 pea result in 3 sentences, using alleles separating in meiosis.",
+          "detail": "Segregation says each parent passes on one allele of each gene, chosen at random. Independent assortment says genes on different chromosomes are inherited separately. Both follow from how chromosomes move in meiosis, which Mendel didn't know about yet.",
+          "proof": "Each parent passes on T or t at random, so Tt x Tt gives 3 tall to 1 short.",
+          "pitfall": "Applying independent assortment to genes that sit close together on one chromosome.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which plant did Gregor Mendel study?",
+              "answer": "Pea plants",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Mendel crossed 2 heterozygous tall plants and got 787 tall and 277 short. Roughly what ratio is that?",
+              "answer": "3:1",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which of Mendel's laws says alleles of different genes are inherited separately?",
+              "answer": "Independent assortment",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Read a Pedigree",
+          "mastery": "Read a family pedigree and decide whether a trait is dominant or recessive.",
+          "practice": "Draw a 3-generation pedigree where 2 unaffected parents have 1 affected child, and say what that shows.",
+          "detail": "Squares are males and circles are females, and shaded means affected. If two unaffected parents have an affected child, the trait must be recessive, since both carried a hidden copy. A dominant trait usually shows in every generation.",
+          "proof": "The trait is recessive, and both parents must be carriers.",
+          "pitfall": "Deciding from one family branch without checking the whole chart.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "2 unaffected parents have an affected child. Is the trait dominant or recessive?",
+              "answer": "Recessive",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In a pedigree, what does 1 shaded square stand for?",
+              "answer": "An affected male",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "An affected parent and an unaffected one have 4 children, 2 of them affected. Could the trait be dominant?",
+              "answer": "Yes. A heterozygous affected parent would pass it to about half.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Beyond Simple Dominance",
+          "mastery": "Work crosses with incomplete dominance, codominance and sex-linked genes.",
+          "practice": "Cross 2 pink snapdragons, where red and white show incomplete dominance, and give the color ratio.",
+          "detail": "In incomplete dominance the mix shows in between, like pink. In codominance both show fully, like blood type AB. Sex-linked genes sit on the X chromosome, so males, with one X, show a recessive allele with just one copy.",
+          "proof": "1 red to 2 pink to 1 white.",
+          "pitfall": "Expecting a 3:1 ratio when neither allele is dominant.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Blood type AB shows both A and B. What kind of inheritance is that?",
+              "answer": "Codominance",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Hemophilia is X-linked. A carrier mother and an XY father without it have a son. What's the chance he has it?",
+              "answer": "1/2",
+              "answer_kind": "fraction"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why are X-linked recessive traits more common in XY males?",
+              "answer": "Males have only 1 X, so a single recessive allele shows.",
+              "answer_kind": "sentence"
+            }
+          ]
+        }
+      ]
+    },
+    "bi.life": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "List the Signs of Life",
+          "mastery": "Name 7 traits that living things share, and give an example of each in an animal you know.",
+          "practice": "List the 7 signs of life using MRS GREN, and give one example of each in a pet dog.",
+          "detail": "MRS GREN is a memory aid: movement, respiration, sensitivity, growth, reproduction, excretion and nutrition. Textbooks also list being made of cells, keeping a steady inside and evolving over generations. A living thing shows all of these over its life, though not every one at every moment.",
+          "proof": "Running, breathing, smelling food, growing up, having puppies, passing urine and eating.",
+          "pitfall": "Calling something alive because it shows one sign, like a fire that grows and uses oxygen.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In MRS GREN, what does the 'E' stand for?",
+              "answer": "Excretion",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A seed sits in a packet for 3 years doing nothing visible. Is it alive?",
+              "answer": "Yes. It's dormant, with slow metabolism, and grows when planted.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Fire grows, moves and uses oxygen. Name 1 sign of life it lacks.",
+              "answer": "It isn't made of cells, and it doesn't reproduce from inherited instructions.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Cells Are the Unit",
+          "mastery": "Explain the 3 claims of cell theory and use them to judge whether something is an organism.",
+          "practice": "Write the 3 parts of cell theory, then use them to sort a bacterium, a virus and a red blood cell.",
+          "detail": "Cell theory says every living thing is made of one or more cells, the cell is the basic unit of life, and every cell comes from an existing cell. A bacterium is a whole organism in one cell. A red blood cell is alive but only part of an organism. A virus isn't a cell at all.",
+          "proof": "Bacterium: an organism. Red blood cell: a living cell, not an organism. Virus: not a cell.",
+          "pitfall": "Calling any cell an organism. Most cells are parts of a bigger one.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many claims make up the cell theory of Schleiden and Schwann?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Does 1 bacterium count as a whole organism under cell theory?",
+              "answer": "Yes. It's one cell that lives on its own.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does the 3rd part of cell theory say cells come from?",
+              "answer": "Other cells that already exist.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Metabolism and Energy",
+          "mastery": "Explain metabolism as all the chemical reactions in an organism, and why it needs a steady energy supply.",
+          "practice": "List 3 reactions going on in your body right now, like digesting lunch, and say which release energy and which use it.",
+          "detail": "Metabolism has two halves. Catabolism breaks big molecules into small ones and releases energy, as in digestion and respiration. Anabolism builds big molecules from small ones and uses energy, as in growing muscle. Cells pass energy between the two using ATP.",
+          "proof": "Digestion and respiration release energy, and building muscle protein uses it.",
+          "pitfall": "Thinking metabolism means only how fast you burn calories.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which molecule do cells use as their energy currency: ATP or DNA?",
+              "answer": "ATP",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Breaking starch into glucose is 1 example of which kind of metabolism?",
+              "answer": "Catabolism, breaking down.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Building a protein from 20 kinds of amino acids is which kind of metabolism?",
+              "answer": "Anabolism, building up.",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Respond and Stay Steady",
+          "mastery": "Give examples of organisms sensing and responding to change, including keeping their inside steady.",
+          "practice": "Write 3 responses a plant makes and 3 a human makes, like bending toward light or sweating.",
+          "detail": "Every organism detects changes, called stimuli, and responds. Some responses act on the outside world, like a plant turning to light. Others keep the inside steady, like sweating to cool down, which is called homeostasis. Both are signs of life.",
+          "proof": "Plant: bending to light, roots growing down, closing pores. Human: sweating, shivering, pulling a hand from heat.",
+          "pitfall": "Leaving out plants because their responses are slow.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A plant on a windowsill bends toward the window over 2 days. What is it responding to?",
+              "answer": "Light",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Your body temperature stays near 37°C on a cold day. What is that steadiness called?",
+              "answer": "Homeostasis",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 way your body responds when its temperature rises to 38°C.",
+              "answer": "Sweating, or widening blood vessels near the skin.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Judge the Borderline Cases",
+          "mastery": "Argue whether viruses, seeds and prions are alive, using the signs of life as evidence.",
+          "practice": "Score a virus on each of the 7 MRS GREN signs, then write 2 sentences on whether it counts as alive.",
+          "detail": "A virus has genes and evolves, but it has no cells, no metabolism and can only copy itself inside a host cell. That's why biologists disagree about it. Use the signs of life as a checklist, then say which ones you think matter most and why.",
+          "proof": "A scorecard showing the virus fails most signs, plus a reasoned verdict.",
+          "pitfall": "Answering yes or no with no evidence behind it.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Can 1 virus copy itself outside a host cell?",
+              "answer": "No. It needs a host cell's machinery.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Does a virus carry out respiration, the R in MRS GREN?",
+              "answer": "No. It has no metabolism of its own.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Give 1 reason someone might call a virus alive.",
+              "answer": "It has genes and evolves by natural selection.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "bi.membrane": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "The Phospholipid Bilayer",
+          "mastery": "Describe the membrane as a bilayer of phospholipids, heads out and tails in, studded with proteins.",
+          "practice": "Draw a section of membrane with 6 phospholipids, 1 channel protein and 1 carrier, labeling the water-loving heads.",
+          "detail": "Each phospholipid has a head that likes water and two tails that avoid it. In water they line up in two layers, tails hiding in the middle. Small uncharged molecules slip through. Ions and big molecules need proteins to get across.",
+          "proof": "A two-layer drawing with heads facing out on both sides and proteins spanning it.",
+          "pitfall": "Drawing the tails facing the water, which is the opposite of what they do.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In a bilayer of 2 layers, do the tails face toward water or away from it?",
+              "answer": "Away from it. They're hydrophobic.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which crosses a bilayer more easily: O2 or glucose?",
+              "answer": "O2",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why is the membrane described as a 'fluid mosaic'?",
+              "answer": "Its parts drift around like a fluid, and proteins dot it like tiles in a mosaic.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Diffusion",
+          "mastery": "Explain diffusion as net movement from high to low concentration, and name what speeds it up.",
+          "practice": "Drop food coloring into water at 10°C and at 40°C, time how long each takes to spread, and explain the difference.",
+          "detail": "Particles move randomly all the time. Where there are more of them, more move away than move in, so there's a net flow down the concentration gradient. Heat speeds the particles up, a steeper gradient speeds the flow, and a thinner barrier shortens the trip.",
+          "proof": "The warm water spreads the color faster, because its particles move faster.",
+          "pitfall": "Saying particles stop moving once the concentration is even. They keep moving, with no net flow.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Oxygen is 10 units outside a cell and 2 inside. Which way does it diffuse?",
+              "answer": "Into the cell.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 2 things that speed up diffusion.",
+              "answer": "A higher temperature and a steeper concentration gradient.",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Does diffusion use ATP?",
+              "answer": "No. It's passive.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Osmosis",
+          "mastery": "Predict which way water moves across a membrane from the solute concentrations on each side.",
+          "practice": "Put potato strips in 0%, 5% and 20% salt water for 30 minutes, measure each strip's mass change, and explain the results.",
+          "detail": "Osmosis is water diffusing across a membrane that lets water through but not the solute. Water moves toward the side with more solute, where free water is scarcer. Cells swell in dilute solutions and shrink in strong ones. Plant walls stop them bursting.",
+          "proof": "The strip in 0% gains mass, and the ones in 5% and 20% lose mass, the 20% one most.",
+          "pitfall": "Saying the salt moves. In osmosis, only the water crosses.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A red blood cell is put in 0% salt water. What happens to it?",
+              "answer": "Water rushes in, and it swells and may burst.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A potato strip goes from 5.0 g to 4.6 g in salt water. What is its percent change?",
+              "answer": "-8%",
+              "answer_kind": "percent"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Side A is 1% salt and side B is 3%, with a membrane between. Which way does water move?",
+              "answer": "From A to B.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Active Transport",
+          "mastery": "Explain active transport as moving molecules against their gradient using carrier proteins and ATP.",
+          "practice": "Sketch the sodium-potassium pump moving 3 Na+ out and 2 K+ in, and mark where ATP is used.",
+          "detail": "Sometimes a cell needs more of something inside than outside, like a root cell collecting minerals. Moving it uphill takes energy. Carrier proteins grab the molecule, use ATP to change shape, and release it on the other side. Anything that blocks ATP stops it.",
+          "proof": "A pump drawn with 3 Na+ leaving, 2 K+ entering and ATP splitting.",
+          "pitfall": "Calling any movement through a protein active. Channel diffusion is passive.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many Na+ ions does the sodium-potassium pump move out per cycle?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A root cell takes in nitrate while already holding 100 times more than the soil. Which kind of transport is that?",
+              "answer": "Active transport",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Cyanide stops ATP production. What happens to active transport?",
+              "answer": "It stops, since there's no ATP to power it.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Bulk Transport",
+          "mastery": "Describe endocytosis and exocytosis, which move large particles in and out inside vesicles.",
+          "practice": "Draw a white blood cell engulfing a bacterium in 4 stages, then draw a cell releasing insulin by exocytosis.",
+          "detail": "Some things are too big for any protein. In endocytosis, the membrane wraps around the particle and pinches off a vesicle inside. In exocytosis, a vesicle merges with the membrane and empties outside. Both bend the membrane, and both use ATP.",
+          "proof": "4 stages of engulfing, then a vesicle fusing with the membrane to release insulin.",
+          "pitfall": "Mixing the two up. Endo means into, exo means out of.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A cell swallows 1 bacterium into a vesicle. Endocytosis or exocytosis?",
+              "answer": "Endocytosis",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Pancreas cells release insulin from 1000s of vesicles. Which process is that?",
+              "answer": "Exocytosis",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Do these 2 bulk processes use energy?",
+              "answer": "Yes. Both need ATP.",
+              "answer_kind": "yesno"
+            }
+          ]
+        }
+      ]
+    },
+    "bi.molecules": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Carbohydrates",
+          "mastery": "Tell monosaccharides, disaccharides and polysaccharides apart, and match each to its job.",
+          "practice": "Sort these 5, glucose, sucrose, starch, glycogen and cellulose, by size, and give the job of each one.",
+          "detail": "Monosaccharides like glucose are single sugar units and quick fuel. Disaccharides like sucrose are two units. Polysaccharides are long chains: starch stores energy in plants, glycogen stores it in animals, and cellulose builds plant walls.",
+          "proof": "Glucose is a monosaccharide, sucrose a disaccharide, and the other 3 are polysaccharides.",
+          "pitfall": "Calling cellulose a food store. It's structural.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Glucose has the formula C6H12O6. How many carbon atoms does it have?",
+              "answer": "6",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which polysaccharide does an adult store in a 1.5 kg liver: glycogen or starch?",
+              "answer": "Glycogen",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why can't humans digest cellulose, even though it's made of glucose?",
+              "answer": "We lack the enzyme that breaks its bonds.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Lipids",
+          "mastery": "Describe fats as glycerol plus 3 fatty acids, and tell saturated fats from unsaturated ones.",
+          "practice": "Draw a triglyceride with 3 fatty acids, make 1 of them unsaturated with a kink, and say why oils are liquid.",
+          "detail": "Saturated fatty acids have only single bonds, so they're straight and pack tightly, which makes solids like butter. Unsaturated ones have double bonds that kink the chain, so they pack loosely and stay liquid. Fats store a lot of energy and insulate.",
+          "proof": "A drawing with 3 tails, 1 of them kinked, and a note that kinks stop tight packing.",
+          "pitfall": "Thinking all fats are unhealthy. Cells need them for membranes and hormones.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A triglyceride is glycerol plus how many fatty acids: 1, 2 or 3?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Butter is solid at 20°C. Is it mostly saturated or unsaturated fat?",
+              "answer": "Saturated",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Per gram, about how many kcal does fat give, compared with 4 for carbohydrate?",
+              "answer": "9",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Proteins",
+          "mastery": "Explain proteins as chains of 20 kinds of amino acids, folded into a shape that sets their job.",
+          "practice": "Write the 4 levels of protein structure and give one example of a protein whose shape is its job.",
+          "detail": "The order of amino acids is the primary structure. Parts of the chain coil or fold into sheets, then the whole chain folds into a 3D shape, and some proteins join several chains. Change the shape with heat or acid and the protein stops working.",
+          "proof": "Primary, secondary, tertiary and quaternary, with an enzyme or hemoglobin as the example.",
+          "pitfall": "Thinking cooking destroys amino acids. It unfolds the shape and leaves the chain.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Human DNA codes for proteins built from how many kinds of amino acids?",
+              "answer": "20",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What bond links 2 amino acids in a chain?",
+              "answer": "A peptide bond",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Heating an egg white to 80°C turns it solid and white. What happened to its proteins?",
+              "answer": "They denatured. Their shape unfolded and they clumped.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Nucleic Acids",
+          "mastery": "Describe DNA and RNA as chains of nucleotides, and name how the two differ.",
+          "practice": "List 3 differences between DNA and RNA: their sugar, their bases and their strands.",
+          "detail": "Each nucleotide is a sugar, a phosphate and a base. DNA uses deoxyribose and the bases A, T, C and G, and forms a double helix. RNA uses ribose, swaps T for U, and is usually single-stranded. DNA stores the information and RNA carries it out.",
+          "proof": "Deoxyribose against ribose, T against U, and 2 strands against 1.",
+          "pitfall": "Writing T in an RNA sequence.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What 3 parts make up a nucleotide?",
+              "answer": "A sugar, a phosphate and a base.",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which base does RNA use instead of thymine?",
+              "answer": "Uracil",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Is DNA usually 1 strand or 2?",
+              "answer": "2",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Test for Molecules",
+          "mastery": "Use food tests, iodine, Benedict's, biuret and ethanol, to find which molecules a sample holds.",
+          "practice": "Test milk, bread and apple juice with iodine, Benedict's and biuret, and record each color change in a table.",
+          "detail": "Iodine turns blue-black with starch. Benedict's turns from blue to green, orange or brick red when heated with a reducing sugar. Biuret turns purple with protein. Shaking with ethanol and adding water gives a cloudy white layer with fat. Run a water blank for comparison.",
+          "proof": "A table with a color for each food and test, like bread blue-black with iodine.",
+          "pitfall": "Forgetting to heat the Benedict's test, so no color change shows.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A food turns blue-black with 1 drop of iodine. Which molecule is present?",
+              "answer": "Starch",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Benedict's solution turns brick red when heated. What does that show?",
+              "answer": "A reducing sugar, like glucose.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A sample turns purple with Biuret reagent. Which kind of molecule is there?",
+              "answer": "Protein",
+              "answer_kind": "word"
+            }
+          ]
+        }
+      ]
+    },
+    "bi.mutation": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Point Mutations",
+          "mastery": "Tell substitutions from insertions and deletions, and predict which ones shift the reading frame.",
+          "practice": "Change one base of AUG GCA UUC in 3 ways, a substitution, an insertion and a deletion, and translate each.",
+          "detail": "A substitution swaps one base, which changes one codon at most. An insertion or deletion of one base shifts every codon after it, which usually wrecks the protein. Adding or removing 3 bases keeps the frame, losing or gaining just one amino acid.",
+          "proof": "The substitution changes one codon, and the other two scramble everything after the change.",
+          "pitfall": "Thinking a 1-base insertion only changes 1 amino acid.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "THE CAT ATE THE RAT loses its first E, and the rest is reread in threes. What kind of mutation is that?",
+              "answer": "A deletion, which shifts the reading frame.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which shifts every codon after it: a substitution or a deletion of 1 base?",
+              "answer": "A deletion",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does deleting 3 bases usually do less harm than deleting 1?",
+              "answer": "It removes one codon but keeps the frame.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Silent, Missense, Nonsense",
+          "mastery": "Classify a substitution as silent, missense or nonsense by its effect on the protein.",
+          "practice": "Change GAA to GAG, GUA and UAA, look each one up in a codon table, and classify the effect.",
+          "detail": "Silent mutations change a codon to another for the same amino acid. Missense mutations swap in a different amino acid, which may or may not matter. Nonsense mutations create a stop codon and cut the protein short, which usually ruins it.",
+          "proof": "GAG is silent, GUA is missense, and UAA is nonsense.",
+          "pitfall": "Assuming every missense mutation is harmful. Many barely change the protein.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A codon changes from UUU to UUC, both phenylalanine. What type of mutation is that?",
+              "answer": "Silent",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A codon changes to UAG in the middle of a gene. What type is it?",
+              "answer": "Nonsense",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Sickle cell disease swaps 1 amino acid in hemoglobin. Missense or nonsense?",
+              "answer": "Missense",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Causes of Mutation",
+          "mastery": "Name the sources of mutation: copying errors, UV light, chemicals and radiation.",
+          "practice": "List 4 mutagens, like UV and tobacco smoke, and say how to cut your exposure to each.",
+          "detail": "Some mutations happen by chance when DNA is copied, even with proofreading. Others come from damage: UV light, X-rays and chemicals in smoke all change bases. Cells repair most damage, but not all of it. Only changes in sex cells pass to children.",
+          "proof": "UV, smoke, X-rays and some chemicals, cut by sunscreen, not smoking and limiting scans.",
+          "pitfall": "Thinking every mutation comes from something outside. Copying errors happen anyway.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which part of sunlight damages the DNA in skin cells?",
+              "answer": "UV light",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "DNA polymerase makes about 1 uncorrected error per billion bases. About how many errors happen in copying a 3 billion base genome?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why isn't a mutation in 1 skin cell passed to children?",
+              "answer": "Only mutations in sex cells are inherited.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Good, Bad or Neutral",
+          "mastery": "Explain that most mutations are neutral, some harmful and a few helpful, depending on the environment.",
+          "practice": "Give 1 example each of a harmful, a neutral and a helpful mutation, in humans or other species.",
+          "detail": "Much DNA doesn't code for proteins, and many codon changes are silent, so most mutations do nothing. Some damage a protein and cause disease. A few help, and whether one helps depends on where you live. The same allele can help in one place and hurt in another.",
+          "proof": "Cystic fibrosis is harmful, a silent change is neutral, and lactase persistence is helpful.",
+          "pitfall": "Thinking mutation always means damage.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Lactase persistence lets adults digest milk. Harmful, neutral or helpful?",
+              "answer": "Helpful, where people drink milk.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A mutation lands in a stretch of DNA that codes for nothing. What effect is it most likely to have?",
+              "answer": "None. It's neutral.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why can the sickle cell allele be helpful in parts of Africa?",
+              "answer": "One copy protects against malaria.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Variation in Populations",
+          "mastery": "Tell genetic variation from environmental variation, and continuous traits from discrete ones.",
+          "practice": "Measure the height of 10 classmates and record their blood types, then say which trait is continuous.",
+          "detail": "Continuous traits like height vary smoothly and usually depend on many genes plus the environment. Discrete traits like blood type fall into clear groups and often depend on one gene. Identical twins raised apart show how much the environment adds.",
+          "proof": "Height is continuous, with values all along a range. Blood type is discrete.",
+          "pitfall": "Saying a trait is all genes or all environment. Most are both.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Is ABO blood type continuous or discrete?",
+              "answer": "Discrete",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Identical twins raised apart end up 5 cm different in height. Genetic or environmental?",
+              "answer": "Environmental, since their genes match.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 source of variation other than mutation.",
+              "answer": "Crossing over, independent assortment or random fertilization.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "bi.photo": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Write the Equation",
+          "mastery": "Write the balanced equation for photosynthesis and say where in the cell it happens.",
+          "practice": "Write 6CO2 + 6H2O to C6H12O6 + 6O2, label each part as a reactant or product, and name the organelle.",
+          "detail": "Plants take in carbon dioxide and water, use light energy captured by chlorophyll, and make glucose and oxygen. It all happens in chloroplasts. Notice it's respiration run backward, which is why the two processes balance each other in nature.",
+          "proof": "6CO2 + 6H2O gives C6H12O6 + 6O2, in the chloroplast.",
+          "pitfall": "Forgetting that light is the energy input, not a reactant that gets used up.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many CO2 molecules make 1 glucose in photosynthesis?",
+              "answer": "6",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which gas do plants release in photosynthesis: O2 or CO2?",
+              "answer": "O2",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Where does the O2 released in photosynthesis come from: CO2 or H2O?",
+              "answer": "H2O. The water is split.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Light Reactions and the Calvin Cycle",
+          "mastery": "Describe the 2 stages: the light reactions in the thylakoids and the Calvin cycle in the stroma.",
+          "practice": "Draw 1 chloroplast, label the thylakoids and stroma, and write which stage happens in each and what passes between them.",
+          "detail": "The light reactions use light to split water, release oxygen and charge up ATP and NADPH. The Calvin cycle spends that ATP and NADPH to turn carbon dioxide into sugar. Neither stage can keep going for long without the other.",
+          "proof": "Thylakoids hold the light reactions, the stroma holds the Calvin cycle, and ATP and NADPH pass between them.",
+          "pitfall": "Calling the Calvin cycle the dark reactions and thinking it only runs at night.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which 2 molecules carry energy from the light reactions to the Calvin cycle?",
+              "answer": "ATP and NADPH",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Does the Calvin cycle need light directly?",
+              "answer": "No. It runs on ATP and NADPH from the light reactions.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In which part of the chloroplast does the Calvin cycle fix CO2?",
+              "answer": "The stroma",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Limiting Factors",
+          "mastery": "Name light, carbon dioxide and temperature as limiting factors, and read which one limits a rate on a graph.",
+          "practice": "Plot pondweed bubbles per minute at lamp distances of 10, 20, 30 and 40 cm, and say where the curve levels off and why.",
+          "detail": "The rate is held back by whichever factor is in shortest supply. While light limits it, more light speeds it up. Once the curve flattens, something else is limiting, often carbon dioxide or temperature. Raising that one lifts the whole curve.",
+          "proof": "The rate rises as the lamp moves closer, then levels off when another factor limits it.",
+          "pitfall": "Adding more light past the plateau and expecting the rate to keep rising.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "More light makes no difference, but more CO2 raises the rate. Which factor is limiting?",
+              "answer": "CO2",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Moving a lamp from 20 cm to 10 cm raises the light intensity by about what factor?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Above 40°C, photosynthesis slows down. Why?",
+              "answer": "The enzymes begin to denature.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Measure the Rate",
+          "mastery": "Measure photosynthesis by counting oxygen bubbles or measuring gas volume, and keep the test fair.",
+          "practice": "Count bubbles from Elodea for 1 minute at 3 light levels, repeat each one 3 times, and average them.",
+          "detail": "Bubbles are oxygen leaving the cut stem, so more bubbles means faster photosynthesis. Change one factor at a time and keep the rest steady, especially temperature, since lamps get hot. Collecting gas in a syringe gives a volume, which is more precise than counts.",
+          "proof": "3 averaged counts that rise as the light gets brighter.",
+          "pitfall": "Letting the lamp heat the water, so temperature changes along with light.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Bubble counts at one lamp distance are 18, 21 and 24. What is the mean?",
+              "answer": "21",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why put a beaker of water between a 60 W lamp and the plant?",
+              "answer": "To stop the lamp's heat changing the temperature.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why might counting bubbles from Elodea underestimate the oxygen made?",
+              "answer": "Some oxygen dissolves, and the bubbles vary in size.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Leaves Built for the Job",
+          "mastery": "Link leaf structure, like thin blades, stomata and palisade cells, to fast photosynthesis.",
+          "practice": "Look at a leaf cross section at 100x and label the palisade layer, spongy layer, stomata and guard cells.",
+          "detail": "Leaves are thin and wide to catch light and keep gases close. Palisade cells packed with chloroplasts sit near the top. The spongy layer has air spaces for gas to spread. Stomata, opened and closed by guard cells, let carbon dioxide in and water out.",
+          "proof": "A labeled cross section with palisade cells on top and stomata underneath.",
+          "pitfall": "Putting the stomata mostly on the top surface, where they'd lose the most water.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Of the 2 middle layers of a leaf, which holds the most chloroplasts?",
+              "answer": "The palisade layer",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which gas enters the leaf through stomata for photosynthesis: CO2 or N2?",
+              "answer": "CO2",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why do stomata close on a 35°C afternoon, and what does it cost the plant?",
+              "answer": "To save water. It cuts the CO2 supply, so photosynthesis slows.",
+              "answer_kind": "sentence"
+            }
+          ]
+        }
+      ]
+    },
+    "bi.protein": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Transcription",
+          "mastery": "Transcribe a DNA template strand into mRNA, pairing A on the DNA with U in the RNA.",
+          "practice": "Transcribe the template strand TACGGATTC into mRNA.",
+          "detail": "RNA polymerase reads the template strand and builds a matching mRNA. The rules are the DNA rules with one swap: A on the template gives U in the mRNA. In eukaryotes this happens in the nucleus, and the mRNA then travels out to the ribosomes.",
+          "proof": "AUGCCUAAG.",
+          "pitfall": "Writing T in the mRNA, which has U instead.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Transcribe the DNA template GCA into mRNA.",
+              "answer": "CGU",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Transcription of mRNA happens in which part of a human cell?",
+              "answer": "The nucleus",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which mRNA base pairs with A on the DNA template?",
+              "answer": "U",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Read the Codons",
+          "mastery": "Split mRNA into codons and translate them with a codon table.",
+          "practice": "Translate AUG GCU UGG UAA with a codon table.",
+          "detail": "Start at the first AUG, which also codes for methionine, and read three bases at a time without overlapping. Look each codon up in the table. Stop when you reach UAA, UAG or UGA, which code for no amino acid.",
+          "proof": "Met, Ala, Trp, then stop.",
+          "pitfall": "Starting to read from the very first base instead of from AUG.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many mRNA bases make 1 codon?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which amino acid does AUG code for?",
+              "answer": "Methionine",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "An mRNA has 300 bases from the start codon to the stop codon, both included. How many amino acids does it code for?",
+              "answer": "99",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Translation at the Ribosome",
+          "mastery": "Describe translation: tRNA brings amino acids, anticodons match codons, and the ribosome links them up.",
+          "practice": "Act out translation for AUG UUU GGC with 3 tRNA cards, writing the anticodon on each one.",
+          "detail": "Each tRNA carries one amino acid at one end and an anticodon at the other. The ribosome moves along the mRNA one codon at a time. When an anticodon matches the codon, the amino acid joins the growing chain with a peptide bond.",
+          "proof": "The anticodons are UAC, AAA and CCG, and the chain is Met, Phe, Gly.",
+          "pitfall": "Writing the anticodon the same as the codon instead of complementary to it.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the anticodon for the codon GGC?",
+              "answer": "CCG",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which of mRNA, tRNA and rRNA carries amino acids to the ribosome?",
+              "answer": "tRNA",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "After 150 codons, what makes the ribosome stop translating?",
+              "answer": "A stop codon, like UAA.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "From Gene to Trait",
+          "mastery": "Trace how one gene's sequence becomes a protein's shape and then a trait you can see.",
+          "practice": "Trace the gene for the enzyme that makes melanin from DNA to mRNA to enzyme to skin color in 4 written steps.",
+          "detail": "The gene's base order sets the amino acid order. That order sets how the protein folds, and the folded shape sets what it does. If the protein is an enzyme that makes a pigment, how well it works shows up as color. One changed base can change the whole chain.",
+          "proof": "DNA to mRNA to an enzyme that makes melanin, and more melanin means darker skin.",
+          "pitfall": "Thinking genes make traits directly, skipping the protein in the middle.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which comes first in the flow: DNA, protein or mRNA?",
+              "answer": "DNA",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "1 gene for a pigment enzyme stops working. Why might eye color change?",
+              "answer": "The enzyme that makes the pigment isn't made, so less pigment forms.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What is the flow from DNA to RNA to protein called?",
+              "answer": "The central dogma",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "The Same Code Everywhere",
+          "mastery": "Explain that nearly all life shares one genetic code, and why that makes biotech possible.",
+          "practice": "Explain in 3 sentences how bacteria can make human insulin from a human gene.",
+          "detail": "The same codons code for the same amino acids in bacteria, plants and people. So a human gene put into a bacterium is read correctly, and the bacterium makes the human protein. That's how most insulin is made today. The shared code is also strong evidence of common ancestry.",
+          "proof": "Bacteria read the human gene with the same code, so they build human insulin.",
+          "pitfall": "Thinking each species needs its own codon table.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Does the codon UUU code for the same amino acid in bacteria and humans?",
+              "answer": "Yes. It's phenylalanine in both.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "With 4 bases in groups of 3, how many codons are possible?",
+              "answer": "64",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "The 64 codons code for 20 amino acids plus stop. What does it mean that the code is redundant?",
+              "answer": "Several codons can code for the same amino acid.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "bi.respiration": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "The Aerobic Equation",
+          "mastery": "Write the word and symbol equations for aerobic respiration, and say where in the cell it happens.",
+          "practice": "Write glucose + oxygen to carbon dioxide + water as a balanced symbol equation, and say which part of the cell does most of it.",
+          "detail": "The balanced equation is C6H12O6 + 6O2 to 6CO2 + 6H2O, releasing energy stored as ATP. The first stage, glycolysis, happens in the cytoplasm, and the rest happens in the mitochondria. It runs all the time in every living cell, plant or animal.",
+          "proof": "C6H12O6 + 6O2 gives 6CO2 + 6H2O, mostly in the mitochondria.",
+          "pitfall": "Saying plants photosynthesize instead of respiring. They do both.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many O2 molecules does 1 glucose need in aerobic respiration?",
+              "answer": "6",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which organelle makes most of the ATP in aerobic respiration?",
+              "answer": "The mitochondrion",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which gas does respiration give off as waste: CO2 or O2?",
+              "answer": "CO2",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Anaerobic in Muscles",
+          "mastery": "Explain anaerobic respiration in muscles, the lactic acid it makes, and why it yields so little ATP.",
+          "practice": "Sprint for 30 seconds, note the burn, then write the equation glucose to lactic acid and say why it happens.",
+          "detail": "When muscles work harder than oxygen can arrive, they break glucose down only partway, into lactic acid. That's fast but gives just 2 ATP per glucose. Afterward you keep breathing hard to supply the oxygen needed to clear the lactic acid, called the oxygen debt.",
+          "proof": "Glucose goes to lactic acid, because oxygen can't arrive fast enough.",
+          "pitfall": "Thinking anaerobic means no breathing. You're breathing hard, just not fast enough.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Anaerobic respiration in muscle makes how many ATP per glucose?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What builds up in your leg muscles during a 400 m sprint?",
+              "answer": "Lactic acid",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why do you keep breathing hard after a 200 m sprint ends?",
+              "answer": "To repay the oxygen debt and clear the lactic acid.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Fermentation in Yeast",
+          "mastery": "Describe fermentation in yeast, which makes ethanol and carbon dioxide, and its everyday uses.",
+          "practice": "Mix yeast, sugar and warm water in a bottle with a balloon on top, and measure the balloon after 20 minutes.",
+          "detail": "Without oxygen, yeast turns glucose into ethanol and carbon dioxide, keeping a small ATP supply going. Bakers want the gas, which puffs up dough. Brewers want the ethanol. Warm water speeds it up, and too hot kills the yeast.",
+          "proof": "The balloon inflates with carbon dioxide from the yeast.",
+          "pitfall": "Saying yeast makes lactic acid. That's the animal pathway.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What gas inflates the balloon after 20 minutes?",
+              "answer": "Carbon dioxide",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Yeast fermentation makes CO2 and what else?",
+              "answer": "Ethanol",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does bread dough rise but not taste of alcohol after baking at 200°C?",
+              "answer": "Baking drives off the ethanol, while the CO2 bubbles stay trapped.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Compare ATP Yields",
+          "mastery": "Compare ATP yields per glucose: roughly 30 to 38 for aerobic respiration against 2 for anaerobic.",
+          "practice": "Work out how many glucose molecules a cell needs anaerobically to match the ATP from 1 glucose aerobically, using 36 and 2.",
+          "detail": "Aerobic respiration takes glucose all the way to carbon dioxide, so it releases far more of its energy. Anaerobic stops partway and leaves most energy locked in lactic acid or ethanol. That's why long efforts rely on oxygen and only short bursts can run without it.",
+          "proof": "36 divided by 2 is 18 glucose molecules.",
+          "pitfall": "Thinking anaerobic is better because it's faster. It's quick but wasteful.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Using 36 ATP for aerobic and 2 for anaerobic, how many times more ATP does aerobic make?",
+              "answer": "18",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A cell needs 72 ATP. How many glucose does it use aerobically, at 36 each?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why can't you sprint at top speed for 10 minutes?",
+              "answer": "Anaerobic respiration makes too little ATP, and lactic acid builds up.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Measure Respiration",
+          "mastery": "Measure a respiration rate with a respirometer, and control the other variables.",
+          "practice": "Put 10 germinating peas in a respirometer at 20°C, and read the bubble's movement every 2 minutes for 10 minutes.",
+          "detail": "A respirometer seals the organisms in with something that absorbs carbon dioxide. As they use oxygen, the gas volume drops and a bubble in the tube moves. Divide the distance by the time for a rate. A tube of dead peas checks that nothing else moves the bubble.",
+          "proof": "5 readings, and a rate in mm per minute.",
+          "pitfall": "Leaving out the carbon dioxide absorber, so the bubble barely moves.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "The bubble moves 12 mm in 4 minutes. What is the rate in mm per minute?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why set up a tube of 10 boiled peas as a control?",
+              "answer": "Boiled peas are dead, so any movement there isn't from respiration.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Peas at 30°C move the bubble faster than at 20°C. Why?",
+              "answer": "Respiration enzymes work faster at the higher temperature.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "bi.taxonomy": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Levels of Classification",
+          "mastery": "List the levels from domain to species in order, and place an organism at each one.",
+          "practice": "Write the 8 levels for a house cat, from Eukarya down to Felis catus.",
+          "detail": "The levels are domain, kingdom, phylum, class, order, family, genus and species, each one narrower than the last. Two organisms that share a level share every level above it. A phrase like Dear King Philip Came Over For Good Soup helps keep the order.",
+          "proof": "Eukarya, Animalia, Chordata, Mammalia, Carnivora, Felidae, Felis, catus.",
+          "pitfall": "Swapping order and family, which flips the narrowing.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Of the 8 levels, which comes between order and genus?",
+              "answer": "Family",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Of these 3, which level is broadest: domain, kingdom or phylum?",
+              "answer": "Domain",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A wolf and a dog share the genus Canis. Do they share an order?",
+              "answer": "Yes. Sharing a genus means sharing every level above it.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Write Binomial Names",
+          "mastery": "Write scientific names correctly, with the genus capitalized, the species lowercase and both in italics.",
+          "practice": "Write the scientific names of 3 species, humans, house cats and E. coli, and say what each part means.",
+          "detail": "Every species gets a two-part name, its genus and then its species. The genus is capitalized and the species isn't, and both are in italics or underlined by hand. After the first use, the genus can be shortened to a letter, as in E. coli.",
+          "proof": "Homo sapiens, Felis catus and Escherichia coli.",
+          "pitfall": "Capitalizing the species name, as in Homo Sapiens.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which is written correctly: Homo sapiens or homo Sapiens?",
+              "answer": "Homo sapiens",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Panthera leo and Panthera tigris share which level?",
+              "answer": "Genus",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Who devised the 2-name system in the 1700s?",
+              "answer": "Carl Linnaeus",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "The Three Domains",
+          "mastery": "Name the 3 domains and tell them apart by cell type and chemistry.",
+          "practice": "Sort 6 organisms, E. coli, a mushroom, an oak, a methanogen, a human and an amoeba, into the 3 domains.",
+          "detail": "Bacteria and Archaea are both prokaryotes, but their membranes and genes differ deeply, so they're separate domains. Archaea often live in extreme places like hot springs. Eukarya, everything with a nucleus, includes plants, animals, fungi and protists.",
+          "proof": "E. coli is Bacteria, the methanogen is Archaea, and the other 4 are Eukarya.",
+          "pitfall": "Lumping Archaea in with bacteria because both lack a nucleus.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which domain has a nucleus: Bacteria, Archaea or Eukarya?",
+              "answer": "Eukarya",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Archaea often live in hot springs. Are they a kind of bacteria?",
+              "answer": "No. They're a separate domain.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In the common school scheme of plants, animals, fungi and protists, how many kingdoms are in Eukarya?",
+              "answer": "4",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Read a Cladogram",
+          "mastery": "Read a cladogram to find which organisms share the most recent common ancestor.",
+          "practice": "Draw a cladogram of 4 animals, a lamprey, a shark, a frog and a lizard, with jaws, legs and amniotic eggs as the branch points.",
+          "detail": "Each branch point marks a common ancestor and the new trait that appeared there. Everything above a branch point has that trait. Two organisms that split from the same latest branch point are each other's closest relatives on the chart.",
+          "proof": "Lamprey branches first, then shark after jaws, then frog after legs, then lizard after amniotic eggs.",
+          "pitfall": "Reading left to right as a ladder of progress, as if lizards came from frogs.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "On a cladogram, frogs and lizards both branch off after 'legs'. Which trait do both have?",
+              "answer": "Legs",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "On that cladogram, which 2 share the most recent ancestor: shark and frog, or frog and lizard?",
+              "answer": "Frog and lizard",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Does 1 cladogram showing lizards next to frogs mean lizards came from frogs?",
+              "answer": "No. It shows they share an ancestor.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Convergence and Ancestry",
+          "mastery": "Tell traits from shared ancestry apart from look-alike traits, and explain why a dolphin is grouped with mammals.",
+          "practice": "List 3 ways a dolphin resembles a shark and 3 ways it differs, then say which ones decide its group.",
+          "detail": "Similar ways of life can push unrelated animals toward similar shapes, which is convergent evolution. Those analogous traits don't show kinship. Homologous traits, inherited from a common ancestor, do. Dolphins breathe air, feed milk and have a mammal skeleton.",
+          "proof": "Fins and a streamlined body are convergent. Lungs, milk and the skeleton make it a mammal.",
+          "pitfall": "Grouping animals by how they look instead of by shared ancestry.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Bird wings and insect wings both fly. Are these 2 kinds of wing homologous or analogous?",
+              "answer": "Analogous",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 2 traits that make a dolphin a mammal.",
+              "answer": "It breathes air and feeds its young milk.",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What is 'convergent evolution'?",
+              "answer": "Unrelated species evolving similar traits for similar ways of life.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
     "c.async": {
       "model": "authored",
       "verifier": "rules+authored",
@@ -110556,6 +112992,354 @@
         }
       ]
     },
+    "mt.ap": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Know the AP Exam",
+          "mastery": "Know the AP exam's parts: multiple choice, written free response and sight-singing.",
+          "practice": "Write the AP exam's 2 sections, how many questions each has, and how much each counts toward the score.",
+          "detail": "Section 1 is 75 multiple-choice questions, many tied to recordings, worth 45%. Section 2 is 9 free-response questions worth 55%: melodic and harmonic dictation, part-writing from figured bass and Roman numerals, a melody to harmonize, and 2 sight-singing melodies.",
+          "proof": "75 multiple choice for 45% and 9 free response for 55%.",
+          "pitfall": "Skipping sight-singing practice because it's only 2 questions.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many sight-singing melodies are on the AP Music Theory exam?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many multiple-choice questions are on the AP Music Theory exam?",
+              "answer": "75",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What share of the AP score comes from the free-response section?",
+              "answer": "55%",
+              "answer_kind": "percent"
+            }
+          ]
+        },
+        {
+          "title": "Timed Dictation Practice",
+          "mastery": "Take melodic dictations under exam timing, with a fixed number of plays.",
+          "practice": "Take 2 melodic dictations a day for a week, each played 4 times with pauses between, as on the exam.",
+          "detail": "With only a few hearings, you need a plan for each one. Get the outline and rhythm on the first play, the pitches on the next two, and check on the last. Timed practice makes that plan automatic, so nerves don't take over on the day.",
+          "proof": "14 dictations in a week, each with a score.",
+          "pitfall": "Replaying a practice melody as often as you like, which builds no exam skill.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "On the AP exam, how many times is each melodic dictation played?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Your dictation scores this week are 5, 6, 6, 7 and 8 out of 10. What's the average?",
+              "answer": "6.4",
+              "answer_kind": "decimal"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You keep missing the same leap of a 6th in dictations. What should you drill?",
+              "answer": "That interval on its own, until you hear it at once.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Part-Write Under Time",
+          "mastery": "Write four-part harmony from Roman numerals and from figured bass, quickly and without errors.",
+          "practice": "Write 2 part-writing exercises, one from numerals and one from figured bass, and time yourself on each.",
+          "detail": "Speed comes from habits. Spell each chord first, write the bass, then the soprano, then fill the inner voices with common tones. Check every pair for parallels at the end. Graders count errors, so a plain correct answer beats a clever one with a mistake.",
+          "proof": "2 exercises done in time, with every voice pair checked.",
+          "pitfall": "Writing all 4 voices chord by chord with no final parallel check.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What 4 voices does AP part-writing use?",
+              "answer": "Soprano, alto, tenor and bass",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name the 2 errors graders look for most in AP part-writing.",
+              "answer": "Parallel 5ths and parallel octaves.",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You're given V6/5 in C major. Which note goes in the bass?",
+              "answer": "B",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Use Released Exams",
+          "mastery": "Practice with released AP free-response questions and score yourself with the official guidelines.",
+          "practice": "Work through one released AP free-response set under time, then grade it with the College Board scoring guidelines.",
+          "detail": "Released questions show exactly the style and difficulty you'll see. The scoring guidelines show where points come from, which is often different from what students expect. Grade honestly, note where points went, and aim next week's practice there.",
+          "proof": "A graded set with a note of the 2 weakest questions.",
+          "pitfall": "Grading generously and missing the habits that cost real points.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Where can you find released AP Music Theory free-response questions?",
+              "answer": "On the College Board's AP Central site.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "After grading, you lost 6 points on harmonic dictation. What should next week focus on?",
+              "answer": "Harmonic dictation, with bass lines and chord qualities.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why use the College Board scoring guidelines instead of guessing your score?",
+              "answer": "They show exactly what earns points, so you practice what's graded.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Plan the Last Month",
+          "mastery": "Plan the final 4 weeks before the exam around your weakest section.",
+          "practice": "Write a 4-week plan with 5 sessions a week, giving your weakest section twice the time of the others.",
+          "detail": "Look at your practice scores and rank the sections. Give the weakest the most time, but keep touching the others so they don't slip. Put a full timed practice exam at the end of each week to measure progress, and keep the last days light.",
+          "proof": "A 20-session plan with the weakest section in 8 of them.",
+          "pitfall": "Spending the last month on the section you already enjoy most.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You have 20 sessions and 4 sections. Your weakest gets double the others. How many sessions does it get?",
+              "answer": "8",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A practice exam score went from 60% to 72%. How many percentage points did it rise?",
+              "answer": "12",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What should the last 2 days before the AP exam hold?",
+              "answer": "Light review and rest, not new material.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "mt.cadences": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "The Authentic Cadence",
+          "mastery": "Spot an authentic cadence, V to I, and tell a perfect one from an imperfect one.",
+          "practice": "Play V to I in C major 2 times, once with C on top of the last chord and once with E, and say which is perfect.",
+          "detail": "V to I is the strongest ending in tonal music. It's perfect when both chords are in root position and the melody lands on the tonic. Move the melody to the 3rd or 5th, or invert a chord, and it's imperfect, which still works but sounds less final.",
+          "proof": "The one with C on top is a perfect authentic cadence.",
+          "pitfall": "Calling every V to I perfect, whatever is in the melody.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In G major, which 2 chords make an authentic cadence?",
+              "answer": "D to G, which is V to I.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A V to I ends with the 3rd of I in the soprano. Is it perfect or imperfect?",
+              "answer": "Imperfect",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "For a perfect authentic cadence, which 2 chords must be in root position?",
+              "answer": "Both V and I.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "The Half Cadence",
+          "mastery": "Spot a half cadence, where a phrase stops on V.",
+          "practice": "Find the phrase endings in the first 8 bars of 'Ode to Joy' and mark the one that stops on V.",
+          "detail": "A half cadence ends on the dominant, usually approached from I, ii or IV. It sounds like a comma: a pause that wants more. It often ends the first phrase of a pair, so the second phrase can finish with an authentic cadence.",
+          "proof": "Bar 4 ends on V, a half cadence, and bar 8 ends on I.",
+          "pitfall": "Calling any phrase ending on a major chord authentic.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A 4-bar phrase in F major ends on a C major chord. Which cadence is it?",
+              "answer": "A half cadence",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Does a half cadence at bar 4 sound finished?",
+              "answer": "No. It sounds like a comma, waiting for more.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A phrase in A minor ends on E major after 8 bars. Which cadence is it?",
+              "answer": "A half cadence",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "The Plagal Cadence",
+          "mastery": "Spot a plagal cadence, IV to I, often called the Amen cadence.",
+          "practice": "Play IV to I in G major and sing 'A-men' over it.",
+          "detail": "IV to I is softer than V to I because there's no leading tone pulling up. It often comes right after an authentic cadence, as a gentle extra ending. Hymns sing it on the final Amen, which is where the nickname comes from.",
+          "proof": "C major to G major, with 'A-men' on top.",
+          "pitfall": "Mistaking IV to I for a half cadence because there's no V.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which 2 chords make a plagal cadence?",
+              "answer": "IV to I",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In D major, name the 2 chords of a plagal cadence.",
+              "answer": "G major to D major",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Hymns often end with one extra 'Amen'. Which cadence usually sits under it?",
+              "answer": "Plagal",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "The Deceptive Cadence",
+          "mastery": "Spot a deceptive cadence, where V moves to vi instead of I.",
+          "practice": "Play V to vi in C major 3 times and say which chord you expected to hear instead.",
+          "detail": "The ear expects V to resolve home. Landing on vi instead keeps the bass moving up a step and the melody resolving, but the chord surprises you. Composers use it to stretch a phrase and save the real ending for a few bars later.",
+          "proof": "G goes to Am, when your ear expected C.",
+          "pitfall": "Calling V to vi a half cadence because it doesn't reach I.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In C major, V goes to Am at bar 8. Which cadence is it?",
+              "answer": "Deceptive",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In G major, which of the 7 chords does V move to in a deceptive cadence?",
+              "answer": "Em, the vi chord.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why would a composer put a deceptive cadence at bar 30 of a 32-bar piece?",
+              "answer": "To delay the ending and set up a stronger final cadence.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Name Cadences by Ear and Eye",
+          "mastery": "Name the cadence at the end of each phrase in a short piece.",
+          "practice": "Label every cadence in a 16-bar folk song as authentic, half, plagal or deceptive.",
+          "detail": "Find the end of each phrase, usually every 4 bars, and look at the last two chords. Name them with numerals, then match the pair: V I, ending on V, IV I, or V vi. With practice you'll hear the type before you look.",
+          "proof": "4 cadences labeled, one at each 4-bar phrase end.",
+          "pitfall": "Looking only at the last chord, which can't tell authentic from plagal.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Bar 4 of a song in C major ends G to C. Name the cadence.",
+              "answer": "Authentic",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In C major, a phrase stops on G after 8 bars. What kind of cadence is that?",
+              "answer": "Half",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A C major hymn's 3rd phrase ends with G going to Am. Name it.",
+              "answer": "Deceptive",
+              "answer_kind": "word"
+            }
+          ]
+        }
+      ]
+    },
     "mt.clefs": {
       "model": "claude-opus-5-5",
       "verifier": "rules+authored",
@@ -110725,6 +113509,180 @@
               "prompt": "A bar has F#, then later an F with no sign. Is that second F still sharp?",
               "answer": "Yes. An accidental lasts to the end of the bar.",
               "answer_kind": "yesno"
+            }
+          ]
+        }
+      ]
+    },
+    "mt.dictation": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Get the Rhythm First",
+          "mastery": "Write down a melody's rhythm before any of its pitches.",
+          "practice": "Listen to a 4-bar melody 3 times and write only the rhythm, as slashes with stems.",
+          "detail": "Rhythm is the frame that holds the pitches. Tap the beat while you listen and count where each note starts. Mark long notes and rests first, then fill in the shorter ones. Check that each bar adds up to the time signature.",
+          "proof": "A 4-bar rhythm where every bar adds up to 4 beats.",
+          "pitfall": "Writing pitches as you go and losing the rhythm halfway through.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You hear 4 even notes per bar in 4/4. What value is each one?",
+              "answer": "Quarter notes",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A bar of 4/4 has a long note, then 2 short ones that fill beat 4. What rhythm is likely?",
+              "answer": "A dotted half, then two eighths.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why write the rhythm of a 4-bar melody before its pitches?",
+              "answer": "Rhythm gives you a frame, so each pitch has a place to land.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Anchor on the Tonic",
+          "mastery": "Find the tonic and the first note's scale degree before writing pitches.",
+          "practice": "Hear a key-setting chord, sing the tonic, then name the first note of a 4-bar melody as a scale degree.",
+          "detail": "Every pitch is easier to hear relative to home. Sing the tonic quietly after the key is set, then compare the first note to it. Most melodies start on do, mi or sol, which narrows the choices. Keep the tonic in your ear the whole time.",
+          "proof": "The first note named as a degree, such as 3, before anything else is written.",
+          "pitfall": "Guessing absolute note names without relating them to the key.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A melody in C major starts on home base. What degree, 1 to 7, is that?",
+              "answer": "1",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "The first note sits a 3rd above the tonic in D major. Which note is it?",
+              "answer": "F#",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You lose your place in bar 3. What can you sing to find the key again?",
+              "answer": "The tonic, or the do-mi-sol chord.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Track Steps and Leaps",
+          "mastery": "Map a melody's shape as it goes, move by move, before pinning down any pitches.",
+          "practice": "Write the contour of an 8-note melody as up or down arrows, marking each move as a step or a leap.",
+          "detail": "Most melodies move by step, with a few leaps. Hear the direction first, then the size. Leaps usually outline the chord, like do to sol. After a large leap, melodies tend to turn and move by step the other way, which helps you guess the next note.",
+          "proof": "8 notes mapped as 7 arrows, each marked step or leap.",
+          "pitfall": "Mistaking a 3rd for a step because the melody moves quickly.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A melody goes 'do re mi do'. How many leaps does it have?",
+              "answer": "1",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A melody leaps from 'sol' down to 'do'. What interval is that?",
+              "answer": "A perfect 5th down.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "After a leap up of a 6th, which way does a melody usually move next?",
+              "answer": "Down by step.",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Fill In the Pitches",
+          "mastery": "Put scale degrees on your rhythm, then turn the degrees into notes in the key.",
+          "practice": "Take your rhythm from a 4-bar melody, write a degree under each note, then turn the degrees into notes in G major.",
+          "detail": "Working in degrees keeps you thinking in the key, where your ear is strongest. Once each note has a number, translating to letters is quick arithmetic. Watch for raised 7ths in minor, which need an accidental.",
+          "proof": "Each note has a degree and a letter, like 1 3 5 becoming G B D.",
+          "pitfall": "Writing letters straight away and drifting out of the key.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In G major, write the degrees 1 3 5 3 1 as notes.",
+              "answer": "G B D B G",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Turn 5 4 3 2 1 in F major into letter names.",
+              "answer": "C Bb A G F",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In D major, what notes are the degrees 1 7 1?",
+              "answer": "D C# D",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Check and Correct",
+          "mastery": "Check a finished dictation by singing it back against the recording, bar by bar.",
+          "practice": "Sing your 4-bar dictation while the recording plays, and circle any bar where you and it part ways.",
+          "detail": "Singing your answer shows mistakes you can't see on the page. Check the rhythm adds up in every bar, then that the last note fits the ending you heard. One wrong pitch early can shift every note after it, so recheck from the first mistake on.",
+          "proof": "Any bar that differs is circled and fixed.",
+          "pitfall": "Handing in without a final check because the page looks tidy.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Your 4-bar answer ends on degree 2, but the melody sounded finished. What should you check?",
+              "answer": "The key, or a wrong pitch earlier that shifted everything.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Your bar 3 has 5 beats in 4/4. What went wrong?",
+              "answer": "A rhythm in that bar is too long.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You got 7 of 8 notes right. What percent is that, to the nearest whole number?",
+              "answer": "88%",
+              "answer_kind": "percent"
             }
           ]
         }
@@ -110904,6 +113862,180 @@
         }
       ]
     },
+    "mt.form": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Phrases and Periods",
+          "mastery": "Find phrases by their cadences, and spot a period, where a weaker cadence is answered by a stronger one.",
+          "practice": "Mark the phrases in the first 8 bars of 'Ode to Joy' and name the cadence that ends each one.",
+          "detail": "A phrase is a musical sentence that ends with a cadence, often 4 bars long. Two phrases make a period when the first ends weaker, usually on a half cadence, and the second ends stronger. If both start the same way, it's a parallel period.",
+          "proof": "Two 4-bar phrases: the first ends on a half cadence and the second on an authentic one, making a period.",
+          "pitfall": "Calling any 4 bars a phrase without finding a cadence at the end.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many bars long is a typical classical phrase: 4 or 7?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Phrase 1 ends on a half cadence and phrase 2 on an authentic one. What do the two make?",
+              "answer": "A period",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Both 4-bar phrases of a period start with the same melody. What kind of period is it?",
+              "answer": "Parallel",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Binary and Ternary",
+          "mastery": "Tell binary form, AB, from ternary form, ABA, by whether the opening comes back in full.",
+          "practice": "Label 2 pieces you know as AB or ABA, and write the bar where each section starts.",
+          "detail": "In binary form, two halves balance each other, and both are often repeated. In ternary form, the first section returns after a contrasting middle, giving a sense of coming home. Rounded binary sits between them, bringing back part of A at the end of B.",
+          "proof": "Two pieces labeled, with a starting bar for every section.",
+          "pitfall": "Calling a piece ternary when only a few bars of A come back. That's rounded binary.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A piece goes ABA, with the first section back in full. Which form is it?",
+              "answer": "Ternary",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A minuet has 2 repeated halves, AABB. Which form is it?",
+              "answer": "Binary",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Rounded binary is AB with a twist. What comes back late in the B section?",
+              "answer": "Part of the A material.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Spot a Rondo",
+          "mastery": "Spot rondo form, where a main theme keeps returning between contrasting sections.",
+          "practice": "Map Beethoven's 'Für Elise' as letters, marking each return of the A theme.",
+          "detail": "A rondo alternates one refrain with new episodes: ABACA, or ABACABA in longer ones. The A theme usually comes back in the home key each time. Rondos often close sonatas and concertos because the returning tune feels lively and familiar.",
+          "proof": "A B A C A, with the A theme returning 2 times after its first statement.",
+          "pitfall": "Calling it ternary after hearing only the first return of A.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write the letters of a 5-part rondo.",
+              "answer": "ABACA",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In a 7-part rondo, ABACABA, how many times does A appear?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What makes a rondo different from ABA ternary form?",
+              "answer": "The main theme returns more than once, with new sections between.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Sonata Form",
+          "mastery": "Name the 3 big parts of sonata form, exposition, development and recapitulation, and what happens in each.",
+          "practice": "Follow the 1st movement of Mozart's Sonata K. 545 and mark where the exposition, development and recap begin.",
+          "detail": "The exposition presents a first theme in the home key and a second theme in a new key. The development breaks those themes into pieces and moves through several keys. The recapitulation brings both themes back, now both in the home key.",
+          "proof": "Three bar numbers marked, one where each big section starts.",
+          "pitfall": "Expecting the 2nd theme in the recap to be in the dominant again.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In a major-key exposition, the 2nd theme is usually in which key?",
+              "answer": "The dominant",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which of the 3 sections of sonata form moves through many keys?",
+              "answer": "The development",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In the recapitulation, what key is the 2nd theme in?",
+              "answer": "The home key, the tonic.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Map the Whole Piece",
+          "mastery": "Sketch a piece's big shape first, its sections, keys and cadences, before the chord-by-chord details.",
+          "practice": "Make a one-line map of a 32-bar piece, with letters for sections, keys under each and bar numbers at the cadences.",
+          "detail": "Listen or skim for where the music repeats, changes key or stops at a cadence. Those points mark the sections. A one-line map gives you a frame to hang the detailed analysis on, and it's often what exam questions ask for first.",
+          "proof": "A map like A in C, bars 1 to 8, then B in G, bars 9 to 16, and so on.",
+          "pitfall": "Labeling every chord first and never seeing the overall shape.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A 32-bar song has 4 sections of 8 bars in the pattern AABA. What is the B section often called?",
+              "answer": "The bridge",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "An AABA tune has A in bars 1 to 8. At which bar does the B section start?",
+              "answer": "17",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why map the big shape of a 32-bar song before labeling every chord?",
+              "answer": "It shows where the cadences and key changes are, so the details make sense.",
+              "answer_kind": "sentence"
+            }
+          ]
+        }
+      ]
+    },
     "mt.intervals": {
       "model": "claude-opus-5-5",
       "verifier": "rules+authored",
@@ -111073,6 +114205,180 @@
               "prompt": "A major 6th is 9 half steps. How many half steps is its inversion?",
               "answer": "3",
               "answer_kind": "integer"
+            }
+          ]
+        }
+      ]
+    },
+    "mt.inversions": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Root, First and Second",
+          "mastery": "Name a triad's inversion from its lowest note: the root, the 3rd or the 5th in the bass.",
+          "practice": "Write a C major triad 3 ways, with C, E and then G in the bass, and label each inversion.",
+          "detail": "Only the lowest note decides the inversion. The upper notes can be in any order or spacing. Root in the bass is root position, the 3rd is first inversion and the 5th is second inversion. Restack the chord in thirds first if you're not sure which note is the root.",
+          "proof": "C in the bass is root position, E is first inversion and G is second inversion.",
+          "pitfall": "Judging the inversion by the top note instead of the bottom one.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A C major triad has E, its 3rd, in the bass. Which inversion is it?",
+              "answer": "First inversion",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "D sits under G and B in a 3-note chord. Name the chord and its inversion.",
+              "answer": "G major, second inversion.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "An F major triad is stacked A C F from the bottom, 3 notes. Which inversion is it?",
+              "answer": "First inversion",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Figured Bass for Triads",
+          "mastery": "Read the figures for triads: none or 5/3 for root position, 6 for first inversion and 6/4 for second.",
+          "practice": "Write the figures for D minor in all 3 positions, root, first inversion and second inversion, then play each one.",
+          "detail": "Figures are intervals above the bass note, shortened. A 6 means a 6th and a 3rd above the bass, which is first inversion. 6/4 means a 6th and a 4th, which is second inversion. With no figure, assume root position.",
+          "proof": "Root position 5/3 or blank, first inversion 6, second inversion 6/4.",
+          "pitfall": "Reading the figure as the chord's root instead of intervals above the bass.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What figure marks a first inversion triad: 6 or 6/4?",
+              "answer": "6",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A bass note of B carries a 6 in C major. Which chord is it?",
+              "answer": "G major in first inversion",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In C major, G is the lowest note and the figure is 6/4. Name the chord.",
+              "answer": "C major in second inversion",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Seventh Chord Inversions",
+          "mastery": "Read 7, 6/5, 4/3 and 4/2 as root position and the three inversions of a seventh chord.",
+          "practice": "Write G7 in all 4 positions and label each with its figure.",
+          "detail": "A seventh chord has four notes, so it has three inversions. The figures shrink the full interval stacks: 6/5 has the 3rd in the bass, 4/3 the 5th and 4/2 the 7th. The 4/2 often resolves to a first inversion tonic, since the 7th in the bass falls a step.",
+          "proof": "G B D F is 7, B D F G is 6/5, D F G B is 4/3 and F G B D is 4/2.",
+          "pitfall": "Mixing up 6/5 and 4/3. Count the interval from the bass to the root to check.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What figure marks a seventh chord with its 3rd in the bass?",
+              "answer": "6/5, read six-five.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "G7 has F in the bass. Which figure does it get?",
+              "answer": "4/2, often written as just 2.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A V4/3 in C major has which note in the bass?",
+              "answer": "D",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Label With Numeral and Figure",
+          "mastery": "Combine Roman numerals and figures, like I6 or V6/5, to show a chord's job and its bass note.",
+          "practice": "Label C/E, G/B and F/C in C major with Roman numerals and figures.",
+          "detail": "Write the numeral for the chord's root in the key, then add the figure for whatever is in the bass. Slash names like G/B mean a G chord with B in the bass. The numeral and figure together tell a performer everything about the chord.",
+          "proof": "I6, V6 and IV6/4.",
+          "pitfall": "Writing the numeral of the bass note, so G/B becomes vii.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In C major, label a G chord with B in the bass, using a numeral and a figure like I6.",
+              "answer": "V6",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In G major, label C/G with a numeral and a figure.",
+              "answer": "IV6/4",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In D major, label an A7 chord with C# in the bass.",
+              "answer": "V6/5",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Smooth the Bass Line",
+          "mastery": "Use inversions to make a bass line move by step instead of leaping.",
+          "practice": "Harmonize the rising bass C, D, E in C major with I, V6/4 and I6, and play it slowly.",
+          "detail": "Root-position chords make the bass jump by 4ths and 5ths. Inversions put other chord tones on the bottom, so the bass can walk by step under the same harmony. A smooth bass is easier to sing and makes the whole texture sound connected.",
+          "proof": "The bass steps C, D, E while the chords go I, V6/4, I6.",
+          "pitfall": "Using second inversion chords anywhere. They belong in set patterns like the passing 6/4.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In C major, which inversion of V puts B in the bass between 2 C chords?",
+              "answer": "V6",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "The bass goes C, B, C under I, V, I in C major. Which of the 3 chords gets a figure, and what is it?",
+              "answer": "The V gets a 6.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does a bass that moves by step sound smoother than one that leaps by 5ths?",
+              "answer": "Small moves are easy to follow, so the line sounds connected.",
+              "answer_kind": "sentence"
             }
           ]
         }
@@ -111426,6 +114732,354 @@
         }
       ]
     },
+    "mt.modulation": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Closely Related Keys",
+          "mastery": "List the closely related keys of any key: its neighbors on the circle and their relative keys.",
+          "practice": "List the 5 closely related keys of C major and of A minor.",
+          "detail": "Closely related keys differ by at most one sharp or flat. For any key, that's the keys a 5th above and below, plus the relative of each of the three. They share most of their notes, so pieces move between them smoothly.",
+          "proof": "C major relates to G, F, Am, Em and Dm. A minor relates to C, Em, Dm, G and F.",
+          "pitfall": "Listing the parallel minor, like C minor for C major. It's 3 flats away.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name the 2 neighbors of D major on the circle of 5ths.",
+              "answer": "A major and G major",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Is E minor closely related to G major, which has 1 sharp?",
+              "answer": "Yes. It's the relative minor.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many sharps or flats apart are closely related keys, at most: 1, 2 or 3?",
+              "answer": "1",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Find the Pivot Chord",
+          "mastery": "Find a chord that belongs to both keys, so it can work as a pivot.",
+          "practice": "List the chords shared by C major and G major, and give each one's numeral in both keys.",
+          "detail": "Write the triads of both keys and circle the ones that match exactly. A pivot sounds normal in the old key and makes sense in the new one, so the listener is moved without a jolt. Chords that act as ii or IV in the new key work especially well.",
+          "proof": "C, Em, G and Am, which are I, iii, V and vi in C and IV, vi, I and ii in G.",
+          "pitfall": "Picking a chord that only looks shared because it has the same letter, like B dim and Bm.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Am is vi in C major. What numeral is it in G major?",
+              "answer": "ii",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which chord is IV in C major and I in F major?",
+              "answer": "F major",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name a pivot chord between D major and A major, which have 2 and 3 sharps.",
+              "answer": "Any of D, F#m, A or Bm.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Confirm the New Key",
+          "mastery": "Hear when a modulation lands, from the new key's V to I and its new accidental.",
+          "practice": "Play a phrase in C major that pivots on Am and cadences D7 to G, and point to the F# that confirms G.",
+          "detail": "A pivot only suggests a new key. The new key is confirmed by a cadence in it, which almost always needs a new accidental, like F# for G major. Without that cadence it's just a passing color, not a modulation.",
+          "proof": "The F# inside D7 and the cadence on G confirm G major.",
+          "pitfall": "Calling one borrowed chord a modulation when no cadence follows.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A piece in C major suddenly has F# and ends a phrase on G. Where has it gone?",
+              "answer": "G major, the dominant key.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A piece in G major drops its F# and cadences G7 to C. Which key has it moved to?",
+              "answer": "C major",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A piece in A minor gains no new accidentals and cadences on C after 8 bars. Which key is it in now?",
+              "answer": "C major, the relative major.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Common Destinations",
+          "mastery": "Know where pieces usually go: from major to the dominant, and from minor to the relative major.",
+          "practice": "Name the usual first modulation for 4 pieces, in D major, F major, E minor and C minor.",
+          "detail": "Most tonal pieces in major move first to the key a 5th up. Pieces in minor usually move to the relative major. Knowing this, you can predict the key of a second theme before you hear it, and you'll recognize the new accidental at once.",
+          "proof": "A major, C major, G major and E-flat major.",
+          "pitfall": "Expecting a minor-key piece to go to its dominant minor first.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A Mozart sonata in B-flat major usually modulates first to which key?",
+              "answer": "F major",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A Bach piece in G minor most often moves first to which key?",
+              "answer": "B-flat major",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does a Bach piece in A minor move so easily to C major?",
+              "answer": "They share a key signature, so the move is smooth.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Analyze a Modulation",
+          "mastery": "Mark the pivot, label it in both keys, and find the cadence that confirms the new key.",
+          "practice": "Take a 16-bar passage that modulates, box the pivot chord, write its two numerals, and circle the confirming cadence.",
+          "detail": "Work backward from the new cadence. Find the first chord that only fits the new key, then the chord just before it that fits both. That's the pivot. Write its numeral in the old key over the new one, stacked.",
+          "proof": "A boxed pivot with two numerals, and a circled cadence in the new key.",
+          "pitfall": "Placing the pivot after the first chord that only fits the new key.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A piece moving from C to G pivots on Em at bar 5. Label Em in both keys.",
+              "answer": "iii in C and vi in G",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Bar 6 pivots on a D major chord from G major into D major. Label it in both keys.",
+              "answer": "V in G and I in D",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A modulation shows V/V, then V, then I in the new key. What does V/V mean?",
+              "answer": "The dominant of the dominant, a secondary dominant.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "mt.nct": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Passing Tones",
+          "mastery": "Spot a passing tone, a step between two chord tones that keeps going the same way.",
+          "practice": "Add a passing tone between E and C in the soprano over a C major chord in bar 1, and label it P.",
+          "detail": "A passing tone fills the gap of a 3rd between two chord tones. It's approached by step and left by step in the same direction. Most are on weak beats. When one falls on a strong beat, it's called an accented passing tone.",
+          "proof": "E, D, C, with the D labeled P.",
+          "pitfall": "Labeling a chord tone as a passing tone because it sits between two others.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Over a C chord, a melody goes C, D, E. What is the D?",
+              "answer": "A passing tone",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Over G7, a line goes B, C, D. Is the C a passing tone?",
+              "answer": "Yes. It steps between 2 chord tones.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Can a passing tone fall on beat 1?",
+              "answer": "Yes. That's an accented passing tone.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Neighbor Tones",
+          "mastery": "Spot a neighbor tone, which steps away from a chord tone and comes straight back.",
+          "practice": "Write a G, A, G figure over a G major chord in 3 different rhythms and label the A as N.",
+          "detail": "A neighbor tone decorates one note by stepping above or below it and returning. Upper neighbors go up first and lower neighbors go down. Lower neighbors are often raised a half step, like F# around G, to make them lean back harder.",
+          "proof": "Three G, A, G figures, each with the A marked N.",
+          "pitfall": "Calling it a passing tone when the line returns to where it started.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Over C major, a line goes E, F, E. What is the F?",
+              "answer": "An upper neighbor",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Over C major, a line goes G, F#, G. What is the F#?",
+              "answer": "A lower neighbor",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Over a G chord in bar 2, how does the A in G, A, G differ from the A in G, A, B?",
+              "answer": "In G, A, G it's a neighbor that returns. In G, A, B it's a passing tone.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Suspensions",
+          "mastery": "Spot a suspension: a note held over from the last chord, clashing, then resolving down by step.",
+          "practice": "Write a 4-3 suspension over a G chord: hold C from the chord before, then fall to B.",
+          "detail": "A suspension has three parts. The preparation is a chord tone, the suspension is the same note held into a chord where it clashes, and the resolution steps down to a chord tone. The numbers, like 4-3 or 7-6, are the intervals above the bass before and after.",
+          "proof": "C held over the G chord as a 4th, then falling to B, the 3rd.",
+          "pitfall": "Resolving a suspension upward, which turns it into something else.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In a 4-3 suspension over G, which note is held?",
+              "answer": "C",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which way does a 7-6 suspension resolve?",
+              "answer": "Down by step.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name the 3 stages of a suspension.",
+              "answer": "Preparation, suspension, resolution.",
+              "answer_kind": "list"
+            }
+          ]
+        },
+        {
+          "title": "Appoggiaturas and Escape Tones",
+          "mastery": "Tell an appoggiatura, a leap in then a step out, from an escape tone, a step in then a leap out.",
+          "practice": "Write one appoggiatura and one escape tone over a C major chord in 4/4, and mark how each one enters and leaves.",
+          "detail": "Both are named by how they're approached and left. An appoggiatura leaps to a dissonance, usually on a strong beat, then steps to resolve, which gives it a sigh. An escape tone steps away from a chord tone, usually on a weak beat, then leaps off.",
+          "proof": "One leap-then-step figure marked A and one step-then-leap figure marked E.",
+          "pitfall": "Naming non-chord tones by sound alone without checking how they enter and leave.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Over C major, a line leaps from C up to F, then steps down to E. What is the F?",
+              "answer": "An appoggiatura",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which non-chord tone goes 'step in, leap out'?",
+              "answer": "An escape tone",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Does an appoggiatura more often fall on beat 1 or on the & of 1?",
+              "answer": "Beat 1. It's usually accented.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Label a Melody",
+          "mastery": "Label every non-chord tone in a short melody over given chords.",
+          "practice": "Label each non-chord tone in 4 bars of a Bach chorale melody with P, N, S, A or E.",
+          "detail": "Spell the chord under each beat first. Any melody note not in that chord is a non-chord tone. Then check how it enters and leaves to name it. Most melody notes in chorales turn out to be chord tones or passing tones.",
+          "proof": "Every non-chord tone in the 4 bars carries a letter.",
+          "pitfall": "Labeling a note without checking which chord sits under it at that moment.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Over C major, the line is C, D, E, F, G. Which notes are non-chord tones?",
+              "answer": "D and F",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Over F major, the line is A, Bb, A. What is the Bb?",
+              "answer": "An upper neighbor",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A line holds C from a C chord into a G chord, then falls to B. What is the C?",
+              "answer": "A suspension, a 4-3.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
     "mt.roman": {
       "model": "claude-opus-5-5",
       "verifier": "rules+authored",
@@ -111774,6 +115428,180 @@
         }
       ]
     },
+    "mt.singing": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Learn Solfege",
+          "mastery": "Give each degree of the major scale its solfege syllable, and sing them in tune.",
+          "practice": "Sing the C major scale on solfege up and down 3 times, then sing 'do mi sol do'.",
+          "detail": "Solfege gives each scale degree its own syllable, so you learn how it feels in the key rather than what letter it is. In movable do, do is always the tonic, whatever the key. That makes every major key feel the same to sing.",
+          "proof": "Three clean scales up and down, then the arpeggio in tune.",
+          "pitfall": "Using fixed do with letter names, which makes every key feel different.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which solfege syllable is the 5th degree?",
+              "answer": "Sol",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which syllable comes just below the top 'do'?",
+              "answer": "Ti",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In movable do, which syllable is A in A major, with its 3 sharps?",
+              "answer": "Do",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Sing Common Patterns",
+          "mastery": "Sing patterns like do-mi-sol and stepwise runs until they come without thinking.",
+          "practice": "Sing 'do mi sol mi do', then 'do re mi fa sol fa mi re do', 5 times each, from a given starting pitch.",
+          "detail": "Most melodies are built from scale steps and chord outlines. Drilling those few shapes means you'll recognize them on the page and sing them at once. Watch the half steps, mi to fa and ti to do, which singers tend to make too wide.",
+          "proof": "Both patterns sung 5 times, in tune and on the beat.",
+          "pitfall": "Singing mi to fa as a whole step, which drags the whole scale sharp.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which 3 syllables spell the tonic triad?",
+              "answer": "Do, mi, sol",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which pair is a half step in the major scale: 'mi-fa' or 're-mi'?",
+              "answer": "Mi-fa",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In major, what's the other half step besides 'mi' to 'fa'?",
+              "answer": "Ti to do.",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Keep the Pulse",
+          "mastery": "Keep a steady pulse while singing, even when a pitch goes wrong.",
+          "practice": "Sing 8 bars at sight with a metronome at 72, and keep going past any mistake.",
+          "detail": "Graders and listeners forgive a wrong note far more easily than a stop. Keep the beat going with your hand or foot, and if you miss a pitch, find the next one and carry on. Practice recovering on purpose, since stopping becomes a habit.",
+          "proof": "8 bars sung to the end with no stops.",
+          "pitfall": "Stopping to fix every wrong note, which wrecks the rhythm.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You miss a note in bar 3. Should you stop and fix it?",
+              "answer": "No. Keep the pulse and come back to it after.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why conduct or tap while sight-singing 8 bars?",
+              "answer": "It keeps the beat steady.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A metronome is at 60 and each beat is a quarter note. How long does one 4/4 bar take?",
+              "answer": "4 seconds",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Scan Before You Sing",
+          "mastery": "Take 30 seconds to scan the key, meter, range and hard leaps before singing.",
+          "practice": "Before singing a new 8-bar melody, spend 30 seconds naming its key, meter, highest note and biggest leap.",
+          "detail": "A quick scan prevents most mistakes. Find do from the key signature and the last note, set the tempo from the meter, and spot the leaps and tricky rhythms. Hum the hardest spot once in your head before you start.",
+          "proof": "Key, meter, top note and biggest leap named before the first note.",
+          "pitfall": "Starting to sing right away and finding the hard leap halfway through.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What 2 things should you check first in a new melody?",
+              "answer": "The key and the time signature.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A melody has 3 sharps and ends on A. Which note is 'do'?",
+              "answer": "A",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You spot an octave leap in bar 6 during your scan. How can you prepare for it?",
+              "answer": "Find the two notes and hear them in your head first.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Practice Like the Exam",
+          "mastery": "Practice in AP style: 75 seconds to look, then sing once and record it.",
+          "practice": "Record 3 sight-singing melodies with 75 seconds of practice each, then score yourself on pitch and rhythm.",
+          "detail": "Exam conditions feel different from practice, so rehearse them. Use the full prep time to scan and hum, then sing once with no restarts. Listening back shows mistakes you miss while singing, and scoring yourself shows which skill to drill.",
+          "proof": "3 recordings, each with a score for pitch and one for rhythm.",
+          "pitfall": "Practicing only with unlimited time and restarts.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "On the AP exam, how many seconds do you get to practice each sight-singing melody?",
+              "answer": "75",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why record your AP practice instead of just singing it?",
+              "answer": "You can hear pitch and rhythm mistakes you miss while singing.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You sing 4 of 8 bars right on pitch. What fraction of the bars is that?",
+              "answer": "1/2",
+              "answer_kind": "fraction"
+            }
+          ]
+        }
+      ]
+    },
     "mt.triads": {
       "model": "claude-opus-5-5",
       "verifier": "rules+authored",
@@ -111943,6 +115771,180 @@
               "prompt": "Name the chord D F# A C.",
               "answer": "D7",
               "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "mt.voice": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Ranges and Spacing",
+          "mastery": "Keep each of the 4 voices in range, with no more than an octave between neighboring upper voices.",
+          "practice": "Write a C major chord for SATB with the soprano on E5, then check each voice's range and spacing.",
+          "detail": "Rough ranges: soprano C4 to G5, alto G3 to C5, tenor C3 to G4 and bass E2 to C4. Soprano and alto, and alto and tenor, should stay within an octave of each other. The bass may sit further below the tenor. Voices shouldn't cross.",
+          "proof": "All 4 voices sit in range, and the upper pairs are within an octave.",
+          "pitfall": "Letting the tenor climb above the alto to fill a chord.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the usual top note for an SATB soprano: G5 or C6?",
+              "answer": "G5",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "The soprano is on E5 and the alto on C4. Is that spacing allowed?",
+              "answer": "No. They're more than an octave apart.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "The tenor and bass are 2 octaves apart. Is that allowed?",
+              "answer": "Yes. The bass may sit more than an octave below the tenor.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Double the Right Note",
+          "mastery": "Double the root of a root-position triad, and never double the leading tone.",
+          "practice": "Write V to I in C major in 4 parts with the root doubled in both chords.",
+          "detail": "Four voices and three chord notes means one note gets doubled. In root position, double the root. Never double the leading tone, because both copies want to rise to the tonic, which makes parallel octaves. In first inversion, doubling the soprano note is usually safe.",
+          "proof": "G B D G goes to C C E G, with no B doubled.",
+          "pitfall": "Doubling the leading tone to make a chord sound fuller.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In a root-position C major triad for SATB, which of its 3 notes is usually doubled?",
+              "answer": "C, the root.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In G major, why shouldn't you double F# in a D chord?",
+              "answer": "F# is the leading tone, and doubling it forces parallel octaves or a bad resolution.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In an I6 chord, which note is a safe one to double?",
+              "answer": "The soprano note, or any note except the leading tone.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Avoid Parallel 5ths and Octaves",
+          "mastery": "Find and fix parallel 5ths and octaves between any two voices.",
+          "practice": "Check every pair of voices in a 4-chord progression for parallel 5ths and octaves, and fix any you find.",
+          "detail": "When two voices a 5th or octave apart both move to another 5th or octave in the same direction, they stop sounding independent. Check all 6 pairs of voices at every chord change. Contrary motion, with the voices moving opposite ways, is the usual fix.",
+          "proof": "Every pair checked, with any parallels rewritten by contrary motion.",
+          "pitfall": "Checking only soprano and bass and missing parallels in the inner voices.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many pairs of voices do you check in SATB writing?",
+              "answer": "6",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "The soprano goes C5 to D5 while the bass goes F3 to G3. Is that a problem?",
+              "answer": "Yes. They move in parallel 5ths.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "The bass goes C3 to G2 and the tenor goes C4 to G3. What's wrong?",
+              "answer": "Parallel octaves.",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Move Smoothly",
+          "mastery": "Keep common tones in the same voice and move the other voices by the smallest step.",
+          "practice": "Connect C major to F major in 4 parts, keeping the shared C in the same voice.",
+          "detail": "Find the notes the two chords share and hold them still. Move every other upper voice to the nearest note of the next chord. Leave the leaps to the bass. Smooth upper voices are easy to sing and almost never make parallels.",
+          "proof": "C holds, E moves up to F and G moves up to A.",
+          "pitfall": "Moving all 4 voices in the same direction, which invites parallels.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "C major and A minor share how many of their 3 notes?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Going from C to G in C major, which of the 3 notes of C can stay in place?",
+              "answer": "G",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "The alto leaps from E4 up to C5 between two chords. What should you try instead?",
+              "answer": "Keep a common tone or move by step to a nearer note.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Resolve Tendency Tones",
+          "mastery": "Resolve the leading tone up to the tonic and the 7th of V7 down by step.",
+          "practice": "Write V7 to I in G major in four parts and show the leading tone rising and the 7th falling.",
+          "detail": "Tendency tones are the notes that pull hardest. The leading tone rises a half step to the tonic, and the chord 7th falls a step. If you resolve those two first, the rest of the chord falls into place. An inner-voice leading tone may drop to the 5th in some cases.",
+          "proof": "D F# A C goes to G G B D, with F# rising to G and C falling to B.",
+          "pitfall": "Resolving the 7th upward, which sounds wrong in a V7 to I.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In G major, which note of the V7 chord is its 7th?",
+              "answer": "C",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In that G major V7 to I, where does the C go?",
+              "answer": "Down to B.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In C major, a V7 with B in the soprano goes to I. Where does the B go?",
+              "answer": "Up to C.",
+              "answer_kind": "word"
             }
           ]
         }
