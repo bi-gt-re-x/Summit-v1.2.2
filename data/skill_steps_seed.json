@@ -5615,9 +5615,11 @@
               "weight": "warmup",
               "prompt": "Simplify \\(4^{2} \\times 4^{-1}\\).",
               "answer": "\\(4^{2 - 1} = 4^{1} = 4\\).",
-              "answer_kind": "expression",
+              "answer_kind": "integer",
               "grading": {
-                "form": "short"
+                "accept": [
+                  "4"
+                ]
               }
             },
             {
@@ -5625,9 +5627,11 @@
               "weight": "core",
               "prompt": "Simplify \\(10^{5} \\times 10^{-3}\\).",
               "answer": "\\(10^{5 - 3} = 10^{2} = 100\\).",
-              "answer_kind": "expression",
+              "answer_kind": "integer",
               "grading": {
-                "form": "short"
+                "accept": [
+                  "100"
+                ]
               }
             },
             {
@@ -5636,9 +5640,11 @@
               "prompt": "Simplify \\(2^{-2} \\times 2^{4} \\div 2^{1}\\).",
               "answer": "\\(2^{-2 + 4 - 1} = 2^{1} = 2\\).",
               "hint": "Combine all exponents: add the positive ones and subtract the negatives.",
-              "answer_kind": "expression",
+              "answer_kind": "integer",
               "grading": {
-                "form": "short"
+                "accept": [
+                  "2"
+                ]
               }
             }
           ]
@@ -26566,21 +26572,46 @@
               "weight": "warmup",
               "prompt": "Conjugate base of \\(\\mathrm{HNO_{3}}\\)?",
               "answer": "\\(\\mathrm{NO_{3}}^{-}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "NO3-",
+                  "NO3^-",
+                  "nitrate",
+                  "nitrate ion"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Conjugate acid of \\(\\mathrm{NH_{3}}\\)?",
               "answer": "\\(\\mathrm{NH_{4}}^{+}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "NH4+",
+                  "NH4^+",
+                  "ammonium",
+                  "ammonium ion"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "In \\(\\mathrm{HCl} + \\mathrm{H_{2}O}\\), which of the 2 reactants is the base?",
               "answer": "\\(\\mathrm{H_{2}O}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "HCl",
+                  "H2O"
+                ],
+                "accept": [
+                  "H2O"
+                ]
+              }
             }
           ]
         },
@@ -26605,7 +26636,12 @@
               "weight": "core",
               "prompt": "[H+] at pH 7?",
               "answer": "\\(10^{-7}\\) M.",
-              "answer_kind": "phrase"
+              "answer_kind": "expression",
+              "grading": {
+                "accept": [
+                  "10^-7"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -26630,7 +26666,13 @@
               "weight": "warmup",
               "prompt": "[H+] in 0.1 M acetic acid, roughly?",
               "answer": "\\(1.34 \\times 10^{-3}\\) M.",
-              "answer_kind": "phrase"
+              "answer_kind": "expression",
+              "grading": {
+                "accept": [
+                  "1.34*10^-3",
+                  "1.3*10^-3"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -26644,7 +26686,16 @@
               "weight": "stretch",
               "prompt": "Larger Ka of 2 acids means what?",
               "answer": "The stronger acid.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "keys": [
+                  [
+                    "stronger",
+                    "more",
+                    "dissociates"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -26692,9 +26743,14 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "pH when [A-] = [HA] and pKa = 7.2?",
-              "answer": "7.2.",
-              "answer_kind": "decimal"
+              "prompt": "pH when [A-] = 10[HA] and pKa = 7.2?",
+              "answer": "8.2, since pH = pKa + \\(\\log 10\\).",
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "8.2"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -26740,21 +26796,46 @@
               "weight": "warmup",
               "prompt": "Flame color of \\(\\mathrm{K}^{+}\\)?",
               "answer": "Lilac.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "lilac",
+                  "purple",
+                  "violet",
+                  "pink-purple",
+                  "light purple"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Precipitate color of \\(\\mathrm{AgCl}\\), from 1 drop of \\(\\mathrm{AgNO_{3}}\\)?",
               "answer": "White.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "white"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Test for \\(\\mathrm{SO_{4}}^{2-}\\) with 1 reagent?",
               "answer": "\\(\\mathrm{BaCl_{2}}\\), giving a white precipitate.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "BaCl2",
+                    "barium chloride",
+                    "Ba(NO3)2",
+                    "barium nitrate",
+                    "barium"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -26784,9 +26865,14 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "A pure substance on paper, run in 1 solvent, makes how many spots?",
-              "answer": "1.",
-              "answer_kind": "integer"
+              "prompt": "A pure substance run on chromatography paper in 'water' makes how many spots?",
+              "answer": "1. More than 1 spot means a mixture.",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "1"
+                ]
+              }
             }
           ]
         },
@@ -26804,21 +26890,46 @@
               "weight": "warmup",
               "prompt": "Peak near 1700 per cm suggests which bond?",
               "answer": "C=O.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "C=O",
+                  "carbonyl",
+                  "C=O bond",
+                  "a carbonyl"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Broad peak near 3300 per cm?",
               "answer": "O-H.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "O-H",
+                  "OH",
+                  "hydroxyl",
+                  "alcohol",
+                  "O-H bond"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Molecular ion at \\(\\frac{m}{z} = 46\\) in mass spec, with 1 O. Candidate?",
               "answer": "Ethanol, \\(\\mathrm{C_{2}H_{5}OH}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "Ethanol",
+                  "C2H5OH",
+                  "dimethyl ether",
+                  "CH3OCH3"
+                ]
+              }
             }
           ]
         },
@@ -26850,7 +26961,17 @@
               "weight": "stretch",
               "prompt": "Doubling the path length to 2 cm does what to A?",
               "answer": "Doubles it.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "doubles it",
+                  "doubles",
+                  "double",
+                  "twice",
+                  "2 times",
+                  "doubled"
+                ]
+              }
             }
           ]
         },
@@ -26868,21 +26989,51 @@
               "weight": "warmup",
               "prompt": "\\(\\mathrm{C_{2}H_{4}O_{2}}\\) with acid pH 3 and C=O. Name?",
               "answer": "Ethanoic acid.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "ethanoic acid",
+                  "acetic acid",
+                  "CH3COOH"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "\\(\\mathrm{C_{2}H_{6}O}\\) with an O-H peak and no C=O. Name?",
               "answer": "Ethanol.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "ethanol",
+                  "C2H5OH"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why use 3 methods instead of 1?",
               "answer": "They check each other and rule out lookalikes.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "check",
+                    "confirm",
+                    "cross-check",
+                    "verify",
+                    "lookalike",
+                    "rule out",
+                    "agree",
+                    "same answer",
+                    "each other",
+                    "mistake",
+                    "error"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -26912,9 +27063,14 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Protons in oxygen, atomic number 8?",
-              "answer": "8.",
-              "answer_kind": "integer"
+              "prompt": "How many neutrons are in oxygen-18, atomic number 8?",
+              "answer": "10, since \\(18 - 8 = 10\\).",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "10"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -26926,9 +27082,14 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Electrons in a neutral Mg atom, atomic number 12?",
-              "answer": "12.",
-              "answer_kind": "integer"
+              "prompt": "How many electrons are in a \\(\\mathrm{Cl}^{-}\\) ion, atomic number 17?",
+              "answer": "18, since the ion has 1 more electron than protons.",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "18"
+                ]
+              }
             }
           ]
         },
@@ -26992,7 +27153,22 @@
               "weight": "stretch",
               "prompt": "Why is Cl listed as 35.5 and not 36?",
               "answer": "Cl-35 is 3 times more common than Cl-37.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "35",
+                    "cl-35"
+                  ],
+                  [
+                    "common",
+                    "abundant",
+                    "3 times",
+                    "75%",
+                    "more of"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -27017,14 +27193,32 @@
               "weight": "core",
               "prompt": "An atom with 16 protons and 18 electrons. Charge?",
               "answer": "2-.",
-              "answer_kind": "expression"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "2-",
+                  "-2",
+                  "2 minus",
+                  "minus 2",
+                  "negative 2"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Does Na lose or gain 1 electron to form \\(\\mathrm{Na}^{+}\\)?",
               "answer": "Lose.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Lose",
+                  "Gain"
+                ],
+                "accept": [
+                  "Lose"
+                ]
+              }
             }
           ]
         },
@@ -27042,21 +27236,52 @@
               "weight": "warmup",
               "prompt": "Who discovered the electron in 1897?",
               "answer": "J. J. Thomson.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "J. J. Thomson",
+                  "Thomson",
+                  "JJ Thomson",
+                  "J.J. Thomson"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "What did most alpha particles do in the Rutherford gold foil test?",
               "answer": "Passed straight through.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "keys": [
+                  [
+                    "straight through",
+                    "through",
+                    "passed",
+                    "went through",
+                    "undeflected",
+                    "weren't deflected"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "What did Bohr add to the model in 1913?",
               "answer": "Electrons in fixed energy levels.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "energy levels",
+                    "levels",
+                    "shells",
+                    "orbits",
+                    "fixed"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -27095,7 +27320,12 @@
               "weight": "core",
               "prompt": "Formula of the compound of \\(\\mathrm{Mg}^{2+}\\) and \\(\\mathrm{Cl}^{-}\\)?",
               "answer": "\\(\\mathrm{MgCl_{2}}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "MgCl2"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -27134,7 +27364,14 @@
               "weight": "stretch",
               "prompt": "Bonds between C and each O in \\(\\mathrm{CO_{2}}\\)?",
               "answer": "A double bond each.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "double"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -27152,21 +27389,52 @@
               "weight": "warmup",
               "prompt": "What carries current in a 1 m copper wire?",
               "answer": "Free electrons.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "free electrons",
+                  "electrons",
+                  "delocalized electrons",
+                  "sea of electrons",
+                  "mobile electrons",
+                  "delocalised electrons"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why can Al be hammered into foil 0.02 mm thick?",
               "answer": "Layers of ions slide over each other.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "layers",
+                    "rows",
+                    "slide",
+                    "slip",
+                    "delocalized",
+                    "sea"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Stronger metallic bond, Na with 1 outer electron or Mg with 2?",
               "answer": "Mg.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Na",
+                  "Mg"
+                ],
+                "accept": [
+                  "Mg"
+                ]
+              }
             }
           ]
         },
@@ -27184,7 +27452,13 @@
               "weight": "warmup",
               "prompt": "Most electronegative element in all 118?",
               "answer": "F.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "F",
+                  "fluorine"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -27198,7 +27472,16 @@
               "weight": "stretch",
               "prompt": "Is a C-H bond with a difference of 0.4 polar or nearly nonpolar?",
               "answer": "Nearly nonpolar.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Polar",
+                  "Nearly nonpolar"
+                ],
+                "accept": [
+                  "Nearly nonpolar"
+                ]
+              }
             }
           ]
         },
@@ -27216,7 +27499,21 @@
               "weight": "warmup",
               "prompt": "Why does \\(\\mathrm{CH_{4}}\\) boil at -162 degrees C?",
               "answer": "Weak forces between molecules.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "weak"
+                  ],
+                  [
+                    "molecule",
+                    "intermolecular",
+                    "london",
+                    "dispersion",
+                    "van der waals"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -27262,21 +27559,50 @@
               "weight": "warmup",
               "prompt": "Anode in a Zn/Cu cell?",
               "answer": "Zn.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "Zn",
+                  "zinc",
+                  "the zinc"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Electron flow in the Zn/Cu cell, which way?",
               "answer": "From Zn to Cu.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "from Zn to Cu",
+                  "Zn to Cu",
+                  "zinc to copper",
+                  "from zinc to copper",
+                  "Zn → Cu"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Job of the salt bridge filled with \\(\\mathrm{KNO_{3}}\\)?",
               "answer": "Let ions flow to keep charges balanced.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "ion",
+                    "ions",
+                    "charge",
+                    "balance",
+                    "neutral",
+                    "complete the circuit",
+                    "circuit"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -27308,7 +27634,15 @@
               "weight": "stretch",
               "prompt": "Reference electrode at 0.00 V?",
               "answer": "The standard hydrogen electrode.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "standard hydrogen electrode",
+                  "hydrogen electrode",
+                  "SHE",
+                  "the standard hydrogen electrode"
+                ]
+              }
             }
           ]
         },
@@ -27326,21 +27660,40 @@
               "weight": "warmup",
               "prompt": "delta G for \\(n = 1\\), \\(E = 1.00\\) V?",
               "answer": "About -96.5 kJ/mol.",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "-96.5"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Sign of delta G when \\(E = + 0.5\\) V?",
               "answer": "Negative.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Positive",
+                  "Negative"
+                ],
+                "accept": [
+                  "Negative"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Value of F to 3 figures?",
               "answer": "96,500 C/mol.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "96500"
+                ]
+              }
             }
           ]
         },
@@ -27358,21 +27711,39 @@
               "weight": "warmup",
               "prompt": "Product at the cathode for molten \\(\\mathrm{PbBr_{2}}\\)?",
               "answer": "Pb.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "Pb",
+                  "lead"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Product at the anode for molten \\(\\mathrm{NaCl}\\)?",
               "answer": "\\(\\mathrm{Cl_{2}}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "Cl2",
+                  "chlorine"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Gas at the cathode for dilute \\(\\mathrm{H_{2}SO_{4}}\\)?",
               "answer": "\\(\\mathrm{H_{2}}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "H2",
+                  "hydrogen"
+                ]
+              }
             }
           ]
         },
@@ -27402,9 +27773,14 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Moles of Ag from 0.1 mol e-, \\(\\mathrm{Ag}^{+} + e^{-} \\to \\mathrm{Ag}\\)?",
-              "answer": "0.1.",
-              "answer_kind": "decimal"
+              "prompt": "Moles of Cu from 0.1 mol of electrons, in \\(\\mathrm{Cu}^{2+} + 2e^{-} \\to \\mathrm{Cu}\\)?",
+              "answer": "0.05, since each Cu needs 2 electrons.",
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "0.05"
+                ]
+              }
             }
           ]
         }
@@ -27468,7 +27844,13 @@
               "weight": "warmup",
               "prompt": "Configuration of O, 8 electrons?",
               "answer": "1s2 2s2 2p4.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "1s2 2s2 2p4",
+                  "1s^2 2s^2 2p^4"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -27539,14 +27921,30 @@
               "weight": "core",
               "prompt": "Likely ion of Ca, group 2?",
               "answer": "\\(\\mathrm{Ca}^{2+}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "Ca2+",
+                  "Ca^2+",
+                  "Ca++",
+                  "Ca 2+"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Likely ion of F, group 17?",
               "answer": "\\(\\mathrm{F}^{-}\\).",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "F-",
+                  "F^-",
+                  "fluoride",
+                  "fluoride ion"
+                ]
+              }
             }
           ]
         },
@@ -27571,14 +27969,38 @@
               "weight": "core",
               "prompt": "Configuration of Cu, 29 electrons?",
               "answer": "[Ar]4s1 3d10.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "[Ar]4s1 3d10",
+                  "[Ar] 3d10 4s1",
+                  "[Ar]3d10 4s1",
+                  "[Ar] 4s1 3d10",
+                  "1s2 2s2 2p6 3s2 3p6 4s1 3d10",
+                  "[Ar]4s^1 3d^10",
+                  "[Ar]3d^10 4s^1"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why is \\(\\mathrm{Fe}^{3+}\\) with 3d5 fairly stable?",
               "answer": "The 5 d orbitals are each half full.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "half",
+                    "half-full",
+                    "half full",
+                    "half-filled",
+                    "5 unpaired",
+                    "one each",
+                    "1 each"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -27610,21 +28032,48 @@
               "weight": "warmup",
               "prompt": "\\(\\Delta H = - 890\\) kJ/mol. Exo or endo?",
               "answer": "Exothermic.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Exothermic",
+                  "Endothermic"
+                ],
+                "accept": [
+                  "Exothermic"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A cold pack gets to 2 degrees C. Exo or endo?",
               "answer": "Endothermic.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Exothermic",
+                  "Endothermic"
+                ],
+                "accept": [
+                  "Endothermic"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Is photosynthesis, which stores 2800 kJ per glucose, exo or endo?",
               "answer": "Endothermic.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Exothermic",
+                  "Endothermic"
+                ],
+                "accept": [
+                  "Endothermic"
+                ]
+              }
             }
           ]
         },
@@ -27681,7 +28130,12 @@
               "weight": "core",
               "prompt": "2.09 kJ from 0.05 mol. Delta H per mol for an exo reaction?",
               "answer": "-41.8 kJ/mol.",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "-41.8"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -27736,8 +28190,8 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Reverse a reaction with \\(\\Delta H = - 283\\). New delta H?",
-              "answer": "+283 kJ.",
+              "prompt": "A reaction has \\(\\Delta H = - 283\\) kJ. What is \\(\\Delta H\\) for twice that reaction, run in reverse?",
+              "answer": "+566 kJ. Reversing flips the sign and doubling doubles the size.",
               "answer_kind": "integer"
             },
             {
@@ -27784,7 +28238,16 @@
               "weight": "warmup",
               "prompt": "At equilibrium in \\(\\mathrm{N_{2}} + 3\\mathrm{H_{2}} \\rightleftharpoons 2\\mathrm{NH_{3}}\\), are concentrations equal or constant?",
               "answer": "Constant.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Equal",
+                  "Constant"
+                ],
+                "accept": [
+                  "Constant"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -27796,9 +28259,19 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Forward rate 5 units at equilibrium. Reverse rate?",
-              "answer": "5 units.",
-              "answer_kind": "integer"
+              "prompt": "At equilibrium the forward rate is 5 units. Is the reverse rate bigger, smaller or the same?",
+              "answer": "The same, 5 units. Equal rates are what equilibrium means.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Bigger",
+                  "Smaller",
+                  "The same"
+                ],
+                "accept": [
+                  "The same"
+                ]
+              }
             }
           ]
         },
@@ -27816,14 +28289,37 @@
               "weight": "warmup",
               "prompt": "K for \\(\\mathrm{H_{2}} + \\mathrm{I_{2}} \\rightleftharpoons 2\\mathrm{HI}\\)?",
               "answer": "\\(\\frac{[\\mathrm{HI}]^{2}}{[\\mathrm{H}_{2}][\\mathrm{I}_{2}]}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "[HI]^2",
+                    "HI^2",
+                    "[hi]^2"
+                  ],
+                  [
+                    "[H2][I2]",
+                    "H2 I2",
+                    "[h2][i2]"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "\\(K = 1000\\). Mostly products or reactants?",
               "answer": "Products.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Products",
+                  "Reactants"
+                ],
+                "accept": [
+                  "Products"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -27848,21 +28344,49 @@
               "weight": "warmup",
               "prompt": "Add more \\(\\mathrm{H_{2}}\\). Which way?",
               "answer": "Right.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Left",
+                  "Right"
+                ],
+                "accept": [
+                  "Right"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Raise temperature on an exothermic reaction with \\(\\Delta H = - 50\\) kJ. Which way?",
               "answer": "Left.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Left",
+                  "Right"
+                ],
+                "accept": [
+                  "Left"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Raise pressure on \\(\\mathrm{H_{2}} + \\mathrm{I_{2}} \\rightleftharpoons 2\\mathrm{HI}\\). Which way?",
               "answer": "No shift, 2 gas moles each side.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Left",
+                  "Right",
+                  "No shift"
+                ],
+                "accept": [
+                  "No shift"
+                ]
+              }
             }
           ]
         },
@@ -27912,21 +28436,51 @@
               "weight": "warmup",
               "prompt": "\\(Q = 2\\), \\(K = 10\\). Direction?",
               "answer": "Forward, to the right.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Forward",
+                  "Reverse",
+                  "None"
+                ],
+                "accept": [
+                  "Forward"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "\\(Q = 10\\), \\(K = 10\\). Direction?",
               "answer": "None, it is at equilibrium.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Forward",
+                  "Reverse",
+                  "None"
+                ],
+                "accept": [
+                  "None"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "\\(Q = 50\\), \\(K = 5\\). Direction?",
               "answer": "Reverse, to the left.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Forward",
+                  "Reverse",
+                  "None"
+                ],
+                "accept": [
+                  "Reverse"
+                ]
+              }
             }
           ]
         }
@@ -27958,21 +28512,36 @@
               "weight": "warmup",
               "prompt": "Formula of magnesium chloride, from \\(\\mathrm{Mg}^{2+}\\) and \\(\\mathrm{Cl}^{-}\\)?",
               "answer": "\\(\\mathrm{MgCl_{2}}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "MgCl2"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Formula of iron(III) oxide?",
               "answer": "\\(\\mathrm{Fe_{2}O_{3}}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "Fe2O3"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Formula of ammonium sulfate, from \\(\\mathrm{NH_{4}}^{+}\\) and \\(\\mathrm{SO_{4}}^{2-}\\)?",
               "answer": "(NH4)2SO4.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "(NH4)2SO4"
+                ]
+              }
             }
           ]
         },
@@ -27990,21 +28559,40 @@
               "weight": "warmup",
               "prompt": "Name of \\(\\mathrm{SO_{3}}\\)?",
               "answer": "Sulfur trioxide.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "sulfur trioxide",
+                  "sulphur trioxide"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name of \\(\\mathrm{CuCl}\\), with \\(\\mathrm{Cu}^{+}\\)?",
               "answer": "Copper(I) chloride.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "copper(I) chloride",
+                  "copper (I) chloride",
+                  "cuprous chloride",
+                  "copper(1) chloride"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name of \\(\\mathrm{Na_{2}CO_{3}}\\)?",
               "answer": "Sodium carbonate.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "sodium carbonate"
+                ]
+              }
             }
           ]
         },
@@ -28022,21 +28610,61 @@
               "weight": "warmup",
               "prompt": "Balance \\(\\mathrm{N_{2}} + \\mathrm{H_{2}} \\to \\mathrm{NH_{3}}\\).",
               "answer": "\\(\\mathrm{N_{2}} + 3\\mathrm{H_{2}} \\to 2\\mathrm{NH_{3}}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "3H2",
+                    "3 H2"
+                  ],
+                  [
+                    "2NH3",
+                    "2 NH3"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Balance \\(\\mathrm{Na} + \\mathrm{Cl_{2}} \\to \\mathrm{NaCl}\\).",
               "answer": "2Na + \\(\\mathrm{Cl_{2}} \\to 2\\mathrm{NaCl}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "2Na",
+                    "2 Na"
+                  ],
+                  [
+                    "2NaCl",
+                    "2 NaCl"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Balance \\(\\mathrm{C_{3}H_{8}} + \\mathrm{O_{2}} \\to \\mathrm{CO_{2}} + \\mathrm{H_{2}O}\\).",
               "answer": "\\(\\mathrm{C_{3}H_{8}} + 5\\mathrm{O_{2}} \\to 3\\mathrm{CO_{2}} + 4\\mathrm{H_{2}O}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "5O2",
+                    "5 O2"
+                  ],
+                  [
+                    "3CO2",
+                    "3 CO2"
+                  ],
+                  [
+                    "4H2O",
+                    "4 H2O"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -28054,21 +28682,58 @@
               "weight": "warmup",
               "prompt": "Net ionic equation for \\(\\mathrm{HCl} + \\mathrm{NaOH}\\)?",
               "answer": "\\(\\mathrm{H}^{+} + \\mathrm{OH}^{-} \\to \\mathrm{H_{2}O}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "H+"
+                  ],
+                  [
+                    "OH-"
+                  ],
+                  [
+                    "H2O"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Spectator ions in \\(\\mathrm{AgNO_{3}} + \\mathrm{NaCl}\\)?",
               "answer": "\\(\\mathrm{Na}^{+}\\) and \\(\\mathrm{NO_{3}}^{-}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "Na+"
+                  ],
+                  [
+                    "NO3-"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Net ionic equation when \\(\\mathrm{Ba}^{2+}\\) meets \\(\\mathrm{SO_{4}}^{2-}\\) in water?",
               "answer": "\\(\\mathrm{Ba}^{2+} + \\mathrm{SO_{4}}^{2-} \\to \\mathrm{BaSO_{4}}(s)\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "Ba2+"
+                  ],
+                  [
+                    "SO42-",
+                    "SO4 2-"
+                  ],
+                  [
+                    "BaSO4"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -28086,7 +28751,12 @@
               "weight": "warmup",
               "prompt": "Empirical formula of \\(\\mathrm{C_{2}H_{6}}\\)?",
               "answer": "\\(\\mathrm{CH_{3}}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "CH3"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -28100,7 +28770,14 @@
               "weight": "stretch",
               "prompt": "Mole ratio 1 : 1.5 becomes what whole ratio?",
               "answer": "2 : 3.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "2 : 3",
+                  "2:3",
+                  "2 to 3"
+                ]
+              }
             }
           ]
         }
@@ -28132,21 +28809,53 @@
               "weight": "warmup",
               "prompt": "What does a GHS skull symbol on 1 bottle mean?",
               "answer": "Acutely toxic.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "acutely toxic",
+                  "toxic",
+                  "poison",
+                  "poisonous",
+                  "very toxic",
+                  "deadly"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Add acid to water or water to acid, for 1 M \\(\\mathrm{H_{2}SO_{4}}\\)?",
               "answer": "Acid to water.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Acid to water",
+                  "Water to acid"
+                ],
+                "accept": [
+                  "Acid to water"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "First step after 2 drops of acid on skin?",
               "answer": "Rinse with lots of water.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "rinse",
+                    "wash",
+                    "run",
+                    "flush"
+                  ],
+                  [
+                    "water"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -28164,14 +28873,28 @@
               "weight": "warmup",
               "prompt": "Uncertainty of a 50 mL burette reading?",
               "answer": "About 0.05 mL.",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "0.05"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Better for 25.00 mL: pipette or 100 mL cylinder?",
               "answer": "Pipette.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Pipette",
+                  "Cylinder"
+                ],
+                "accept": [
+                  "Pipette"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -28210,7 +28933,16 @@
               "weight": "stretch",
               "prompt": "Indicator for strong acid with strong base, 1 example?",
               "answer": "Phenolphthalein.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "phenolphthalein",
+                  "methyl orange",
+                  "bromothymol blue",
+                  "litmus",
+                  "universal indicator"
+                ]
+              }
             }
           ]
         },
@@ -28228,21 +28960,41 @@
               "weight": "warmup",
               "prompt": "Method to separate inks in 1 drop?",
               "answer": "Chromatography.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "chromatography",
+                  "paper chromatography"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Boiling points 78 and 100 degrees C. Method?",
               "answer": "Fractional distillation.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "fractional distillation",
+                  "distillation"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Melting point of a pure solid over a 1 degree range means what?",
               "answer": "It is pure.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "it is pure",
+                  "pure",
+                  "it's pure",
+                  "pure substance"
+                ]
+              }
             }
           ]
         },
@@ -28267,7 +29019,16 @@
               "weight": "core",
               "prompt": "A balance reads 0.02 g high every time. Random or systematic?",
               "answer": "Systematic.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Random",
+                  "Systematic"
+                ],
+                "accept": [
+                  "Systematic"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -28306,14 +29067,34 @@
               "weight": "warmup",
               "prompt": "Which of the 3 states has a fixed shape?",
               "answer": "Solid.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Solid",
+                  "Liquid",
+                  "Gas"
+                ],
+                "accept": [
+                  "Solid"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Which of the 3 states fills its whole container?",
               "answer": "Gas.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Solid",
+                  "Liquid",
+                  "Gas"
+                ],
+                "accept": [
+                  "Gas"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -28338,21 +29119,42 @@
               "weight": "warmup",
               "prompt": "Ice at 0 degrees C turning to water is called what?",
               "answer": "Melting.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "melting",
+                  "fusion",
+                  "it melts"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Dry ice, solid \\(\\mathrm{CO_{2}}\\), turning straight to gas is called what?",
               "answer": "Sublimation.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "sublimation",
+                  "subliming",
+                  "it sublimes"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Water drops forming on a cold can at 5 degrees C?",
               "answer": "Condensation.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "condensation",
+                  "condensing",
+                  "it condenses"
+                ]
+              }
             }
           ]
         },
@@ -28377,14 +29179,35 @@
               "weight": "core",
               "prompt": "Why is the line flat at 0 degrees C?",
               "answer": "Energy is melting the ice, not raising its temperature.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "melting",
+                    "melt",
+                    "changing state",
+                    "phase change",
+                    "breaking",
+                    "state change"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Which flat part is longer for water, at 0 or at 100 degrees C?",
               "answer": "At 100, since boiling needs more energy.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "At 0",
+                  "At 100"
+                ],
+                "accept": [
+                  "At 100"
+                ]
+              }
             }
           ]
         },
@@ -28402,21 +29225,48 @@
               "weight": "warmup",
               "prompt": "Does a pressure cooker at 2 atm raise or lower the boiling point?",
               "answer": "Raise.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Raise",
+                  "Lower"
+                ],
+                "accept": [
+                  "Raise"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Water boils at 70 degrees C on Everest. Is the air pressure higher or lower there?",
               "answer": "Lower.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Higher",
+                  "Lower"
+                ],
+                "accept": [
+                  "Lower"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Will pasta cook faster or slower at 5000 m altitude?",
               "answer": "Slower.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Faster",
+                  "Slower"
+                ],
+                "accept": [
+                  "Slower"
+                ]
+              }
             }
           ]
         },
@@ -28441,7 +29291,18 @@
               "weight": "core",
               "prompt": "Gas heated from 300 K to 600 K at fixed volume. Pressure change?",
               "answer": "It doubles.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "it doubles",
+                  "doubles",
+                  "double",
+                  "twice",
+                  "2 times",
+                  "×2",
+                  "doubled"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -28590,7 +29451,12 @@
               "weight": "stretch",
               "prompt": "Molar volume at 0 degrees C and 1 atm?",
               "answer": "About 22.4 L.",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "22.4"
+                ]
+              }
             }
           ]
         },
@@ -28654,7 +29520,13 @@
               "weight": "warmup",
               "prompt": "Name of \\(\\mathrm{C_{4}H_{10}}\\), straight chain?",
               "answer": "Butane.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "butane",
+                  "n-butane"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -28668,7 +29540,12 @@
               "weight": "stretch",
               "prompt": "Formula of hexane, with 6 carbons?",
               "answer": "\\(\\mathrm{C_{6}H_{14}}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "C6H14"
+                ]
+              }
             }
           ]
         },
@@ -28686,21 +29563,54 @@
               "weight": "warmup",
               "prompt": "Group in \\(\\mathrm{CH_{3}COCH_{3}}\\)?",
               "answer": "Ketone.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Alcohol",
+                  "Ketone",
+                  "Ester",
+                  "Aldehyde"
+                ],
+                "accept": [
+                  "Ketone"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Group in \\(\\mathrm{C_{2}H_{5}OH}\\)?",
               "answer": "Alcohol.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Alcohol",
+                  "Ketone",
+                  "Ester",
+                  "Aldehyde"
+                ],
+                "accept": [
+                  "Alcohol"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Group in \\(\\mathrm{CH_{3}COOCH_{3}}\\)?",
               "answer": "Ester.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Alcohol",
+                  "Ketone",
+                  "Ester",
+                  "Aldehyde"
+                ],
+                "accept": [
+                  "Ester"
+                ]
+              }
             }
           ]
         },
@@ -28750,21 +29660,50 @@
               "weight": "warmup",
               "prompt": "Test for C=C using \\(\\mathrm{Br_{2}}\\) water?",
               "answer": "Orange color disappears.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "keys": [
+                  [
+                    "disappear",
+                    "decolor",
+                    "decolour",
+                    "colorless",
+                    "colourless",
+                    "clear",
+                    "goes clear",
+                    "fades",
+                    "loses its color",
+                    "loses color"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Product of ethene + \\(\\mathrm{H_{2}O}\\) with a catalyst?",
               "answer": "Ethanol.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "ethanol",
+                  "C2H5OH",
+                  "ethyl alcohol"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Byproduct of an ester forming from 1 acid and 1 alcohol?",
               "answer": "Water.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "water",
+                  "H2O"
+                ]
+              }
             }
           ]
         },
@@ -28780,23 +29719,47 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Monomer of poly(propene)?",
-              "answer": "Propene, \\(\\mathrm{C_{3}H_{6}}\\).",
-              "answer_kind": "phrase"
+              "prompt": "Monomer of 'polystyrene'?",
+              "answer": "Styrene, also called phenylethene, \\(\\mathrm{C_{8}H_{8}}\\).",
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "styrene",
+                  "phenylethene",
+                  "ethenylbenzene",
+                  "vinylbenzene",
+                  "C8H8"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Byproduct of making nylon-6,6?",
               "answer": "Water.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "water",
+                  "H2O"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Is poly(ethene) an addition or condensation polymer?",
               "answer": "Addition.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Addition",
+                  "Condensation"
+                ],
+                "accept": [
+                  "Addition"
+                ]
+              }
             }
           ]
         }
@@ -28842,7 +29805,14 @@
               "weight": "stretch",
               "prompt": "Elements in group 18 are called what?",
               "answer": "Noble gases.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "noble gases",
+                  "noble gas",
+                  "inert gases"
+                ]
+              }
             }
           ]
         },
@@ -28860,21 +29830,48 @@
               "weight": "warmup",
               "prompt": "Is S, atomic number 16, a metal or nonmetal?",
               "answer": "Nonmetal.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Metal",
+                  "Nonmetal",
+                  "Metalloid"
+                ],
+                "accept": [
+                  "Nonmetal"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 metalloid used in computer chips.",
               "answer": "Si, silicon.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "Si",
+                  "silicon",
+                  "germanium",
+                  "Ge"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Do metals tend to lose or gain electrons in group 1?",
               "answer": "Lose.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Lose",
+                  "Gain"
+                ],
+                "accept": [
+                  "Lose"
+                ]
+              }
             }
           ]
         },
@@ -28892,21 +29889,48 @@
               "weight": "warmup",
               "prompt": "Larger atom in group 17, F or I?",
               "answer": "I.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "F",
+                  "I"
+                ],
+                "accept": [
+                  "I"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Larger atom, Na or Cl in period 3?",
               "answer": "Na.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Na",
+                  "Cl"
+                ],
+                "accept": [
+                  "Na"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Is \\(\\mathrm{Na}^{+}\\) bigger or smaller than Na?",
               "answer": "Smaller.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Bigger",
+                  "Smaller"
+                ],
+                "accept": [
+                  "Smaller"
+                ]
+              }
             }
           ]
         },
@@ -28924,21 +29948,49 @@
               "weight": "warmup",
               "prompt": "Higher first ionization energy in group 1, Li or Cs?",
               "answer": "Li.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Li",
+                  "Cs"
+                ],
+                "accept": [
+                  "Li"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Higher, Mg or Cl in period 3?",
               "answer": "Cl.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Mg",
+                  "Cl"
+                ],
+                "accept": [
+                  "Cl"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Which group has the highest values in each period, out of 18?",
-              "answer": "Group 18.",
-              "answer_kind": "integer"
+              "prompt": "Which group's atoms hold their outer electrons most tightly across a period: group 1, 17 or 18?",
+              "answer": "Group 18, the noble gases, with full outer shells.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Group 1",
+                  "Group 17",
+                  "Group 18"
+                ],
+                "accept": [
+                  "Group 18"
+                ]
+              }
             }
           ]
         },
@@ -28956,14 +30008,34 @@
               "weight": "warmup",
               "prompt": "Most reactive of the group 1 metals Na, K, Rb?",
               "answer": "Rb.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Na",
+                  "K",
+                  "Rb"
+                ],
+                "accept": [
+                  "Rb"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Most reactive of \\(\\mathrm{Cl_{2}}\\), \\(\\mathrm{Br_{2}}\\), \\(\\mathrm{I_{2}}\\)?",
               "answer": "\\(\\mathrm{Cl_{2}}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Cl2",
+                  "Br2",
+                  "I2"
+                ],
+                "accept": [
+                  "Cl2"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -29002,7 +30074,12 @@
               "weight": "warmup",
               "prompt": "Mass falls 1.2 g in 60 s. Average rate?",
               "answer": "0.02 g/s.",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "0.02"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -29034,21 +30111,48 @@
               "weight": "warmup",
               "prompt": "Does powder or a 2 cm lump of \\(\\mathrm{CaCO_{3}}\\) react faster with acid?",
               "answer": "Powder.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Powder",
+                  "The lump"
+                ],
+                "accept": [
+                  "Powder"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Ea is 80 kJ without a catalyst. Does a catalyst make it higher or lower?",
               "answer": "Lower.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Higher",
+                  "Lower"
+                ],
+                "accept": [
+                  "Lower"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Doubling the concentration of 1 reactant, usually raises or lowers the rate?",
               "answer": "Raises.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Raises",
+                  "Lowers"
+                ],
+                "accept": [
+                  "Raises"
+                ]
+              }
             }
           ]
         },
@@ -29080,7 +30184,16 @@
               "weight": "stretch",
               "prompt": "Where does the peak move at higher temperature, out of 2 directions?",
               "answer": "Right and lower.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "right and lower",
+                  "right and down",
+                  "to the right and lower",
+                  "lower and to the right",
+                  "right and flatter"
+                ]
+              }
             }
           ]
         },
@@ -29128,9 +30241,19 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Mass of 0.5 g \\(\\mathrm{MnO_{2}}\\) catalyst after the reaction?",
-              "answer": "0.5 g.",
-              "answer_kind": "decimal"
+              "prompt": "After the reaction, is there more, less or the same 0.5 g of \\(\\mathrm{MnO_{2}}\\) catalyst?",
+              "answer": "The same 0.5 g. A catalyst isn't used up.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "More",
+                  "Less",
+                  "The same"
+                ],
+                "accept": [
+                  "The same"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -29144,7 +30267,13 @@
               "weight": "stretch",
               "prompt": "Enzymes in the body are catalysts made of what, out of 4 molecule types?",
               "answer": "Proteins.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "proteins",
+                  "protein"
+                ]
+              }
             }
           ]
         }
@@ -29176,21 +30305,55 @@
               "weight": "warmup",
               "prompt": "\\(2\\mathrm{H_{2}O_{2}} \\to 2\\mathrm{H_{2}O} + \\mathrm{O_{2}}\\) is which type?",
               "answer": "Decomposition.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Synthesis",
+                  "Decomposition",
+                  "Combustion",
+                  "Single replacement",
+                  "Double replacement"
+                ],
+                "accept": [
+                  "Decomposition"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "\\(\\mathrm{N_{2}} + 3\\mathrm{H_{2}} \\to 2\\mathrm{NH_{3}}\\) is which type?",
               "answer": "Synthesis.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Synthesis",
+                  "Decomposition",
+                  "Combustion",
+                  "Single replacement",
+                  "Double replacement"
+                ],
+                "accept": [
+                  "Synthesis"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Products of heating \\(\\mathrm{CaCO_{3}}\\)?",
               "answer": "\\(\\mathrm{CaO}\\) and \\(\\mathrm{CO_{2}}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "CaO"
+                  ],
+                  [
+                    "CO2"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -29222,7 +30385,17 @@
               "weight": "stretch",
               "prompt": "Products of \\(\\mathrm{Mg} + 2\\mathrm{HCl}\\)?",
               "answer": "\\(\\mathrm{MgCl_{2}}\\) and \\(\\mathrm{H_{2}}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "MgCl2"
+                  ],
+                  [
+                    "H2"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -29240,21 +30413,46 @@
               "weight": "warmup",
               "prompt": "Products of \\(\\mathrm{AgNO_{3}} + \\mathrm{KBr}\\)?",
               "answer": "\\(\\mathrm{AgBr}\\) and \\(\\mathrm{KNO_{3}}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "AgBr"
+                  ],
+                  [
+                    "KNO3"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Driving force in \\(\\mathrm{HCl} + \\mathrm{NaOH}\\)?",
               "answer": "Water forms.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "water forms",
+                  "water",
+                  "forming water",
+                  "H2O",
+                  "water is made"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Gas from \\(\\mathrm{Na_{2}CO_{3}} + 2\\mathrm{HCl}\\)?",
               "answer": "\\(\\mathrm{CO_{2}}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "CO2",
+                  "carbon dioxide"
+                ]
+              }
             }
           ]
         },
@@ -29272,14 +30470,32 @@
               "weight": "warmup",
               "prompt": "Products of complete combustion of \\(\\mathrm{C_{3}H_{8}}\\)?",
               "answer": "\\(\\mathrm{CO_{2}}\\) and \\(\\mathrm{H_{2}O}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "CO2",
+                    "carbon dioxide"
+                  ],
+                  [
+                    "H2O",
+                    "water"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Toxic gas from incomplete combustion, with formula of 2 atoms?",
               "answer": "CO.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "CO",
+                  "carbon monoxide"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -29304,21 +30520,57 @@
               "weight": "warmup",
               "prompt": "\\(\\mathrm{Cl_{2}} + 2\\mathrm{KBr}\\) gives what?",
               "answer": "\\(2\\mathrm{KCl} + \\mathrm{Br_{2}}\\).",
-              "answer_kind": "integer"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "KCl",
+                    "2KCl",
+                    "2 KCl"
+                  ],
+                  [
+                    "Br2"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Type of \\(\\mathrm{C_{6}H_{12}O_{6}} + 6\\mathrm{O_{2}} \\to 6\\mathrm{CO_{2}} + 6\\mathrm{H_{2}O}\\)?",
               "answer": "Combustion.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Synthesis",
+                  "Decomposition",
+                  "Combustion",
+                  "Single replacement",
+                  "Double replacement"
+                ],
+                "accept": [
+                  "Combustion"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Type of \\(2\\mathrm{KClO_{3}} \\to 2\\mathrm{KCl} + 3\\mathrm{O_{2}}\\)?",
               "answer": "Decomposition.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Synthesis",
+                  "Decomposition",
+                  "Combustion",
+                  "Single replacement",
+                  "Double replacement"
+                ],
+                "accept": [
+                  "Decomposition"
+                ]
+              }
             }
           ]
         }
@@ -29382,21 +30634,48 @@
               "weight": "warmup",
               "prompt": "\\(\\mathrm{Fe}^{2+} \\to \\mathrm{Fe}^{3+}\\). Oxidized or reduced?",
               "answer": "Oxidized.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Oxidized",
+                  "Reduced"
+                ],
+                "accept": [
+                  "Oxidized"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "\\(\\mathrm{Cl_{2}} \\to 2\\mathrm{Cl}^{-}\\). Oxidized or reduced?",
               "answer": "Reduced.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Oxidized",
+                  "Reduced"
+                ],
+                "accept": [
+                  "Reduced"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Oxidizing agent in \\(\\mathrm{Zn} + \\mathrm{Cu}^{2+}\\)?",
-              "answer": "\\(\\mathrm{Cu}^{2+}\\).",
-              "answer_kind": "phrase"
+              "answer": "\\(\\mathrm{Cu}^{2+}\\). It gains electrons, which makes it the one doing the oxidizing.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Zn",
+                  "Cu2+"
+                ],
+                "accept": [
+                  "Cu2+"
+                ]
+              }
             }
           ]
         },
@@ -29414,21 +30693,52 @@
               "weight": "warmup",
               "prompt": "Half equation for \\(\\mathrm{Fe}^{3+}\\) to \\(\\mathrm{Fe}^{2+}\\)?",
               "answer": "\\(\\mathrm{Fe}^{3+} + e^{-} \\to \\mathrm{Fe}^{2+}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "Fe3+"
+                  ],
+                  [
+                    "e-"
+                  ],
+                  [
+                    "Fe2+"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Electrons in \\(\\mathrm{Al} \\to \\mathrm{Al}^{3+}\\)?",
               "answer": "3, on the right.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "3"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Half equation for \\(2\\mathrm{I}^{-}\\) to \\(\\mathrm{I_{2}}\\)?",
               "answer": "\\(2\\mathrm{I}^{-} \\to \\mathrm{I_{2}} + 2e^{-}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "2I-"
+                  ],
+                  [
+                    "I2"
+                  ],
+                  [
+                    "2e-"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -29478,21 +30788,48 @@
               "weight": "warmup",
               "prompt": "Metal used to galvanize a 2 m Fe gate?",
               "answer": "Zn.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "Zn",
+                  "zinc"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Is glucose oxidized or reduced in \\(\\mathrm{C_{6}H_{12}O_{6}} + 6\\mathrm{O_{2}}\\) respiration?",
               "answer": "Oxidized.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Oxidized",
+                  "Reduced"
+                ],
+                "accept": [
+                  "Oxidized"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why does a Mg block protect a steel hull of 1000 tons?",
               "answer": "Mg is more reactive, so it corrodes instead.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "reactive",
+                    "corrod",
+                    "sacrificial",
+                    "oxidized instead",
+                    "reacts first",
+                    "instead"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -29570,7 +30907,13 @@
               "weight": "stretch",
               "prompt": "Shape of \\(\\mathrm{SF_{6}}\\)?",
               "answer": "Octahedral.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "octahedral",
+                  "octahedron"
+                ]
+              }
             }
           ]
         },
@@ -29588,7 +30931,14 @@
               "weight": "warmup",
               "prompt": "Shape of \\(\\mathrm{NH_{3}}\\)?",
               "answer": "Trigonal pyramidal.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "trigonal pyramidal",
+                  "pyramidal",
+                  "trigonal pyramid"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -29602,7 +30952,14 @@
               "weight": "stretch",
               "prompt": "Shape of \\(\\mathrm{SO_{2}}\\), with 1 lone pair on S?",
               "answer": "Bent.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "bent",
+                  "v-shaped",
+                  "angular"
+                ]
+              }
             }
           ]
         },
@@ -29634,7 +30991,17 @@
               "weight": "stretch",
               "prompt": "Why is \\(\\mathrm{CCl_{4}}\\) nonpolar with 4 polar bonds?",
               "answer": "The dipoles cancel by symmetry.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "cancel",
+                    "symmetric",
+                    "symmetry",
+                    "symmetrical"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -29652,7 +31019,17 @@
               "weight": "warmup",
               "prompt": "Strongest force between \\(\\mathrm{CH_{4}}\\) molecules?",
               "answer": "London dispersion.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "London dispersion",
+                  "dispersion",
+                  "London forces",
+                  "van der Waals",
+                  "induced dipole",
+                  "London dispersion forces"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -29666,7 +31043,18 @@
               "weight": "stretch",
               "prompt": "Why does water boil at 100 degrees C and \\(\\mathrm{H_{2}S}\\) at -60?",
               "answer": "Water forms hydrogen bonds.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "hydrogen bond",
+                    "hydrogen bonds",
+                    "hydrogen bonding",
+                    "h-bond",
+                    "h bonds"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -29781,7 +31169,16 @@
               "weight": "stretch",
               "prompt": "Best solvent for grease: water or \\(\\mathrm{C_{6}H_{14}}\\)?",
               "answer": "\\(\\mathrm{C_{6}H_{14}}\\), hexane.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Water",
+                  "C6H14"
+                ],
+                "accept": [
+                  "C6H14"
+                ]
+              }
             }
           ]
         },
@@ -29813,7 +31210,13 @@
               "weight": "stretch",
               "prompt": "A solution holds less than its maximum at 25 degrees C. Name?",
               "answer": "Unsaturated.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "unsaturated",
+                  "an unsaturated solution"
+                ]
+              }
             }
           ]
         },
@@ -29838,7 +31241,14 @@
               "weight": "core",
               "prompt": "Precipitate from \\(\\mathrm{Pb(NO_{3})_{2}}\\) and KI?",
               "answer": "\\(\\mathrm{PbI_{2}}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "PbI2",
+                  "lead iodide",
+                  "lead(II) iodide"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -29878,22 +31288,58 @@
               "weight": "warmup",
               "prompt": "Identify the reactants in the equation \\(\\mathrm{Na} + \\mathrm{Cl_{2}} \\to \\mathrm{NaCl}\\).",
               "answer": "Na, \\(\\mathrm{Cl_{2}}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "Na"
+                  ],
+                  [
+                    "Cl2"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Identify the reactants and products in the balanced equation 2 \\(\\mathrm{Mg} + \\mathrm{O_{2}} \\to 2\\) \\(\\mathrm{MgO}\\).",
+              "prompt": "Identify the reactants and products in the balanced equation \\(2\\,\\mathrm{Mg} + \\mathrm{O_{2}} \\to 2\\,\\mathrm{MgO}\\).",
               "answer": "Reactants: Mg, \\(\\mathrm{O_{2}}\\); Products: \\(\\mathrm{MgO}\\).",
-              "answer_kind": "list"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "Mg"
+                  ],
+                  [
+                    "O2"
+                  ],
+                  [
+                    "MgO"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "For the balanced equation 2 \\(\\mathrm{KNO_{3}} \\to 2\\) \\(\\mathrm{KNO_{2}} + \\mathrm{O_{2}}\\), list the reactants and products without coefficients.",
+              "prompt": "For the balanced equation \\(2\\,\\mathrm{KNO_{3}} \\to 2\\,\\mathrm{KNO_{2}} + \\mathrm{O_{2}}\\), list the reactants and products without coefficients.",
               "answer": "Reactants: \\(\\mathrm{KNO_{3}}\\); Products: \\(\\mathrm{KNO_{2}}\\), \\(\\mathrm{O_{2}}\\).",
               "hint": "Pay attention to the direction of the arrow.",
-              "answer_kind": "list"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "KNO3"
+                  ],
+                  [
+                    "KNO2"
+                  ],
+                  [
+                    "O2"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -29957,21 +31403,21 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "In the reaction \\(\\mathrm{N_{2}} + 3\\) \\(\\mathrm{H_{2}} \\to 2\\) \\(\\mathrm{NH_{3}}\\), how many moles of \\(\\mathrm{H_{2}}\\) are needed for 0.50 mol of \\(\\mathrm{N_{2}}\\)?",
+              "prompt": "In the reaction \\(\\mathrm{N_{2}} + 3\\,\\mathrm{H_{2}} \\to 2\\,\\mathrm{NH_{3}}\\), how many moles of \\(\\mathrm{H_{2}}\\) are needed for 0.50 mol of \\(\\mathrm{N_{2}}\\)?",
               "answer": "1.5 mol.",
               "answer_kind": "decimal"
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "From 1.00 mol of Al in 2 \\(\\mathrm{Al} + 3\\) \\(\\mathrm{Cl_{2}} \\to 2\\) \\(\\mathrm{AlCl_{3}}\\), calculate the moles of \\(\\mathrm{Cl_{2}}\\) required.",
+              "prompt": "From 1.00 mol of Al in \\(2\\,\\mathrm{Al} + 3\\,\\mathrm{Cl_{2}} \\to 2\\,\\mathrm{AlCl_{3}}\\), calculate the moles of \\(\\mathrm{Cl_{2}}\\) required.",
               "answer": "1.50 mol.",
               "answer_kind": "decimal"
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "The reaction 2 \\(\\mathrm{Al} + 3\\) \\(\\mathrm{Cl_{2}} \\to 2\\) \\(\\mathrm{AlCl_{3}}\\) produces 0.80 mol of \\(\\mathrm{AlCl_{3}}\\). How many moles of Al were originally present?",
+              "prompt": "The reaction \\(2\\,\\mathrm{Al} + 3\\,\\mathrm{Cl_{2}} \\to 2\\,\\mathrm{AlCl_{3}}\\) produces 0.80 mol of \\(\\mathrm{AlCl_{3}}\\). How many moles of Al were originally present?",
               "answer": "0.80 mol.",
               "hint": "Use the Al : \\(\\mathrm{AlCl_{3}}\\) ratio of 2 : 2 (1:1).",
               "answer_kind": "decimal"
@@ -30033,24 +31479,51 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Given 0.5 mol \\(\\mathrm{H_{2}}\\) and 0.3 mol \\(\\mathrm{O_{2}}\\), which reactant limits the formation of \\(\\mathrm{H_{2}O}\\) in the reaction 2 \\(\\mathrm{H_{2}} + \\mathrm{O_{2}} \\to 2\\) \\(\\mathrm{H_{2}O}\\)?",
+              "prompt": "Given 0.5 mol \\(\\mathrm{H_{2}}\\) and 0.3 mol \\(\\mathrm{O_{2}}\\), which reactant limits the formation of \\(\\mathrm{H_{2}O}\\) in \\(2\\,\\mathrm{H_{2}} + \\mathrm{O_{2}} \\to 2\\,\\mathrm{H_{2}O}\\)?",
               "answer": "\\(\\mathrm{H_{2}}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "H2",
+                  "O2"
+                ],
+                "accept": [
+                  "H2"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Given 1.00 mol Al and 1.20 mol \\(\\mathrm{Cl_{2}}\\), determine the limiting reactant for the reaction 2 \\(\\mathrm{Al} + 3\\) \\(\\mathrm{Cl_{2}} \\to 2\\) \\(\\mathrm{AlCl_{3}}\\).",
+              "prompt": "Given 1.00 mol Al and 1.20 mol \\(\\mathrm{Cl_{2}}\\), which is the limiting reactant in \\(2\\,\\mathrm{Al} + 3\\,\\mathrm{Cl_{2}} \\to 2\\,\\mathrm{AlCl_{3}}\\)?",
               "answer": "\\(\\mathrm{Cl_{2}}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Al",
+                  "Cl2"
+                ],
+                "accept": [
+                  "Cl2"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "In the reaction 2 \\(\\mathrm{Al} + 3\\) \\(\\mathrm{Cl_{2}} \\to 2\\) \\(\\mathrm{AlCl_{3}}\\), you have 2.0 mol of Al and 2.5 mol of \\(\\mathrm{Cl_{2}}\\). Which reactant is limiting?",
+              "prompt": "In \\(2\\,\\mathrm{Al} + 3\\,\\mathrm{Cl_{2}} \\to 2\\,\\mathrm{AlCl_{3}}\\), you have 2.0 mol of Al and 2.5 mol of \\(\\mathrm{Cl_{2}}\\). Which reactant is limiting?",
               "answer": "\\(\\mathrm{Cl_{2}}\\).",
               "hint": "Calculate the moles of \\(\\mathrm{Cl_{2}}\\) required for the given amount of Al.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Al",
+                  "Cl2"
+                ],
+                "accept": [
+                  "Cl2"
+                ]
+              }
             }
           ]
         },
@@ -30080,10 +31553,15 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Limiting \\(\\mathrm{Cl_{2}} = 2.00\\) mol. Using the ratio 3 : 2, calculate the theoretical mass of \\(\\mathrm{AlCl_{3}}\\) (M = 133.34 g·mol⁻¹) and explain why using the excess reactant would give an incorrect result.",
-              "answer": "\\(\\mathrm{AlCl_{3}}\\) moles = \\(2.00 \\times (\\frac{2}{3}) = 1.33\\) mol; mass ≈ 177 g. Using the excess reactant would overestimate yield because it is not the limiting reactant.",
+              "prompt": "\\(\\mathrm{Cl_{2}}\\) is limiting at 2.00 mol. Using the 3 : 2 ratio, what is the theoretical mass of \\(\\mathrm{AlCl_{3}}\\) (M = 133.34 g/mol), to the nearest gram?",
+              "answer": "About 178 g. That is \\(2.00 \\times \\frac{2}{3} = 1.33\\) mol of \\(\\mathrm{AlCl_{3}}\\), times 133.34 g/mol. The excess reactant can't run out, so it can't set the yield.",
               "hint": "Convert moles to mass after finding moles of product.",
-              "answer_kind": "paragraph"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "178"
+                ]
+              }
             }
           ]
         },
@@ -30111,25 +31589,36 @@
             {
               "slot": 2,
               "weight": "warmup",
-              "prompt": "The reaction 2 \\(\\mathrm{Na} + \\mathrm{Cl_{2}} \\to 2\\) \\(\\mathrm{NaCl}\\) requires 2 mol of Na per 2 mol of \\(\\mathrm{NaCl}\\). How many moles of Na are needed to produce 0.250 mol of \\(\\mathrm{NaCl}\\)?",
+              "prompt": "The reaction \\(2\\,\\mathrm{Na} + \\mathrm{Cl_{2}} \\to 2\\,\\mathrm{NaCl}\\) needs 2 mol of Na per 2 mol of \\(\\mathrm{NaCl}\\). How many moles of Na are needed to make 0.250 mol of \\(\\mathrm{NaCl}\\)?",
               "answer": "0.250 mol.",
               "answer_kind": "decimal"
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "You want to produce 30.0 g of \\(\\mathrm{NaCl}\\) (M = 58.44 g·mol⁻¹) via 2 \\(\\mathrm{Na} + \\mathrm{Cl_{2}} \\to 2\\) \\(\\mathrm{NaCl}\\). Calculate the masses of Na and \\(\\mathrm{Cl_{2}}\\) required, assuming 100 % yield.",
+              "prompt": "You want 30.0 g of \\(\\mathrm{NaCl}\\) (M = 58.44 g/mol) from \\(2\\,\\mathrm{Na} + \\mathrm{Cl_{2}} \\to 2\\,\\mathrm{NaCl}\\). Give the mass of Na, then of \\(\\mathrm{Cl_{2}}\\), in grams, at 100% yield.",
               "answer": "Na: 11.8 g; \\(\\mathrm{Cl_{2}}\\): 18.2 g.",
               "hint": "Convert target mass to moles, then use stoichiometric ratios to find moles of each reactant before converting to mass.",
-              "answer_kind": "phrase"
+              "answer_kind": "list",
+              "grading": {
+                "accept": [
+                  "11.8, 18.2"
+                ],
+                "order": true
+              }
             },
             {
               "slot": 4,
               "weight": "stretch",
-              "prompt": "If you mistakenly used the coefficient 1 for \\(\\mathrm{Cl_{2}}\\) instead of 0.5 when planning to make 30.0 g of \\(\\mathrm{NaCl}\\), what mass of \\(\\mathrm{Cl_{2}}\\) would you calculate, and why is this incorrect?",
-              "answer": "Incorrect mass = 36.4 g (using 1 mol \\(\\mathrm{Cl_{2}}\\) per 2 mol \\(\\mathrm{NaCl)}\\). The correct coefficient is 0.5 mol \\(\\mathrm{Cl_{2}}\\) per 1 mol \\(\\mathrm{NaCl}\\), so the mass should be 18.2 g; using 1 doubles the required \\(\\mathrm{Cl_{2}}\\).",
+              "prompt": "Planning 30.0 g of \\(\\mathrm{NaCl}\\), you wrongly use 1 mol of \\(\\mathrm{Cl_{2}}\\) per mol of \\(\\mathrm{NaCl}\\) instead of 0.5. What mass of \\(\\mathrm{Cl_{2}}\\) do you calculate?",
+              "answer": "36.4 g, double the correct 18.2 g, since the real ratio is 0.5 mol of \\(\\mathrm{Cl_{2}}\\) per mol of \\(\\mathrm{NaCl}\\).",
               "hint": "Check the stoichiometric ratio of \\(\\mathrm{Cl_{2}}\\) to \\(\\mathrm{NaCl}\\) in the balanced equation.",
-              "answer_kind": "paragraph"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "36.4"
+                ]
+              }
             }
           ]
         }
@@ -85715,21 +87204,13 @@
               "answer": "If a shape has 4 sides, then it is a square.",
               "answer_kind": "sentence",
               "grading": {
-                "keys": [
-                  [
-                    "if"
-                  ],
-                  [
-                    "4 sides",
-                    "four sides",
-                    "has 4 sides"
-                  ],
-                  [
-                    "then"
-                  ],
-                  [
-                    "square"
-                  ]
+                "accept": [
+                  "If a shape has 4 sides, then it is a square",
+                  "If a shape has four sides, then it is a square",
+                  "If it has 4 sides, then it is a square",
+                  "If a shape has 4 sides then it is a square",
+                  "If a shape has 4 sides, it is a square",
+                  "If a shape has 4 sides, then it's a square"
                 ]
               }
             },
@@ -102196,12 +103677,12 @@
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Integral of \\(\\ln x\\) from 1 to e?",
-              "answer": "1. [x \\(\\ln x\\) - x] from 1 to e is \\(0 - (-1) = 1\\).",
-              "answer_kind": "integer",
+              "prompt": "Integral of \\(\\ln x\\) from 1 to \\(e^{2}\\)?",
+              "answer": "\\(e^{2} + 1\\), since [x \\(\\ln x\\) - x] from 1 to \\(e^{2}\\) is \\((2e^{2} - e^{2}) - (0 - 1)\\).",
+              "answer_kind": "expression",
               "grading": {
                 "accept": [
-                  "1"
+                  "e^2 + 1"
                 ]
               }
             },
@@ -105543,11 +107024,11 @@
                   "just the origin",
                   "the origin",
                   "origin",
-                  "(0, 0)",
-                  "0",
                   "the zero vector",
                   "zero vector",
-                  "a point"
+                  "a point",
+                  "a single point",
+                  "only the zero vector"
                 ]
               }
             },
@@ -117509,8 +118990,13 @@
               "slot": 2,
               "weight": "warmup",
               "prompt": "If each apple costs $2 and you buy a bags of apples, write the total cost expression.",
-              "answer": "2a.",
-              "answer_kind": "integer"
+              "answer": "2a dollars.",
+              "answer_kind": "expression",
+              "grading": {
+                "accept": [
+                  "2a"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -120174,9 +121660,14 @@
             {
               "slot": 2,
               "weight": "warmup",
-              "prompt": "If a transversal creates a corresponding angle of 45° with a pair of parallel lines, what is the measure of the other corresponding angle?",
-              "answer": "45°.",
-              "answer_kind": "integer"
+              "prompt": "A transversal makes a corresponding angle of 45° with a pair of parallel lines. What is the angle next to it on the same line?",
+              "answer": "135°, since angles on a straight line add to 180°.",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "135"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -127249,9 +128740,14 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "What is the sine of 0°?",
-              "answer": "0.",
-              "answer_kind": "integer"
+              "prompt": "What is the sine of 90°?",
+              "answer": "1. At 90° the point on the unit circle is (0, 1).",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "1"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -127399,9 +128895,14 @@
             {
               "slot": 3,
               "weight": "core",
-              "prompt": "What is the amplitude of \\(y = 3\\sin x\\)?",
-              "answer": "3.",
-              "answer_kind": "integer"
+              "prompt": "What is the amplitude of \\(y = 3\\sin x + 5\\)?",
+              "answer": "3. Adding 5 lifts the whole wave, so its height above the middle stays 3.",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "3"
+                ]
+              }
             },
             {
               "slot": 4,
@@ -127413,10 +128914,15 @@
             {
               "slot": 5,
               "weight": "stretch",
-              "prompt": "For \\(y = 2\\sin x\\), what is the y-coordinate of its maximum point?",
-              "answer": "2.",
+              "prompt": "For \\(y = 2\\sin x - 1\\), what is the y-coordinate of its maximum point?",
+              "answer": "1, since the sine tops out at 1, and \\(2(1) - 1 = 1\\).",
               "hint": "Amplitude equals the coefficient outside the sine.",
-              "answer_kind": "integer"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "1"
+                ]
+              }
             },
             {
               "slot": 6,
@@ -150182,7 +151688,21 @@
               "weight": "stretch",
               "prompt": "Why is a bird on 1 power line safe?",
               "answer": "No voltage difference across its body.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "no voltage",
+                    "no potential difference",
+                    "same voltage",
+                    "same potential",
+                    "no difference",
+                    "no current",
+                    "equal potential",
+                    "both feet"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -150221,14 +151741,28 @@
               "weight": "core",
               "prompt": "Charges of +3 and -3 microcoulombs. Attract or repel?",
               "answer": "Attract.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Attract",
+                  "Repel"
+                ],
+                "accept": [
+                  "Attract"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Charge of 1 electron in C?",
               "answer": "\\(-1.6 \\times 10^{-19}\\) C.",
-              "answer_kind": "phrase"
+              "answer_kind": "expression",
+              "grading": {
+                "accept": [
+                  "-1.6*10^-19"
+                ]
+              }
             }
           ]
         },
@@ -150260,7 +151794,16 @@
               "weight": "stretch",
               "prompt": "Direction of E near a -4 microcoulomb charge?",
               "answer": "Toward the charge.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Toward the charge",
+                  "Away from the charge"
+                ],
+                "accept": [
+                  "Toward the charge"
+                ]
+              }
             }
           ]
         },
@@ -150285,14 +151828,28 @@
               "weight": "core",
               "prompt": "Field between plates 0.01 m apart at 100 V?",
               "answer": "10,000 V/m.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "10000"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Field inside a charged metal sphere of radius 1 m?",
               "answer": "Zero.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "zero",
+                  "0",
+                  "none",
+                  "no field",
+                  "nothing"
+                ]
+              }
             }
           ]
         },
@@ -150317,7 +151874,12 @@
               "weight": "core",
               "prompt": "1 eV in joules?",
               "answer": "\\(1.6 \\times 10^{-19}\\) J.",
-              "answer_kind": "phrase"
+              "answer_kind": "expression",
+              "grading": {
+                "accept": [
+                  "1.6*10^-19"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -150388,14 +151950,28 @@
               "weight": "warmup",
               "prompt": "Which has higher frequency, UV or IR, out of the 7 regions?",
               "answer": "UV.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "UV",
+                  "IR"
+                ],
+                "accept": [
+                  "UV"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Speed of 2.45 GHz microwaves in a vacuum?",
               "answer": "\\(3 \\times 10^{8}\\) m/s.",
-              "answer_kind": "phrase"
+              "answer_kind": "expression",
+              "grading": {
+                "accept": [
+                  "3*10^8"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -150434,7 +152010,14 @@
               "weight": "stretch",
               "prompt": "Who predicted EM waves in the 1860s?",
               "answer": "James Clerk Maxwell.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "James Clerk Maxwell",
+                  "Maxwell",
+                  "James Maxwell"
+                ]
+              }
             }
           ]
         },
@@ -150452,7 +152035,12 @@
               "weight": "warmup",
               "prompt": "mu0 epsilon0 value, roughly?",
               "answer": "\\(1.11 \\times 10^{-17}\\,\\mathrm{s^{2}/m^{2}}\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "expression",
+              "grading": {
+                "accept": [
+                  "1.11*10^-17"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -150491,14 +152079,24 @@
               "weight": "core",
               "prompt": "Sunlight at Earth is about 1360 W/m². At 2 AU?",
               "answer": "About 340 W/m².",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "340"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Area of a sphere of radius 1 m?",
               "answer": "4 pi, about 12.6 m².",
-              "answer_kind": "phrase"
+              "answer_kind": "expression",
+              "grading": {
+                "accept": [
+                  "4pi"
+                ]
+              }
             }
           ]
         },
@@ -150611,7 +152209,12 @@
               "prompt": "A 0.5 kg projectile has a kinetic energy of 8 J. What is its speed?",
               "answer": "5.66 m/s.",
               "hint": "Solve KE = ½ m v² for v.",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "5.66"
+                ]
+              }
             }
           ]
         },
@@ -150694,15 +152297,25 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "A 0.2 kg pendulum bob is released from 0.3 m height. What is its speed at the lowest point? (g=9.8 m/s²).",
-              "answer": "2.43 m/s.",
-              "answer_kind": "phrase"
+              "answer": "2.42 m/s, since \\(v = \\sqrt{2 \\times 9.8 \\times 0.3}\\).",
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "2.42"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A 0.8 kg block slides down a frictionless 2 m high incline. Find its speed at the bottom.",
               "answer": "6.26 m/s.",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "6.26"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -150739,16 +152352,26 @@
               "slot": 2,
               "weight": "core",
               "prompt": "A 1.5 kg skateboarder starts from rest at the top of a frictionless 2 m high ramp and then receives a constant 5 N push along a horizontal 3 m section. What is the speed at the end of the push?",
-              "answer": "7.68 m/s.",
-              "answer_kind": "phrase"
+              "answer": "7.69 m/s. The ramp gives \\(1.5 \\times 9.8 \\times 2 = 29.4\\) J and the push adds 15 J, so \\(v = \\sqrt{2 \\times \\frac{44.4}{1.5}}\\).",
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "7.69"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "If the same skateboarder receives a constant 5 N force opposite to its motion along the 3 m horizontal section after the ramp, what is its speed at the end of the section?",
-              "answer": "4.38 m/s.",
+              "answer": "4.38 m/s. The ramp gives 29.4 J and the force takes 15 J, so \\(v = \\sqrt{2 \\times \\frac{14.4}{1.5}}\\).",
               "hint": "Subtract the work done by the opposing push from the gravitational work before converting to kinetic energy.",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "4.38"
+                ]
+              }
             }
           ]
         }
@@ -150780,14 +152403,36 @@
               "weight": "warmup",
               "prompt": "Forces on a 2 kg book resting on a table?",
               "answer": "Weight down and normal force up.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "weight",
+                    "gravity",
+                    "gravitational"
+                  ],
+                  [
+                    "normal"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Forces on a 3 kg ball in free fall, no air?",
               "answer": "Only its weight.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "only its weight",
+                  "weight",
+                  "gravity",
+                  "only gravity",
+                  "just gravity",
+                  "just its weight"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -150812,14 +152457,35 @@
               "weight": "warmup",
               "prompt": "Direction of kinetic friction on a crate moving right at 2 m/s?",
               "answer": "Left.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Left",
+                  "Right"
+                ],
+                "accept": [
+                  "Left"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Force from a rope on a hanging 4 kg mass?",
               "answer": "Tension, upward.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "keys": [
+                  [
+                    "tension"
+                  ],
+                  [
+                    "up",
+                    "upward",
+                    "upwards"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -150858,7 +152524,12 @@
               "weight": "stretch",
               "prompt": "Normal force on a 10 kg block on a 30 degree frictionless slope?",
               "answer": "About 84.9 N.",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "84.9"
+                ]
+              }
             }
           ]
         },
@@ -150883,7 +152554,12 @@
               "weight": "core",
               "prompt": "a for a net 12 N on 5 kg?",
               "answer": "2.4 m/s².",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "2.4"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -150908,21 +152584,36 @@
               "weight": "warmup",
               "prompt": "Masses 3 kg on a smooth table and 2 kg hanging. a with \\(g = 9.8\\)?",
               "answer": "3.92 m/s².",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "3.92"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Tension in the string joining the 3 kg and 2 kg blocks?",
               "answer": "About 11.8 N.",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "11.8"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Atwood machine with 5 kg and 3 kg. a with \\(g = 9.8\\)?",
               "answer": "2.45 m/s².",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "2.45"
+                ]
+              }
             }
           ]
         }
@@ -151322,10 +153013,15 @@
               "weight": "warmup",
               "prompt": "Water drains through a hole 5 m below the surface of a tank. Find the exit speed to 2 decimal places, with \\(g = 9.81\\) m/s².",
               "answer": "9.90 m/s",
-              "answer_kind": "phrase",
+              "answer_kind": "decimal",
               "aids": {
                 "tools": [
                   "calculator"
+                ]
+              },
+              "grading": {
+                "accept": [
+                  "9.90"
                 ]
               }
             },
@@ -151346,7 +153042,19 @@
               "weight": "stretch",
               "prompt": "Air moves faster over the top of a wing than under it. Use Bernoulli to say what that does to the pressure on top.",
               "answer": "Faster flow means lower pressure, so the pressure on top is lower and the wing is pushed up.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "lower",
+                    "less",
+                    "drops",
+                    "decrease",
+                    "smaller",
+                    "reduced"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -151414,9 +153122,14 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "What is the static friction coefficient \\(\\mu_{s}\\) for rubber on concrete if it is 0.4?",
-              "answer": "0.4.",
-              "answer_kind": "decimal"
+              "prompt": "Rubber on concrete has \\(\\mu_{s} = 0.4\\). What is the largest static friction on a 50 kg crate resting on it, with \\(g = 9.8\\) m/s²?",
+              "answer": "196 N, since \\(0.4 \\times 50 \\times 9.8 = 196\\).",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "196"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -151431,7 +153144,17 @@
               "prompt": "A student writes \\(\\mu_{s} = 0.3\\) for rubber on concrete. Identify the mistake and give the correct static coefficient.",
               "answer": "Mistake: used kinetic value; correct \\(\\mu_{s} = 0.4\\).",
               "hint": "Recall typical values for rubber on concrete.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "kinetic"
+                  ],
+                  [
+                    "0.4"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -151480,9 +153203,14 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "What is the kinetic friction coefficient \\(\\mu_{k}\\) for ice if it is 0.08?",
-              "answer": "0.08.",
-              "answer_kind": "decimal"
+              "prompt": "A 20 kg sled slides on ice with \\(\\mu_{k} = 0.08\\). What is the friction force to 1 decimal place, with \\(g = 9.8\\) m/s²?",
+              "answer": "15.7 N, since \\(0.08 \\times 20 \\times 9.8 = 15.68\\).",
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "15.7"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -151494,10 +153222,15 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "A 4 kg sled slides on a horizontal surface with \\(\\mu_{k} = 0.08\\) while a horizontal push of 5 N is applied. What is the net force on the sled?",
-              "answer": "\\(\\approx 1.9\\) N forward.",
+              "prompt": "A 4 kg sled slides on a level surface with \\(\\mu_{k} = 0.08\\) while a 5 N push acts forward. What is the net force to 1 decimal place, with \\(g = 9.8\\) m/s²?",
+              "answer": "About 1.9 N forward, since friction is \\(0.08 \\times 4 \\times 9.8 = 3.1\\) N.",
               "hint": "Subtract kinetic friction from the applied force.",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "1.9"
+                ]
+              }
             }
           ]
         },
@@ -151527,10 +153260,16 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "A 0.5 kg object moves in a circle of radius 0.8 m with angular speed 4 rad/s. Find the required centripetal force and state the acceleration.",
+              "prompt": "A 0.5 kg object moves in a circle of radius 0.8 m at 4 rad/s. Give the centripetal force in N, then the acceleration in m/s².",
               "answer": "Force = 6.4 N; acceleration = 12.8 m/s².",
               "hint": "Use \\(a = \\omega^{2} r\\).",
-              "answer_kind": "sentence"
+              "answer_kind": "list",
+              "grading": {
+                "accept": [
+                  "6.4, 12.8"
+                ],
+                "order": true
+              }
             }
           ]
         },
@@ -151546,16 +153285,21 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "What maximum static friction force can a 1500 kg car generate on a flat road with \\(\\mu_{s} = 0.7\\)?",
-              "answer": "\\(\\approx 10\\) 300 N.",
-              "answer_kind": "phrase"
+              "prompt": "What maximum static friction can a 1500 kg car get on a flat road with \\(\\mu_{s} = 0.7\\) and \\(g = 9.8\\) m/s²? Round to the nearest 100 N.",
+              "answer": "About 10,300 N, since \\(0.7 \\times 1500 \\times 9.8 = 10{,}290\\).",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "10300"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "A 1500 kg car travels at 20 m/s around a curve of radius 50 m with \\(\\mu_{s} = 0.7\\). Can it negotiate the turn without skidding?",
-              "answer": "The car will skid; required 12 000 N > maximum 10 300 N.",
-              "answer_kind": "sentence"
+              "prompt": "A 1500 kg car takes a curve of radius 50 m at 20 m/s with \\(\\mu_{s} = 0.7\\). Can it make the turn without skidding?",
+              "answer": "No. It needs 12,000 N of friction, and the most it can get is about 10,300 N.",
+              "answer_kind": "yesno"
             },
             {
               "slot": 3,
@@ -151661,7 +153405,12 @@
               "weight": "warmup",
               "prompt": "g at 2 Earth radii from the center, with 9.8 at the surface?",
               "answer": "2.45 m/s².",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "2.45"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -151691,9 +153440,14 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "\\(v = \\sqrt{\\frac{GM}{r}}\\) with GM = \\(4 \\times 10^{14}\\) and \\(r = 1 \\times 10^{7}\\) m?",
+              "prompt": "\\(v = \\sqrt{\\frac{GM}{r}}\\) with GM = \\(4 \\times 10^{14}\\) and \\(r = 1 \\times 10^{7}\\) m. What is v in km/s, to 1 decimal place?",
               "answer": "About 6.3 km/s.",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "6.3"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -151707,7 +153461,16 @@
               "weight": "stretch",
               "prompt": "Higher orbit, r from 7 to \\(14 \\times 10^{6}\\) m. Faster or slower?",
               "answer": "Slower.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Faster",
+                  "Slower"
+                ],
+                "accept": [
+                  "Slower"
+                ]
+              }
             }
           ]
         },
@@ -151732,14 +153495,29 @@
               "weight": "core",
               "prompt": "Mars at 1.52 AU. Period?",
               "answer": "About 1.87 years.",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "1.87"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Where in an elliptical orbit around the Sun is a planet fastest?",
               "answer": "Closest to the Sun.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "closest",
+                    "nearest",
+                    "perihelion",
+                    "close"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -151755,16 +153533,31 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Escape speed is 11.2 km/s where orbital speed is 7.9 km/s. Ratio?",
-              "answer": "About 1.41, which is \\(\\sqrt{2}\\).",
-              "answer_kind": "phrase"
+              "prompt": "Escape speed is 11.2 km/s where orbital speed is 7.9 km/s. Their ratio is close to the square root of what whole number?",
+              "answer": "2. The ratio is about 1.41, which is \\(\\sqrt{2}\\).",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "2"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Sign of GPE far below infinity, at \\(r = 2R\\)?",
               "answer": "Negative.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Positive",
+                  "Negative",
+                  "Zero"
+                ],
+                "accept": [
+                  "Negative"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -151808,9 +153601,14 @@
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Gas compressed with 50 J of work and no heat. delta U?",
-              "answer": "+50 J.",
-              "answer_kind": "integer"
+              "prompt": "A gas is compressed with 50 J of work and loses 20 J of heat. What is \\(\\Delta U\\)?",
+              "answer": "+30 J, since \\(\\Delta U = 50 - 20\\).",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "30"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -151849,7 +153647,12 @@
               "weight": "stretch",
               "prompt": "Area of a rectangle loop 100 kPa tall and 0.002 m³ wide?",
               "answer": "200 J per cycle.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "200"
+                ]
+              }
             }
           ]
         },
@@ -151977,21 +153780,46 @@
               "weight": "warmup",
               "prompt": "Unit of magnetic field, named after 1 person?",
               "answer": "Tesla.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "tesla",
+                  "the tesla",
+                  "T"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Field around a wire: lines or circles, for 5 A?",
               "answer": "Circles.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Lines",
+                  "Circles"
+                ],
+                "accept": [
+                  "Circles"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Like poles of 2 magnets attract or repel?",
               "answer": "Repel.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Attract",
+                  "Repel"
+                ],
+                "accept": [
+                  "Repel"
+                ]
+              }
             }
           ]
         },
@@ -152048,7 +153876,12 @@
               "weight": "core",
               "prompt": "Force on \\(1.6 \\times 10^{-19}\\) C at \\(10^{6}\\) m/s in 1 T?",
               "answer": "\\(1.6 \\times 10^{-13}\\) N.",
-              "answer_kind": "phrase"
+              "answer_kind": "expression",
+              "grading": {
+                "accept": [
+                  "1.6*10^-13"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -152110,16 +153943,38 @@
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Ideal transformer, 10 W in. Power out?",
-              "answer": "10 W.",
-              "answer_kind": "integer"
+              "prompt": "An ideal transformer takes in 10 W and steps down to 12 V. What current comes out, to 2 decimal places?",
+              "answer": "About 0.83 A, since 10 W divided by 12 V is 0.83 A. An ideal transformer loses no power.",
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "0.83"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why do power lines use 400,000 V?",
               "answer": "Lower current means less heat lost.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "current",
+                    "amps",
+                    "amperage"
+                  ],
+                  [
+                    "heat",
+                    "loss",
+                    "lost",
+                    "waste",
+                    "i^2r",
+                    "resistance"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -152152,14 +154007,24 @@
               "weight": "warmup",
               "prompt": "What is the momentum of a 2 kg object moving at 3 m/s?",
               "answer": "6 kg·m/s.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "6"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Calculate the momentum of a 5 kg cart traveling at 7 m/s.",
               "answer": "35 kg·m/s.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "35"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -152167,7 +154032,17 @@
               "prompt": "A 4 kg sled moves west at 5 m/s. What is its momentum (include direction)?",
               "answer": "20 kg·m/s west.",
               "hint": "Treat direction as part of the answer.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "20"
+                  ],
+                  [
+                    "west"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -152176,7 +154051,7 @@
           "mastery": "Determine the change in momentum when an object's speed varies, using Δp = m·Δv.",
           "practice": "Compute the change in momentum when a 2 kg ball slows from 6 m/s to 2 m/s.",
           "detail": "Write the initial momentum p_i = m·v_i and the final momentum p_f = m·v_f. Subtract p_i from p_f to get Δp. Remember that a decrease in speed gives a negative Δp, indicating momentum loss. Verify the arithmetic and sign before finalising the answer.",
-          "proof": "Δp = 2 kg × (2 m/s, 6 m/s) = 2 kg × (-4 m/s) =, 8 kg·m/s.",
+          "proof": "Δp = 2 kg × (2 m/s - 6 m/s) = 2 kg × (-4 m/s) = -8 kg·m/s.",
           "pitfall": "Using final minus initial speed incorrectly, leading to a sign error.",
           "minutes": 12,
           "problems": [
@@ -152185,22 +154060,37 @@
               "weight": "warmup",
               "prompt": "What is the change in momentum of a 1 kg ball that speeds up from 2 m/s to 5 m/s?",
               "answer": "3 kg·m/s.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "3"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A 3 kg crate slows from 8 m/s to 3 m/s. Find \\(\\Delta p\\).",
               "answer": "-15 kg·m/s.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "-15"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "A 2 kg puck reverses direction, changing velocity from 4 m/s east to 2 m/s west. What is \\(\\Delta p\\)?",
+              "prompt": "A 2 kg puck goes from 4 m/s east to 2 m/s west. Taking east as positive, what is \\(\\Delta p\\) in kg·m/s?",
               "answer": "-12 kg·m/s.",
               "hint": "Remember velocity sign.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "-12"
+                ]
+              }
             }
           ]
         },
@@ -152218,7 +154108,12 @@
               "weight": "warmup",
               "prompt": "What impulse is delivered to a 1 kg ball that speeds up from 0 m/s to 2 m/s?",
               "answer": "2 kg·m/s.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "2"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -152242,7 +154137,7 @@
           "mastery": "Use conservation of momentum to solve for final speeds in a perfectly elastic collision.",
           "practice": "A 1 kg cart moving at 4 m/s collides elastically with a 2 kg cart at rest. Find the 1 kg cart's speed after the collision.",
           "detail": "Write the momentum conservation equation and the kinetic-energy conservation equation for an elastic collision. Solve the two equations simultaneously, or use the shortcut formula for v1'. Keep sign conventions consistent: a negative result means the cart reverses direction. Check the answer by confirming total kinetic energy is unchanged.",
-          "proof": "Using m1v1 + m2v2 = m1v1' + m2v2' and v1' = (m1-m2)/(m1+m2)·v1, we get v1' = (1-2)/(1+2)·4 m/s = (-1/3)·4 m/s =, 1.33 m/s.",
+          "proof": "With v1' = (m1 - m2)/(m1 + m2) · v1, you get v1' = (1 - 2)/(1 + 2) · 4 m/s = -1.33 m/s, so the 1 kg cart bounces back at 1.33 m/s.",
           "pitfall": "Applying the inelastic-collision formula instead of the elastic one, which yields the wrong speed.",
           "minutes": 15,
           "problems": [
@@ -152256,9 +154151,14 @@
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "A 1 kg cart moving at 5 m/s collides elastically with a 3 kg cart that is initially at rest. What is the final speed of the 1 kg cart?",
+              "prompt": "A 1 kg cart at 5 m/s collides elastically with a 3 kg cart at rest. What is the 1 kg cart's final velocity?",
               "answer": "-2.5 m/s.",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "-2.5"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -152291,7 +154191,12 @@
               "weight": "core",
               "prompt": "A 0.7 kg object moving at 6 m/s collides inelastically with a 0.3 kg object at rest and they stick together. What is their common speed after the collision?",
               "answer": "4.2 m/s.",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "4.2"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -152299,7 +154204,12 @@
               "prompt": "A 0.9 kg cart moving at 5 m/s collides and sticks to a 0.1 kg cart moving opposite at 2 m/s. What is the final velocity (including direction) of the combined mass?",
               "answer": "4.3 m/s.",
               "hint": "Include the momentum of the moving 0.1 kg cart (negative direction) before dividing by the total mass.",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "4.3"
+                ]
+              }
             }
           ]
         },
@@ -152308,7 +154218,7 @@
           "mastery": "Apply conservation of momentum to a real-world interaction, solving for the recoil speed of the kicker.",
           "practice": "A 0.2 kg soccer ball is kicked to 12 m/s. If the foot (1 kg) was initially at rest, calculate the foot's speed right after the kick assuming an isolated system.",
           "detail": "Set the total initial momentum to zero because both foot and ball start at rest. After the kick, write the momentum of the ball (0.2 kg·12 m/s) and the unknown foot momentum (1 kg·v_foot). Solve for v_foot, remembering that the foot's velocity is opposite in direction to the ball's, hence the negative sign. Confirm the magnitude is reasonable for a human foot recoil.",
-          "proof": "Using m_ball·v_ball + m_foot·v_foot = 0, v_foot =, (0.2 kg·12 m/s) / 1 kg =, 2.4 m/s (foot moves opposite to ball).",
+          "proof": "From m_ball · v_ball + m_foot · v_foot = 0, v_foot = -(0.2 kg · 12 m/s)/1 kg = -2.4 m/s, so the foot moves back at 2.4 m/s.",
           "pitfall": "Treating the foot as stationary after the kick or forgetting the opposite direction sign, which gives a positive speed for the foot.",
           "minutes": 12,
           "problems": [
@@ -152317,14 +154227,24 @@
               "weight": "warmup",
               "prompt": "What is the momentum of a 0.2 kg soccer ball moving at 12 m/s?",
               "answer": "2.4 kg·m/s.",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "2.4"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "A 0.2 kg soccer ball is kicked to 12 m/s. If the foot (1 kg) was initially at rest, what is the foot's speed right after the kick, assuming an isolated system?",
+              "prompt": "A 0.2 kg soccer ball is kicked to 12 m/s by a 1 kg foot that was at rest. Treating them as an isolated system, what is the foot's velocity right after?",
               "answer": "-2.4 m/s.",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "-2.4"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -152332,7 +154252,25 @@
               "prompt": "A 0.5 kg ball is kicked to 8 m/s by a 2 kg foot that was initially at rest. Using conservation of momentum, calculate the foot's recoil speed and state its direction relative to the ball.",
               "answer": "-2.0 m/s, opposite direction.",
               "hint": "Set total momentum to zero and solve for the foot's velocity.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "2",
+                    "-2",
+                    "2.0",
+                    "-2.0"
+                  ],
+                  [
+                    "opposite",
+                    "backward",
+                    "backwards",
+                    "other way",
+                    "-2",
+                    "reverse"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -152370,7 +154308,7 @@
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Write the displacement for an object that moves from \\(x\\) =, 3 m to \\(x = 4\\) m on a straight line.",
+              "prompt": "Write the displacement for an object that moves from \\(x = - 3\\) m to \\(x = 4\\) m on a straight line.",
               "answer": "7 m.",
               "answer_kind": "integer"
             },
@@ -152485,9 +154423,9 @@
         {
           "title": "Solve Multi-Stage Motion Problem",
           "mastery": "Combine successive constant-acceleration segments to obtain total displacement.",
-          "practice": "An object moves with a = 2 m/s² for 5 s, then a =, 3 m/s² for 4 s. Starting from rest, find its total displacement.",
+          "practice": "Find the total displacement of an object that starts from rest, accelerates at 2 m/s² for 5 s, then at -3 m/s² for 4 s.",
           "detail": "Compute the distance covered in the first interval using s = ½at². Find the velocity at the end of that interval (v = at) and use it as the initial velocity for the second interval. Apply s = v₀t + ½at² for the second part, then add the two distances.",
-          "proof": "First stage: s₁ = ½·2·5² = 25 m. Second stage: v₁ = 2·5 = 10 m/s, s₂ = 10·4 + ½·(, 3)·4² = 40-24 = 16 m. Total displacement = 25 m + 16 m = 41 m.",
+          "proof": "First stage: s₁ = ½ · 2 · 5² = 25 m and v₁ = 10 m/s. Second stage: s₂ = 10 · 4 + ½ · (-3) · 4² = 40 - 24 = 16 m. Total displacement = 41 m.",
           "pitfall": "Resetting the velocity to zero before the second stage instead of carrying over the final velocity from the first stage.",
           "minutes": 18,
           "problems": [
@@ -152506,14 +154444,14 @@
             {
               "slot": 2,
               "weight": "warmup",
-              "prompt": "An object moves with a constant acceleration of, 1 m/s² for 5 s, starting with an initial velocity of 8 m/s. What is its displacement?",
+              "prompt": "An object moves with a constant acceleration of -1 m/s² for 5 s, starting with a velocity of 8 m/s. What is its displacement?",
               "answer": "27.5 m.",
               "answer_kind": "decimal"
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "An object starts from rest, accelerates at 2 m/s² for 3 s, then accelerates at, 4 m/s² for 2 s. Find its total displacement.",
+              "prompt": "An object starts from rest, accelerates at 2 m/s² for 3 s, then at -4 m/s² for 2 s. Find its total displacement.",
               "answer": "13 m.",
               "hint": "First find the velocity after the first stage and use it as the initial velocity for the second stage.",
               "answer_kind": "integer"
@@ -152521,10 +154459,25 @@
             {
               "slot": 4,
               "weight": "stretch",
-              "prompt": "A student calculates the total displacement for the motion in the previous problem by treating the second stage as starting from rest, obtaining 9 m + \\((0.5 \\cdot (, 4) \\cdot 2^{2}) = 1\\) m. Explain why this method is incorrect.",
-              "answer": "The velocity at the end of the first stage is 6 m/s, not zero, so it must be carried into the second stage. Ignoring this velocity omits the distance traveled due to the existing motion, leading to an underestimate.",
+              "prompt": "For the motion in the last problem, a student treats the second stage as starting from rest and gets 9 m + \\(0.5 \\times (-4) \\times 2^{2} = 1\\) m. What did they get wrong?",
+              "answer": "The second stage starts at 6 m/s, not from rest, so that velocity has to be carried in. Dropping it leaves out the distance covered by the motion already under way.",
               "hint": "Remember the velocity at the end of the first stage is not zero.",
-              "answer_kind": "paragraph"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "6 m/s",
+                    "velocity",
+                    "speed",
+                    "not zero",
+                    "isn't zero",
+                    "not from rest",
+                    "wasn't at rest",
+                    "moving",
+                    "carried"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -152590,14 +154543,30 @@
               "weight": "warmup",
               "prompt": "A 1 kg puck slides at 2 m/s on a frictionless ice surface with no horizontal forces acting. What happens to its motion?",
               "answer": "It continues at 2 m/s in the same direction.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "same",
+                    "constant",
+                    "continues",
+                    "keeps",
+                    "unchanged",
+                    "doesn't change",
+                    "stays"
+                  ],
+                  [
+                    "2"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "State what happens to a 2 kg puck sliding at 3 m/s on a frictionless ice surface when no horizontal forces act on it.",
-              "answer": "It continues at 3 m/s in the same direction.",
-              "answer_kind": "sentence"
+              "prompt": "A 2 kg puck slides at 3 m/s on frictionless ice. Does it need a forward force to keep moving?",
+              "answer": "No. With no net force it keeps its 3 m/s and its direction.",
+              "answer_kind": "yesno"
             },
             {
               "slot": 3,
@@ -152623,14 +154592,24 @@
               "weight": "warmup",
               "prompt": "Find the acceleration of a 2 kg object acted on by a net force of 6 N east.",
               "answer": "3 m/s² east.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "3"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Find the acceleration of a 3 kg cart when a net horizontal force of 15 N acts on it.",
               "answer": "5 m/s² in the direction of the force.",
-              "answer_kind": "sentence"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "5"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -152638,7 +154617,12 @@
               "prompt": "A 10 kg sled is pulled with 25 N north and 15 N south. What is its acceleration?",
               "answer": "1 m/s² north.",
               "hint": "Subtract opposing forces before applying F=ma.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "1"
+                ]
+              }
             }
           ]
         },
@@ -152656,14 +154640,41 @@
               "weight": "warmup",
               "prompt": "A hand pushes a wall with 5 N. What force does the wall exert on the hand?",
               "answer": "5 N opposite direction.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "5"
+                  ],
+                  [
+                    "opposite",
+                    "toward",
+                    "back",
+                    "away",
+                    "outward",
+                    "equal"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A book rests on a table. The Earth exerts a 9.8 N downward force on the book. What force does the book exert on the Earth?",
               "answer": "9.8 N upward.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "9.8"
+                  ],
+                  [
+                    "up",
+                    "upward",
+                    "upwards"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -152671,7 +154682,20 @@
               "prompt": "A person of 70 kg pushes a 100 kg crate with a horizontal force of 120 N. State the reaction force and the object on which it acts.",
               "answer": "120 N opposite direction acting on the person.",
               "hint": "Action-reaction forces act on different bodies.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "120"
+                  ],
+                  [
+                    "person",
+                    "you",
+                    "pusher",
+                    "on the person"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -152689,22 +154713,38 @@
               "weight": "warmup",
               "prompt": "Two 50 kg skaters push off each other with a 20 N force for 1 s. What is the final speed of each skater?",
               "answer": "0.4 m/s in opposite directions.",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "0.4"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Two 60 kg ice skaters push off each other with a 30 N force for 2 s. Calculate each skater's final speed.",
               "answer": "1 m/s in opposite directions.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "1"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Two astronauts, masses 80 kg and 120 kg, push apart with a force that increases linearly from 0 to 40 N over 3 s. Assuming the average force is 20 N, find the final speeds of each astronaut.",
+              "prompt": "Two astronauts of 80 kg and 120 kg push apart with an average force of 20 N for 3 s. Give the 80 kg astronaut's final speed, then the 120 kg one's.",
               "answer": "0.75 m/s for the 80 kg astronaut and 0.5 m/s for the 120 kg astronaut, opposite directions.",
               "hint": "Use the average force to compute impulse, then divide by each mass.",
-              "answer_kind": "paragraph"
+              "answer_kind": "list",
+              "grading": {
+                "accept": [
+                  "0.75, 0.5"
+                ],
+                "order": true
+              }
             }
           ]
         }
@@ -152734,9 +154774,14 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Incidence 40 degrees. Reflection?",
-              "answer": "40 degrees.",
-              "answer_kind": "integer"
+              "prompt": "Light hits a mirror at 40 degrees from the normal. What angle does the reflected ray make with the mirror's surface?",
+              "answer": "50 degrees. The reflected ray is 40 degrees from the normal, and \\(90 - 40 = 50\\).",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "50"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -152768,21 +154813,40 @@
               "weight": "warmup",
               "prompt": "Speed of light in glass with \\(n = 1.5\\)?",
               "answer": "\\(2 \\times 10^{8}\\) m/s.",
-              "answer_kind": "phrase"
+              "answer_kind": "expression",
+              "grading": {
+                "accept": [
+                  "2*10^8"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Light from water, \\(n = 1.33\\), into air. Toward or away from the normal?",
               "answer": "Away.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Toward",
+                  "Away"
+                ],
+                "accept": [
+                  "Away"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Critical angle for glass with \\(n = 1.5\\) into air?",
               "answer": "About 41.8 degrees.",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "41.8"
+                ]
+              }
             }
           ]
         },
@@ -152807,7 +154871,12 @@
               "weight": "core",
               "prompt": "Object at 5 cm, \\(f = 10\\) cm. di?",
               "answer": "-10 cm, a virtual image.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "-10"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -152846,7 +154915,17 @@
               "weight": "stretch",
               "prompt": "A rainbow forms from dispersion in what, out of 3 options: dust, rain, wind?",
               "answer": "Raindrops.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Dust",
+                  "Raindrops",
+                  "Wind"
+                ],
+                "accept": [
+                  "Raindrops"
+                ]
+              }
             }
           ]
         },
@@ -152871,14 +154950,29 @@
               "weight": "core",
               "prompt": "Halve d from 0.2 to 0.1 mm. Fringes get wider or narrower?",
               "answer": "Wider.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Wider",
+                  "Narrower"
+                ],
+                "accept": [
+                  "Wider"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Who did the double slit experiment around 1801?",
               "answer": "Thomas Young.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "Thomas Young",
+                  "Young"
+                ]
+              }
             }
           ]
         }
@@ -152910,7 +155004,12 @@
               "weight": "warmup",
               "prompt": "Energy of a photon at \\(10^{15}\\) Hz?",
               "answer": "\\(6.63 \\times 10^{-19}\\) J.",
-              "answer_kind": "phrase"
+              "answer_kind": "expression",
+              "grading": {
+                "accept": [
+                  "6.63*10^-19"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -152949,14 +155048,30 @@
               "weight": "core",
               "prompt": "Doubling the intensity at 3.5 eV changes what?",
               "answer": "The number of electrons, not their max KE.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "number",
+                    "count",
+                    "how many",
+                    "more electrons",
+                    "rate"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Stopping voltage for a max KE of 1.5 eV?",
-              "answer": "1.5 V.",
-              "answer_kind": "decimal"
+              "prompt": "Light of 4.5 eV hits a metal with a work function of 2.3 eV. What is the stopping voltage?",
+              "answer": "2.2 V, since the fastest electrons have \\(4.5 - 2.3 = 2.2\\) eV.",
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "2.2"
+                ]
+              }
             }
           ]
         },
@@ -153006,7 +155121,12 @@
               "weight": "warmup",
               "prompt": "Momentum giving \\(\\lambda = 6.63 \\times 10^{-10}\\) m?",
               "answer": "\\(10^{-24}\\) kg m/s.",
-              "answer_kind": "phrase"
+              "answer_kind": "expression",
+              "grading": {
+                "accept": [
+                  "10^-24"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -153020,7 +155140,21 @@
               "weight": "stretch",
               "prompt": "Experiment showing electron waves in 1927, by Davisson and Germer?",
               "answer": "Electron diffraction off a crystal.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "diffraction",
+                    "interference",
+                    "pattern"
+                  ],
+                  [
+                    "crystal",
+                    "nickel",
+                    "lattice"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -153052,7 +155186,12 @@
               "weight": "stretch",
               "prompt": "\\(\\frac{h}{4\\pi}\\) to 2 figures?",
               "answer": "\\(5.3 \\times 10^{-35}\\) J s.",
-              "answer_kind": "phrase"
+              "answer_kind": "expression",
+              "grading": {
+                "accept": [
+                  "5.3*10^-35"
+                ]
+              }
             }
           ]
         }
@@ -153084,7 +155223,19 @@
               "weight": "warmup",
               "prompt": "Speed of light measured from a ship at 0.9c?",
               "answer": "c, \\(3 \\times 10^{8}\\) m/s.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "c",
+                    "3 × 10^8",
+                    "3*10^8",
+                    "300,000 km/s",
+                    "speed of light",
+                    "the same"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -153167,7 +155318,12 @@
               "weight": "stretch",
               "prompt": "Distance 4 light years shrinks to what at 0.6c?",
               "answer": "3.2 light years.",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "3.2"
+                ]
+              }
             }
           ]
         },
@@ -153185,21 +155341,38 @@
               "weight": "warmup",
               "prompt": "E for 1 kg?",
               "answer": "\\(9 \\times 10^{16}\\) J.",
-              "answer_kind": "phrase"
+              "answer_kind": "expression",
+              "grading": {
+                "accept": [
+                  "9*10^16"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Rest energy of an electron, \\(9.1 \\times 10^{-31}\\) kg, in J?",
               "answer": "About \\(8.2 \\times 10^{-14}\\) J.",
-              "answer_kind": "phrase"
+              "answer_kind": "expression",
+              "grading": {
+                "accept": [
+                  "8.2*10^-14",
+                  "8.19*10^-14",
+                  "8.19*10^(-14)"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Mass for \\(9 \\times 10^{10}\\) J?",
               "answer": "\\(10^{-6}\\) kg.",
-              "answer_kind": "phrase"
+              "answer_kind": "expression",
+              "grading": {
+                "accept": [
+                  "10^-6"
+                ]
+              }
             }
           ]
         },
@@ -153217,7 +155390,12 @@
               "weight": "warmup",
               "prompt": "Spacetime interval for 5 s and 3 light seconds?",
               "answer": "4 s, since \\(25 - 9 = 16\\).",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "4"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -153262,15 +155440,25 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Radians in 1 full turn?",
-              "answer": "2 pi, about 6.28.",
-              "answer_kind": "phrase"
+              "answer": "\\(2\\pi\\), about 6.28.",
+              "answer_kind": "expression",
+              "grading": {
+                "accept": [
+                  "2pi"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "omega for 60 rpm?",
-              "answer": "2 pi rad/s.",
-              "answer_kind": "phrase"
+              "answer": "\\(2\\pi\\) rad/s.",
+              "answer_kind": "expression",
+              "grading": {
+                "accept": [
+                  "2pi"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -153373,7 +155561,16 @@
               "weight": "stretch",
               "prompt": "Which rolls down a 30 degree ramp faster, a hoop or a solid disc?",
               "answer": "The solid disc.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "The hoop",
+                  "The solid disc"
+                ],
+                "accept": [
+                  "The solid disc"
+                ]
+              }
             }
           ]
         },
@@ -153391,7 +155588,12 @@
               "weight": "warmup",
               "prompt": "L for \\(I = 3\\) kg m² and \\(\\omega = 5\\) rad/s?",
               "answer": "15 kg m²/s.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "15"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -153403,9 +155605,15 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "KE before and after for the skater going from \\(I = 4\\) to 1 kg m²?",
-              "answer": "8 J before, 32 J after.",
-              "answer_kind": "phrase"
+              "prompt": "A skater spins with \\(L = 8\\) kg m²/s and pulls in from \\(I = 4\\) to \\(I = 1\\) kg m². Give the kinetic energy before, then after, in J.",
+              "answer": "8 J before and 32 J after, since KE = \\(\\frac{L^{2}}{2I}\\).",
+              "answer_kind": "list",
+              "grading": {
+                "accept": [
+                  "8, 32"
+                ],
+                "order": true
+              }
             }
           ]
         }
@@ -153451,7 +155659,16 @@
               "weight": "stretch",
               "prompt": "Is sound faster in steel or in 20 degrees C air?",
               "answer": "Steel.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Steel",
+                  "Air"
+                ],
+                "accept": [
+                  "Steel"
+                ]
+              }
             }
           ]
         },
@@ -153467,9 +155684,14 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Intensity factor for +10 dB?",
-              "answer": "10.",
-              "answer_kind": "integer"
+              "prompt": "Intensity factor for +30 dB?",
+              "answer": "1000, since every 10 dB is a factor of 10.",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "1000"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -153481,9 +155703,15 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Range of human hearing for a 20 year old, roughly, in Hz?",
+              "prompt": "Give the low end, then the high end, of human hearing for a 20 year old, roughly, in Hz.",
               "answer": "20 to 20,000 Hz.",
-              "answer_kind": "phrase"
+              "answer_kind": "list",
+              "grading": {
+                "accept": [
+                  "20, 20000"
+                ],
+                "order": true
+              }
             }
           ]
         },
@@ -153515,7 +155743,16 @@
               "weight": "stretch",
               "prompt": "Pitch rises or falls as a car passes at 30 m/s?",
               "answer": "It falls.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "It rises",
+                  "It falls"
+                ],
+                "accept": [
+                  "It falls"
+                ]
+              }
             }
           ]
         },
@@ -153572,14 +155809,41 @@
               "weight": "core",
               "prompt": "A string at 438 Hz beats 2 times a second with 440 Hz. Fix?",
               "answer": "Tighten it to raise the pitch.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "tighten",
+                    "tension",
+                    "raise",
+                    "increase",
+                    "tune up",
+                    "sharpen"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why did the Tacoma Narrows Bridge fail in 1940?",
               "answer": "Wind drove large oscillations.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "wind"
+                  ],
+                  [
+                    "oscillat",
+                    "resonan",
+                    "flutter",
+                    "twist",
+                    "vibrat",
+                    "swing"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -153623,9 +155887,14 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "A change of 10 degrees C is how many kelvin?",
-              "answer": "10 K.",
-              "answer_kind": "integer"
+              "prompt": "Water at 25 degrees C is what temperature in kelvin, to the nearest whole number?",
+              "answer": "298 K, from \\(25 + 273.15\\).",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "298"
+                ]
+              }
             }
           ]
         },
@@ -153656,8 +155925,17 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Which heats faster under 1000 W, 1 kg of water or 1 kg of Al?",
-              "answer": "Al.",
-              "answer_kind": "word"
+              "answer": "1 kg of Al, since aluminum's specific heat is about a fifth of water's.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "1 kg of water",
+                  "1 kg of Al"
+                ],
+                "accept": [
+                  "1 kg of Al"
+                ]
+              }
             }
           ]
         },
@@ -153675,21 +155953,45 @@
               "weight": "warmup",
               "prompt": "Energy to boil 1 kg of water at 100 degrees C, \\(L = 2.26 \\times 10^{6}\\)?",
               "answer": "\\(2.26 \\times 10^{6}\\) J.",
-              "answer_kind": "phrase"
+              "answer_kind": "expression",
+              "grading": {
+                "accept": [
+                  "2.26*10^6"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Energy to freeze 2 kg of water, \\(L = 334{,}000\\)?",
               "answer": "668,000 J released.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "668000"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why does steam at 100 degrees C burn worse than water at 100?",
               "answer": "It releases latent heat as it condenses.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "latent"
+                  ],
+                  [
+                    "condens",
+                    "turns to water",
+                    "changes to water",
+                    "phase change",
+                    "changes state"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -153707,21 +156009,58 @@
               "weight": "warmup",
               "prompt": "How does the Sun heat Earth across 150 million km?",
               "answer": "Radiation.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Conduction",
+                  "Convection",
+                  "Radiation"
+                ],
+                "accept": [
+                  "Radiation"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Main transfer in a metal pan handle 20 cm long?",
               "answer": "Conduction.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Conduction",
+                  "Convection",
+                  "Radiation"
+                ],
+                "accept": [
+                  "Conduction"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why are freezer coils near the top of 1 old fridge?",
               "answer": "Cold air sinks and sets up convection.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "sink",
+                    "sinks",
+                    "falls",
+                    "drops",
+                    "denser",
+                    "heavier"
+                  ],
+                  [
+                    "convection",
+                    "circulat",
+                    "current"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -153746,7 +156085,12 @@
               "weight": "core",
               "prompt": "Volume of 1 mol at 273 K and 101,000 Pa?",
               "answer": "About 0.0225 m³.",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "0.0225"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -153786,14 +156130,37 @@
               "weight": "warmup",
               "prompt": "What is the magnitude and direction of a vector that is 5 m long pointing directly east?",
               "answer": "5 m ∠0°.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "5"
+                  ],
+                  [
+                    "east",
+                    "0"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Write the vector representing a displacement of 8 m toward the northeast (45° from the positive x-axis).",
               "answer": "8 m ∠45°.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "8"
+                  ],
+                  [
+                    "45",
+                    "northeast",
+                    "north-east"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -153801,7 +156168,17 @@
               "prompt": "A student records the vector as 12 m only. What essential information is missing?",
               "answer": "The direction (angle) of the vector.",
               "hint": "Recall what defines a vector.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "direction",
+                    "angle",
+                    "bearing",
+                    "heading"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -153834,7 +156211,17 @@
               "prompt": "If you accidentally draw the 120° vector pointing into the fourth quadrant, which component sign will be incorrect?",
               "answer": "The y-component sign (it should be positive but would be negative).",
               "hint": "Consider the quadrant where 120° lies.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "y-component",
+                    "y component",
+                    "vertical",
+                    "y"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -153850,24 +156237,41 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "What is the x-component of a 10 N force acting exactly along the positive x-axis?",
-              "answer": "10 N.",
-              "answer_kind": "integer"
+              "prompt": "What is the x-component of a 10 N force pointing 60° above the positive x-axis?",
+              "answer": "5 N, since \\(10\\cos 60^{\\circ} = 5\\).",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "5"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Find the x- and y-components of a 9 N force at 30° above the positive x-axis.",
+              "prompt": "Give the x- and then the y-component, in N, of a 9 N force at 30° above the positive x-axis.",
               "answer": "\\(x = 7.79\\) N, \\(y = 4.5\\) N.",
-              "answer_kind": "phrase"
+              "answer_kind": "list",
+              "grading": {
+                "accept": [
+                  "7.79, 4.5"
+                ],
+                "order": true
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "A 7 N force is directed 210° from the positive x-axis. What are its x- and y-components?",
+              "prompt": "A 7 N force points 210° from the positive x-axis. Give its x- and then its y-component, in N.",
               "answer": "\\(x = - 6.06\\) N, \\(y = - 3.5\\) N.",
               "hint": "Use cosine for \\(x\\) and sine for \\(y\\); remember the angle is in the third quadrant.",
-              "answer_kind": "sentence"
+              "answer_kind": "list",
+              "grading": {
+                "accept": [
+                  "-6.06, -3.5"
+                ],
+                "order": true
+              }
             }
           ]
         },
@@ -153897,10 +156301,16 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Add vectors \\(D = (6, - 8)\\) m and \\(E = (-3, 4)\\) m. What are the magnitude and direction of the resultant vector?",
+              "prompt": "Add \\(D = (6, - 8)\\) m and \\(E = (-3, 4)\\) m. Give the magnitude of the resultant in m, then its direction in degrees.",
               "answer": "Magnitude 5 m, direction 306.9°.",
               "hint": "Add the components to get (3, -4) m, then use the Pythagorean theorem and arctangent.",
-              "answer_kind": "phrase"
+              "answer_kind": "list",
+              "grading": {
+                "accept": [
+                  "5, 306.9"
+                ],
+                "order": true
+              }
             },
             {
               "slot": 4,
@@ -153908,7 +156318,17 @@
               "prompt": "Three vectors are \\(F = (2, - 5)\\) m, \\(G = (-2, 5)\\) m, and \\(H = (0, - 3)\\) m. After adding them, on which axis does the resultant lie?",
               "answer": "negative y-axis.",
               "hint": "Add the x-components and y-components separately.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "negative y-axis",
+                  "-y axis",
+                  "negative y",
+                  "the negative y-axis",
+                  "-y",
+                  "down the y-axis"
+                ]
+              }
             }
           ]
         },
@@ -153924,24 +156344,42 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Resolve a 10 N force acting horizontally into components parallel to a 30° incline and perpendicular to that incline.",
+              "prompt": "A horizontal 10 N force acts on a block on a 30° incline. Give its component along the incline, then into the incline, in N.",
               "answer": "Parallel component = 10 \\(\\cos 30^{\\circ} \\approx 8.66\\) N, Normal component = 10 \\(\\sin 30^{\\circ} = 5\\) N.",
-              "answer_kind": "sentence"
+              "answer_kind": "list",
+              "grading": {
+                "accept": [
+                  "8.66, 5"
+                ],
+                "order": true
+              }
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Resolve a 20 N force that pushes up a 30° incline into components parallel to the plane and normal to the plane.",
+              "prompt": "A horizontal 20 N push acts on a block on a 30° incline. Give its component along the incline, then into the incline, in N.",
               "answer": "Parallel component = 20 \\(\\cos 30^{\\circ} \\approx 17.32\\) N, Normal component = 20 \\(\\sin 30^{\\circ} = 10\\) N.",
-              "answer_kind": "sentence"
+              "answer_kind": "list",
+              "grading": {
+                "accept": [
+                  "17.32, 10"
+                ],
+                "order": true
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "A 30 N force acts down a 30° incline, directed 20° below the plane. Resolve this force into components parallel to the incline and perpendicular to the incline.",
-              "answer": "Parallel component = 30 \\(\\cos 20^{\\circ} \\approx 28.20\\) N down the plane, Normal component = 30 \\(\\sin 20^{\\circ} \\approx 10.26\\) N into the plane.",
+              "prompt": "A 30 N force acts down a 30° incline, aimed 20° below the surface. Give its component along the incline, then into the incline, in N.",
+              "answer": "About 28.19 N down the plane and 10.26 N into it, from \\(30\\cos 20^{\\circ}\\) and \\(30\\sin 20^{\\circ}\\).",
               "hint": "Use the angle between the force direction and the plane (20°) with sine for the normal component and cosine for the parallel component.",
-              "answer_kind": "paragraph"
+              "answer_kind": "list",
+              "grading": {
+                "accept": [
+                  "28.19, 10.26"
+                ],
+                "order": true
+              }
             }
           ]
         }
@@ -154019,7 +156457,16 @@
               "weight": "stretch",
               "prompt": "A wave enters a slower medium at 20 Hz. Which changes, f or lambda?",
               "answer": "lambda.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "f",
+                  "lambda"
+                ],
+                "accept": [
+                  "lambda"
+                ]
+              }
             }
           ]
         },
@@ -154051,7 +156498,16 @@
               "weight": "stretch",
               "prompt": "P waves in an earthquake are which type, out of 2?",
               "answer": "Longitudinal.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Transverse",
+                  "Longitudinal"
+                ],
+                "accept": [
+                  "Longitudinal"
+                ]
+              }
             }
           ]
         },
@@ -154076,14 +156532,32 @@
               "weight": "core",
               "prompt": "Path difference of 1 wavelength. Constructive or destructive?",
               "answer": "Constructive.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Constructive",
+                  "Destructive"
+                ],
+                "accept": [
+                  "Constructive"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Path difference of 0.5 wavelength?",
               "answer": "Destructive.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Constructive",
+                  "Destructive"
+                ],
+                "accept": [
+                  "Destructive"
+                ]
+              }
             }
           ]
         },
@@ -154115,7 +156589,19 @@
               "weight": "stretch",
               "prompt": "Shorten the string from 0.65 to 0.325 m. Fundamental change?",
               "answer": "It doubles.",
-              "answer_kind": "word"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "it doubles",
+                  "doubles",
+                  "double",
+                  "2 times",
+                  "twice",
+                  "x2",
+                  "×2",
+                  "doubled"
+                ]
+              }
             }
           ]
         }
@@ -169294,9 +171780,14 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Sample size for a poll of 1200 adults?",
-              "answer": "1200.",
-              "answer_kind": "integer"
+              "prompt": "A poll asks 1200 of a town's 50,000 adults. What fraction of the adults is sampled, as a percent?",
+              "answer": "2.4%, since \\(\\frac{1200}{50{,}000} = 0.024\\).",
+              "answer_kind": "percent",
+              "grading": {
+                "accept": [
+                  "2.4%"
+                ]
+              }
             }
           ]
         },

@@ -78,7 +78,9 @@ _SAME = {
 _QUOTES = str.maketrans({'‘': "'", '’': "'", '“': '"', '”': '"', '♯': '#', '♭': 'b', '–': '-', '−': '-'})
 # A minus on a number is part of it ("-1/4" is not "1/4"); a hyphen inside a
 # word ("x-2", "left-to-right") is not.
-_TOKEN = re.compile(r"(?<![a-z0-9.])-?\d+\.\d+|(?<![a-z0-9])-\d+|[a-z0-9]+(?:'[a-z]+)?#?|%|\+\+|#|[≤≥<>≠]")
+# An ion keeps its charge ("ca2+" is not "ca2-"); a hyphen between two words
+# is still a break.
+_TOKEN = re.compile(r"(?<![a-z0-9.])-?\d+\.\d+|(?<![a-z0-9])-\d+|[a-z0-9]+(?:'[a-z]+)?#?(?:\+|-(?![a-z0-9]))?|%|\+\+|#|[≤≥<>≠]")
 #: How many words longer than an accepted answer a reply may run.
 SLACK = {'word': 3, 'phrase': 6, 'choice': 2}
 
@@ -132,6 +134,8 @@ def _fold(text: str) -> str:
         text = pattern.sub(word, text + ' ').strip()
     for pattern, note in _NOTES:
         text = pattern.sub(note, text)
+    # CO_2 and CO2, H_{2} and H2: a subscript digit is part of the word.
+    text = re.sub(r'([a-z])_\{?(\d+)\}?', r'\1\2', text)
     # "x = - 1" is how a stored answer spaces a negative; it's still -1.
     text = re.sub(r'(^|[=(,;:≤≥<>≠])\s*-\s+(?=\d)', r'\1 -', text)
     for long, short in _SAME.items():
@@ -163,12 +167,20 @@ def _negated(token: str) -> bool:
     return token in NEGATIONS or token.endswith("n't")
 
 
+def _same_word(have: str, want: str) -> bool:
+    """A word matches itself, and a key of 5 letters or more also matches the
+    longer words it starts: "oscillat" meets "oscillation". Only from the
+    front, so "polar" never meets "nonpolar"."""
+    return have == want or (len(want) >= 5 and want.isalpha() and have.startswith(want))
+
+
 def _find(haystack: Sequence[str], needle: Sequence[str]) -> List[int]:
     """Every place `needle` starts in `haystack`."""
     if not needle or len(needle) > len(haystack):
         return []
     size = len(needle)
-    return [at for at in range(len(haystack) - size + 1) if list(haystack[at:at + size]) == list(needle)]
+    return [at for at in range(len(haystack) - size + 1)
+            if all(_same_word(haystack[at + k], needle[k]) for k in range(size))]
 
 
 def says(given: Sequence[str], idea: Sequence[str]) -> bool:
@@ -217,6 +229,42 @@ def matches_one(given: str, accepted: Iterable[str], slack: int, context: Iterab
             if all(word in allowed for word in extra):
                 return True
     return False
+
+
+#: How much of a question a reply may repeat before it counts as the
+#: question typed back.
+ECHO_SHARE = 0.7
+
+
+def echoes(given: str, context: Sequence[str]) -> bool:
+    """Whether a reply is mostly the question itself: it repeats ECHO_SHARE
+    of the question's words and adds little of its own."""
+    asked = set(context)
+    if len(asked) < 5:
+        return False
+    said = tokens(given, typed=True)
+    if not said:
+        return False
+    covered = len(asked & set(said)) / len(asked)
+    added = len([word for word in said if word not in asked])
+    if covered < ECHO_SHARE or added > max(2, len(said) // 4):
+        return False
+    # The question typed back keeps its order. A merge of "1, 4, 7 and 2, 3,
+    # 9" reuses every number in a new order, and is an answer.
+    shared = [word for word in said if word in asked]
+    return _common(shared, list(context)) >= 0.8 * len(shared)
+
+
+def _common(left: Sequence[str], right: Sequence[str]) -> int:
+    """The longest common subsequence of two short word lists."""
+    best = [0] * (len(right) + 1)
+    for one in left:
+        last = 0
+        for at, other in enumerate(right, start=1):
+            keep = best[at]
+            best[at] = last + 1 if one == other else max(best[at], best[at - 1])
+            last = keep
+    return best[-1]
 
 
 def rejected(given: str, reject: Iterable[str]) -> bool:
@@ -349,6 +397,10 @@ def _prepare(text: str) -> str:
     text = str(text or '').strip().rstrip('.').strip()
     if '\\' in text:
         text = delatex(text)
+    # 2.26 × 10^6, 2.26 x 10^6 and 2.26e6 are one number; so is 2,260,000.
+    text = re.sub(r'(\d)\s*[x×*]\s*10\s*\^', r'\1*10^', text)
+    text = re.sub(r'(?<![a-zA-Z])(\d(?:\.\d+)?)[eE]([-+]?\d+)(?![\w.])', r'(\1*10^(\2))', text)
+    text = re.sub(r'(?<=\d),(?=\d{3}(?!\d))', '', text)
     text = text.replace('−', '-').replace('–', '-').replace('×', '*').replace('·', '*').replace('÷', '/')
     text = text.replace('≤', '<=').replace('≥', '>=').replace('≠', '!=').replace('≈', '=')
     # Degrees inside a trig function are degrees: sin 30° is 1/2. Anywhere
@@ -862,7 +914,9 @@ def typed_form(kind: str, answer: str) -> str:
     """A stored answer the way a reader would type it back: math as plain
     math, anything else as plain words. For tests that hold the library to
     passing its own marking."""
-    return _stored(answer).lstrip('\u0000') if kind in ('expression', 'coordinates', 'list') else to_plain(answer)
+    if kind in ('expression', 'coordinates') or (kind == 'list' and number_list(answer)):
+        return _stored(answer).lstrip('\u0000')
+    return to_plain(answer)
 
 
 def _rename(node, mapping):
@@ -1089,6 +1143,9 @@ def grade(kind: str, answer: str, given: str, grading: Optional[Dict[str, Any]],
     whose words a short reply may repeat around its answer."""
     grading = grading or {}
     context = tokens(prompt)
+    accepted_exactly = any(tokens(given, typed=True) == tokens(one) for one in grading.get('accept') or [])
+    if echoes(given, context) and not accepted_exactly:
+        return False
     accept = [str(one) for one in grading.get('accept') or []]
     keys = [[str(way) for way in group] for group in grading.get('keys') or []]
     need = grading.get('need')
