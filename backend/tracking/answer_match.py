@@ -120,6 +120,9 @@ def _fold(text: str) -> str:
     text = str(text or '').translate(_QUOTES).lower()
     text = text.replace('>=', '≥').replace('<=', '≤').replace('!=', '≠').replace('=<', '≤').replace('=>', '≥')
     text = text.replace('²', '^2').replace('³', '^3')
+    for mark, word in (('∀', ' for all '), ('∃', ' there exists '), ('¬', ' not '), ('∧', ' and '),
+                       ('∨', ' or '), ('→', ' implies '), ('->', ' implies ')):
+        text = text.replace(mark, word)
     # Greek reads as its name, so "α + 1" and "alpha + 1" are the same words.
     for mark, name in _GREEK_WORDS.items():
         text = text.replace(mark, ' {} '.format(name))
@@ -153,6 +156,9 @@ def tokens(text: str, typed: bool = False) -> List[str]:
     return out
 
 
+_BREAKS = frozenset('or and but so because then while'.split())
+
+
 def _negated(token: str) -> bool:
     return token in NEGATIONS or token.endswith("n't")
 
@@ -170,7 +176,13 @@ def says(given: Sequence[str], idea: Sequence[str]) -> bool:
     for at in _find(given, idea):
         if any(_negated(one) for one in idea):
             return True
-        before = given[max(0, at - 3):at]
+        # A "not" up to 3 words back cancels the idea, unless an "or" or an
+        # "and" comes between: "none or infinitely many" says both.
+        before = []
+        for word in reversed(given[max(0, at - 3):at]):
+            if word in _BREAKS:
+                break
+            before.append(word)
         if not any(_negated(one) for one in before):
             return True
     return False
@@ -381,6 +393,12 @@ def _lex(text: str) -> List[Tuple[str, str]]:
                 else:
                     out.append(('name', word[spot]))
                     spot += 1
+            # c1 and x0, typed with no space, are c_1 and x_0.
+            digits = re.match(r'\d+(?![.\d])', text[at:])
+            last = out[-1][1]
+            if digits and len(last) == 1 and last not in 'ei':
+                out[-1] = ('name', '{}_{}'.format(last, digits.group(0)))
+                at += len(digits.group(0))
         else:
             out.append(('op', match.group('op')))
     return out
@@ -490,13 +508,22 @@ class _Parser:
             name = value
             if self.peek()[1] == '_':
                 self.take()
-                name += '_' + self.take()[1]
+                if self.peek()[1] == '(':
+                    # c_(1), from c_{1}: the subscript is part of the name.
+                    self.take()
+                    inside = []
+                    while self.peek()[1] not in (')', None):
+                        inside.append(self.take()[1])
+                    self.take(')')
+                    name += '_' + ''.join(inside)
+                else:
+                    name += '_' + self.take()[1]
             while self.peek()[1] == "'":
                 self.take()
                 name += "'"
             if name in CONSTANTS:
                 return ('num', CONSTANTS[name])
-            return ('var', name)
+            return ('var', name)  # may already be c_1, from "c1"
         raise Unreadable('unexpected {}'.format(value))
 
     def _call(self, name):
@@ -838,6 +865,38 @@ def typed_form(kind: str, answer: str) -> str:
     return _stored(answer).lstrip('\u0000') if kind in ('expression', 'coordinates', 'list') else to_plain(answer)
 
 
+def _rename(node, mapping):
+    if not isinstance(node, tuple):
+        return node
+    if node[0] == 'var':
+        return ('var', mapping.get(node[1], node[1]))
+    return tuple(_rename(part, mapping) if isinstance(part, tuple)
+                 else [_rename(one, mapping) for one in part] if isinstance(part, list) else part
+                 for part in node)
+
+
+def _names(found) -> set:
+    out = set()
+    for one in found:
+        out |= variables(one[1]) if one[0] == 'expr' else set().union(*(variables(side) for side in one[2]))
+    return out
+
+
+def _matched(want, got) -> bool:
+    unused = list(got)
+    for one in want:
+        for other in unused:
+            try:
+                if same_statement(one, other):
+                    unused.remove(other)
+                    break
+            except (Unreadable, ZeroDivisionError, OverflowError, ValueError, TypeError):
+                continue
+        else:
+            return False
+    return True
+
+
 def same_math(answer: str, given: str) -> Optional[bool]:
     """Whether a typed answer is the same math as the stored one. None when the
     stored answer isn't math this module can read."""
@@ -854,18 +913,21 @@ def same_math(answer: str, given: str) -> Optional[bool]:
     want, got = atoms(want), atoms(got)
     if len(want) != len(got):
         return False
-    unused = list(got)
-    for one in want:
-        for other in unused:
-            try:
-                if same_statement(one, other):
-                    unused.remove(other)
-                    break
-            except (Unreadable, ZeroDivisionError, OverflowError, ValueError, TypeError):
-                continue
-        else:
-            return False
-    return True
+    if _matched(want, got):
+        return True
+    # Constants have no fixed names: A and B are c_1 and c_2, and C is K.
+    import itertools
+    extra, missing = sorted(_names(got) - _names(want)), sorted(_names(want) - _names(got))
+    if not extra or len(extra) != len(missing) or len(extra) > 3:
+        return False
+    for order in itertools.permutations(missing):
+        mapping = dict(zip(extra, order))
+        renamed = [(one[0], _rename(one[1], mapping)) if one[0] == 'expr'
+                   else ('rel', [(op, _rename(f, mapping)) for op, f in one[1]], [_rename(side, mapping) for side in one[2]])
+                   for one in got]
+        if _matched(want, renamed):
+            return True
+    return False
 
 
 def readable_math(answer: str) -> bool:
@@ -978,7 +1040,7 @@ def same_items(groups: Sequence[Sequence[str]], given: str, order: bool, need: O
                 continue
             for way in group:
                 want = tokens(way)
-                if want and (words == want or (says(words, want) and len(words) <= len(want) + 2)):
+                if want and (words == want or says(words, want)):
                     found = at
                     break
             if found is not None:
@@ -1221,6 +1283,7 @@ def grading_failures(kind: str, answer: str, grading: Optional[Dict[str, Any]]) 
     if accepted and kind in ('integer', 'decimal', 'fraction', 'percent'):
         want = _number_of(accepted[0].rstrip('.'))
         text = to_plain(answer) + ' ' + _stored(answer)
+        text = re.sub(r'([=(,:]\s*)-\s+(?=\d)', r'\1-', text)
         found = [_number_of(one) for one in re.findall(r'-?\d[\d,]*(?:\.\d+)?(?:/\d+)?', text.replace(',', ''))]
         if want is None or not any(one is not None and _close(one, want) for one in found):
             bad.append('grading:the worked answer does not say the accepted number')
