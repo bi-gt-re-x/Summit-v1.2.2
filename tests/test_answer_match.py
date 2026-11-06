@@ -194,6 +194,11 @@ def test_no_marking_in_the_library_takes_the_next_problems_answer():
                 continue
             if match.tokens(theirs) == match.tokens(problem['answer']):
                 continue
+            # Two problems can share an answer: the side opposite A and the
+            # side adjacent to B are both BC.
+            mine_cores = [match.tokens(one) for one in (grading.get('accept') or []) + match.cores(problem['answer'])]
+            if any(match.tokens(one) in mine_cores for one in match.cores(theirs)):
+                continue
             if skill_check.grade_as(kind, problem['answer'], theirs, grading, problem['prompt']):
                 loose.append((node_id, step['title'], problem['slot'], theirs[:60]))
     assert loose == []
