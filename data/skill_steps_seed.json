@@ -24274,7 +24274,7 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "K for \\(\\mathrm{H_{2}} + \\mathrm{I_{2}} \\rightleftharpoons 2\\mathrm{HI}\\)?",
-              "answer": "[HI]^2/([H2][I2]).",
+              "answer": "\\(\\frac{[\\mathrm{HI}]^{2}}{[\\mathrm{H}_{2}][\\mathrm{I}_{2}]}\\).",
               "answer_kind": "phrase"
             },
             {
@@ -25569,7 +25569,7 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "rate = k[A]^2[B]. Overall order?",
+              "prompt": "\\(\\text{rate} = k[\\mathrm{A}]^{2}[\\mathrm{B}]\\). Overall order?",
               "answer": "3.",
               "answer_kind": "integer"
             }
@@ -31355,7 +31355,7 @@
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Ways 2 dice sum to 5, from (x + ... + x^6)^2?",
+              "prompt": "Ways 2 dice sum to 5, from \\((x + \\dots + x^{6})^{2}\\)?",
               "answer": "4.",
               "answer_kind": "integer"
             },
@@ -88184,7 +88184,7 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "\\(\\begin{bmatrix} 2 & 0 \\\\ 0 & 3 \\end{bmatrix}\\)^2?",
+              "prompt": "\\(\\begin{bmatrix} 2 & 0 \\\\ 0 & 3 \\end{bmatrix}^{2}\\)?",
               "answer": "\\(\\begin{bmatrix} 4 & 0 \\\\ 0 & 9 \\end{bmatrix}\\).",
               "answer_kind": "list"
             },
@@ -88198,7 +88198,7 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "\\(\\begin{bmatrix} 0 & 1 \\\\ 1 & 0 \\end{bmatrix}\\)^3?",
+              "prompt": "\\(\\begin{bmatrix} 0 & 1 \\\\ 1 & 0 \\end{bmatrix}^{3}\\)?",
               "answer": "\\(\\begin{bmatrix} 0 & 1 \\\\ 1 & 0 \\end{bmatrix}\\).",
               "answer_kind": "list"
             }
@@ -88500,7 +88500,7 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "\\(\\begin{bmatrix} 3 & 0 \\\\ 0 & 2 \\end{bmatrix}\\)^3?",
+              "prompt": "\\(\\begin{bmatrix} 3 & 0 \\\\ 0 & 2 \\end{bmatrix}^{3}\\)?",
               "answer": "\\(\\begin{bmatrix} 27 & 0 \\\\ 0 & 8 \\end{bmatrix}\\).",
               "answer_kind": "list"
             },
@@ -88998,7 +88998,7 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Inverse of \\(\\begin{bmatrix} 1 & 2 \\\\ 3 & 4 \\end{bmatrix}\\)?",
-              "answer": "\\((-\\frac{1}{2})\\)\\(\\begin{bmatrix} 4 & -2 \\\\ -3 & 1 \\end{bmatrix}\\).",
+              "answer": "\\(-\\frac{1}{2}\\begin{bmatrix} 4 & -2 \\\\ -3 & 1 \\end{bmatrix}\\).",
               "answer_kind": "expression"
             },
             {
@@ -89274,7 +89274,7 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Solve R \\(x = Q^{T}\\) b with R = \\(\\begin{bmatrix} 2 & 0 \\\\ 0 & 1 \\end{bmatrix}\\) and \\(Q^{T}\\) \\(b = (4, 3)\\).",
+              "prompt": "Solve \\(Rx = Q^{T}b\\) with \\(R = \\begin{bmatrix} 2 & 0 \\\\ 0 & 1 \\end{bmatrix}\\) and \\(Q^{T}b = (4, 3)\\).",
               "answer": "\\(x = (2, 3)\\).",
               "answer_kind": "expression"
             }
@@ -131971,7 +131971,7 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "mu0 epsilon0 value, roughly?",
-              "answer": "\\(1.11 \\times 10^{-17}\\) s^2/m^2.",
+              "answer": "\\(1.11 \\times 10^{-17}\\,\\mathrm{s^{2}/m^{2}}\\).",
               "answer_kind": "phrase"
             },
             {
