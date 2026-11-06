@@ -11797,6 +11797,180 @@
         }
       ]
     },
+    "bi.biotech": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Cut and Paste DNA",
+          "mastery": "Explain how restriction enzymes cut DNA and ligase joins it, making recombinant DNA.",
+          "practice": "Cut a plasmid and a human insulin gene with EcoRI on paper, match the sticky ends, and join them with ligase.",
+          "detail": "A restriction enzyme cuts DNA at one exact sequence, often leaving short single-stranded sticky ends. Cut two DNA pieces with the same enzyme and their ends match. Ligase seals them together. Put the new plasmid into bacteria and they copy it as they divide.",
+          "proof": "A paper plasmid with the insulin gene taped in where EcoRI cut it.",
+          "pitfall": "Cutting the gene and the plasmid with different enzymes, so the ends don't match.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "EcoRI cuts at GAATTC. How many times does it cut GAATTCAAGAATTC?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which enzyme seals cut DNA back together?",
+              "answer": "DNA ligase",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why cut the gene and 1 plasmid with the same enzyme?",
+              "answer": "So their sticky ends match.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Copy DNA With PCR",
+          "mastery": "Explain the 3 temperature steps of PCR and how the copies double every cycle.",
+          "practice": "Write the 3 PCR steps with their temperatures, then work out the copies after 10 cycles from 1 molecule.",
+          "detail": "Heating to about 95°C separates the strands. Cooling to about 55°C lets short primers stick to each strand. Warming to 72°C lets a heat-proof polymerase build new strands. Each cycle doubles the DNA, so 30 cycles turn one molecule into about a billion.",
+          "proof": "95, 55 and 72°C, and 1024 copies after 10 cycles.",
+          "pitfall": "Thinking PCR adds a fixed number of copies each cycle instead of doubling.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "At what temperature does PCR separate DNA strands: about 55°C or 95°C?",
+              "answer": "95°C",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many copies are there after 5 cycles, starting from 1 molecule?",
+              "answer": "32",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does PCR use a polymerase from a hot spring bacterium?",
+              "answer": "It survives the 95°C steps.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Read a Gel",
+          "mastery": "Read a gel: smaller DNA pieces travel farther toward the positive end.",
+          "practice": "Draw a gel with a ladder and 3 samples of 300, 500 and 1000 base pairs, placing each band correctly.",
+          "detail": "DNA is negatively charged, so in an electric field it moves toward the positive electrode. The gel is a mesh, and small pieces slip through faster. A ladder of known sizes lets you read each band's size. Matching bands suggest matching DNA.",
+          "proof": "The 300 bp band is farthest from the wells, and the 1000 bp band is closest.",
+          "pitfall": "Putting the biggest piece farthest, as if size meant speed.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which travels farther in a gel: a 200 bp or an 800 bp fragment?",
+              "answer": "200 bp",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "DNA moves toward which electrode in a gel?",
+              "answer": "The positive one, since DNA is negative.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A crime scene sample's bands match suspect 2 but not suspect 1. What does that suggest?",
+              "answer": "The sample likely came from suspect 2.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Edit Genes With CRISPR",
+          "mastery": "Explain how CRISPR-Cas9 uses a guide RNA to cut a chosen DNA site.",
+          "practice": "Write a 20-base guide RNA to match a target DNA sequence, and explain what Cas9 does once it binds.",
+          "detail": "The guide RNA is built to pair with the exact DNA sequence you want to change. Cas9 follows the guide and cuts both strands there. The cell repairs the cut, which can switch the gene off or, with a template, write in a new sequence.",
+          "proof": "A guide matching the target, and Cas9 cutting both strands at that spot.",
+          "pitfall": "Thinking CRISPR adds new genes on its own. It cuts, and the cell's repair does the rest.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which part of CRISPR finds the target DNA sequence?",
+              "answer": "The guide RNA",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does Cas9 do at the target?",
+              "answer": "It cuts both DNA strands.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write the guide RNA that pairs with the DNA template ACGTAC.",
+              "answer": "UGCAUG",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Weigh the Uses",
+          "mastery": "Weigh a biotech use's benefits and risks, like GM crops or gene therapy, using evidence.",
+          "practice": "Write 3 benefits and 3 concerns for Golden Rice, then give your own view in 2 sentences.",
+          "detail": "Biotech questions mix science with values. First get the facts right: what the change does, what studies show and who it affects. Then weigh benefits against risks, and say which risks are known and which are guesses. Editing body cells affects one person, while editing embryos affects their descendants too.",
+          "proof": "3 benefits, 3 concerns and a 2-sentence view backed by evidence.",
+          "pitfall": "Arguing from 'natural' or 'unnatural' without any evidence.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Golden Rice makes beta-carotene. Which deficiency does it target?",
+              "answer": "Vitamin A deficiency",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Is editing 1 patient's blood cells different from editing an embryo? Why?",
+              "answer": "Yes. Embryo edits pass to future generations.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 medicine made with recombinant DNA.",
+              "answer": "Insulin",
+              "answer_kind": "word"
+            }
+          ]
+        }
+      ]
+    },
     "bi.cells": {
       "model": "claude-opus-5-5",
       "verifier": "rules+authored",
@@ -12319,6 +12493,180 @@
         }
       ]
     },
+    "bi.ecology": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Food Chains and Webs",
+          "mastery": "Build food chains and webs, and name the producers, consumers and decomposers.",
+          "practice": "Build a food web of 6 organisms from a pond, with arrows pointing the way energy flows.",
+          "detail": "Producers like plants and algae make food from light. Consumers eat them or each other, and decomposers break down whatever dies. Arrows point from what's eaten to what eats it. A web shows that most animals eat several things, so the loss of one species ripples outward.",
+          "proof": "A web of 6 organisms with arrows from algae up to the top predator.",
+          "pitfall": "Drawing arrows from predator to prey, which reverses the energy flow.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In the 3-link chain grass, rabbit, fox, which is the producer?",
+              "answer": "Grass",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In a 6-organism food web, which way should the arrows point?",
+              "answer": "From the eaten to the eater, the way energy flows.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Foxes vanish from 1 web. What likely happens to the rabbits at first?",
+              "answer": "Their numbers rise.",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "The 10% Rule",
+          "mastery": "Use the rule that about 10% of the energy passes from one feeding level to the next.",
+          "practice": "Start with 10,000 kJ in grass and work out the energy reaching rabbits, foxes and an eagle.",
+          "detail": "At each level, most energy is spent on staying alive and leaves as heat, and some is never eaten. Only about a tenth is built into the next level's bodies. That's why top predators are rare and food chains stay short.",
+          "proof": "1000 kJ to rabbits, 100 kJ to foxes and 10 kJ to the eagle.",
+          "pitfall": "Saying energy is recycled like matter. Energy flows through once and is lost as heat.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Plants hold 50,000 kJ. About how much reaches the herbivores?",
+              "answer": "5000 kJ",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why are there rarely more than 5 levels in a food chain?",
+              "answer": "Too little energy is left at the top.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "At each step, where does the other 90% go?",
+              "answer": "Lost as heat from respiration, and in waste and uneaten parts.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Cycles of Matter",
+          "mastery": "Trace carbon through photosynthesis, respiration, decay and burning.",
+          "practice": "Draw the carbon cycle with 4 stores, air, plants, animals and fossil fuels, and label each arrow with its process.",
+          "detail": "Photosynthesis pulls carbon out of the air into plants. Eating moves it into animals. Respiration and decay return it to the air, and burning fossil fuels releases carbon that was locked away for millions of years. Matter cycles, unlike energy.",
+          "proof": "4 stores linked by photosynthesis, feeding, respiration, decay and burning.",
+          "pitfall": "Leaving decomposers out, which stops the cycle at dead matter.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which process removes CO2 from the air?",
+              "answer": "Photosynthesis",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which 2 processes add CO2 to the air?",
+              "answer": "Respiration and burning.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why do decomposers matter when 1 tree falls and dies?",
+              "answer": "They release its carbon back to the air.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Biotic and Abiotic Factors",
+          "mastery": "Tell living from nonliving factors, and explain how each one limits where a species lives.",
+          "practice": "List 4 biotic and 4 abiotic factors for a forest stream, and say which one limits trout the most.",
+          "detail": "Biotic factors are living things: food, predators, competitors and disease. Abiotic factors are nonliving: temperature, light, water, oxygen and soil. A species can only live where all of them stay in its range, and the tightest one sets the limit.",
+          "proof": "Biotic: insects, herons, algae, other fish. Abiotic: temperature, oxygen, current, light. Temperature limits trout most.",
+          "pitfall": "Calling dead leaves abiotic. They came from living things, so they count as biotic.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Is water at 25°C a biotic or an abiotic factor?",
+              "answer": "Abiotic",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Is 1 heron that eats fish a biotic or an abiotic factor?",
+              "answer": "Biotic",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Trout need water below about 20°C. What limits them in a stream that warms to 24°C?",
+              "answer": "Temperature, which also lowers the oxygen.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Sample a Habitat",
+          "mastery": "Estimate how many of a species live in an area, with quadrats or mark and recapture, and judge the estimate.",
+          "practice": "Count daisies in 10 random 1 m squares on a 200 square meter lawn, and estimate the total.",
+          "detail": "Counting everything is rarely possible, so sample. Quadrats suit plants: average the count per square and scale up by area. For animals that move, mark some, release them, then recapture and use the share that's marked. More samples give a better estimate.",
+          "proof": "Multiply the mean per square by 200 to estimate the lawn's total.",
+          "pitfall": "Placing quadrats where the plants look thickest, which inflates the estimate.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "10 quadrats of 1 m² average 4 daisies each. Estimate the total on 200 m².",
+              "answer": "800",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You mark 20 beetles and release them. Later you catch 30, and 6 are marked. Estimate the population.",
+              "answer": "100",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why place your 10 quadrats at random?",
+              "answer": "To avoid picking spots that bias the count.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
     "bi.enzymes": {
       "model": "claude-opus-5-5",
       "verifier": "rules+authored",
@@ -12835,6 +13183,354 @@
               "weight": "stretch",
               "prompt": "Why are X-linked recessive traits more common in XY males?",
               "answer": "Males have only 1 X, so a single recessive allele shows.",
+              "answer_kind": "sentence"
+            }
+          ]
+        }
+      ]
+    },
+    "bi.homeo": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Negative Feedback",
+          "mastery": "Explain negative feedback: a change is detected and the response pushes the value back toward normal.",
+          "practice": "Draw a thermostat loop with a sensor, a control center and an effector, then draw your body's temperature loop the same way.",
+          "detail": "A sensor notices a change, a control center compares it to the set point, and an effector acts to undo the change. Once the value is back, the response stops. That loop holds temperature, blood sugar and water steady inside you.",
+          "proof": "Thermometer, thermostat, heater. Skin and brain sensors, hypothalamus, sweat glands and muscles.",
+          "pitfall": "Thinking negative feedback means something bad. It means the response opposes the change.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A home thermostat is set to 20°C and the room drops to 18°C. What does the heater do?",
+              "answer": "It turns on until the room is back to 20°C.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In 1 negative feedback loop, does the response push the value further away or back toward normal?",
+              "answer": "Back toward normal.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name the 3 parts of a feedback loop.",
+              "answer": "Sensor, control center and effector.",
+              "answer_kind": "list"
+            }
+          ]
+        },
+        {
+          "title": "Temperature Control",
+          "mastery": "Describe how the body cools itself and warms itself to stay near 37°C.",
+          "practice": "List 3 ways your body cools at 39°C and 3 ways it warms at 35°C.",
+          "detail": "The hypothalamus in the brain acts as the thermostat. When you're hot, you sweat and the blood vessels near your skin widen to lose heat. When you're cold, you shiver, the skin vessels narrow, and your hair stands up, which helps more in furry animals.",
+          "proof": "Cooling: sweating, wider skin vessels, less activity. Warming: shivering, narrower vessels, goosebumps.",
+          "pitfall": "Saying sweat cools you by being wet. It cools you as it evaporates.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which brain region keeps your temperature near 37°C?",
+              "answer": "The hypothalamus",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why do you shiver at 35°C?",
+              "answer": "The muscle contractions release heat.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Sweat only cools you as it evaporates. Why is a humid 30°C day so uncomfortable?",
+              "answer": "Humid air slows evaporation, so sweat doesn't cool you.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Blood Sugar",
+          "mastery": "Explain how insulin and glucagon keep blood glucose in range.",
+          "practice": "Draw what happens to blood glucose after a meal and after 4 hours without food, showing where insulin and glucagon act.",
+          "detail": "After a meal, glucose rises and the pancreas releases insulin, which makes cells take it up and the liver store it as glycogen. When glucose falls, the pancreas releases glucagon, which makes the liver turn glycogen back into glucose.",
+          "proof": "Insulin brings glucose down after the meal, and glucagon raises it after 4 hours without food.",
+          "pitfall": "Mixing up glycogen, the stored form, with glucagon, the hormone.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which hormone lowers blood glucose after a 600 kcal meal?",
+              "answer": "Insulin",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which 1 organ releases both insulin and glucagon?",
+              "answer": "The pancreas",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In type 1 diabetes, which hormone isn't made?",
+              "answer": "Insulin",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Water Balance",
+          "mastery": "Explain how the kidneys and ADH keep water and salt in balance.",
+          "practice": "Compare urine color and volume after drinking 2 liters of water and after a hot hike with little to drink, and explain each with ADH.",
+          "detail": "When blood gets too concentrated, the brain releases ADH, and the kidneys hold onto water, making small amounts of dark urine. When you've had plenty to drink, ADH drops and the kidneys let water go, so urine is pale and plentiful.",
+          "proof": "After 2 liters: lots of pale urine, low ADH. After the hike: a little dark urine, high ADH.",
+          "pitfall": "Thinking the kidneys only remove waste. They also set your water level.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which hormone tells the kidneys to save water: ADH or insulin?",
+              "answer": "ADH",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "After drinking 2 L of water fast, is your urine darker or paler?",
+              "answer": "Paler, and there's more of it.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does a meal with 3 g of salt make you thirsty?",
+              "answer": "Your blood gets more concentrated, so your brain triggers thirst to dilute it.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "When Balance Fails",
+          "mastery": "Explain what happens when a feedback loop breaks, using fever, heat stroke or diabetes as examples.",
+          "practice": "Pick 1 condition, like heat stroke, and draw its feedback loop with the broken part marked.",
+          "detail": "When a sensor, control center or effector fails, the value drifts out of range and stays there. In heat stroke, sweating stops and temperature runs away. In type 1 diabetes, no insulin is made. A few loops are positive on purpose, like contractions in childbirth.",
+          "proof": "The heat stroke loop with the sweating effector crossed out.",
+          "pitfall": "Calling every runaway change positive feedback. Most are broken negative loops.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Body temperature reaches 41°C and sweating has stopped. What is this called?",
+              "answer": "Heat stroke",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "During the 1st stage of childbirth, oxytocin makes each contraction stronger. Is that negative or positive feedback?",
+              "answer": "Positive. Each contraction triggers a stronger one.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why is untreated type 1 diabetes dangerous?",
+              "answer": "Blood glucose climbs out of control, damaging organs.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "bi.immune": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "First Lines of Defense",
+          "mastery": "Name the barriers that keep pathogens out before the immune system has to act, like skin, mucus and stomach acid.",
+          "practice": "List 4 barriers and 1 pathogen each one stops, like stomach acid against bacteria in food.",
+          "detail": "Most germs never get inside. Skin is a tough physical wall. Mucus traps microbes in your airways and tiny hairs called cilia sweep it up. Stomach acid kills most bacteria in food, and tears and saliva hold enzymes that break bacteria apart.",
+          "proof": "Skin, mucus with cilia, stomach acid and tears, each with a germ it blocks.",
+          "pitfall": "Forgetting the barriers and jumping straight to antibodies.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What pH is stomach acid, roughly: 2 or 7?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Your airways make about 100 mL of mucus a day. How does it protect you?",
+              "answer": "It traps microbes, and cilia sweep them out.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does a 1 cm cut raise your infection risk?",
+              "answer": "It breaks the skin barrier.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "The Fast Response",
+          "mastery": "Describe inflammation and phagocytes, the fast response that works the same way every time.",
+          "practice": "Draw a splinter wound and show 4 steps: damage, swelling, phagocytes arriving and germs being engulfed.",
+          "detail": "Damaged cells release chemicals that widen nearby blood vessels, so the area gets red, warm and swollen. White blood cells called phagocytes squeeze out and swallow the invaders. This innate response starts within hours but doesn't remember anything.",
+          "proof": "4 panels, ending with a phagocyte swallowing bacteria.",
+          "pitfall": "Thinking swelling is the damage itself. It's the body's response.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why does an infected cut turn red and warm after 1 day?",
+              "answer": "More blood flows there, bringing white blood cells.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does 1 phagocyte do to a bacterium?",
+              "answer": "Engulfs it and digests it.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "The 1st time you meet a germ, is the innate response faster or slower than antibodies?",
+              "answer": "Faster. It starts within hours.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Antibodies and Memory",
+          "mastery": "Explain how B cells make antibodies for one antigen, and how memory cells speed up the next response.",
+          "practice": "Sketch antibody levels over 30 days for a first infection and a second one, and mark the difference.",
+          "detail": "Each B cell recognizes one antigen, a shape on the germ's surface. The matching B cells multiply and pour out antibodies, which tag the germ for destruction. That takes about a week the first time. Memory cells stay behind, so a second exposure is answered faster and harder.",
+          "proof": "The 2nd curve rises sooner, peaks higher and lasts longer than the first.",
+          "pitfall": "Thinking one antibody works against every germ.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does 1 antibody bind to?",
+              "answer": "A specific antigen",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "The first response peaks after about 10 days. Is the second one faster or slower?",
+              "answer": "Faster, and bigger.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why don't most people catch chickenpox 2 times?",
+              "answer": "Memory cells recognize it and clear it before you get sick.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "How Vaccines Work",
+          "mastery": "Explain how vaccines train memory cells without causing the disease.",
+          "practice": "Write 3 sentences on how a measles vaccine leads to protection, using the words antigen, B cell and memory cell.",
+          "detail": "A vaccine shows the immune system an antigen without the danger, as a weakened germ, a piece of it or instructions to make the piece. B cells respond and memory cells form. If the real germ arrives, the fast second response stops it. When enough people are immune, outbreaks can't spread.",
+          "proof": "The vaccine's antigen triggers B cells, which leave memory cells that answer measles quickly.",
+          "pitfall": "Thinking a vaccine gives you a mild case of the disease.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does 1 vaccine dose contain?",
+              "answer": "A harmless form or piece of the germ, or instructions to make one.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Measles needs about 95% of people immune for herd immunity. In a town of 10,000, how many must be immune?",
+              "answer": "9500",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why do some vaccines need a booster after 10 years?",
+              "answer": "Memory fades, and another dose builds the response back up.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Self and Not-Self",
+          "mastery": "Explain how the immune system tells self from not-self, and what goes wrong in allergies and autoimmunity.",
+          "practice": "Compare an allergy, an autoimmune disease and an organ rejection in a 3-row table.",
+          "detail": "Your cells carry markers the immune system learns to leave alone. An allergy is a strong response to something harmless, like pollen. Autoimmunity is an attack on your own cells. Rejection is a correct attack on a transplant, which drugs have to hold back.",
+          "proof": "Allergy: harmless trigger. Autoimmune: attacks self. Rejection: attacks donor tissue.",
+          "pitfall": "Calling an allergy a weak immune system. It's an overactive one.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In type 1 diabetes, what does the immune system attack?",
+              "answer": "The insulin-making cells of the pancreas.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Pollen is harmless, yet about 1 in 5 people get hay fever. Why?",
+              "answer": "Their immune system wrongly treats it as a threat.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why do people with 1 new kidney take drugs that weaken immunity?",
+              "answer": "To stop the immune system rejecting the new organ.",
               "answer_kind": "sentence"
             }
           ]
@@ -13537,6 +14233,354 @@
         }
       ]
     },
+    "bi.nervous": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "The Neuron",
+          "mastery": "Label a neuron's dendrites, cell body, axon and myelin, and say which way a signal travels.",
+          "practice": "Draw a motor neuron, label its 4 parts, and add arrows for the direction of the signal.",
+          "detail": "Dendrites pick up signals and pass them to the cell body. The axon carries the signal away, sometimes for a meter or more. Myelin wraps the axon and makes the signal jump from gap to gap, which is far faster. The end of the axon passes the signal to the next cell.",
+          "proof": "Dendrites to cell body to axon to the axon ends, with myelin around the axon.",
+          "pitfall": "Drawing the signal going backward, from axon to dendrites.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Of a neuron's 4 parts, which carries the signal away from the cell body?",
+              "answer": "The axon",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In multiple sclerosis, myelin is damaged. What does myelin normally do?",
+              "answer": "It insulates the axon and speeds up the signal.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A signal travels 100 m/s down a myelinated axon. How long does it take to go 1 m?",
+              "answer": "0.01 seconds",
+              "answer_kind": "decimal"
+            }
+          ]
+        },
+        {
+          "title": "Reflex Arcs",
+          "mastery": "Trace a reflex arc from receptor to effector and explain why it's so fast.",
+          "practice": "Draw the reflex arc for pulling your hand from a hot pan, labeling its 5 parts.",
+          "detail": "A receptor in the skin fires a sensory neuron, which reaches a relay neuron in the spinal cord. The relay neuron fires a motor neuron straight to the muscle. The brain hears about it afterward. Skipping the brain saves time and protects you before you've thought.",
+          "proof": "Receptor, sensory neuron, relay neuron in the spinal cord, motor neuron, muscle.",
+          "pitfall": "Routing the reflex through the brain, which would slow it down.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Does 1 reflex arc pass through the brain before you move?",
+              "answer": "No. It passes through the spinal cord.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Put these 5 in order: (a) motor neuron, (b) receptor, (c) relay neuron, (d) effector, (e) sensory neuron.",
+              "answer": "b, e, c, a, d",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why is a reflex faster than deciding to move, often under 50 ms?",
+              "answer": "It skips the brain, so there are fewer synapses and no thinking time.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Cross the Synapse",
+          "mastery": "Explain how a signal crosses a synapse using neurotransmitters.",
+          "practice": "Draw a synapse in 4 steps: the signal arrives, transmitter is released, it crosses the gap, and receptors fire the next neuron.",
+          "detail": "Neurons don't touch. When a signal reaches the end of an axon, it releases a neurotransmitter, which crosses the tiny gap and binds to receptors on the next cell. That can start a new signal. The transmitter is then broken down or taken back up, so the message ends.",
+          "proof": "4 panels: arrival, release, crossing and binding.",
+          "pitfall": "Drawing the electrical signal jumping straight across the gap.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which kind of chemical crosses the 20 nm gap at a synapse?",
+              "answer": "A neurotransmitter",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Can a signal cross 1 synapse backward?",
+              "answer": "No. Transmitter is only released on one side.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "200 mg of caffeine blocks adenosine receptors. Why does that keep you awake?",
+              "answer": "Adenosine signals tiredness, and caffeine stops it landing.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Hormones",
+          "mastery": "Explain how hormones travel in blood to target organs, and compare them with nerve signals.",
+          "practice": "Make a 4-row table comparing nerves and hormones on speed, route, reach and how long the effect lasts.",
+          "detail": "Glands release hormones into the blood, which carries them everywhere, but only cells with the right receptors respond. Hormones are slower than nerves but can act on many organs at once and for longer. Adrenaline, insulin and growth hormone are examples.",
+          "proof": "Nerves: fast, wired, targeted, brief. Hormones: slower, through blood, widespread, longer lasting.",
+          "pitfall": "Thinking hormones only matter in puberty. They run your body every day.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which reaches a muscle within 0.01 seconds: a nerve signal or adrenaline?",
+              "answer": "A nerve signal",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name the gland that releases adrenaline, found on top of each of your 2 kidneys.",
+              "answer": "The adrenal gland",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 effect of adrenaline during a scare.",
+              "answer": "A faster heart rate, faster breathing or more glucose in the blood.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Brain Regions",
+          "mastery": "Name the main brain regions, cerebrum, cerebellum and brainstem, and say what each controls.",
+          "practice": "Sketch the brain, label 3 regions, then list 2 jobs for each one.",
+          "detail": "The cerebrum handles thinking, memory, language and voluntary movement, with each half controlling the opposite side of the body. The cerebellum coordinates balance and smooth movement. The brainstem runs breathing and heart rate without you thinking about it.",
+          "proof": "Cerebrum: thinking and movement. Cerebellum: balance and coordination. Brainstem: breathing and heartbeat.",
+          "pitfall": "Thinking the left brain controls the left hand. Control is crossed over.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Of the 3 main regions, which coordinates balance?",
+              "answer": "The cerebellum",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which region keeps you breathing through 8 hours of sleep?",
+              "answer": "The brainstem",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "1 stroke damages the left cerebrum. Which side of the body is most likely weakened?",
+              "answer": "The right side",
+              "answer_kind": "word"
+            }
+          ]
+        }
+      ]
+    },
+    "bi.organs": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Levels of Organization",
+          "mastery": "Order the levels from cell to tissue to organ to organ system to organism, with an example at each.",
+          "practice": "Write the 5 levels for the digestive system, from one stomach lining cell up to you.",
+          "detail": "Similar cells doing one job form a tissue, like muscle. Several tissues working together form an organ, like the stomach. Organs that share a task form a system, and all the systems together make the organism. Some organs belong to more than one system.",
+          "proof": "Stomach lining cell, lining tissue, stomach, digestive system, you.",
+          "pitfall": "Calling blood an organ. It's a tissue.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Is the heart, with its 4 chambers, a tissue or an organ?",
+              "answer": "An organ",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Of the 5 levels, which one is a group of similar cells doing one job?",
+              "answer": "A tissue",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 organ that belongs to 2 systems.",
+              "answer": "The pancreas, in digestion and hormones.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Why Big Bodies Need Systems",
+          "mastery": "Explain why large organisms need transport and exchange systems that a single cell does without.",
+          "practice": "Compare how an amoeba and a human get oxygen to every cell, using surface area to volume, in 3 sentences.",
+          "detail": "A single cell is small enough that diffusion through its surface reaches everything inside. A large body has far too little outer surface for its volume, and most cells are deep inside. So it needs lungs to exchange gas over a huge surface and blood to carry it everywhere.",
+          "proof": "The amoeba relies on diffusion. Humans need lungs for surface and blood for delivery.",
+          "pitfall": "Thinking big animals have systems just because they're complicated, not because of size.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How does 1 amoeba get oxygen into itself?",
+              "answer": "By diffusion across its surface.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Your lungs have about 70 square meters of surface. Why so much?",
+              "answer": "To exchange enough gas for trillions of cells.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A flatworm is about 1 mm thick and has no lungs. How does it get enough oxygen?",
+              "answer": "Every cell is close to the surface, so diffusion is enough.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "The Digestive System",
+          "mastery": "Trace food through the digestive system and name what each organ adds.",
+          "practice": "Trace a cheese sandwich from mouth to colon in 6 stops, naming the enzyme or job at each one.",
+          "detail": "Teeth and amylase start in the mouth. The stomach adds acid and pepsin for protein. The pancreas sends enzymes into the small intestine, the liver sends bile for fat, and villi absorb the nutrients. The large intestine takes back water.",
+          "proof": "Mouth, esophagus, stomach, small intestine with pancreas and liver help, large intestine, rectum.",
+          "pitfall": "Saying the stomach absorbs most nutrients. The small intestine does.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which organ absorbs most nutrients, the 6 m small intestine or the 1.5 m large intestine?",
+              "answer": "The small intestine",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which enzyme starts digesting starch in the first 30 seconds of chewing?",
+              "answer": "Amylase",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Villi make the small intestine's surface about 30 times larger. Why does that matter?",
+              "answer": "More surface means faster absorption.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Heart, Blood and Lungs",
+          "mastery": "Explain how the heart, blood and lungs work together to deliver oxygen and remove carbon dioxide.",
+          "practice": "Trace one red blood cell from the right atrium through the lungs and back out to a leg muscle, in 8 steps.",
+          "detail": "The right side of the heart pumps blood to the lungs, where it drops carbon dioxide and picks up oxygen. The left side pumps that blood to the body through arteries. Capillaries swap gases with the cells, and veins bring the blood back.",
+          "proof": "Right atrium, right ventricle, lungs, left atrium, left ventricle, aorta, leg capillaries, veins back.",
+          "pitfall": "Thinking arteries always carry oxygen-rich blood. The pulmonary artery carries oxygen-poor blood.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many chambers does 1 human heart have?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which of the heart's 2 sides pumps blood to the lungs?",
+              "answer": "The right side",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "The aorta is 1 artery. Do arteries carry blood away from the heart or toward it?",
+              "answer": "Away from the heart",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Systems Working Together",
+          "mastery": "Describe how several systems cooperate during one activity, like running.",
+          "practice": "List 4 systems that change during a 1 km run and say what each one does differently.",
+          "detail": "No system works alone. During a run, nerves fire muscles that pull on bones, the lungs breathe faster, the heart pumps harder, and the skin sweats to shed heat. Hormones like adrenaline help tie the changes together.",
+          "proof": "Nervous, muscular, respiratory and circulatory, plus the skin for cooling.",
+          "pitfall": "Describing each system in isolation, with no link to the others.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "During a 1 km run, why does your breathing rate rise?",
+              "answer": "To take in more oxygen and remove more CO2.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 2 systems that work together to move a bone.",
+              "answer": "Muscular and skeletal, with the nervous system giving the signal.",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does your skin redden during a 10 km run?",
+              "answer": "Blood vessels near the skin widen to lose heat.",
+              "answer_kind": "sentence"
+            }
+          ]
+        }
+      ]
+    },
     "bi.photo": {
       "model": "claude-opus-5-5",
       "verifier": "rules+authored",
@@ -13706,6 +14750,180 @@
               "prompt": "Why do stomata close on a 35°C afternoon, and what does it cost the plant?",
               "answer": "To save water. It cuts the CO2 supply, so photosynthesis slows.",
               "answer_kind": "sentence"
+            }
+          ]
+        }
+      ]
+    },
+    "bi.population": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Exponential Growth",
+          "mastery": "Describe exponential growth, where numbers double at a steady rate while nothing limits them.",
+          "practice": "Start with 1 bacterium dividing every 20 minutes and work out the count after 3 hours.",
+          "detail": "When each individual reproduces at the same rate and nothing runs short, the population doubles every fixed time. The curve starts slow and then shoots up. Bacteria in fresh food, or rabbits in Australia in the 1800s, grew this way until limits caught up.",
+          "proof": "3 hours is 9 doublings, so 512 bacteria.",
+          "pitfall": "Adding a fixed number each time, which is linear growth, not exponential.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A population doubles every year from 100. How many are there after 4 years?",
+              "answer": "1600",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many doublings take 1 cell past 1000 cells?",
+              "answer": "10",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why can't exponential growth last for 100 years?",
+              "answer": "Food, space or something else runs out.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Carrying Capacity",
+          "mastery": "Explain carrying capacity and read it off an S-shaped growth curve.",
+          "practice": "Sketch an S curve for deer on an island that can feed 400, marking the lag, growth and leveling-off phases.",
+          "detail": "Carrying capacity, K, is the largest population the environment can support over time. As numbers near K, food and space run short, so births fall and deaths rise until they balance. The result is an S curve that flattens at K, often wobbling around it.",
+          "proof": "An S curve that rises steeply and levels off at 400.",
+          "pitfall": "Thinking a population stops exactly at K and never goes above it.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "An S curve levels off at 400 deer. What is the carrying capacity?",
+              "answer": "400",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What usually sets the carrying capacity of an island for 400 deer?",
+              "answer": "Limited food, water, space or shelter.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A population overshoots to 500 when K is 400. What likely happens next?",
+              "answer": "It falls back as food runs short.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Predator and Prey Cycles",
+          "mastery": "Explain the lagging up-and-down cycles of predators and their prey.",
+          "practice": "Plot the Hudson's Bay hare and lynx trend over 20 years as two curves, and mark where lynx peaks lag behind hare peaks.",
+          "detail": "When prey are plentiful, predators breed more. More predators eat more prey, so prey numbers fall. Then predators starve and decline, and prey recover. The predator curve follows the prey curve with a delay, because breeding takes time.",
+          "proof": "Two wavy curves, with each lynx peak a year or two after a hare peak.",
+          "pitfall": "Drawing the two peaks at the same time.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Hares boom. What happens to lynx a year or 2 later?",
+              "answer": "Lynx numbers rise.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why do lynx peaks come 1 to 2 years after hare peaks?",
+              "answer": "Lynx need time to breed on the extra food.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In these roughly 10-year cycles, why do lynx crash after hares crash?",
+              "answer": "Their food supply has collapsed.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Density-Dependent Limits",
+          "mastery": "Tell density-dependent limits, like disease, from density-independent ones, like a flood.",
+          "practice": "Sort 6 factors, disease, a flood, food shortage, frost, predators and a wildfire, into density-dependent and density-independent.",
+          "detail": "Density-dependent limits get stronger as a population gets crowded: disease spreads more easily, food runs shorter and predators find prey faster. Density-independent limits hit the same share whatever the numbers, like weather and fire.",
+          "proof": "Dependent: disease, food shortage, predators. Independent: flood, frost, wildfire.",
+          "pitfall": "Calling a wildfire density-dependent because it kills many animals.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In a herd of 1000, a disease spreads faster as the herd crowds together. Is it density-dependent?",
+              "answer": "Yes.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A late frost kills 30% of insects whatever their number. Which kind of limit is that?",
+              "answer": "Density-independent",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does competition get stronger as a deer population grows to 500?",
+              "answer": "More individuals share the same food and space.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "The Human Population",
+          "mastery": "Read human population data and explain why growth has slowed in many countries.",
+          "practice": "Plot world population at 1 billion in 1804, 2.5 billion in 1950 and 8 billion in 2022, and describe the shape.",
+          "detail": "Human numbers grew slowly for thousands of years, then shot up as farming, medicine and clean water cut death rates. Birth rates fell later, as child deaths dropped and more girls stayed in school. Many countries now grow slowly or shrink.",
+          "proof": "A curve that's nearly flat, then rises steeply after 1950.",
+          "pitfall": "Assuming the steep rise will continue at the same pace forever.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "World population went from 4 billion in 1974 to 8 billion in 2022. How many years did it take to double?",
+              "answer": "48",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 1 reason birth rates fall as countries get richer.",
+              "answer": "More education for women, fewer child deaths, or the cost of raising children.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A country's population pyramid has a narrow base. Is it growing fast or slowly?",
+              "answer": "Slowly, since fewer children are being born.",
+              "answer_kind": "phrase"
             }
           ]
         }
@@ -79913,6 +81131,1398 @@
               "prompt": "Name 1 lasting cost for US veterans after 1975.",
               "answer": "Trauma from what they saw.",
               "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "jv.arrays": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Create and Index",
+          "mastery": "Create arrays, read and write their elements, and use length.",
+          "practice": "Create int[] scores = {90, 85, 77, 92}, change the third score to 80, and print scores.length.",
+          "detail": "An array has a fixed size set when it's made. Indexes run from 0 to length - 1, so the third element is at index 2. length is a field, written without parentheses. Reading outside the range throws ArrayIndexOutOfBoundsException.",
+          "proof": "scores becomes {90, 85, 80, 92}, and length prints 4.",
+          "pitfall": "Writing scores.length() with parentheses, which is the String form.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "int[] a = {4, 8, 15}; What is a[2]?",
+              "answer": "15",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is a.length for int[] a = new int[6];?",
+              "answer": "6",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "int[] a = {1, 2, 3}; What does a[3] do?",
+              "answer": "It throws ArrayIndexOutOfBoundsException.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Know the Default Values",
+          "mastery": "Know the default values in a new array: 0, 0.0, false and null.",
+          "practice": "Create new int[3], new double[2], new boolean[2] and new String[2], and print one element of each.",
+          "detail": "A new array is filled with defaults: 0 for int, 0.0 for double, false for boolean and null for any object type. A null String isn't an empty string, and calling a method on it throws NullPointerException.",
+          "proof": "0, 0.0, false and null.",
+          "pitfall": "Calling words[0].length() on a new String array and crashing on null.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "int[] a = new int[5]; What is a[0]?",
+              "answer": "0",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "String[] s = new String[3]; What is s[1]?",
+              "answer": "null",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "boolean[] f = new boolean[4]; What is f[3]?",
+              "answer": "false",
+              "answer_kind": "truefalse"
+            }
+          ]
+        },
+        {
+          "title": "Sum, Max and Count",
+          "mastery": "Track a running total, a largest value and a tally together, updating all 3 inside a single loop.",
+          "practice": "Write one loop over {3, 9, 2, 9, 5} that finds the sum, the max and how many 9s there are.",
+          "detail": "Set up the accumulators before the loop: sum at 0, count at 0, and max at the first element. Then update all three in the same loop. Starting max at a[0] works even when every value is negative.",
+          "proof": "Sum 28, max 9 and two 9s.",
+          "pitfall": "Starting max at 0, which fails on an all-negative array.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the sum of {4, -2, 7}?",
+              "answer": "9",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why start max at a[0] instead of 0 for {-5, -2, -8}?",
+              "answer": "Every value is negative, so 0 would be wrong.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A loop counts values over 10 in {12, 7, 15, 10, 30}. What's the count?",
+              "answer": "3",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Use Enhanced for Loops",
+          "mastery": "Use for-each loops to read every element, and know they can't change the array or give the index.",
+          "practice": "Rewrite a standard for loop that sums {2, 4, 6} as a for-each loop.",
+          "detail": "for (int x : arr) hands you each element in turn, which is shorter and avoids index mistakes. But x is a copy, so assigning to x leaves the array alone, and there's no index. When you need either, use a standard for loop.",
+          "proof": "int sum = 0; for (int x : arr) sum += x; gives 12.",
+          "pitfall": "Trying to set elements to 0 inside a for-each loop.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "'for (int x : arr) x = 0;' runs on {1, 2}. What is arr afterward?",
+              "answer": "{1, 2}. Changing x doesn't change the array.",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Can a loop like 'for (int x : arr)' tell you an element's index?",
+              "answer": "No. Use a standard for loop for that.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write a for-each loop header that visits each String w in words.",
+              "answer": "for (String w : words)",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Shift and Reverse",
+          "mastery": "Reverse or shift an array in place using a temp variable.",
+          "practice": "Reverse {1, 2, 3, 4, 5} in place by swapping a[i] and a[a.length - 1 - i] up to the middle.",
+          "detail": "Swapping needs a temp variable: save one value, overwrite it, then put the saved value in the other spot. To reverse, swap pairs from the outside in and stop at the middle, or you'll swap everything back. Shifting moves each element over and handles the end separately.",
+          "proof": "{5, 4, 3, 2, 1} after 2 swaps.",
+          "pitfall": "Looping all the way to the end, which reverses the array twice.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many swaps reverse an array of 6 elements?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write the 3 lines that swap a[0] and a[1].",
+              "answer": "int t = a[0]; a[0] = a[1]; a[1] = t;",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "{1, 2, 3, 4} is shifted left by 1, with the first element moving to the end. What is it now?",
+              "answer": "{2, 3, 4, 1}",
+              "answer_kind": "code"
+            }
+          ]
+        }
+      ]
+    },
+    "jv.classes": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Fields and Constructors",
+          "mastery": "Write a class with private fields and a constructor that sets them.",
+          "practice": "Write class Student with fields name and grade and a constructor that sets both, then make 2 students.",
+          "detail": "Fields hold each object's data. The constructor has the class's name and no return type, and runs when you write new. this.name means the field when a parameter has the same name. If you write any constructor, Java stops supplying the default no-argument one.",
+          "proof": "new Student(\"Ana\", 11) and new Student(\"Ben\", 10) each hold their own name and grade.",
+          "pitfall": "Giving the constructor a return type like void, which turns it into a method.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does 'this.name = name;' do in a constructor?",
+              "answer": "Sets the field to the parameter with the same name.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A class Dog has no constructor written. Can you still call new Dog()?",
+              "answer": "Yes. Java gives a default no-argument constructor.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You wrote only Dog(String n). Does new Dog() compile?",
+              "answer": "No. Writing any constructor removes the default one.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Instance Methods",
+          "mastery": "Write methods that use and change an object's own fields.",
+          "practice": "Give a Counter class a field count and methods increment() and getCount(), then call increment 3 times.",
+          "detail": "An instance method runs on one object and can read or change that object's fields directly. Two objects of the same class have separate fields, so changing one leaves the other alone. Calls look like c.increment().",
+          "proof": "getCount() returns 3.",
+          "pitfall": "Making count static by mistake, so every Counter shares one value.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Counter c = new Counter(); c.increment(); c.increment(); What is c.getCount()?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "2 Counter objects each call increment() once. What is each one's count?",
+              "answer": "1",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does a method like getCount() need no parameters?",
+              "answer": "It reads the object's own field.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Write toString",
+          "mastery": "Write a toString method so printing an object shows its data.",
+          "practice": "Add toString() to Student so System.out.println(s) prints 'Ana, grade 11'.",
+          "detail": "println calls toString on any object. The default prints the class name and a hash code, which tells you nothing. Override it with public String toString() and build a string from the fields. It makes debugging much easier.",
+          "proof": "It returns name + \", grade \" + grade, which prints Ana, grade 11.",
+          "pitfall": "Printing inside toString instead of returning the string.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Without toString, what does printing a Student show?",
+              "answer": "Something like Student@1b6d3586.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write a toString for Point, with fields x and y, that returns '(x, y)'.",
+              "answer": "public String toString() { return \"(\" + x + \", \" + y + \")\"; }",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What return type must toString() have?",
+              "answer": "String",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Static and Instance",
+          "mastery": "Tell static members, shared by the whole class, from instance members, one per object.",
+          "practice": "Add a static int count to Student that goes up in the constructor, then make 3 students and print Student.count.",
+          "detail": "A static field belongs to the class, so all objects share one copy. A static method runs without an object, which means it can't touch instance fields directly. Math.sqrt is static, which is why you call it on the class.",
+          "proof": "Student.count prints 3.",
+          "pitfall": "Calling an instance method from main without making an object first.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A static counter goes up in every constructor. After 5 objects are made, what is it?",
+              "answer": "5",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Can a 'static' method use an instance field directly?",
+              "answer": "No. It has no object to read it from.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Math.sqrt(16) is called on the class Math. Is sqrt static?",
+              "answer": "Yes.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Design a Class",
+          "mastery": "Design a class from a description: choose its fields, constructor and methods.",
+          "practice": "Design a BankAccount class from 'it holds an owner and a balance, and can deposit and withdraw', writing the header of each member.",
+          "detail": "Nouns in the description usually become fields, and verbs become methods. Decide what the constructor must be given and what can start at a default. Keep fields private, and give each method one clear job.",
+          "proof": "Fields owner and balance, a constructor taking the owner, and deposit, withdraw and getBalance.",
+          "pitfall": "Making every field public to save writing methods.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A Book has a title and a page count. Which 2 fields fit?",
+              "answer": "private String title; private int pages;",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Should withdraw(double amt) on BankAccount return void or boolean?",
+              "answer": "boolean works well, true if it succeeded.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 method a Rectangle class with width and height should have.",
+              "answer": "getArea(), returning width times height.",
+              "answer_kind": "code"
+            }
+          ]
+        }
+      ]
+    },
+    "jv.control": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Branch With if and else",
+          "mastery": "Write if, else if and else chains, and predict which branch runs.",
+          "practice": "Write a chain that prints \"freezing\" below 0, \"cold\" below 15 and \"warm\" otherwise, then test it with 0, 14 and 15.",
+          "detail": "Java checks each condition in order and runs only the first true branch. Without braces, an if controls just the next statement, which is a common source of bugs, so always use braces. Separate ifs, not chained with else, are each checked on their own.",
+          "proof": "0 and 14 print cold, and 15 prints warm.",
+          "pitfall": "Writing two separate ifs when you meant else if, so both can run.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "int t = 0; The chain is 'if (t < 0)' then 'else if (t < 15)'. Which branch runs?",
+              "answer": "The else if.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "int x = 5; if (x > 3) x = 1; if (x > 3) x = 2; What is x?",
+              "answer": "1",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does 'if (false) System.out.print(1); System.out.print(2);' print?",
+              "answer": "2",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Boolean Logic",
+          "mastery": "Evaluate &&, || and !, and use De Morgan's laws to rewrite a condition.",
+          "practice": "Rewrite !(a && b) and !(x > 5 || y == 0) using De Morgan's laws.",
+          "detail": "&& is true only if both sides are true, and || if at least one is. De Morgan's laws flip the operator when you push a ! inside: !(a && b) is !a || !b. Java also short-circuits: && stops at the first false and || at the first true.",
+          "proof": "!a || !b, and x <= 5 && y != 0.",
+          "pitfall": "Pushing ! inside without flipping && to ||.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does the Java expression 'true && !false' give?",
+              "answer": "true",
+              "answer_kind": "truefalse"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Rewrite !(a || b) with De Morgan's law.",
+              "answer": "!a && !b",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "int x = 0; Does 'x != 0 && 10 / x > 1' crash?",
+              "answer": "No. && stops at the first false, so 10 / x never runs.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Write while Loops",
+          "mastery": "Write while loops that end, and count how many times they run.",
+          "practice": "Write a while loop that doubles n = 1 until it reaches at least 1000, and count the passes.",
+          "detail": "A while loop checks its condition before every pass, so it may run zero times. Something in the body must move toward making the condition false. To count passes, trace a table of the variable's values, or add a counter while you test.",
+          "proof": "10 passes, ending at 1024.",
+          "pitfall": "Forgetting to change the loop variable, which loops forever.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "int n = 10; while (n > 0) n -= 3; What is n after the loop?",
+              "answer": "-2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "int k = 1; while (k < 50) k *= 2; What is k after the loop?",
+              "answer": "64",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many times does 'int i = 5; while (i < 5) i++;' run its body?",
+              "answer": "0",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "for Loops and Off-by-One",
+          "mastery": "Write for loops with the right bounds, and spot off-by-one errors.",
+          "practice": "Write 3 for loops that print 1 to 10, 10 down to 1, and the even numbers 0 to 20, then count each loop's passes.",
+          "detail": "A for loop's header holds the start, the condition and the step. < stops one before the end and <= includes it. To count passes, use (last - first) / step + 1, then check the edges by hand. Most loop bugs are one pass too many or too few.",
+          "proof": "10, 10 and 11 passes.",
+          "pitfall": "Using <= with an array's length, which reads past the end.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many times does 'for (int i = 0; i < 10; i++)' run?",
+              "answer": "10",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many times does 'for (int i = 1; i <= 10; i += 3)' run?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Count the passes of a loop that starts at i = 10 and runs while i >= 0, subtracting 1 each time.",
+              "answer": "11",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Trace Nested Loops",
+          "mastery": "Trace nested loops and count the total passes of the inner body.",
+          "practice": "Write nested loops that print a 4 by 5 grid of stars, and count how many stars print.",
+          "detail": "The inner loop runs completely for every pass of the outer one. If both bounds are fixed, multiply. If the inner bound depends on the outer variable, add up the inner counts row by row. A small table of i and j values makes this quick.",
+          "proof": "20 stars in 4 rows of 5.",
+          "pitfall": "Multiplying when the inner loop's bound changes with the outer variable.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "An outer loop runs 3 times and the inner loop runs 4 times each pass. How many inner passes in total?",
+              "answer": "12",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many stars print from 'for (int i = 1; i <= 4; i++) for (int j = 1; j <= i; j++) print(\"*\")'?",
+              "answer": "10",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "i runs from 0 to 2 and j runs from i to 2, both inclusive. How many inner passes?",
+              "answer": "6",
+              "answer_kind": "integer"
+            }
+          ]
+        }
+      ]
+    },
+    "jv.encap": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Make Fields Private",
+          "mastery": "Make fields private so only the class's own methods can change them.",
+          "practice": "Change Student's public grade field to private, then fix the code in main that set it directly.",
+          "detail": "A private field can't be touched from outside the class, so every change goes through a method you wrote. That lets the class reject bad values and change how it stores data later. Public fields let any code break the object.",
+          "proof": "main now calls s.setGrade(12) instead of writing s.grade = 12.",
+          "pitfall": "Leaving fields public because it's quicker to write.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Can main write s.grade = 12 when grade is private?",
+              "answer": "No. It won't compile.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why make fields 'private'?",
+              "answer": "So the class controls every change and can reject bad values.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which keyword lets any class read a field: 'public' or 'private'?",
+              "answer": "public",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Write Getters",
+          "mastery": "Write getter methods that return a field's value without exposing the field itself.",
+          "practice": "Write getName() and getGrade() for Student, and use them to print a student's info.",
+          "detail": "A getter is a public method that returns a private field. Naming it getX is the convention. It lets other code read the value without being able to change it. A getter shouldn't change anything.",
+          "proof": "s.getName() and s.getGrade() print the student's name and grade.",
+          "pitfall": "Giving a getter a parameter, or making it change the field.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write a getter for a private int field 'age'.",
+              "answer": "public int getAge() { return age; }",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What type should getName() return if name is a String?",
+              "answer": "String",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Does calling getAge() change the object?",
+              "answer": "No. It only reads.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Write Setters With Checks",
+          "mastery": "Write setters that check a new value and refuse bad ones.",
+          "practice": "Write setGrade(int g) that only accepts 9 to 12, and test it with 10 and 15.",
+          "detail": "A setter is where the class guards itself. Check the value, store it only if it's valid, and otherwise leave the field alone or throw an exception. That way no object can end up in a nonsense state like grade 15.",
+          "proof": "setGrade(10) works, and setGrade(15) leaves the grade unchanged.",
+          "pitfall": "Writing a setter that stores anything, which is a public field with extra steps.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "setGrade(15) runs on a setter that only accepts 9 to 12. What is grade afterward?",
+              "answer": "Unchanged.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write a setter for 'age' that refuses negative values.",
+              "answer": "public void setAge(int a) { if (a >= 0) age = a; }",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why is 'setAge' safer than a public age field?",
+              "answer": "It can check the value before storing it.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Keep Some Fields Read-Only",
+          "mastery": "Decide which fields should have no setter, and use final for values that never change.",
+          "practice": "Give Student a final int id set in the constructor with no setter, and try assigning it later to see the error.",
+          "detail": "Not every field should be changeable. An id or a birth date is set once. Leave out the setter and mark it final, and the compiler stops any later change. For a balance, use deposit and withdraw rather than a raw setter.",
+          "proof": "Assigning id after the constructor gives a compile error.",
+          "pitfall": "Writing a setter for every field out of habit.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Can you assign to a 'final' field after the constructor runs?",
+              "answer": "No.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Should a BankAccount have setBalance(double b)?",
+              "answer": "No. Use deposit and withdraw so every change is checked.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which field of a Student should usually be read-only: id or nickname?",
+              "answer": "id",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Hide the Details",
+          "mastery": "Keep helper methods private, so other classes see only what they need.",
+          "practice": "Move a validation helper in BankAccount into a private method, and check that main can't call it.",
+          "detail": "Public methods are a promise to other code. Private helpers are details you can change at any time without breaking anyone. Keeping that line clear lets you rewrite the inside of a class while everything outside keeps working.",
+          "proof": "main gets a compile error calling the private helper, and deposit still works.",
+          "pitfall": "Making helpers public just in case, which ties other code to them.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Can main call a private helper isValid() in another class?",
+              "answer": "No.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why hide helper methods like isValid()?",
+              "answer": "You can change them later without breaking other code.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A BankAccount class switches its balance from a double to cents in an int. If its fields are private, what else must change?",
+              "answer": "Only that class. Other code uses the methods.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "jv.methods": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Write a Method",
+          "mastery": "Write a static method with parameters and a return type, and call it from main.",
+          "practice": "Write static int square(int n) and call it with 7 from main, printing the result.",
+          "detail": "The header gives the return type, the name and each parameter's type and name. return hands back a value of that type and ends the method. A void method returns nothing. Calling it runs the body with the arguments copied into the parameters.",
+          "proof": "square(7) returns 49, which main prints.",
+          "pitfall": "Printing inside a method that's supposed to return the value.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does 'static int twice(int x) { return x * 2; }' return for twice(9)?",
+              "answer": "18",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What return type fits a method like printBanner() that only prints?",
+              "answer": "void",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write the header for a static method avg that takes 2 doubles and returns a double.",
+              "answer": "static double avg(double a, double b)",
+              "answer_kind": "code"
+            }
+          ]
+        },
+        {
+          "title": "Parameters Are Copies",
+          "mastery": "Explain that primitive parameters are copies, so changing one inside a method leaves the caller's variable alone.",
+          "practice": "Write static void bump(int x) { x++; }, call it on n = 5, print n, and explain the result.",
+          "detail": "Java passes every argument by value. For a primitive, the method gets a copy of the number. For an object or array, it gets a copy of the reference, so it can change the object's contents but can't make the caller's variable point somewhere else.",
+          "proof": "n is still 5, because bump changed only its own copy.",
+          "pitfall": "Writing a swap method for two ints and expecting it to work.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "int n = 3; change(n); where change sets its parameter to 10. What is n afterward?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "An array is passed to a method that sets arr[0] = 9. Does the caller see the change?",
+              "answer": "Yes. The method gets a copy of the reference to the same array.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why doesn't 'static void swap(int a, int b)' swap the caller's variables?",
+              "answer": "It only swaps its own copies.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Overload a Method",
+          "mastery": "Overload a method with different parameter lists, and predict which version gets called.",
+          "practice": "Write 2 versions of area, one taking a side and one taking width and height, and call each one.",
+          "detail": "Methods can share a name if their parameter lists differ in number or types. Java picks the version that matches the arguments most closely. An int argument can widen to a double, but not the other way. Return type alone can't tell two versions apart.",
+          "proof": "area(5) gives 25 and area(3, 4) gives 12.",
+          "pitfall": "Writing two versions that differ only in return type, which won't compile.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Can 2 methods named max differ only in return type?",
+              "answer": "No. The parameter lists must differ.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "max(int, int) and max(double, double) both exist. Which runs for max(3, 4)?",
+              "answer": "max(int, int)",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "With those 2 versions, which runs for max(3, 4.5)?",
+              "answer": "max(double, double), since 3 widens to a double.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Follow the Scope",
+          "mastery": "Tell which variables a block can see, and why a loop variable disappears after the loop.",
+          "practice": "Declare int i inside a 'for' loop, try to print i after the loop, read the error, and fix it.",
+          "detail": "A variable exists from its declaration to the closing brace of its block. A loop variable declared in the header lives only inside the loop. Each method has its own locals, so two methods can reuse a name without clashing.",
+          "proof": "The error is 'cannot find symbol'. Declaring i before the loop fixes it.",
+          "pitfall": "Declaring a variable inside an if block and trying to use it after.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A variable is declared inside a 'for' loop's braces. Can you use it after the loop?",
+              "answer": "No. It's out of scope.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Can 2 different methods each have a local variable named count?",
+              "answer": "Yes. Each one is local to its own method.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which error does using an out-of-scope variable give: 'cannot find symbol' or 'missing return'?",
+              "answer": "cannot find symbol",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Return Early and Test",
+          "mastery": "Use early returns for special cases, and test a method with normal and edge inputs.",
+          "practice": "Write static boolean isPrime(int n) with an early return for n < 2, and test it on 1, 2, 9 and 13.",
+          "detail": "Handle the odd cases at the top and return right away, which keeps the main logic simple. Every path through a non-void method must return something, or it won't compile. Test with a normal case, the edges and anything that should fail.",
+          "proof": "false, true, false and true.",
+          "pitfall": "Forgetting a return at the end of the method, after the loop.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "isPrime(1) should return what?",
+              "answer": "false",
+              "answer_kind": "truefalse"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 3 good test inputs for a method absolute(int x).",
+              "answer": "A positive number, a negative number and 0.",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What's wrong if a non-void method like getMax() has a path with no return?",
+              "answer": "It won't compile: missing return statement.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "jv.setup": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Install the JDK",
+          "mastery": "Install a JDK and confirm it works with java -version and javac -version.",
+          "practice": "Install JDK 21, then run 'java -version' and 'javac -version' and write down both numbers.",
+          "detail": "The JDK is the kit for writing Java: the compiler, javac, plus the runtime that runs your programs. If either command says it isn't found, the JDK's bin folder isn't on your PATH. Reopen the terminal after installing, since an open one won't see the change.",
+          "proof": "Both commands print 21 and some build details.",
+          "pitfall": "Installing only a JRE, which can run Java but has no compiler.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which command compiles Hello.java: 'javac Hello.java' or 'java -version'?",
+              "answer": "javac Hello.java",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does a JDK include that a plain runtime doesn't?",
+              "answer": "The compiler, javac, and other developer tools.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Right after installing, 'javac' isn't recognized. What's the likely fix?",
+              "answer": "Add the JDK's bin folder to your PATH and reopen the terminal.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Write a main Method",
+          "mastery": "Write a class with a public static void main(String[] args) method that prints a line.",
+          "practice": "Write Hello.java with a class Hello and a main method that prints 'Hello, Java', then compile and run it.",
+          "detail": "Every Java program starts in main. A public class must live in a file with exactly its name, so Hello goes in Hello.java. Statements end with semicolons, and braces mark where each block starts and ends. Case matters everywhere.",
+          "proof": "The terminal prints Hello, Java.",
+          "pitfall": "Naming the file hello.java when the class is Hello.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A file holds 'public class Greeter'. What must the file be named?",
+              "answer": "Greeter.java",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write the 1 line that prints Hi and moves to a new line.",
+              "answer": "System.out.println(\"Hi\");",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What is missing from 'System.out.println(\"x\")' inside main?",
+              "answer": "A semicolon at the end.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Compile, Then Run",
+          "mastery": "Explain the 2 steps: javac turns source into bytecode, and java runs that bytecode on the JVM.",
+          "practice": "Compile Hello.java, find the Hello.class file it made, then run it with 'java Hello'.",
+          "detail": "javac checks your code and writes a .class file of bytecode. The java command starts the Java Virtual Machine, which runs that bytecode. You give java the class name, not the file name. Because every system has its own JVM, the same .class file runs anywhere.",
+          "proof": "A Hello.class file appears, and 'java Hello' prints the message.",
+          "pitfall": "Running 'java Hello.class', which looks for a class literally named Hello.class.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What file does 'javac Hello.java' create?",
+              "answer": "Hello.class",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Do you type 'java Hello.class' or 'java Hello' to run it?",
+              "answer": "java Hello",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why can 1 .class file run on both Windows and Mac?",
+              "answer": "Each system's JVM runs the same bytecode.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Read Compiler Errors",
+          "mastery": "Read a compiler error's file, line number and message, and fix the first error first.",
+          "practice": "Delete a semicolon and misspell 'String' in Hello.java, compile, and fix the errors in the order they're reported.",
+          "detail": "Each error names the file and line, then a short message. Errors cascade: one missing brace can cause a dozen later complaints. So fix the first one, recompile, and see what's left. If the line looks fine, check the end of the line above it.",
+          "proof": "Both errors fixed, and the program compiles and runs.",
+          "pitfall": "Fixing errors from the bottom of the list up.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "javac says 'Hello.java:5: error: ';' expected'. Which line do you check?",
+              "answer": "5, or the end of the line before it.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "javac reports 12 errors after you deleted 1 brace. Which do you fix first?",
+              "answer": "The first one. The rest often vanish.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does 'cannot find symbol: variable totl' mean?",
+              "answer": "You used a name that was never declared, likely a typo.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Use an IDE",
+          "mastery": "Set up an IDE like IntelliJ or VS Code for Java, and run and debug a class from it.",
+          "practice": "Open Hello.java in IntelliJ IDEA, run it with the green arrow, then set 1 breakpoint and step through it.",
+          "detail": "An IDE compiles as you type, underlines errors, suggests fixes and runs the debugger with a click. It saves time, but practice writing some code by hand too, because the AP exam is on paper with no autocomplete.",
+          "proof": "The program runs from the IDE, and the debugger stops on the breakpoint.",
+          "pitfall": "Relying so much on autocomplete that you can't write a for loop from memory.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name 1 free IDE that runs Java.",
+              "answer": "IntelliJ IDEA Community, Eclipse or VS Code.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A red underline appears under 'Sytem.out'. What's wrong?",
+              "answer": "System is misspelled.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does the AP exam have you write Java without an IDE?",
+              "answer": "It tests whether you know the syntax without autocomplete.",
+              "answer_kind": "sentence"
+            }
+          ]
+        }
+      ]
+    },
+    "jv.strings": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Compare With .equals",
+          "mastery": "Compare strings with .equals, and explain why == compares references instead.",
+          "practice": "Create String a = \"hi\" and String b = new String(\"hi\"), print a == b and a.equals(b), and explain the difference.",
+          "detail": "A String variable holds a reference to an object. == asks whether two references point at the same object. .equals asks whether the characters match. Two separate String objects with the same text are equal by .equals but not by ==, which is the classic AP trap.",
+          "proof": "a == b prints false and a.equals(b) prints true.",
+          "pitfall": "Using == to compare user input with a word, which can fail even when the text matches.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "String a = new String(\"cat\"); String b = new String(\"cat\"); What does a.equals(b) give?",
+              "answer": "true",
+              "answer_kind": "truefalse"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "For those same 2 strings, what does a == b give?",
+              "answer": "false",
+              "answer_kind": "truefalse"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write the condition that checks whether name holds \"Ana\", ignoring case.",
+              "answer": "name.equalsIgnoreCase(\"Ana\")",
+              "answer_kind": "code"
+            }
+          ]
+        },
+        {
+          "title": "Length, charAt and substring",
+          "mastery": "Use the String methods length(), charAt() and substring(), with indexes that start at 0.",
+          "practice": "For s = \"computer\", find s.length(), s.charAt(3), s.substring(2, 5) and s.substring(4).",
+          "detail": "Indexes run from 0 to length() - 1. substring(a, b) starts at a and stops before b, so its length is b - a. substring(a) runs to the end. An index out of range throws StringIndexOutOfBoundsException.",
+          "proof": "8, 'p', \"mpu\" and \"uter\".",
+          "pitfall": "Thinking substring(2, 5) includes the character at index 5.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is \"java\".length()?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is \"hello\".charAt(1)?",
+              "answer": "'e'",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What is \"science\".substring(1, 4)?",
+              "answer": "\"cie\"",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Search With indexOf",
+          "mastery": "Find text with indexOf, which returns -1 when the text isn't there.",
+          "practice": "For s = \"banana\", find s.indexOf(\"a\"), s.indexOf(\"na\"), s.indexOf(\"z\") and s.indexOf(\"a\", 2).",
+          "detail": "indexOf returns the position of the first match. A second argument says where to start looking. If there's no match, it returns -1, so checking indexOf(x) != -1 is a quick contains test. There's also lastIndexOf for the final match.",
+          "proof": "1, 2, -1 and 3.",
+          "pitfall": "Treating 0 as not found. 0 means it was found at the very start.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is \"mississippi\".indexOf(\"ss\")?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is \"apple\".indexOf(\"q\")?",
+              "answer": "-1",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write a condition that's true when word contains the letter 'x'.",
+              "answer": "word.indexOf(\"x\") != -1",
+              "answer_kind": "code"
+            }
+          ]
+        },
+        {
+          "title": "Strings Don't Change",
+          "mastery": "Remember that String methods return new strings, so you have to save the result.",
+          "practice": "Run String s = \"hi\"; s.toUpperCase(); System.out.println(s); then explain what prints and fix it.",
+          "detail": "Strings are immutable: no method changes the original. toUpperCase, substring and replace all hand back a new string. If you don't assign it to something, it's thrown away. Also, + with a String turns everything after it into text, left to right.",
+          "proof": "It prints hi. The fix is s = s.toUpperCase();.",
+          "pitfall": "Calling a String method on its own line and expecting the variable to change.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "String s = \"abc\"; s.toUpperCase(); What is s now?",
+              "answer": "\"abc\"",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write the line that makes s hold \"ABC\" from \"abc\".",
+              "answer": "s = s.toUpperCase();",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "String t = \"a\" + 1 + 2; What is t?",
+              "answer": "\"a12\"",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Loop Over Strings",
+          "mastery": "Loop over a string's characters to count, reverse or build a new string.",
+          "practice": "Write a loop that counts the vowels in \"education\", and another that builds its reverse.",
+          "detail": "Loop i from 0 to length() - 1 and use charAt(i) or substring(i, i + 1). To count, add to a counter when the character matches. To build, start with an empty string and add each piece. Adding to the front reverses, and adding to the back copies.",
+          "proof": "5 vowels, and \"noitacude\".",
+          "pitfall": "Using i <= s.length(), which runs one step too far and crashes.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many times does 'for (int i = 0; i < s.length(); i++)' run when s is \"loop\"?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A loop adds each s.charAt(i) to the front of an empty r, for s = \"abc\". What is r?",
+              "answer": "\"cba\"",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What is 3 + 2 + \"5\" in Java?",
+              "answer": "\"55\"",
+              "answer_kind": "word"
+            }
+          ]
+        }
+      ]
+    },
+    "jv.types": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "The Main Primitives",
+          "mastery": "Choose between int, double, boolean and char for a value, and declare it.",
+          "practice": "Declare 4 variables, a count, a price, a flag and a grade letter, each with the right primitive type.",
+          "detail": "int holds whole numbers, double holds decimals, boolean holds true or false, and char holds one character in single quotes. Java checks types when it compiles, so putting 3.5 into an int is an error rather than a silent bug.",
+          "proof": "Use int count = 0, double price = 4.99, boolean done = false and char grade = 'A'.",
+          "pitfall": "Writing a char with double quotes. \"A\" is a String.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which type holds 3.75: int or double?",
+              "answer": "double",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which literal is a char: 'A' or \"A\"?",
+              "answer": "'A'",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What type is the literal 'true'?",
+              "answer": "boolean",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Integer Division",
+          "mastery": "Predict integer division and the % remainder in Java.",
+          "practice": "Evaluate 17 / 5, 17 % 5, 17.0 / 5 and -17 / 5 in Java, and explain each one.",
+          "detail": "When both sides of / are ints, Java drops the decimal part, truncating toward zero. If either side is a double, you get a double. % gives the remainder and keeps the sign of the left side. This trips up more AP students than almost anything else.",
+          "proof": "3, 2, 3.4 and -3.",
+          "pitfall": "Expecting -17 / 5 to be -4. Java truncates toward zero, so it's -3.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is 7 / 2 in Java?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is 7 / 2.0 in Java?",
+              "answer": "3.5",
+              "answer_kind": "decimal"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What is -7 / 2 in Java?",
+              "answer": "-3",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Cast Between Types",
+          "mastery": "Cast between int and double, and know that a cast to int cuts off the decimal.",
+          "practice": "Evaluate (int) 3.99, (double) 7 / 2, (double) (7 / 2) and (int) -2.7.",
+          "detail": "A cast applies only to what comes right after it. (double) 7 / 2 casts the 7 first, so the division is decimal. (double) (7 / 2) divides as ints first and casts the 3. Casting to int never rounds. To round, use (int) (x + 0.5) for positive x.",
+          "proof": "3, 3.5, 3.0 and -2.",
+          "pitfall": "Expecting (int) 3.99 to round up to 4.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is (int) 9.8?",
+              "answer": "9",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is (double) 5 / 2?",
+              "answer": "2.5",
+              "answer_kind": "decimal"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What is (double) (5 / 2)?",
+              "answer": "2.0",
+              "answer_kind": "decimal"
+            }
+          ]
+        },
+        {
+          "title": "Overflow and Limits",
+          "mastery": "Know the range of int and what happens when a value overflows it.",
+          "practice": "Print Integer.MAX_VALUE, then add 1 to it and print the result.",
+          "detail": "An int holds about plus or minus 2.1 billion. Go past the top and it wraps around to the most negative value with no error. That's overflow. Use long for bigger whole numbers, and watch sums and products in loops.",
+          "proof": "2147483647, then -2147483648.",
+          "pitfall": "Assuming Java will warn you when an int overflows.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "About how big is Integer.MAX_VALUE: 2 million or 2 billion?",
+              "answer": "2 billion",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does Integer.MAX_VALUE + 1 give?",
+              "answer": "-2147483648",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which type should hold the number 5,000,000,000: int or long?",
+              "answer": "long",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Compound Assignment and Increment",
+          "mastery": "Predict the results of +=, -=, *=, %=, ++ and -- on a variable.",
+          "practice": "Trace int x = 5; x += 3; x *= 2; x--; and give x after each line.",
+          "detail": "x += 3 is short for x = x + 3, and the same goes for the other operators. x++ adds 1 and x-- subtracts 1. Trace these one line at a time and write each new value down, because doing several in your head is where mistakes creep in.",
+          "proof": "8, then 16, then 15.",
+          "pitfall": "Reading x *= 2 + 1 as (x * 2) + 1. The right side is worked out first, so it's x * 3.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "int a = 10; a -= 4; What is a?",
+              "answer": "6",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "int n = 3; n++; n++; What is n?",
+              "answer": "5",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "int x = 7; x %= 3; What is x?",
+              "answer": "1",
+              "answer_kind": "integer"
             }
           ]
         }
