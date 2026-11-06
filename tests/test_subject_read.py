@@ -86,7 +86,7 @@ def test_routines_are_not_work_on_a_goal():
     tasks = [task('meditation', day, 'Meditation') for day in range(1, 20)]
     found = read('meditation', tasks, [goal('Meditation retreat', deadline=ahead(100))])
     assert found['goals'] == []
-    assert found['card']['title'].endswith('is a routine, so no goal rides on it.')
+    assert found['card']['title'] == 'A routine, so nothing to chase'
 
 
 # ---- what the plan says -----------------------------------------------------
@@ -100,7 +100,9 @@ def test_the_subject_the_plan_needs_most_says_so_with_the_pace():
     found = read('computer_science', tasks, [usaco], name='Computer Science')
     assert found['stance'] == 'first'
     assert found['card']['tone'] == 'bad'
-    assert 'needs' in found['card']['figures'] and 'a week and you do' in found['card']['figures']
+    # The gap is drawn from numbers, not written out.
+    assert found['card']['meter']['needs'] > found['card']['meter']['does']
+    assert found['card']['days_left'] == 27
 
 
 def test_work_going_elsewhere_gets_a_swap_named():
@@ -109,17 +111,17 @@ def test_work_going_elsewhere_gets_a_swap_named():
     stones = [{'id': 's', 'title': 'Silver DP unassisted', 'status': 'active', 'position': 0, 'steps': []}]
     usaco = dict(usaco, milestones=stones)
     found = read('computer_science', tasks, [usaco], name='Computer Science')
-    assert 'going elsewhere' in found['card']['title']
-    assert 'Swap your next "LeetCode review"' in found['card']['suggests']
-    assert 'Silver DP unassisted' in found['card']['suggests']
+    assert found['card']['title'] == "Most work here isn't on your top goal"
+    assert found['card']['tip'] == 'Swap your next "LeetCode review" for "Silver DP unassisted".'
+    assert found['card']['on_goal']['on'] < found['card']['on_goal']['of']
 
 
 def test_aim_right_and_volume_short_says_that_instead():
     tasks, usaco = behind_goal()
     tasks += [task('computer_science', 3, 'USACO Gold problems', execution=4)]
     found = read('computer_science', tasks, [usaco], name='Computer Science')
-    assert "There just isn't enough of it yet." in found['card']['title']
-    assert 'Add' in found['card']['suggests']
+    assert found['card']['title'] == 'The aim is right. You need more sessions.'
+    assert found['card']['tip'].startswith('Add ')
 
 
 def test_a_subject_ahead_of_its_goal_says_how_many_sessions_could_move():
@@ -128,22 +130,24 @@ def test_a_subject_ahead_of_its_goal_says_how_many_sessions_could_move():
     violin = goal('Violin ARCT', deadline=ahead(800), priority_=5, current=5, target=15)
     found = read('music', tasks, [usaco, violin], name='Music')
     assert found['stance'] == 'waits'
-    assert 'ahead of what Violin ARCT needs' in found['card']['title']
-    assert 'a week could move from here to USACO Gold until' in found['card']['suggests']
-    assert 'would still land on time' in found['card']['suggests']
+    assert found['card']['title'].endswith('a week to spare here')
+    assert found['card']['spare'] >= 1
+    assert found['card']['tip'].startswith('Give ')
+    assert 'to USACO Gold until' in found['card']['tip']
+    assert found['card']['tip'].endswith('Violin ARCT still lands on time.')
 
 
 def test_no_goal_says_so_and_offers_the_way_out():
     tasks = [task('physics', 3, 'Physics problems')]
     found = read('physics', tasks, [])
     assert found['stance'] == 'none'
-    assert found['card']['title'] == 'None of your goals depends on Physics.'
-    assert 'give it a goal' in found['card']['suggests']
+    assert found['card']['title'] == 'No goal depends on Physics'
+    assert 'give it a goal' in found['card']['tip']
 
 
 def test_a_quiet_subject_with_no_goal_can_stay_parked():
     found = read('physics', [task('physics', 90, 'Physics problems')], [])
-    assert "gone quiet" in found['card']['title']
+    assert found['card']['title'] == 'Quiet, and no goal needs it'
 
 
 # ---- what the work says ------------------------------------------------------
@@ -156,7 +160,8 @@ def test_a_real_change_in_ratings_is_said_with_from_and_to():
     tasks += [task('music', day, 'Violin practice', execution=5, difficulty=3) for day in range(0, 30)]
     found = read('music', tasks, [goal('Violin ARCT', deadline=ahead(800))], name='Music')
     trend = next(one for one in found['insights'] if one['id'] == 'trend')
-    assert '2.0 → 5.0' in trend['figures']
+    assert trend['title'] == 'Ratings are up'
+    assert [row['value'] for row in trend['chart']['rows']] == [2.0, 5.0]
     assert trend['evidence'] == 'Potentially reliable'
 
 
@@ -172,8 +177,8 @@ def test_ratings_going_up_while_the_pace_is_short_are_read_together():
     found = read('computer_science', tasks, [goal('USACO Gold', deadline=ahead(14), priority_=9, current=1, target=15)],
                  name='Computer Science')
     trend = next(one for one in found['insights'] if one['id'] == 'trend')
-    assert "but the pace hasn't caught up" in trend['title']
-    assert 'more sessions' in trend['suggests']
+    assert trend['title'] == "Ratings are up. The pace isn't yet."
+    assert 'More sessions' in trend['tip']
 
 
 def test_easy_work_going_worse_than_hard_is_read_against_the_goal():
@@ -181,14 +186,16 @@ def test_easy_work_going_worse_than_hard_is_read_against_the_goal():
     tasks += [task('music', day, 'Violin concerto', execution=5, difficulty=5) for day in range(1, 21)]
     found = read('music', tasks, [goal('Violin ARCT', deadline=ahead(800))], name='Music')
     level = next(one for one in found['insights'] if one['id'] == 'level')
-    assert level['title'] == 'Easy work on Violin ARCT goes worse than the hard work.'
+    assert level['title'] == 'Easy work goes worse than hard'
+    assert [row['label'] for row in level['chart']['rows']] == ['Easy work', 'Hard work']
 
 
 def test_work_below_the_goals_level_is_said():
     tasks = [task('music', day, 'Violin scales', execution=4, difficulty=2) for day in range(1, 21)]
     found = read('music', tasks, [goal('Violin ARCT', deadline=ahead(800))], name='Music')
     level = next(one for one in found['insights'] if one['id'] == 'level')
-    assert 'below the hard level' in level['title']
+    assert level['title'] == 'Very little hard work'
+    assert (level['chart']['part'], level['chart']['whole']) == (0, 20)
 
 
 def test_a_reason_needs_enough_behind_it_and_comes_with_what_to_try():
@@ -199,8 +206,8 @@ def test_a_reason_needs_enough_behind_it_and_comes_with_what_to_try():
     many = [task('music', day, 'Violin practice', execution=2, reason=reason) for day in range(1, 7)]
     found = read('music', many, [goal('Violin ARCT', deadline=ahead(800))], name='Music')
     said = next(one for one in found['insights'] if one['id'] == 'reason')
-    assert '6 of the 6 times' in said['figures']
-    assert 'phone in another room' in said['suggests']
+    assert (said['chart']['part'], said['chart']['whole']) == (6, 6)
+    assert 'phone in another room' in said['tip']
 
 
 def test_more_attending_than_doing_is_said():
@@ -208,10 +215,11 @@ def test_more_attending_than_doing_is_said():
     tasks += [task('mathematics', day, 'AIME problem set') for day in range(1, 4)]
     found = read('mathematics', tasks, [goal('Reach AIME', deadline=ahead(400))], name='Mathematics')
     said = next(one for one in found['insights'] if one['id'] == 'attended')
-    assert said['title'] == 'You sat through more Mathematics than you practiced.'
+    assert said['title'] == 'More sitting in than practicing'
+    assert [row['value'] for row in said['chart']['rows']] == [10, 3]
 
 
-def test_the_bad_news_comes_first_and_every_reading_has_its_three_parts():
+def test_the_bad_news_comes_first_and_every_reading_is_short():
     tasks = [task('music', day, 'Violin scales', execution=2, difficulty=1) for day in range(1, 21)]
     tasks += [task('music', day, 'Violin concerto', execution=5, difficulty=5) for day in range(1, 21)]
     from backend.tracking.next_sessions import GOOD
@@ -221,9 +229,13 @@ def test_the_bad_news_comes_first_and_every_reading_has_its_three_parts():
     tones = [one['tone'] for one in found['insights']]
     assert tones == sorted(tones, key=subject_read.ORDER.get)
     assert 'good' in tones and 'bad' in tones
+    # Each reading is a tag, a short title, a chart and one thing to try. Short means short.
+    for one in found['insights']:
+        assert one['tag'] and one['title'] and one['chart'] and one['tip']
+        assert len(one['title'].split()) <= 8
+        assert len(one['tip'].split()) <= 16
     for one in [found['card']] + found['insights']:
-        assert one['title'] and one['figures'] and one['suggests']
-        for text in (one['title'], one['figures'], one['suggests']):
+        for text in (one['title'], one['tip']):
             assert '—' not in text and '“' not in text
 
 

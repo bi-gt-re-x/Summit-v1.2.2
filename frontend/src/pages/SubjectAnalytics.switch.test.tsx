@@ -69,7 +69,7 @@ const NOTHING_FEEDS_IT = vi.hoisted(() => ({
   stance: 'none',
   top: null,
   lead: null,
-  card: { tone: 'flat', title: 'None of your goals depends on Algebra.', figures: 'Nothing here.', suggests: 'This suggests it can stay parked.' },
+  card: { tone: 'flat', title: 'No goal depends on Algebra', tip: 'If it should lead somewhere, give it a goal.', recent: 0 },
   goals: [],
   misfiled: [],
   insights: [],
@@ -79,7 +79,7 @@ vi.mock('@/services/subjectGoal', () => ({
   subjectGoalRead: async (id: string) => ({
     success: true,
     ...NOTHING_FEEDS_IT,
-    card: { ...NOTHING_FEEDS_IT.card, title: `None of your goals depends on ${id}.` },
+    card: { ...NOTHING_FEEDS_IT.card, title: `No goal depends on ${id}` },
   }),
 }));
 vi.mock('@/services/topics', async (original) => {

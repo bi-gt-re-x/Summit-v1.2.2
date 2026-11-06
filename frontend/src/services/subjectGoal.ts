@@ -13,16 +13,36 @@ export type SubjectTone = 'good' | 'bad' | 'flat';
 export type SubjectStance = 'first' | 'also' | 'second' | 'waits' | 'none';
 export type GoalPace = 'on_track' | 'behind' | 'stalled' | 'missing' | 'done' | 'undated';
 
-/** Headline, figures, then what they suggest and what to try. */
+/** A short title and one thing to try, with the numbers the page draws. */
 export interface SubjectCard {
   tone: SubjectTone;
   title: string;
-  figures: string;
-  suggests: string;
+  tip: string;
+  /** Sessions a week the goal needs, against what it gets. */
+  meter?: { needs: number; does: number };
+  days_left?: number | null;
+  /** Study tasks here on the goal, out of all of them, over `days`. */
+  on_goal?: { on: number; of: number; days: number } | null;
+  /** Sessions a week this goal could give to the top one. */
+  spare?: number;
+  to?: string;
+  /** Tasks here lately, for a subject no goal needs. */
+  recent?: number;
 }
 
-export interface SubjectInsight extends SubjectCard {
+/** Bars on one scale, or a share of a whole. */
+export type InsightChart =
+  | { type: 'compare'; max: number; unit: string; rows: Array<{ label: string; value: number }> }
+  | { type: 'part'; part: number; whole: number; label: string };
+
+export interface SubjectInsight {
   id: string;
+  tone: SubjectTone;
+  /** What kind of reading, in a word or two. */
+  tag: string;
+  title: string;
+  chart: InsightChart;
+  tip: string;
   /** How sure, for a claim that can be wrong. Null on a plain count. */
   evidence: string | null;
   resource: { name: string; url: string } | null;

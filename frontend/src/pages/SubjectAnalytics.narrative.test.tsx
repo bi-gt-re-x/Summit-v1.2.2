@@ -1,9 +1,9 @@
 /**
  * The subject page, end to end, in the order a reader meets it.
  *
- * What it promises: it opens on what the subject is for and what the plan says about
- * it, the readings read against that goal with the bad news first, then sessions for
- * that goal. Everything else is "The numbers", one tab over. The ring, the count cards,
+ * What it promises: it opens on what the subject is for, drawn rather than written (a
+ * short title, the gap as bars, a few tiles, one thing to try), then cards for what
+ * stands out with the bad news first, then sessions for that goal. Everything else is "The numbers", one tab over. The ring, the count cards,
  * the AI summary and the second copy of the goal's pace were cut, and stay cut. What the
  * read says is tested in tests/test_subject_read.py; this is about what reaches the page.
  */
@@ -126,9 +126,9 @@ const noGoal = () => ({
   lead: null,
   card: {
     tone: 'flat',
-    title: 'None of your goals depends on Algebra.',
-    figures: '8 tasks here in the last 30 days, 8 of them study work.',
-    suggests: "This suggests it's upkeep, or there's a goal here you haven't written down.",
+    title: 'No goal depends on Algebra',
+    tip: 'If it should lead somewhere, give it a goal.',
+    recent: 8,
   },
   goals: [],
   misfiled: [],
@@ -137,8 +137,11 @@ const noGoal = () => ({
 
 const reading = (id: string, tone: string, title: string, evidence: string | null = null) => ({
   id, tone, title, evidence, resource: null,
-  figures: `Figures for ${id}.`,
-  suggests: `This suggests something about ${id}.`,
+  tag: `Tag ${id}`,
+  chart: id === 'coverage'
+    ? { type: 'part', part: 5, whole: 23, label: 'topics with work' }
+    : { type: 'compare', max: 5, unit: '/ 5', rows: [{ label: 'Geometry', value: 2.5 }, { label: 'Your average', value: 3.6 }] },
+  tip: `Try something about ${id}.`,
 });
 
 /** The read for a subject the plan needs most, with a goal filed somewhere wrong. */
@@ -149,9 +152,11 @@ const feedsTopGoal = () => ({
   lead: 'g1',
   card: {
     tone: 'bad',
-    title: 'Algebra is what your top goal runs on, but most of the work here is going elsewhere.',
-    figures: 'Reach AIME needs 5.8 sessions a week and you do 1.8, with 27 days left.',
-    suggests: 'This suggests the time is there and the aim is off. Swap your next "Drills" for "Mock exam".',
+    title: "Most work here isn't on your top goal",
+    tip: 'Swap your next "Drills" for "Mock exam".',
+    meter: { needs: 5.8, does: 1.8 },
+    days_left: 27,
+    on_goal: { on: 4, of: 16, days: 30 },
   },
   goals: [
     {
@@ -160,16 +165,16 @@ const feedsTopGoal = () => ({
     },
     {
       goal_id: 'g2', title: 'AMC 12 cutoff', state: 'on_track', days_left: 200, percent: 60, needs: 0.5, pace: 0.8,
-      gets_time: false, filed: true, work_here: 40, work_total: 40, next: '', note: 'It moves when Reach AIME does.',
+      gets_time: false, filed: true, work_here: 40, work_total: 40, next: '', note: 'Moves with Reach AIME',
     },
   ],
   misfiled: [{ goal_id: 'g3', title: 'Ship the app', work_here: 1, work_total: 160, home: 'programming', home_name: 'Programming' }],
   insights: [
-    reading('topic', 'bad', 'Your weakest part of Reach AIME here is geometry.', 'Emerging pattern'),
-    reading('level', 'bad', 'Your work on Reach AIME falls off once it gets hard.'),
-    reading('coverage', 'flat', 'You only reach 5 of its 23 topics.'),
-    reading('attended', 'flat', 'You sat through more Algebra than you practiced.'),
-    reading('works', 'good', 'Your good sessions have something in common.'),
+    reading('topic', 'bad', 'Geometry is your weakest topic', 'Emerging pattern'),
+    reading('level', 'bad', 'It falls off when it gets hard'),
+    reading('coverage', 'flat', 'Only 5 of 23 AIME topics touched'),
+    reading('attended', 'flat', 'More sitting in than practicing'),
+    reading('works', 'good', '"Was fresh" helps most'),
   ],
 });
 
@@ -209,25 +214,26 @@ const section = (label: string) => within(screen.getByRole('region', { name: lab
 
 // ---------------------------------------------------------------------------
 describe('the page opens on what the subject is for', () => {
-  it('leads with the reading: the headline, the figures, what they suggest', async () => {
+  it('leads with a short title, the gap drawn as bars, and one thing to try', async () => {
     await show({ read: feedsTopGoal() });
 
     const lead = section('What this subject is for');
-    expect(lead.getByRole('heading', { name: /what your top goal runs on/ })).toBeInTheDocument();
-    expect(lead.getByText(/with/).textContent).toContain('needs 5.8 sessions a week');
+    expect(lead.getByRole('heading', { name: "Most work here isn't on your top goal" })).toBeInTheDocument();
+    expect(lead.getByRole('img', { name: 'Needs 5.8/wk, you do 1.8/wk' })).toBeInTheDocument();
+    expect(lead.getByText('27')).toBeInTheDocument();
+    expect(lead.getByText('days left')).toBeInTheDocument();
     expect(lead.getByText(/Swap your next "Drills" for "Mock exam"/)).toBeInTheDocument();
     // Nothing comes before it but the page's own heading and tabs.
     expect(document.querySelector('.ax-panel')).toBe(screen.getByRole('region', { name: 'What this subject is for' }));
   });
 
-  it('says what the plan calls the goal, how it is going and what is next', async () => {
+  it('says what the plan calls the goal and how far along it is', async () => {
     await show({ read: feedsTopGoal() });
 
     const lead = section('What this subject is for');
-    expect(lead.getByText("Your plan's top goal")).toBeInTheDocument();
+    expect(lead.getByText('Top goal')).toBeInTheDocument();
     expect(lead.getByRole('link', { name: 'Reach AIME' })).toBeInTheDocument();
     expect(lead.getByText('Behind')).toBeInTheDocument();
-    expect(lead.getByText('Mock exam')).toBeInTheDocument();
     expect(lead.getByLabelText('40% done')).toBeInTheDocument();
   });
 
@@ -236,7 +242,7 @@ describe('the page opens on what the subject is for', () => {
 
     const others = within(screen.getByRole('list', { name: 'Other goals this work feeds' }));
     expect(others.getByText('AMC 12 cutoff')).toBeInTheDocument();
-    expect(others.getByText('It moves when Reach AIME does.')).toBeInTheDocument();
+    expect(others.getByText('Moves with Reach AIME')).toBeInTheDocument();
   });
 
   it('files a goal whose work is here, keeping what it already names', async () => {
@@ -256,7 +262,7 @@ describe('the page opens on what the subject is for', () => {
     });
 
     const wrong = within(screen.getByRole('list', { name: 'Goals filed here with their work elsewhere' }));
-    expect(wrong.getByText(/1 of its 160 tasks is here/)).toBeInTheDocument();
+    expect(wrong.getByText(/1 of 160 of its tasks are/)).toBeInTheDocument();
     await userEvent.click(wrong.getByRole('button', { name: 'Move to Programming' }));
     expect(updateGoal).toHaveBeenCalledWith('g3', { subject_ids: 'programming' });
   });
@@ -268,7 +274,7 @@ describe('the page opens on what the subject is for', () => {
         { id: 'g2', title: 'Earn 250,000 XP', status: 'active', goal_type: 'xp', measure: '', subject_ids: '', milestones: [] },
       ],
     });
-    expect(section('What this subject is for').getByRole('heading', { name: /None of your goals/ })).toBeInTheDocument();
+    expect(section('What this subject is for').getByRole('heading', { name: 'No goal depends on Algebra' })).toBeInTheDocument();
 
     const picker = within(screen.getByLabelText('Link a goal'));
     await userEvent.click(picker.getByRole('button', { name: /Choose a goal/ }));
@@ -283,24 +289,26 @@ describe('the page opens on what the subject is for', () => {
 });
 
 describe('what the work says about the goal', () => {
-  it('reads against the goal by name, each with its three parts and how sure it is', async () => {
+  it('draws each one as a card: tag, short title, chart, one thing to try, how sure', async () => {
     await show({ read: feedsTopGoal() });
 
     const reads = section('What the work says');
-    expect(reads.getByRole('heading', { name: 'What your work says about Reach AIME' })).toBeInTheDocument();
-    expect(reads.getByText('Your weakest part of Reach AIME here is geometry.')).toBeInTheDocument();
-    expect(reads.getByText('Figures for topic.')).toBeInTheDocument();
-    expect(reads.getByText('This suggests something about topic.')).toBeInTheDocument();
-    expect(reads.getByText('How sure: emerging pattern')).toBeInTheDocument();
+    expect(reads.getByRole('heading', { name: 'What stands out' })).toBeInTheDocument();
+    expect(reads.getByText('In your work on Reach AIME.')).toBeInTheDocument();
+    expect(reads.getByText('Geometry is your weakest topic')).toBeInTheDocument();
+    expect(reads.getAllByRole('img', { name: 'Geometry 2.5, Your average 3.6' })[0]).toBeInTheDocument();
+    expect(reads.getByRole('img', { name: '5 of 23 topics with work' })).toBeInTheDocument();
+    expect(reads.getByText(/Try something about topic\./)).toBeInTheDocument();
+    expect(reads.getByText('Emerging')).toHaveAttribute('title', 'How sure: emerging pattern');
   });
 
   it('shows four and folds the rest', async () => {
     await show({ read: feedsTopGoal() });
 
     const reads = section('What the work says');
-    expect(reads.queryByText(/good sessions/)).not.toBeInTheDocument();
+    expect(reads.queryByText(/helps most/)).not.toBeInTheDocument();
     await userEvent.click(reads.getByRole('button', { name: 'Show 1 more' }));
-    expect(reads.getByText(/good sessions/)).toBeInTheDocument();
+    expect(reads.getByText(/helps most/)).toBeInTheDocument();
   });
 
   it('draws nothing when nothing cleared the evidence table', async () => {

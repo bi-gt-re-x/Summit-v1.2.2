@@ -154,6 +154,10 @@ def goals_here(subject: str, tasks: Sequence[Dict[str, Any]], goals: Sequence[Di
 
 # ---------------------------------------------------------------------------
 # The goal card
+#
+# A short title and one thing to try. The figures behind it (what the goal needs a
+# week against what it gets, days left, how much work was on it) go out as numbers,
+# and the page draws them, so nobody has to read a sentence to see a gap.
 # ---------------------------------------------------------------------------
 def _pace_of(goal: Dict[str, Any], tasks, sittings, today: date, name_of) -> Dict[str, Any]:
     """A goal's forecast, or an empty one with no date on it."""
@@ -164,147 +168,111 @@ def _pace_of(goal: Dict[str, Any], tasks, sittings, today: date, name_of) -> Dic
     return forecast.forecast(goal, tasks, sittings, today, name_of)
 
 
-def _needs_line(title: str, pace: Dict[str, Any]) -> str:
-    """"Violin ARCT needs 2 sessions a week and you do 4, with 823 days left." """
-    return '{} needs {} a week and you do {}, with {} left.'.format(
-        title, _sessions(pace['need_per_week']), '{:g}'.format(pace['per_week']), _days(pace['days_left']))
-
-
-def _share_line(work: Dict[str, Any], name: str) -> str:
-    if not work['study']:
-        return 'You finished no {} study work in the last {} days.'.format(name, RECENT_DAYS)
-    return '{} of your {} {} study tasks in the last {} days {} on it.'.format(
-        len(work['on']), len(work['study']), name, RECENT_DAYS, 'was' if len(work['on']) == 1 else 'were')
-
-
 def _swap_of(work: Dict[str, Any]) -> str:
     names = goal_why._top_names(work['off'], TOP_NAMES)
     return names[0] if names else ''
+
+
+def _card(tone: str, title: str, tip: str, **more) -> Dict[str, Any]:
+    return {'tone': tone, 'title': title, 'tip': tip, **more}
+
+
+def _next(step: str) -> str:
+    return 'Next: "{}".'.format(step) if step else ''
+
+
+def _no_pace(state: str, step: str) -> Dict[str, Any]:
+    return _card('flat', 'No pace to read yet',
+                 ('Give it a date. ' if state == 'undated' else 'Log a few more sessions on it. ') + _next(step))
 
 
 def _first_card(name: str, title: str, pace: Dict[str, Any], work: Dict[str, Any], step: str) -> Dict[str, Any]:
     """The subject the plan needs most."""
     state, study = pace['state'], len(work['study'])
     share = len(work['on']) / study if study else 0.0
-    next_up = ' Next up: "{}".'.format(step) if step else ''
     if state == 'behind':
-        figures = '{} {}'.format(_needs_line(title, pace), _share_line(work, name))
         if pace.get('out_of_reach'):
-            return {'tone': 'bad', 'title': "{} can't make its date at this pace, and it's your top goal.".format(title),
-                    'figures': figures,
-                    'suggests': 'This suggests moving the date or shrinking the goal before you put more hours in.'}
+            return _card('bad', "Your top goal can't make its date at this pace",
+                         'Move the date or shrink the goal before adding hours.')
         if study and share < ON_GOAL_SHARE:
             swap = _swap_of(work)
-            return {'tone': 'bad',
-                    'title': '{} is what your top goal runs on, but most of the work here is going elsewhere.'.format(name),
-                    'figures': figures,
-                    'suggests': ('This suggests the time is there and the aim is off. Swap your next "{}" for "{}".'.format(swap, step)
-                                 if swap and step else 'This suggests the time is there and the aim is off.{}'.format(next_up))}
+            return _card('bad', "Most work here isn't on your top goal",
+                         'Swap your next "{}" for "{}".'.format(swap, step) if swap and step
+                         else 'Point your next session at it. ' + _next(step))
         more = max(1, math.ceil(pace['need_per_week'] - pace['per_week']))
-        return {'tone': 'bad',
-                'title': "The work here is going at your top goal. There just isn't enough of it yet.",
-                'figures': figures,
-                'suggests': 'This suggests aim is fine and volume is the gap. Add {} a week here.{}'.format(_sessions(more), next_up)}
+        return _card('bad', 'The aim is right. You need more sessions.',
+                     'Add {} a week. {}'.format(_sessions(more), _next(step)).strip())
     if state == 'stalled':
-        return {'tone': 'bad',
-                'title': "{} is what your top goal runs on, and you've stopped working on it.".format(name),
-                'figures': '{} needs {} a week with {} left, and no sessions on it in the last 4 weeks.'.format(
-                    title, _sessions(pace['need_per_week']), _days(pace['days_left'])),
-                'suggests': 'This suggests it has lost its place in your week. Book one session to restart it.{}'.format(next_up)}
+        return _card('bad', 'Your top goal has stalled', 'Book one session this week. ' + _next(step))
     if state == 'on_track':
-        return {'tone': 'good',
-                'title': '{} is what your top goal runs on, and the pace is holding.'.format(name),
-                'figures': '{} {}'.format(_needs_line(title, pace), _share_line(work, name)),
-                'suggests': 'This suggests you can hold this pace.{}'.format(next_up)}
-    return {'tone': 'flat',
-            'title': "{} is what your top goal runs on, but there's no pace to read yet.".format(name),
-            'figures': pace.get('line') or 'It has no date yet, so nothing can say how far off it is.',
-            'suggests': 'This suggests working out the pace comes first. {}'.format(
-                'Give it a date.' if pace['state'] == 'undated' else 'Keep logging sessions on it.') + next_up}
+        return _card('good', 'Your top goal is on pace', 'Keep it up. ' + _next(step))
+    return _no_pace(state, step)
 
 
 def _waiting_card(name: str, title: str, pace: Dict[str, Any], work: Dict[str, Any], step: str,
                   top: Optional[Dict[str, Any]], until: str) -> Dict[str, Any]:
     """A subject whose goal isn't the one the plan puts first."""
     state = pace['state']
-    next_up = ' Next up: "{}".'.format(step) if step else ''
     top_title = (top or {}).get('title') or ''
     top_short = bool(top and top.get('state') in ('behind', 'stalled') and top.get('needs') is not None)
     if state == 'on_track':
-        figures = _needs_line(title, pace)
         if top_short:
-            figures += ' {} needs {} a week and gets {}.'.format(
-                top_title, _sessions(top['needs']), '{:g}'.format(top['pace'] or 0))
             spare = math.floor(pace['per_week'] - pace['need_per_week'])
             short = math.ceil(top['needs'] - (top['pace'] or 0))
             moved = min(spare, short)
             if moved >= 1:
-                return {'tone': 'flat',
-                        'title': '{} is ahead of what {} needs, while your top goal is behind.'.format(name, title),
-                        'figures': figures,
-                        'suggests': ('This suggests about {} a week could move from here to {} {}, and {} would still land on time.'
-                                     .format(_sessions(moved), top_title, until, title))}
-        return {'tone': 'good',
-                'title': '{} is on track, so nothing here needs pushing.'.format(title),
-                'figures': figures,
-                'suggests': 'This suggests you can hold this pace.{}'.format(next_up)}
+                return _card('flat', '{} a week to spare here'.format(_sessions(moved)).capitalize(),
+                             'Give {} to {} {}. {} still lands on time.'.format('it' if moved == 1 else 'them', top_title, until, title),
+                             spare=moved, to=top_title)
+        return _card('good', 'On pace, nothing to push', 'Keep it up. ' + _next(step))
     if state in ('behind', 'stalled'):
         if pace.get('out_of_reach'):
-            return {'tone': 'bad', 'title': "{} can't make its date at this pace.".format(title),
-                    'figures': _needs_line(title, pace),
-                    'suggests': 'This suggests moving the date or shrinking the goal before you put more hours in.'}
-        figures = (_needs_line(title, pace) if state == 'behind' else
-                   '{} needs {} a week with {} left, and no sessions on it in the last 4 weeks.'.format(
-                       title, _sessions(pace['need_per_week']), _days(pace['days_left'])))
+            return _card('bad', "Can't make its date at this pace", 'Move the date or shrink the goal.')
         if top_title:
-            return {'tone': 'flat',
-                    'title': '{} is behind too, but your plan puts {} first.'.format(title, top_title),
-                    'figures': figures,
-                    'suggests': 'This suggests giving {} what you can spare {}, then picking it back up.{}'.format(name, until, next_up)}
-        return {'tone': 'bad', 'title': '{} is behind.'.format(title), 'figures': figures,
-                'suggests': 'This suggests it needs more sessions from here.{}'.format(next_up)}
+            return _card('flat', 'Behind, but your top goal comes first',
+                         'Give {} what you can spare {}.'.format(name, until))
+        return _card('bad', 'Behind', 'It needs more sessions. ' + _next(step))
     if state == 'done':
-        return {'tone': 'good', 'title': "You've reached {}.".format(title),
-                'figures': 'Every step is ticked off or the number is hit.',
-                'suggests': 'This suggests marking it done on Goals, then deciding what {} is for now.'.format(name)}
-    return {'tone': 'flat',
-            'title': "{} feeds {}, but there's no pace to read yet.".format(name, title),
-            'figures': pace.get('line') or 'It has no date yet, so nothing can say how far off it is.',
-            'suggests': 'This suggests working out the pace comes first. {}'.format(
-                'Give it a date.' if state == 'undated' else 'Keep logging sessions on it.') + next_up}
+        return _card('good', 'Goal reached', 'Mark it done on Goals.')
+    return _no_pace(state, step)
 
 
 def _no_goal_card(name: str, work: Dict[str, Any], top: Optional[Dict[str, Any]], routine: int = 0) -> Dict[str, Any]:
     if routine:
-        return {'tone': 'flat',
-                'title': '{} is a routine, so no goal rides on it.'.format(name),
-                'figures': '{} here in the last {} days.'.format(_plural(routine, 'task'), RECENT_DAYS),
-                'suggests': "This suggests it's upkeep, and there's nothing to chase here. If it should lead somewhere, give it a goal."}
+        return _card('flat', 'A routine, so nothing to chase', 'No goal rides on {}. That\'s fine.'.format(name),
+                     recent=routine)
     total = len(work['all'])
     if not total:
-        return {'tone': 'flat',
-                'title': "None of your goals depends on {}, and it's gone quiet.".format(name),
-                'figures': 'Nothing here in the last {} days.{}'.format(
-                    RECENT_DAYS, ' {} is what your plan puts first.'.format(top['title']) if top else ''),
-                'suggests': 'This suggests it can stay parked. If it should lead somewhere, give it a goal.'}
-    figures = '{} here in the last {} days, {} of them study work.'.format(
-        _plural(total, 'task'), RECENT_DAYS, len(work['study']))
-    if top:
-        figures += ' {} is what your plan puts first.'.format(top['title'])
-    return {'tone': 'flat',
-            'title': 'None of your goals depends on {}.'.format(name),
-            'figures': figures,
-            'suggests': ("This suggests it's upkeep, or there's a goal here you haven't written down. "
-                         'If it should lead somewhere, give it a goal.')}
+        return _card('flat', 'Quiet, and no goal needs it', 'It can stay parked, or give it a goal.', recent=0)
+    return _card('flat', 'No goal depends on {}'.format(name), 'If it should lead somewhere, give it a goal.',
+                 recent=total)
 
 
 # ---------------------------------------------------------------------------
 # What the work says about the goal
+#
+# Each reading: a tag, a short title, a chart the page draws, and one thing to try.
+# How sure it is goes out as its evidence label, drawn as a chip, so the wording
+# stays short however early the evidence is.
+#   compare: bars on one scale, e.g. your rating here against your average
+#   part:    a share, e.g. 5 of 23 topics
 # ---------------------------------------------------------------------------
-def _said(read: Dict[str, Any], **fields) -> Dict[str, Any]:
-    """A reading with its evidence label on it, hedged as far as its tier asks."""
-    fields['suggests'] = evidence.hedge(fields['suggests'], read['tier'])
-    return {'evidence': read['label'], 'resource': None, **fields}
+def _read(id_: str, tone: str, tag: str, title: str, chart: Dict[str, Any], tip: str,
+          sure: Optional[Dict[str, Any]] = None, resource=None) -> Dict[str, Any]:
+    return {'id': id_, 'tone': tone, 'tag': tag, 'title': title, 'chart': chart, 'tip': tip,
+            'evidence': sure['label'] if sure else None, 'resource': resource}
+
+
+def _compare(rows: List[Any], top: Optional[float] = 5) -> Dict[str, Any]:
+    """Bars on one scale. `rows` are (label, value) pairs."""
+    values = [value for _, value in rows]
+    return {'type': 'compare', 'max': top or max(values + [1]),
+            'unit': '/ 5' if top == 5 else '',
+            'rows': [{'label': label, 'value': round(value, 1)} for label, value in rows]}
+
+
+def _part(part: int, whole: int, label: str) -> Dict[str, Any]:
+    return {'type': 'part', 'part': part, 'whole': whole, 'label': label}
 
 
 def _trend(rows: Sequence[Dict[str, Any]], today: date, aim: str, behind: bool) -> Optional[Dict[str, Any]]:
@@ -312,25 +280,18 @@ def _trend(rows: Sequence[Dict[str, Any]], today: date, aim: str, behind: bool) 
     for days in TREND_DAYS:
         now = [r for r in map(_rating, _within(rows, today, days)) if r is not None]
         then = [r for r in map(_rating, _within(rows, today, days * 2, days)) if r is not None]
-        read = evidence.means(then, now)
-        if not (evidence.speaks(read) and read['clear']):
+        sure = evidence.means(then, now)
+        if not (evidence.speaks(sure) and sure['clear']):
             continue
         before, after = mean(then), mean(now)
-        figures = 'Rated {} → {} out of 5, the last {} days against the {} before, over {} and {} tasks.'.format(
-            _figure(before), _figure(after), days, days, len(now), len(then))
+        chart = _compare([('{} days before'.format(days), before), ('Last {} days'.format(days), after)])
         if after > before:
             if behind:
-                return _said(read, id='trend', tone='flat',
-                             title="The work on {} is going better, but the pace hasn't caught up.".format(aim),
-                             figures=figures,
-                             suggests="This suggests quality isn't what's holding it back. The next opportunity is more sessions.")
-            return _said(read, id='trend', tone='good',
-                         title='The work on {} is going better.'.format(aim), figures=figures,
-                         suggests="This suggests what you're doing is working. Keep the same setup.")
-        return _said(read, id='trend', tone='bad',
-                     title="You're still doing the work on {}, but it's going worse.".format(aim),
-                     figures=figures,
-                     suggests='This suggests the sessions got harder or got rushed. Look at what changed, and slow the next one down.')
+                return _read('trend', 'flat', 'Trend', "Ratings are up. The pace isn't yet.", chart,
+                             'Quality is fine. More sessions are what it needs.', sure)
+            return _read('trend', 'good', 'Trend', 'Ratings are up', chart, 'Keep the same setup.', sure)
+        return _read('trend', 'bad', 'Trend', 'Ratings are down', chart,
+                     'Look at what changed, and slow the next one down.', sure)
     return None
 
 
@@ -339,24 +300,19 @@ def _levels(rows: Sequence[Dict[str, Any]], today: date, aim: str) -> Optional[D
     recent = _within(rows, today, LOOKBACK_DAYS)
     easy = [r for r in (_rating(t) for t in recent if (_level(t) or 9) <= EASY) if r is not None]
     hard = [r for r in (_rating(t) for t in recent if (_level(t) or 0) >= HARD) if r is not None]
-    read = evidence.means(easy, hard)
-    if evidence.speaks(read) and read['clear']:
-        figures = 'Rated {} on easy work against {} on hard work, over {} and {} tasks.'.format(
-            _figure(mean(easy)), _figure(mean(hard)), len(easy), len(hard))
+    sure = evidence.means(easy, hard)
+    if evidence.speaks(sure) and sure['clear']:
+        chart = _compare([('Easy work', mean(easy)), ('Hard work', mean(hard))])
         if mean(easy) < mean(hard):
-            return _said(read, id='level', tone='bad',
-                         title='Easy work on {} goes worse than the hard work.'.format(aim), figures=figures,
-                         suggests="This suggests you're rushing the easy ones or coasting through them. Check each one before you call it done.")
-        return _said(read, id='level', tone='bad',
-                     title='Your work on {} falls off once it gets hard.'.format(aim), figures=figures,
-                     suggests='This suggests the hard level is where the goal gets won. Put your next session there and go slower.')
+            return _read('level', 'bad', 'Difficulty', 'Easy work goes worse than hard', chart,
+                         'Check the easy ones before calling them done.', sure)
+        return _read('level', 'bad', 'Difficulty', 'It falls off when it gets hard', chart,
+                     'Do your next session at the hard level, slower.', sure)
     leveled = [task for task in recent if _level(task) is not None]
     many_hard = sum(1 for task in leveled if _level(task) >= HARD)
     if len(leveled) >= HARD_FLOOR and many_hard / len(leveled) < HARD_SHARE:
-        return {'id': 'level', 'tone': 'bad', 'evidence': None, 'resource': None,
-                'title': 'Most of your work on {} is below the hard level.'.format(aim),
-                'figures': '{} of {} tasks in the last {} days were hard.'.format(many_hard, len(leveled), LOOKBACK_DAYS),
-                'suggests': "This suggests you're practicing under what the goal asks. Make the next session harder."}
+        return _read('level', 'bad', 'Difficulty', 'Very little hard work', _part(many_hard, len(leveled), 'tasks were hard'),
+                     'Make the next session harder.')
     return None
 
 
@@ -367,16 +323,12 @@ def _reason(rows: Sequence[Dict[str, Any]], today: date, aim: str) -> Optional[D
     if not named:
         return None
     label, count = Counter(named).most_common(1)[0]
-    read = evidence.counted(count)
-    if not evidence.speaks(read):
+    sure = evidence.counted(count)
+    if not evidence.speaks(sure):
         return None
-    share = round(count / len(named) * 100)
-    return {'id': 'reason', 'tone': 'bad', 'evidence': read['label'], 'resource': None,
-            'title': '"{}" keeps getting in the way of {}.'.format(label, aim),
-            'figures': 'You picked it {} of the {} times you said what went wrong ({}%).'.format(
-                '{:,}'.format(count), len(named), share),
-            'suggests': 'This suggests fixing this one thing is the cheapest gain here. {}'.format(
-                TRY_FOR.get(label, "Decide before the next session how you'll handle it."))}
+    return _read('reason', 'bad', 'What goes wrong', '"{}" comes up most'.format(label),
+                 _part(count, len(named), 'times something went wrong'),
+                 TRY_FOR.get(label, "Decide before the next session how you'll handle it."), sure)
 
 
 def _works(rows: Sequence[Dict[str, Any]], today: date, aim: str) -> Optional[Dict[str, Any]]:
@@ -386,13 +338,11 @@ def _works(rows: Sequence[Dict[str, Any]], today: date, aim: str) -> Optional[Di
     if not named:
         return None
     label, count = Counter(named).most_common(1)[0]
-    read = evidence.counted(count)
-    if not evidence.speaks(read):
+    sure = evidence.counted(count)
+    if not evidence.speaks(sure):
         return None
-    return {'id': 'works', 'tone': 'good', 'evidence': read['label'], 'resource': None,
-            'title': 'Your good sessions on {} have something in common.'.format(aim),
-            'figures': '"{}" came up {} after work that went well.'.format(label, _plural(count, 'time')),
-            'suggests': 'This suggests setting up the next session the same way.'}
+    return _read('works', 'good', 'What works', '"{}" helps most'.format(label),
+                 _part(count, len(named), 'good sessions'), 'Set up the next one the same way.', sure)
 
 
 def _attended(work: Dict[str, Any], name: str, aim: str) -> Optional[Dict[str, Any]]:
@@ -400,11 +350,9 @@ def _attended(work: Dict[str, Any], name: str, aim: str) -> Optional[Dict[str, A
     sat, did = len(work['attended']), len(work['study'])
     if sat < evidence.FLOOR or sat <= did:
         return None
-    return {'id': 'attended', 'tone': 'flat', 'evidence': None, 'resource': None,
-            'title': 'You sat through more {} than you practiced.'.format(name),
-            'figures': '{} you attended and {} of your own in the last {} days.'.format(
-                _plural(sat, 'thing'), _plural(did, 'study task'), RECENT_DAYS),
-            'suggests': 'This suggests the practice is what\'s short. {} moves when you do the work yourself.'.format(aim)}
+    return _read('attended', 'flat', 'Practice', 'More sitting in than practicing',
+                 _compare([('Attended', sat), ('Practiced', did)], None),
+                 'Practice is what moves {}.'.format(aim))
 
 
 def _weak_topic(goal: Dict[str, Any], rows_here: Sequence[Dict[str, Any]], aim: str) -> Optional[Dict[str, Any]]:
@@ -417,36 +365,28 @@ def _weak_topic(goal: Dict[str, Any], rows_here: Sequence[Dict[str, Any]], aim: 
     row = next((one for one in rows_here if one.get('topic') == move.get('topic') and goal_id in one.get('goal_ids', [])), None)
     if not row or row.get('execution') is None or row.get('base') is None:
         return None
-    read = evidence.counted(int(row.get('tasks') or 0))
-    if not evidence.speaks(read):
+    sure = evidence.counted(int(row.get('tasks') or 0))
+    if not evidence.speaks(sure):
         return None
-    said = _said(read, id='topic', tone='bad',
-                 title='Your weakest part of {} here is {}.'.format(aim, topics.lower(row['label'])),
-                 figures='Rated {} out of 5 over {}, against {} across {}.'.format(
-                     _figure(row['execution']), _plural(int(row['tasks']), 'task'), _figure(row['base']), row['subject_label']),
-                 suggests='This suggests a session goes furthest here. {}.'.format(move['title']))
-    said['resource'] = move.get('resource')
-    return said
+    label = row['label']
+    return _read('topic', 'bad', 'Weak spot', '{} is your weakest topic'.format(label),
+                 _compare([(label, row['execution']), ('Your average', row['base'])]),
+                 '{}.'.format(move['title']), sure, move.get('resource'))
 
 
 def _coverage(goal: Dict[str, Any], rows: Sequence[Dict[str, Any]], worked: int, aim: str) -> Optional[Dict[str, Any]]:
     """How much of what the goal tests has any work behind it."""
     plan = topics.plan(goal, rows)
     position = plan.get('position') or []
-    if len(position) < evidence.FLOOR or plan.get('covered', 0) >= len(position) * COVERED_SHARE:
+    covered = plan.get('covered', 0)
+    if len(position) < evidence.FLOOR or covered >= len(position) * COVERED_SHARE:
         return None
     untouched = [topics.lower(spot['label']) for spot in position if spot['status'] == 'untouched']
-    shown = ', '.join(untouched[:4])
-    rest = len(untouched) - 4
-    suggests = 'This suggests the work is deep in a few places and missing in most. Try {} next.'.format(untouched[0])
-    if plan.get('unnamed', 0) >= 5:
-        suggests += " {} don't name a topic, so some of this could be hidden. Put the topic in the next task's name.".format(
-            _plural(int(plan['unnamed']), 'task'))
-    return {'id': 'coverage', 'tone': 'flat', 'evidence': None, 'resource': None,
-            'title': "You've put {} into {}, but they only reach {} of its {} topics.".format(
-                _plural(worked, 'task'), aim, plan.get('covered', 0), len(position)),
-            'figures': 'Not yet: {}{}.'.format(shown, ', and {} more'.format(rest) if rest > 0 else ''),
-            'suggests': suggests}
+    contest = (plan.get('contexts') or [''])[0]
+    return _read('coverage', 'flat', 'Coverage',
+                 'Only {} of {} {} topics touched'.format(covered, len(position), contest).replace('  ', ' '),
+                 _part(covered, len(position), 'topics with work'),
+                 'Try {} next.'.format(untouched[0]))
 
 
 def insights(rows: Sequence[Dict[str, Any]], work: Dict[str, Any], today: date, name: str, aim: str,
@@ -459,7 +399,7 @@ def insights(rows: Sequence[Dict[str, Any]], work: Dict[str, Any], today: date, 
         found += [_weak_topic(goal, here, aim), _coverage(goal, topic_rows, worked, aim)]
     found += [_trend(rows, today, aim, behind), _levels(rows, today, aim), _reason(rows, today, aim),
               _attended(work, name, aim), _works(rows, today, aim)]
-    said = [one for one in found if one and one['suggests']]
+    said = [one for one in found if one]
     return sorted(said, key=lambda one: ORDER[one['tone']])[:MOST_INSIGHTS]
 
 
@@ -501,7 +441,6 @@ def read(subject: str, name: str, tasks: Sequence[Dict[str, Any]], goals: Sequen
     if not until.startswith('until '):
         until = 'for now'
     also = set(decision.get('also') or [])
-    why_not = {row['key']: row['why'] for row in decision.get('not_now') or []}
     done_here = [task for task in _done(tasks) if task.get('subject') == subject]
 
     rows_out = []
@@ -511,8 +450,7 @@ def read(subject: str, name: str, tasks: Sequence[Dict[str, Any]], goals: Sequen
         goal_id, title = str(goal.get('id')), str(goal.get('title') or 'Your goal')
         pace = _pace_of(goal, tasks, sittings, today, name_of)
         paces[goal_id] = pace
-        note = ('It moves when {} does, since they share the same work.'.format(top['title'])
-                if top and title in also else why_not.get('goal-{}'.format(goal_id), ''))
+        note = 'Moves with {}'.format(top['title']) if top and title in also else ''
         rows_out.append(_row_out(row, pace, plan_rows.get(goal_id) or {}, note, goal_why.next_step(goal) or ''))
 
     live = [row for row in serving if paces[str(row['goal'].get('id'))]['state'] != 'done']
@@ -552,6 +490,12 @@ def read(subject: str, name: str, tasks: Sequence[Dict[str, Any]], goals: Sequen
             card = _waiting_card(name, title, pace, work, step, top, until)
         said = insights(lead['here'], work, today, name, title, goal, topic_rows, subject,
                         pace['state'] in ('behind', 'stalled'), len(lead['direct']))
+        # The numbers the page draws under the title.
+        card['days_left'] = pace.get('days_left')
+        if pace.get('need_per_week') is not None and pace.get('per_week') is not None:
+            card['meter'] = {'needs': pace['need_per_week'], 'does': pace['per_week']}
+        if work['study']:
+            card['on_goal'] = {'on': len(work['on']), 'of': len(work['study']), 'days': RECENT_DAYS}
 
     return {
         'subject': subject,
@@ -592,7 +536,9 @@ def session_decision(row: Dict[str, Any], decision: Dict[str, Any], tasks, sitti
     goal_id = str(goal.get('id'))
     plan_row = next((one for one in decision.get('goals') or [] if one['goal_id'] == goal_id), {})
     pace = _pace_of(goal, tasks, sittings, today, name_of)
-    standing = (_needs_line(str(goal.get('title')), pace) if pace.get('need_per_week') is not None and pace.get('per_week') is not None
+    standing = ('{} needs {} a week and you do {}, with {} left.'.format(
+        goal.get('title'), _sessions(pace['need_per_week']), '{:g}'.format(pace['per_week']), _days(pace['days_left']))
+        if pace.get('need_per_week') is not None and pace.get('per_week') is not None
                 else pace.get('line') or 'It has no date yet.')
     return {'focus': {'goal_id': goal_id, 'title': str(goal.get('title') or 'Your goal'),
                       'percent': plan_row.get('percent', 0), 'days_left': pace.get('days_left'),
