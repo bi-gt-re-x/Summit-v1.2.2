@@ -81136,6 +81136,180 @@
         }
       ]
     },
+    "jv.arraylist": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Create and Use an ArrayList",
+          "mastery": "Create an ArrayList, and use add, get, set, remove and size.",
+          "practice": "Make an ArrayList<String> of 3 names, add a 4th, change the 2nd with set, remove the 1st, and print size().",
+          "detail": "add puts an item at the end, or at an index if you give one, shifting the rest right. get and set read and replace by index. remove takes an item out and shifts the rest left. size() is the current count, and it changes as you go.",
+          "proof": "The list ends with 3 names, and size() prints 3.",
+          "pitfall": "Using .length on an ArrayList. That's for arrays.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "ArrayList<Integer> a holds [5, 8]. After a.add(3), what is a.size()?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "a holds [5, 8, 3]. What does a.get(1) return?",
+              "answer": "8",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "a holds [5, 8, 3]. After a.add(1, 9), what is a?",
+              "answer": "[5, 9, 8, 3]",
+              "answer_kind": "list"
+            }
+          ]
+        },
+        {
+          "title": "Wrapper Types",
+          "mastery": "Use Integer and Double in ArrayLists, since an ArrayList can't hold primitives directly.",
+          "practice": "Declare ArrayList<Integer> nums, add 4 ints, and sum them with a for-each loop, letting Java unbox each one.",
+          "detail": "Generic lists hold objects, so ints go in as Integer objects. Java converts automatically: autoboxing when you add, unboxing when you read. Watch remove: with an int argument it removes by index, not by value.",
+          "proof": "The loop adds each Integer as an int and prints the total.",
+          "pitfall": "Calling nums.remove(10) to remove the value 10, which removes index 10 instead.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Can you write ArrayList<int>?",
+              "answer": "No. Use ArrayList<Integer>.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Java turns an int into an Integer automatically when you add it. What is that called?",
+              "answer": "Autoboxing",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "nums holds [10, 20]. What does nums.remove(0) remove?",
+              "answer": "The element at index 0, which is 10.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Remove While Looping",
+          "mastery": "Remove items during a loop without skipping any, by looping backward or adjusting the index.",
+          "practice": "Remove every even number from [2, 4, 5, 6, 7] with a forward loop, see the bug, then fix it by looping backward.",
+          "detail": "When you remove at index i, everything after it shifts left, so the next item lands at i. A forward loop then moves on to i + 1 and skips it. Looping backward avoids this, because the shifted items are ones you've already checked.",
+          "proof": "The forward loop leaves [4, 5, 7], skipping the 4. Looping backward gives [5, 7].",
+          "pitfall": "Removing inside a for-each loop, which throws an exception.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A forward loop removes every \"x\" from [x, x, y]. What is left?",
+              "answer": "[x, y]",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why does looping backward from size() - 1 avoid skipping?",
+              "answer": "Removing shifts only items you've already checked.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Can you call remove inside a for-each loop over an ArrayList?",
+              "answer": "No. It throws ConcurrentModificationException.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Array or ArrayList",
+          "mastery": "Choose an array when the size is fixed and an ArrayList when it changes.",
+          "practice": "Pick array or ArrayList for 12 monthly totals, a growing to-do list and 64 chess squares, and say why for each.",
+          "detail": "Arrays are fixed in size, hold primitives directly and use [] and length. ArrayLists grow and shrink, hold objects and use get, set and size(). If you know the count in advance and it won't change, an array is simpler.",
+          "proof": "Arrays for the 12 months and 64 squares, and an ArrayList for the to-do list.",
+          "pitfall": "Mixing the syntax, like list[0] or arr.size().",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How do you get the size of an ArrayList: .length or .size()?",
+              "answer": "size()",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which fits a shopping list that grows as you think of things: an array or an ArrayList?",
+              "answer": "An ArrayList",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which is fixed in size once created: int[] or ArrayList<Integer>?",
+              "answer": "int[]",
+              "answer_kind": "code"
+            }
+          ]
+        },
+        {
+          "title": "Common List Algorithms",
+          "mastery": "Write the standard ArrayList algorithms: find, insert in order, and remove duplicates.",
+          "practice": "Write a method that inserts 7 into the sorted list [2, 5, 9, 12] so it stays sorted.",
+          "detail": "To insert in order, walk the list until you find the first item bigger than the new one, then add at that index. To remove duplicates, build a new list and add each item only if it isn't there yet. indexOf finds an item or returns -1.",
+          "proof": "7 goes at index 2, giving [2, 5, 7, 9, 12].",
+          "pitfall": "Appending and then sorting the whole list, which works but wastes effort.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Insert 4 into the sorted list [1, 3, 6]. At what index does it go?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A remove-duplicates pass keeps first copies. What does it leave from [3, 1, 3, 2, 1]?",
+              "answer": "[3, 1, 2]",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "list.indexOf(\"cat\") returns -1. What does that mean?",
+              "answer": "\"cat\" isn't in the list.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
     "jv.arrays": {
       "model": "claude-opus-5-5",
       "verifier": "rules+authored",
@@ -81832,6 +82006,702 @@
         }
       ]
     },
+    "jv.frq": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Read the Question",
+          "mastery": "Read the whole free-response question, and mark what the method must return and what you're given.",
+          "practice": "Take 1 released FRQ part and underline the return type, the parameters and every precondition before writing code.",
+          "detail": "Preconditions tell you what you don't need to check, which saves time and clutter. The method header is given, so copy it exactly. Later parts often say you may assume earlier ones work, which is a hint to call those methods.",
+          "proof": "Return type, parameters and preconditions underlined before any code.",
+          "pitfall": "Writing checks for cases the preconditions already rule out.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "An FRQ says 'precondition: arr.length > 0'. Do you need to handle an empty array?",
+              "answer": "No. The precondition rules it out.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "The header 'public int countMatches(String s)' is given. Should you change it?",
+              "answer": "No. Use it exactly as given.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Part (b) says you may assume part (a) works. Should you call your part (a) method?",
+              "answer": "Yes. That's usually the point.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Write Java on Paper",
+          "mastery": "Write clean Java by hand, with braces matched, semicolons in and indentation clear.",
+          "practice": "Write a method that returns how many values in an int array are above 50, by hand, in under 6 minutes.",
+          "detail": "Graders follow your logic, so neat indentation helps them give credit. Small slips like a missing semicolon usually aren't penalized, but wrong loop bounds or a missing return are. Practice on paper weekly so your hand knows the syntax.",
+          "proof": "A short method with a counter, a loop and a return, written in under 6 minutes.",
+          "pitfall": "Practicing only in an IDE and freezing when there's no autocomplete.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write the loop header that visits every index of int[] arr.",
+              "answer": "for (int i = 0; i < arr.length; i++)",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Graders usually forgive 1 missing semicolon. Do they forgive a wrong loop bound?",
+              "answer": "No. That's a logic error and costs points.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You run out of room mid-method on page 3. What should you do?",
+              "answer": "Keep writing on the next page and label it clearly.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "The Class Question",
+          "mastery": "Write a complete class from a description: private fields, a constructor and the methods asked for.",
+          "practice": "Write a Ticket class from 'holds a row and seat number and a price, with getPrice() and a method that raises the price by a percent'.",
+          "detail": "Read the description for nouns and verbs: nouns become private fields and verbs become methods. Write the header exactly as the question names it. Use this.field = field in the constructor when names match, and return the right type from every method.",
+          "proof": "A class with 3 private fields, a constructor, getPrice() and raise(double pct).",
+          "pitfall": "Making the fields public, which loses points on most class questions.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In a 'Ticket' class FRQ, should the fields be public or private?",
+              "answer": "Private",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "raise(10) should add 10% to a price of 50. What is the new price?",
+              "answer": "55",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A constructor parameter is named row, and so is the field. What do you write to set the field?",
+              "answer": "this.row = row;",
+              "answer_kind": "code"
+            }
+          ]
+        },
+        {
+          "title": "Array and ArrayList Questions",
+          "mastery": "Solve the classic array and ArrayList patterns: count, find, remove and build a new list.",
+          "practice": "Write removeShort(ArrayList<String> words, int n) that removes every word shorter than n, looping backward.",
+          "detail": "Most list questions are one of a few patterns. Counting and finding walk the list once. Removing loops backward. Building creates a new list and adds to it, leaving the original alone unless the question says otherwise.",
+          "proof": "A backward loop from words.size() - 1 to 0 that removes each short word.",
+          "pitfall": "Removing while looping forward and skipping words.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "For words [\"hi\", \"hello\", \"yo\"] and n = 3, what does removeShort leave?",
+              "answer": "[\"hello\"]",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why loop backward when removing from an ArrayList?",
+              "answer": "Removing shifts later items left, so a forward loop skips one.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Should a method named 'buildList' change the original list?",
+              "answer": "No, unless the question says to.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "The 2D Array Question",
+          "mastery": "Write 2D array methods that walk rows or columns and handle the edges.",
+          "practice": "Write a method that returns the row index with the largest sum in an int[][] grid.",
+          "detail": "Loop over rows, sum each one with an inner loop, and keep the best sum and its index. Start the best at row 0 rather than at 0, so negative grids work. Name your loop variables r and c so the indexes stay clear.",
+          "proof": "A method that tracks bestSum and bestRow and returns bestRow.",
+          "pitfall": "Starting bestSum at 0, which fails when every row's sum is negative.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "For {{1, 2}, {5, 0}, {3, 3}}, which row index has the largest sum?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write the header of a static method that returns the sum of column c of an int[][] grid.",
+              "answer": "public static int colSum(int[][] grid, int c)",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Your method uses grid[0].length for the number of columns. When is that safe?",
+              "answer": "When every row has the same length, which AP grids do.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "jv.grid": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Create and Index a Grid",
+          "mastery": "Create a 2D array and read an element with [row][col].",
+          "practice": "Create int[][] g = new int[3][4], set g[2][1] = 7, and print g.length and g[0].length.",
+          "detail": "A 2D array is an array of rows. g.length is the number of rows, and g[0].length is the number of columns in row 0. The first index picks the row and the second picks the column, both starting at 0.",
+          "proof": "g.length is 3 and g[0].length is 4.",
+          "pitfall": "Swapping the indexes and writing [col][row].",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "int[][] g = {{1, 2, 3}, {4, 5, 6}}; What is g[1][2]?",
+              "answer": "6",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "For g = new int[4][7], what is g.length?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A grid is built with new int[5][8]. What is grid[0].length?",
+              "answer": "8",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Row-Major Traversal",
+          "mastery": "Walk a 2D array row by row with nested loops, rows in the outer loop and columns in the inner one.",
+          "practice": "Print every element of {{1, 2}, {3, 4}, {5, 6}} in row-major order with nested for loops.",
+          "detail": "Row-major order finishes a whole row before moving down. The outer loop runs r over the rows and the inner loop runs c over the columns of that row. Using grid[r].length for the inner bound works even when rows differ in length.",
+          "proof": "It prints 1 2 3 4 5 6.",
+          "pitfall": "Using grid.length for the inner loop, which only works for square grids.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In row-major order, which element comes right after the last one in row 0?",
+              "answer": "g[1][0]",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write the outer loop header for the rows of 'grid'.",
+              "answer": "for (int r = 0; r < grid.length; r++)",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write the inner loop header for the columns of 'grid'.",
+              "answer": "for (int c = 0; c < grid[r].length; c++)",
+              "answer_kind": "code"
+            }
+          ]
+        },
+        {
+          "title": "Column-Major Traversal",
+          "mastery": "Walk a 2D array column by column by putting the column loop on the outside.",
+          "practice": "Walk {{7, 8, 9}, {1, 2, 3}} down each column in turn, and write the 6 numbers in the order you visit them.",
+          "detail": "Swap the loops: the outer loop runs over columns and the inner one over rows, still reading grid[r][c]. This order is what you need for column sums or a column's largest value. Use grid[0].length for the number of columns.",
+          "proof": "You visit 7, 1, 8, 2, 9 and then 3.",
+          "pitfall": "Swapping the loops and also swapping the indexes, which reads the wrong cells.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the column-major order of {{1, 2}, {3, 4}}?",
+              "answer": "1, 3, 2, 4",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In column-major traversal of a 3 by 4 grid, which loop runs over the rows: the outer or the inner?",
+              "answer": "The inner",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Find the sum of column 1 in {{1, 2}, {3, 4}, {5, 6}}.",
+              "answer": "12",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Grid Algorithms",
+          "mastery": "Find a row sum, a column's largest value and a count of matches in a 2D array.",
+          "practice": "For {{3, 8, 1}, {9, 2, 7}}, find each row's sum, the largest value in column 0 and how many values are over 5.",
+          "detail": "Each of these is a one-dimensional algorithm aimed at a row, a column or the whole grid. Fix the row and loop over columns for a row sum. Fix the column and loop over rows for a column max. Loop over everything for a count.",
+          "proof": "Row sums 12 and 18, column 0 max 9, and 3 values over 5.",
+          "pitfall": "Resetting the row sum outside the outer loop, so it keeps growing across rows.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the sum of row 0 in {{3, 8, 1}, {9, 2, 7}}?",
+              "answer": "12",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many values are even in {{1, 2}, {4, 7}}?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What is the sum of the main diagonal of {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}}?",
+              "answer": "15",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Neighbors and Bounds",
+          "mastery": "Check a cell's neighbors without going out of bounds.",
+          "practice": "Write a method that counts how many of a cell's 4 neighbors hold a 1, checking each index is in range first.",
+          "detail": "A neighbor is one step up, down, left or right. Before reading grid[r - 1][c], check that r - 1 >= 0, and do the same for every edge. Put the range check first in an && so Java never reaches the bad index.",
+          "proof": "Edge and corner cells skip the neighbors that would fall off the grid.",
+          "pitfall": "Reading the neighbor first and checking the bounds after, which crashes at the edges.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many neighbors, counting up, down, left and right, does the corner cell [0][0] have?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In a 5 by 5 grid, how many neighbors does the center cell [2][2] have?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write the check that row r - 1 is a valid row.",
+              "answer": "r - 1 >= 0",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "jv.inherit": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Extend a Class",
+          "mastery": "Make a subclass with extends, and know that it inherits the parent's public methods.",
+          "practice": "Write class Animal with speak() returning \"...\", then class Dog extends Animal, and call speak() on a Dog.",
+          "detail": "extends says one class is a kind of another. The subclass gets every public method of the parent without rewriting it. Java allows only one parent class. The parent's private fields exist inside the object, but the child can only reach them through the parent's methods.",
+          "proof": "Dog inherits speak(), so new Dog().speak() returns \"...\".",
+          "pitfall": "Copying the parent's methods into the child instead of inheriting them.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "class B extends A. Does B get A's public methods?",
+              "answer": "Yes.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Can a Java class extend 2 classes at once?",
+              "answer": "No. Java allows one parent class.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Can a subclass use its parent's private fields, like 'name', directly?",
+              "answer": "No. It can only reach them through the parent's methods.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Call super in Constructors",
+          "mastery": "Call the parent's constructor with super(...) as the first line of the child's constructor.",
+          "practice": "Give Animal a constructor taking a name, then write Dog(String name, String breed) that calls super(name) first.",
+          "detail": "The parent's part of the object has to be set up before the child's. So super(...) must come first. If you leave it out, Java inserts super() with no arguments, which fails to compile when the parent has no such constructor.",
+          "proof": "Dog's constructor starts with super(name), then sets its own breed.",
+          "pitfall": "Setting the parent's private fields directly from the child constructor.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Where must super(name) go in a child constructor?",
+              "answer": "On the first line.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A parent has only Animal(String n). The child constructor doesn't call super. Does it compile?",
+              "answer": "No. Java inserts super(), which doesn't exist.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Can 1 constructor call both this(...) and super(...)?",
+              "answer": "No. Only one, and it must be first.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Override Methods",
+          "mastery": "Override a parent method with the same signature, and use @Override to catch mistakes.",
+          "practice": "Override speak() in Dog to return \"Woof\", add @Override, then misspell it as speek() and read the error.",
+          "detail": "An override has the same name and parameter list as the parent's method. The child's version replaces the parent's for that object. @Override asks the compiler to confirm you're really overriding, which catches typos that would otherwise make a new method silently.",
+          "proof": "With @Override, speek() gives a compile error, and speak() returns Woof.",
+          "pitfall": "Changing the parameter list and calling it an override. That's overloading.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Animal a = new Dog(); Dog overrides speak to return \"Woof\". What does a.speak() return?",
+              "answer": "\"Woof\"",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does @Override do?",
+              "answer": "Makes the compiler check that you really are overriding a parent method.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A subclass method has the same name and parameters as the parent's. Overloading or overriding?",
+              "answer": "Overriding",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Call the Parent's Version",
+          "mastery": "Use super.method() to build on the parent's version of a method instead of replacing it.",
+          "practice": "Make Dog's toString return super.toString() + \", breed: lab\".",
+          "detail": "Sometimes the child wants the parent's behavior plus a little more. super.method() runs the parent's version, and you add to its result. That avoids copying code, so a fix in the parent reaches the child too.",
+          "proof": "Dog's toString shows the Animal info followed by the breed.",
+          "pitfall": "Calling this.toString() inside toString, which calls itself forever.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Animal's describe() returns \"animal\". Dog's returns super.describe() + \" dog\". What does Dog's return?",
+              "answer": "\"animal dog\"",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "When should an override call super.method()?",
+              "answer": "When you want to add to the parent's behavior, not replace it.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Can a subclass call super.super.method()?",
+              "answer": "No. Java doesn't allow it.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Design a Hierarchy",
+          "mastery": "Design a small class hierarchy with shared code in the parent and the differences in the children.",
+          "practice": "Design Shape with 3 subclasses, Circle, Rectangle and Triangle, and decide which fields and methods go in the parent.",
+          "detail": "Use inheritance for 'is a' relationships: a Circle is a Shape. Put what every child shares in the parent, and what differs in each child. If one thing merely has another, like a car with an engine, use a field, not extends.",
+          "proof": "Shape holds a name and declares area(), and each child holds its own sizes and overrides area().",
+          "pitfall": "Using extends for 'has a' relationships.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Should Student extend Person, or Person extend Student?",
+              "answer": "Student extends Person. Every student is a person.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Is a Car a kind of Engine, so 'Car extends Engine' makes sense?",
+              "answer": "No. A car has an engine, so use a field.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "All 3 shapes have area(). Where should its header go?",
+              "answer": "In Shape, overridden by each subclass.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "jv.mcq": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Trace With a Table",
+          "mastery": "Trace code on paper with a table that records every variable's value after each line.",
+          "practice": "Trace int a = 3, b = 5; a = a + b; b = a - b; a = a - b; in a 3-column table and give a and b at the end.",
+          "detail": "Write one column per variable and one row per line or loop pass. Update only what the line changes. It feels slow, but it's faster than guessing and redoing, and it catches the off-by-one and integer division traps the exam is built around.",
+          "proof": "a goes 3, 8, 5 and b goes 5, 3, so the two values swapped.",
+          "pitfall": "Tracing in your head and losing track after 3 lines.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "int x = 4; x = x * x - 3; What is x?",
+              "answer": "13",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "int a = 2, b = 7; a = b; b = a; What is b?",
+              "answer": "7",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "int s = 0; for (int i = 1; i <= 4; i++) s += i * i; What is s?",
+              "answer": "30",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Watch Integer Division",
+          "mastery": "Spot the integer division and casting traps the multiple choice section loves.",
+          "practice": "Work out 10 / 4, 10 / 4.0, (double) 10 / 4 and (int) (10 / 4.0) before checking any of them.",
+          "detail": "Java works left to right with the usual precedence, and each operation's type depends only on its two sides. So 1 / 2 * 4.0 is 0 * 4.0, not 2.0. Look for two ints meeting at a / and slow down there.",
+          "proof": "2, 2.5, 2.5 and 2.",
+          "pitfall": "Assuming a double anywhere in the line makes every division decimal.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is 1 / 2 * 4.0 in Java?",
+              "answer": "0.0",
+              "answer_kind": "decimal"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "double d = 3.0 * 5 / 2; What is d?",
+              "answer": "7.5",
+              "answer_kind": "decimal"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "int avg = (90 + 85) / 2; What is avg?",
+              "answer": "87",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Eliminate Choices",
+          "mastery": "Eliminate wrong answers by testing edge cases, like empty arrays or the first and last index.",
+          "practice": "For 5 practice questions, cross off at least 2 choices each by testing an edge case before solving.",
+          "detail": "Wrong choices are usually wrong at the edges: they skip the first element, run past the last, or fail on an empty list. Test those first. Two choices that differ only in < versus <= are telling you exactly where to look.",
+          "proof": "5 questions, each with 2 or more choices crossed off and a reason noted.",
+          "pitfall": "Testing only the middle of the array, where every choice looks right.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A method should return the last element of arr. Choice A uses arr[arr.length]. Keep or eliminate?",
+              "answer": "Eliminate. That index is out of bounds.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A loop should visit every index. Choice B uses i <= arr.length. Keep or eliminate?",
+              "answer": "Eliminate. It runs one past the end.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "2 choices differ only in < versus <=. What should you test?",
+              "answer": "The boundary value, where the two give different answers.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Pace the Section",
+          "mastery": "Pace the section at about 2 minutes per question, and skip slow ones to come back to.",
+          "practice": "Answer 10 practice questions in 22 minutes, marking any that take over 3 minutes to come back to.",
+          "detail": "The section has around 40 questions in 90 minutes. Every question is worth the same, so one stubborn trace shouldn't cost you three easy ones. Mark it, make a guess, move on and return if there's time. Check your pace every 10 questions.",
+          "proof": "10 questions done in 22 minutes, with the slow ones marked.",
+          "pitfall": "Spending 8 minutes on one question while easy ones wait.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "If 42 questions take 90 minutes, about how many minutes is that each, to 1 decimal?",
+              "answer": "2.1",
+              "answer_kind": "decimal"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You're stuck after 3 minutes on question 12. What should you do?",
+              "answer": "Mark it, guess, move on and come back if there's time.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Is there a penalty for wrong guesses on AP multiple choice?",
+              "answer": "No. Never leave one blank.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Learn From Mistakes",
+          "mastery": "Keep a log of missed questions by topic, and drill the topics that show up most.",
+          "practice": "Log every wrong answer from 2 practice sets with its topic and the reason, then count which topic appears most.",
+          "detail": "A log turns a vague feeling of being bad at Java into a list like 'six misses on 2D arrays'. Note whether each miss was a content gap, a misread or a careless slip, because each one has a different fix. Drill the biggest group first.",
+          "proof": "A tally by topic, with the top one picked for next week's drill.",
+          "pitfall": "Redoing whole practice tests without looking at why you missed anything.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Your log shows 6 misses on 2D arrays and 1 on strings. What should you drill?",
+              "answer": "2D arrays",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You missed a question because you misread 'not'. What kind of error is that?",
+              "answer": "A reading error, not a content gap.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You got 31 of 40 questions right. What percent is that, to the nearest whole number?",
+              "answer": "78%",
+              "answer_kind": "percent"
+            }
+          ]
+        }
+      ]
+    },
     "jv.methods": {
       "model": "claude-opus-5-5",
       "verifier": "rules+authored",
@@ -82001,6 +82871,702 @@
               "prompt": "What's wrong if a non-void method like getMax() has a path with no return?",
               "answer": "It won't compile: missing return statement.",
               "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "jv.poly": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Declared and Actual Types",
+          "mastery": "Tell a variable's declared type from the actual type of the object it holds.",
+          "practice": "Write Animal a = new Dog(); then name the declared type and the actual type, and try calling a Dog-only method.",
+          "detail": "The declared type is on the left, and it decides which methods the compiler lets you call. The actual type is what new built, and it decides which version of a method runs. A parent-type variable can hold any child object, but not the other way round.",
+          "proof": "Declared type Animal, actual type Dog, and the Dog-only call won't compile.",
+          "pitfall": "Expecting Dog-only methods to be callable through an Animal variable.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In Animal a = new Cat(); what is the declared type?",
+              "answer": "Animal",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Shape s = new Circle(2); Whose area() runs when you call s.area()?",
+              "answer": "Circle's",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Can you write Dog d = new Animal();?",
+              "answer": "No. An Animal isn't necessarily a Dog.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Predict Which Method Runs",
+          "mastery": "Predict which overridden method runs: Java picks the actual object's version at run time.",
+          "practice": "Make an Animal array holding a Dog and a Cat, loop over it calling speak(), and predict each line.",
+          "detail": "Two checks happen. At compile time, Java checks that the declared type has the method. At run time, it calls the version belonging to the real object. That's why one loop over Animals can make each one speak its own way.",
+          "proof": "The loop prints Woof, then Meow.",
+          "pitfall": "Predicting the parent's version because the variable's type is Animal.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Animal[] a = {new Dog(), new Cat()}; Dog says Woof and Cat says Meow. What does a[1].speak() print?",
+              "answer": "Meow",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Animal a = new Dog(); a.fetch(); fetch exists only in Dog. Does it compile?",
+              "answer": "No. The compiler checks the declared type, Animal.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How do you call fetch() on a, declared as Animal but holding a Dog?",
+              "answer": "Cast it: ((Dog) a).fetch();",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Cast Objects Safely",
+          "mastery": "Cast a reference down to its actual type, and check first with instanceof.",
+          "practice": "Loop over an Animal array and call fetch() only on the Dogs, using instanceof and a cast.",
+          "detail": "A downcast tells the compiler to treat the reference as the child type. If the object isn't really that type, the program crashes with ClassCastException. instanceof checks first, so the cast only runs when it's safe.",
+          "proof": "Each Dog fetches and the Cats are skipped, with no exception.",
+          "pitfall": "Casting without checking and crashing on the first Cat.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does 'a instanceof Dog' return when a holds a Cat?",
+              "answer": "false",
+              "answer_kind": "truefalse"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Animal a = new Cat(); Dog d = (Dog) a; What happens at run time?",
+              "answer": "ClassCastException",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why check 'instanceof' before casting?",
+              "answer": "So the cast can't fail at run time.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Abstract Classes",
+          "mastery": "Use an abstract class for a parent that shouldn't be created on its own, with abstract methods the children must fill in.",
+          "practice": "Make Shape abstract with abstract double area(), then write Circle and Square that implement it.",
+          "detail": "An abstract method has a header and no body, and every concrete child must provide one. You can't create an object of an abstract class, but you can declare variables of its type. It can still hold fields and normal methods for the children to share.",
+          "proof": "new Shape() fails, while new Circle(2).area() works.",
+          "pitfall": "Giving an abstract method a body, which won't compile.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Shape is abstract. Can you write new Shape()?",
+              "answer": "No.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Circle extends the abstract Shape but doesn't write area(). What happens?",
+              "answer": "It won't compile, unless Circle is also abstract.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Can an abstract class also have regular methods, like toString()?",
+              "answer": "Yes.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Use Interfaces",
+          "mastery": "Use an interface to promise a set of methods across classes that aren't related.",
+          "practice": "Write interface Scorable with int score(), and make both Player and Team implement it.",
+          "detail": "An interface lists method headers that a class promises to provide. A class can implement many interfaces but extend only one class. Comparable is the one you'll see most: implementing compareTo lets objects be sorted.",
+          "proof": "Player and Team both have score(), and a Scorable list can hold either one.",
+          "pitfall": "Writing extends for an interface instead of implements.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A class can extend 1 class. How many interfaces can it implement?",
+              "answer": "Any number",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which keyword makes a class use an interface: 'extends' or 'implements'?",
+              "answer": "implements",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Comparable<Student> needs which method?",
+              "answer": "compareTo",
+              "answer_kind": "word"
+            }
+          ]
+        }
+      ]
+    },
+    "jv.project": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Pick a Project",
+          "mastery": "Choose a Java project that uses classes and lists and fits in about 2 weeks.",
+          "practice": "List 3 project ideas, like a text adventure, a grade tracker or a card game, and pick one that uses at least 2 classes.",
+          "detail": "A good first project uses what you know, classes, lists and loops, plus one new thing. Something you'd use or play yourself keeps you going and gets tested properly. Giant ideas stall, so pick one you can finish and then grow.",
+          "proof": "One idea chosen, with 2 or more classes named.",
+          "pitfall": "Starting a full 3D game and quitting a week in.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which is a better 2-week project: a full 3D game engine or a Blackjack game?",
+              "answer": "Blackjack. It's finishable and uses classes and lists.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 2 classes a Blackjack game might have.",
+              "answer": "Card and Deck, or Hand and Player.",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why pick a project like a 'grade tracker' you'd actually use?",
+              "answer": "You'll test it more and want to fix its bugs.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Plan the Classes",
+          "mastery": "Sketch the classes, their fields and their methods, before writing code.",
+          "practice": "Draw a class diagram for a library app with Book, Member and Library, listing 2 fields and 2 methods for each.",
+          "detail": "Decide which class owns each piece of data, and put the methods that use that data in the same class. A quick sketch shows problems, like two classes both tracking whether a book is out, before you've written 300 lines around them.",
+          "proof": "A diagram of 3 boxes, each with its fields and methods.",
+          "pitfall": "Putting everything in one giant class with dozens of methods.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A Library holds many Books. Which field fits?",
+              "answer": "ArrayList<Book> books",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which class should know whether a Book is checked out: Book or Member?",
+              "answer": "Book, with a field like checkedOut.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why sketch 3 classes before coding them?",
+              "answer": "It shows which class owns which data before you're deep in code.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Build and Test in Steps",
+          "mastery": "Build one class at a time and test it in main before moving on.",
+          "practice": "Write the Card class, test toString on 3 cards in main, then start Deck only once Card works.",
+          "detail": "Testing each class alone means a bug can only be in the code you just wrote. Write a few lines in main that create objects and print results, and check them against what you expect. Then build the next class on top.",
+          "proof": "Card prints correctly for all 3 test cards before Deck exists.",
+          "pitfall": "Writing every class first and testing the whole program at the end.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You finished Card. What should you do before writing Deck?",
+              "answer": "Test Card in main with a few examples.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A standard Deck should hold how many cards?",
+              "answer": "52",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Deck.deal() is called 53 times on a fresh deck. What should the 53rd call do?",
+              "answer": "Return null or throw an exception, since the deck is empty.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Use the Standard Library",
+          "mastery": "Use Java's standard library, like Random, Scanner and Collections, instead of writing it yourself.",
+          "practice": "Shuffle a 52-card ArrayList with Collections.shuffle and read the player's choice with Scanner.",
+          "detail": "The standard library already has well-tested tools for common jobs. Random makes random numbers, Scanner reads input, Collections sorts and shuffles lists, and Math has the usual functions. Check the docs for what each method returns.",
+          "proof": "The deck comes out in a different order each run, and the player's typed choice is read.",
+          "pitfall": "Writing your own shuffle and getting an uneven one.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which call shuffles an ArrayList named deck?",
+              "answer": "Collections.shuffle(deck)",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write the line that makes a Scanner reading from the keyboard.",
+              "answer": "Scanner in = new Scanner(System.in);",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "rand.nextInt(6) returns which values?",
+              "answer": "0 through 5.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Go Beyond the Exam",
+          "mastery": "Take Java further with a desktop app, an Android app or a Minecraft mod.",
+          "practice": "Pick 1 path, JavaFX, Android Studio or a Minecraft Forge mod, and finish its official first tutorial.",
+          "detail": "The AP course covers the core language. Real projects add a framework on top: JavaFX for windows and buttons, Android for phone apps, Forge or Fabric for Minecraft. Each has a beginner tutorial that ends with something running.",
+          "proof": "One tutorial finished, with a window, an app or a mod running.",
+          "pitfall": "Trying all three at once and finishing none.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which tool do most people use to build Android apps?",
+              "answer": "Android Studio",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Minecraft Java Edition mods are written in which language?",
+              "answer": "Java",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 thing a library like JavaFX adds over printing to the console.",
+              "answer": "Windows and buttons the user can click.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "jv.recursion": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Base Case and Recursive Case",
+          "mastery": "Write a recursive method with a base case that stops it and a recursive case that moves toward that stop.",
+          "practice": "Write factorial(n) with the base case n == 0, and trace factorial(4) by hand.",
+          "detail": "Every recursive method needs a case it can answer directly, and a case that calls itself on a smaller problem. Each call must get closer to the base case, or the calls never end. Then the answers pass back up the chain.",
+          "proof": "factorial(4) is 4 * 3 * 2 * 1 * 1, which is 24.",
+          "pitfall": "Forgetting the base case, so the method calls itself until the stack overflows.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is factorial(5)?",
+              "answer": "120",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What happens if factorial(n) has no base case?",
+              "answer": "It recurses forever and throws StackOverflowError.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "For sum(n) = n + sum(n - 1), what's a good base case?",
+              "answer": "sum(0) returns 0.",
+              "answer_kind": "code"
+            }
+          ]
+        },
+        {
+          "title": "Trace the Calls",
+          "mastery": "Trace recursive calls as a stack, writing each call and the value it returns.",
+          "practice": "Trace mystery(3), where mystery(n) returns 1 if n == 1, and n * 2 + mystery(n - 1) otherwise, writing every call.",
+          "detail": "Write the calls going down one per line, then fill in the returns going back up. Each call waits for the one below it to finish. This is exactly how the computer does it, and it's the fastest reliable way to answer recursion questions on paper.",
+          "proof": "mystery(3) = 6 + mystery(2) = 6 + 4 + mystery(1) = 11.",
+          "pitfall": "Adding the values on the way down, before the deeper calls have returned.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "f(n) returns 0 if n == 0, and 2 + f(n - 1) otherwise. What is f(4)?",
+              "answer": "8",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "g(n) returns 1 if n <= 1, and g(n - 1) + g(n - 2) otherwise. What is g(5)?",
+              "answer": "8",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many calls does f(4) make in total, counting f(4) itself?",
+              "answer": "5",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Recurse on Strings",
+          "mastery": "Recurse on strings by handling the first character and recursing on the rest.",
+          "practice": "Write reverse(s) that returns reverse(s.substring(1)) + s.charAt(0), with an empty-string base case, and trace \"abc\".",
+          "detail": "s.substring(1) is everything after the first character, so each call works on a shorter string. The empty string is the natural base case. Counting, reversing and checking palindromes all follow this pattern.",
+          "proof": "reverse(\"abc\") = reverse(\"bc\") + a = \"cb\" + a = \"cba\".",
+          "pitfall": "Using s.length() == 1 as the only base case, which crashes on an empty string.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does reverse(\"hey\") return?",
+              "answer": "\"yeh\"",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "count(s) adds 1 if s.charAt(0) is 'a', then recurses on s.substring(1). What is count(\"banana\")?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What base case suits a method that recurses on s.substring(1)?",
+              "answer": "s.length() == 0, the empty string.",
+              "answer_kind": "code"
+            }
+          ]
+        },
+        {
+          "title": "Recursion That Prints",
+          "mastery": "Predict the output when a print comes before or after the recursive call.",
+          "practice": "Trace 2 versions of countdown(3), one printing before the recursive call and one printing after it, and write each output.",
+          "detail": "A print before the call happens on the way down, so values come out in call order. A print after the call waits until the deeper calls finish, so values come out reversed. With prints on both sides, the output mirrors itself.",
+          "proof": "Before prints 3 2 1, and after prints 1 2 3.",
+          "pitfall": "Assuming the print always runs first no matter where it sits.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "p(n): if n > 0, print n and then call p(n - 1). What does p(3) print?",
+              "answer": "3 2 1",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Now swap the order: q(n) calls q(n - 1) before printing n, for n >= 1. What appears for q(4)?",
+              "answer": "1 2 3 4",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "r(n): if n > 0, print n, call r(n - 1), then print n. What does r(2) print?",
+              "answer": "2 1 1 2",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Recursion or a Loop",
+          "mastery": "Decide when recursion is clearer than a loop, and rewrite a simple recursive method as a loop.",
+          "practice": "Rewrite recursive sum(n) as a for loop, then say which version reads better and which is safer for n = 100000.",
+          "detail": "Simple counting recursion is usually clearer as a loop, and a loop can't overflow the stack. Recursion shines when a problem splits into smaller copies of itself, like walking a tree or merge sort. The AP exam mostly asks you to trace it.",
+          "proof": "The loop version is safer for 100000, since recursion that deep overflows the stack.",
+          "pitfall": "Using recursion for everything because it looks clever.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write a loop version of factorial(n).",
+              "answer": "int r = 1; for (int i = 2; i <= n; i++) r *= i; return r;",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why might recursive sum(100000) crash?",
+              "answer": "Too many calls overflow the stack.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 task where recursion is usually clearer than a loop, like the one in merge sort.",
+              "answer": "Walking a tree, or splitting a list in merge sort.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "jv.search": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Linear Search",
+          "mastery": "Write a linear search that returns the index of a target, or -1 if it isn't there.",
+          "practice": "Write linearSearch(int[] a, int t) and test it on {4, 9, 2, 7} with the targets 2 and 5.",
+          "detail": "Check each element from the start until you find the target, and return its index. If the loop finishes, return -1. It works on any array, sorted or not, but in the worst case it checks every element.",
+          "proof": "It returns 2 for the target 2 and -1 for 5.",
+          "pitfall": "Returning -1 inside the loop on the first mismatch.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many comparisons does linear search make to find 7 in {4, 9, 2, 7}?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "At most how many comparisons does linear search make on an array of 1000?",
+              "answer": "1000",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Does linear search on {5, 2, 9} need the array sorted first?",
+              "answer": "No.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Binary Search",
+          "mastery": "Run binary search on a sorted array, halving the range at each step.",
+          "practice": "Trace binary search for 23 in {2, 5, 8, 12, 16, 23, 38, 56, 72, 91}, writing low, high and mid at each step.",
+          "detail": "Look at the middle. If it's the target, stop. If the target is bigger, search the right half, and if smaller, the left half. Each step halves what's left, so even a million items take only about 20 steps. The array must be sorted.",
+          "proof": "mid 4 holds 16, then mid 7 holds 56, then mid 5 holds 23, found in 3 steps.",
+          "pitfall": "Running binary search on an unsorted array.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Each step of binary search halves the range. How many halvings take 1024 items down to 1?",
+              "answer": "10",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Can binary search work on {5, 2, 9, 1}?",
+              "answer": "No. The array must be sorted first.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In {1, 3, 5, 7, 9}, with low = 0 and high = 4, what is the first mid index?",
+              "answer": "2",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Selection Sort",
+          "mastery": "Trace selection sort, which swaps the smallest remaining item into place on each pass.",
+          "practice": "Trace selection sort on {29, 10, 14, 37, 13}, writing the array after each pass.",
+          "detail": "On pass i, find the smallest item from index i to the end and swap it into index i. After each pass, one more item is in its final place at the front. It always takes about n squared comparisons, even on sorted input.",
+          "proof": "{10, 29, 14, 37, 13}, {10, 13, 14, 37, 29}, no change on pass 3, then {10, 13, 14, 29, 37}.",
+          "pitfall": "Swapping every time a smaller item is found, instead of once per pass.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "After 1 pass of selection sort on {5, 3, 8, 1}, what is the array?",
+              "answer": "{1, 3, 8, 5}",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many passes does selection sort need for 6 items?",
+              "answer": "5",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "For n = 1000 items, does selection sort take about n or about n squared steps?",
+              "answer": "About n squared.",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Insertion Sort",
+          "mastery": "Trace insertion sort, which slides each new item left into the sorted part.",
+          "practice": "Trace insertion sort on {7, 3, 5, 1}, writing the array after each insertion.",
+          "detail": "The left part is always sorted. Take the next item, shift bigger items in the sorted part one place right, and drop it into the gap. On nearly sorted data it's very fast, since few shifts are needed.",
+          "proof": "{3, 7, 5, 1}, then {3, 5, 7, 1}, then {1, 3, 5, 7}.",
+          "pitfall": "Confusing it with selection sort, which swaps the minimum into place.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "After 2 insertions on {4, 2, 6, 1}, what is the array?",
+              "answer": "{2, 4, 6, 1}",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "On an already sorted array like {1, 2, 3, 4, 5}, is insertion sort fast or slow?",
+              "answer": "Fast, about n steps.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many shifts does inserting 1 into the sorted part {2, 4, 6} take?",
+              "answer": "3",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Merge Sort",
+          "mastery": "Explain merge sort's split and merge steps, and why it runs in about n log n.",
+          "practice": "Split {38, 27, 43, 3} down to single items, then merge back up, writing each merged list.",
+          "detail": "Split the list in half again and again until each piece has one item. Then merge pairs of sorted pieces by taking the smaller front item each time. There are about log n levels of splitting and each level does about n work, giving n log n.",
+          "proof": "{27, 38} and {3, 43}, then {3, 27, 38, 43}.",
+          "pitfall": "Merging by sticking the lists end to end without comparing.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Merge the sorted lists {2, 7} and {3, 5}.",
+              "answer": "{2, 3, 5, 7}",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many times can 8 items be split in half before each piece has 1 item?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which is faster for 100,000 items: selection sort or merge sort?",
+              "answer": "Merge sort",
+              "answer_kind": "word"
             }
           ]
         }
