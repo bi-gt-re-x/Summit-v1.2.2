@@ -11797,6 +11797,528 @@
         }
       ]
     },
+    "ast.cosmo": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "The Expanding Universe",
+          "mastery": "Explain Hubble's law: more distant galaxies move away faster, because space itself is expanding.",
+          "practice": "Use v = H₀ × d with H₀ = 70 km/s per megaparsec to find the speed of a galaxy 100 megaparsecs away.",
+          "detail": "Edwin Hubble found that galaxies' redshifts grow with their distance. The simplest explanation is that space is stretching, carrying galaxies apart, like dots on an inflating balloon. There's no center: every galaxy sees the others moving away.",
+          "proof": "70 × 100 is 7000 km/s.",
+          "pitfall": "Picturing galaxies flying out from one central point.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A galaxy is 200 Mpc away. With H₀ = 70 km/s per Mpc, how fast does it recede, in km/s?",
+              "answer": "14000",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Who showed in 1929 that galaxies recede?",
+              "answer": "Edwin Hubble",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Does expansion mean galaxies fly away from 1 center?",
+              "answer": "No. Space itself stretches everywhere.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "The Big Bang",
+          "mastery": "Describe the Big Bang as the universe expanding from a hot, dense state about 13.8 billion years ago.",
+          "practice": "Write 3 pieces of evidence for the Big Bang: the expansion, the cosmic microwave background and the amounts of light elements.",
+          "detail": "Run the expansion backward and everything was once hot and dense. The Big Bang wasn't an explosion at a point, it was the expansion of space everywhere at once. It predicts the leftover glow we see and that about a quarter of ordinary matter would be helium, both confirmed.",
+          "proof": "3 pieces of evidence, each with 1 sentence.",
+          "pitfall": "Picturing the Big Bang as a bomb going off in empty space.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "About how long ago was the Big Bang?",
+              "answer": "13.8 billion years",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Was the Big Bang an explosion at 1 point in space?",
+              "answer": "No. It happened everywhere at once.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "About what share of ordinary matter came out of the Big Bang as helium: 25% or 75%?",
+              "answer": "25%",
+              "answer_kind": "percent"
+            }
+          ]
+        },
+        {
+          "title": "The Cosmic Microwave Background",
+          "mastery": "Explain the CMB as light from when the universe first became transparent, now cooled to about 2.7 K.",
+          "practice": "Look at the Planck map of the CMB, and write what its tiny hot and cold spots tell us.",
+          "detail": "For about 380,000 years the universe was a glowing fog. When it cooled enough for atoms to form, light could travel freely. That light is still arriving, stretched by expansion into microwaves. Its tiny ripples were the seeds of galaxies.",
+          "proof": "A note that the spots are tiny density ripples that grew into galaxies.",
+          "pitfall": "Thinking the CMB comes from stars or galaxies.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What temperature is the CMB today?",
+              "answer": "About 2.7 K",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "When was the CMB light released: about 380,000 years or 3 billion years after the Big Bang?",
+              "answer": "About 380,000 years",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "After 13.8 billion years, why is the CMB microwaves instead of visible light?",
+              "answer": "Expansion stretched its wavelength.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Look-Back Time",
+          "mastery": "Explain that looking far away means looking back in time, since light takes time to travel.",
+          "practice": "Work out when the light left the Sun, Proxima Centauri at 4.2 light years, and Andromeda at 2.5 million light years.",
+          "detail": "Light travels fast but not instantly. We see the Sun as it was about 8 minutes ago and Andromeda as it was 2.5 million years ago. The most distant galaxies show the young universe, which is how telescopes act as time machines.",
+          "proof": "8 minutes ago, 4.2 years ago and 2.5 million years ago.",
+          "pitfall": "Thinking we see distant stars as they are right now.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Light from Andromeda left it about how long ago?",
+              "answer": "About 2.5 million years",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A star 100 light years away explodes today. When will we see it?",
+              "answer": "In 100 years",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "We see the Sun as it was about how long ago?",
+              "answer": "About 8 minutes",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Dark Matter and Dark Energy",
+          "mastery": "Name the universe's ingredients: about 5% ordinary matter, 27% dark matter and 68% dark energy.",
+          "practice": "Draw a pie chart of the universe's contents with slices of 5%, 27% and 68%, and write what each slice does.",
+          "detail": "Everything we can see, stars, planets and us, is only about 5% of the universe. Dark matter adds gravity that holds galaxies together. Dark energy, found in 1998 from distant supernovae, is speeding up the expansion. Nobody yet knows what either one is.",
+          "proof": "A pie chart with a sentence for each slice.",
+          "pitfall": "Treating dark matter and dark energy as the same thing.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "About what percent of the universe is ordinary matter, like the Sun and us?",
+              "answer": "5%",
+              "answer_kind": "percent"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does dark energy, about 68% of the universe, do?",
+              "answer": "It speeds up the expansion of the universe.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What 1998 discovery revealed dark energy?",
+              "answer": "That the expansion is speeding up, seen in distant supernovae.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "ast.exoplanets": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "The Transit Method",
+          "mastery": "Find planets by the small dip in a star's light as a planet crosses in front of it.",
+          "practice": "Work out the dip in brightness when a planet 1/10 of its star's width crosses it, using the ratio of areas.",
+          "detail": "When a planet passes in front of its star, it blocks a little light. The dip's depth is the planet's area over the star's, so the radius ratio squared. Repeated dips give the planet's year. NASA's Kepler and TESS missions found thousands this way.",
+          "proof": "(1/10) squared is 1/100, a 1% dip.",
+          "pitfall": "Thinking the dip shows the planet's mass.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A planet's radius is 1/10 of its star's. What fraction of the light does it block?",
+              "answer": "1/100",
+              "answer_kind": "fraction"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which NASA telescope found thousands of planets by transits?",
+              "answer": "Kepler",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A planet's transits repeat every 3 days. What does that tell you?",
+              "answer": "The planet's year is 3 days.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "The Wobble Method",
+          "mastery": "Find planets by the star's back-and-forth Doppler wobble as the planet tugs on it.",
+          "practice": "Explain in 3 sentences why a star's spectral lines shift back and forth when a big planet orbits it.",
+          "detail": "A planet and its star both orbit their shared center of mass, so the star wobbles slightly. Toward us, its lines shift blue, and away, red. Heavy planets close to their stars cause the biggest wobbles, which is why the first finds were hot Jupiters.",
+          "proof": "3 sentences linking the wobble to Doppler shifts.",
+          "pitfall": "Thinking the star stays perfectly still while the planet orbits.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which is easier to find by wobble: a heavy planet in a 4-day orbit, or a light one far away?",
+              "answer": "A heavy planet in a 4-day orbit",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What was the 1st planet found around a Sun-like star, in 1995?",
+              "answer": "51 Pegasi b",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Does the wobble method give a planet like 51 Pegasi b's mass or its size?",
+              "answer": "Its mass, at least a lower limit.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Habitable Zones",
+          "mastery": "Explain the habitable zone, the range of distances where liquid water could exist on a planet's surface.",
+          "practice": "For a star much dimmer than the Sun, like a red dwarf, say whether its habitable zone is closer or farther than 1 AU, and why.",
+          "detail": "Too close to a star and water boils away, and too far and it freezes. The zone in between depends on how bright the star is. Earth sits in the Sun's. Being there doesn't mean a planet has life, or even water, only that liquid water could exist.",
+          "proof": "Closer, since a dim star warms a smaller region.",
+          "pitfall": "Treating the habitable zone as proof of life.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Is Earth in the Sun's habitable zone?",
+              "answer": "Yes.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A red dwarf is much dimmer than the Sun. Is its habitable zone closer or farther than 1 AU?",
+              "answer": "Closer",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Does being in 1 star's habitable zone guarantee life?",
+              "answer": "No. It only means liquid water could exist.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Kinds of Exoplanets",
+          "mastery": "Describe common exoplanet types, like hot Jupiters, super-Earths and mini-Neptunes.",
+          "practice": "Look up 3 exoplanets on NASA's Exoplanet Archive, and label each one hot Jupiter, super-Earth or mini-Neptune.",
+          "detail": "Many planets elsewhere look nothing like ours. Hot Jupiters are giants orbiting in days. Super-Earths and mini-Neptunes, between Earth and Neptune in size, are the most common kind found, yet our solar system has none. Over 5000 planets are confirmed.",
+          "proof": "3 planets labeled with their type.",
+          "pitfall": "Assuming other solar systems look like ours.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is a hot Jupiter, like 51 Pegasi b?",
+              "answer": "A giant planet orbiting very close to its star.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is a super-Earth, up to about 2 Earth radii?",
+              "answer": "A planet bigger than Earth but smaller than Neptune, likely rocky.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "About how many exoplanets are confirmed: over 5000, or about 50?",
+              "answer": "Over 5000",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Study Their Air",
+          "mastery": "Explain how telescopes like JWST read an exoplanet's atmosphere from starlight passing through it.",
+          "practice": "Read about JWST's detection of carbon dioxide on WASP-39b, and explain in 2 sentences how it was found.",
+          "detail": "During a transit, a thin ring of starlight passes through the planet's air. Gases there absorb their own wavelengths, leaving lines in the spectrum. Comparing the spectrum in and out of transit reveals the gases, and some combinations might hint at life.",
+          "proof": "2 sentences on transit spectra and absorption lines.",
+          "pitfall": "Thinking we can photograph an exoplanet's surface.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How does JWST detect gases on a transiting planet?",
+              "answer": "It reads the absorption lines in starlight passing through the planet's air.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 1 gas that might hint at life if found on an exoplanet like WASP-39b.",
+              "answer": "Oxygen, or oxygen with methane.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "On which planet did JWST find carbon dioxide in 2022?",
+              "answer": "WASP-39b",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "ast.galaxies": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Galaxy Types",
+          "mastery": "Recognize the 3 main galaxy shapes on sight, and what each says about its stars.",
+          "practice": "Sort 6 galaxy photos from NASA, including M31, M87 and the Large Magellanic Cloud, into spiral, elliptical or irregular.",
+          "detail": "Spirals have a flat disk with arms full of young blue stars and gas. Ellipticals are smooth balls of older, redder stars with little gas. Irregulars have no clear shape, often because of a past collision. Hubble's tuning fork diagram arranges them.",
+          "proof": "6 photos sorted, with M31 as a spiral and M87 as an elliptical.",
+          "pitfall": "Assuming every galaxy is a spiral like ours.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What type of galaxy is the Milky Way?",
+              "answer": "A barred spiral",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "M87 is a giant ball of old stars. Which type is it?",
+              "answer": "Elliptical",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "The Large Magellanic Cloud has no clear shape. Which type is it?",
+              "answer": "Irregular",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Our Galaxy",
+          "mastery": "Describe the Milky Way's size, shape and our place within it.",
+          "practice": "Draw the Milky Way from above, about 100,000 light years across, and mark the Sun about 26,000 light years from the center.",
+          "detail": "The Milky Way is a barred spiral with hundreds of billions of stars. We live in a minor arm partway out. The band of light across a dark sky is the disk seen edge-on from inside, which is why it circles the whole sky.",
+          "proof": "A drawing with the Sun marked about a quarter of the way out.",
+          "pitfall": "Thinking the Sun is at the center of the galaxy.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "About how wide is the Milky Way: 100,000 or 100 million light years?",
+              "answer": "100,000 light years",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "About how many stars are in the Milky Way: 100 to 400 billion, or 10 million?",
+              "answer": "100 to 400 billion",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does the Milky Way look like a band across the sky on a July night?",
+              "answer": "We see the disk edge-on from inside it.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Dark Matter in Galaxies",
+          "mastery": "Explain how flat rotation curves show that galaxies hold far more mass than we can see.",
+          "practice": "Sketch 2 rotation curves for a galaxy, one expected from the visible stars and one measured and flat, and label the gap.",
+          "detail": "If most of a galaxy's mass were in its bright center, outer stars should orbit slowly, as outer planets do. Vera Rubin found they orbit just as fast as inner ones. Extra unseen mass, dark matter, must surround the galaxy. It makes up about 85% of all matter.",
+          "proof": "2 curves, falling and flat, with the gap labeled dark matter.",
+          "pitfall": "Thinking dark matter is just dust or dark gas.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Stars at 50,000 light years orbit as fast as inner ones. What does that suggest?",
+              "answer": "Extra unseen mass, dark matter.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Who measured galaxy rotation curves in the 1970s?",
+              "answer": "Vera Rubin",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "About what share of the universe's matter is dark matter: about 85% or 15%?",
+              "answer": "85%",
+              "answer_kind": "percent"
+            }
+          ]
+        },
+        {
+          "title": "Groups and Collisions",
+          "mastery": "Explain how galaxies gather in groups and sometimes collide and merge.",
+          "practice": "Read about the Milky Way and Andromeda, and write 3 sentences on their collision in about 4.5 billion years.",
+          "detail": "Galaxies cluster in groups held together by gravity. The Milky Way's is the Local Group. Andromeda is heading toward us and will merge with our galaxy in about 4.5 billion years. Stars are so far apart that they'll almost never hit each other.",
+          "proof": "3 sentences on the merger, including that stars won't collide.",
+          "pitfall": "Picturing galaxy collisions as stars smashing into each other.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which large galaxy will collide with the Milky Way?",
+              "answer": "Andromeda, M31",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "When 2 galaxies collide, do their stars often crash into each other?",
+              "answer": "No. Stars are too far apart.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What is the Milky Way's group of galaxies called?",
+              "answer": "The Local Group",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Count the Galaxies",
+          "mastery": "Use deep field images to estimate how many galaxies the observable universe holds.",
+          "practice": "The Hubble Ultra Deep Field shows about 10,000 galaxies in a patch 1/13,000,000 of the sky. Multiply to estimate the total.",
+          "detail": "Pointing a telescope at a tiny, empty-looking patch for weeks revealed thousands of galaxies. Scaling that patch to the whole sky gives over 100 billion, and newer estimates go higher. Their light left them billions of years ago, so we see them young.",
+          "proof": "About 130 billion galaxies.",
+          "pitfall": "Thinking the Milky Way is most of the universe.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Hubble's deep field has 10,000 galaxies in 1/13,000,000 of the sky. About how many is that in the whole sky?",
+              "answer": "About 130 billion",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why do the galaxies in Hubble's deep field look young?",
+              "answer": "Their light left them billions of years ago.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Do recent estimates suggest about 100 galaxies, or hundreds of billions?",
+              "answer": "Hundreds of billions, maybe trillions.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
     "ast.gravity": {
       "model": "claude-opus-5-5",
       "verifier": "rules+authored",
@@ -11966,6 +12488,180 @@
               "prompt": "What happens to a cannonball fired at 12 km/s?",
               "answer": "It escapes Earth's gravity.",
               "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "ast.lifecycle": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Born in Nebulae",
+          "mastery": "Explain how stars form when clouds of gas and dust collapse under gravity.",
+          "practice": "Look at a photo of the Orion Nebula, and write 3 steps from cold cloud to new star.",
+          "detail": "Cold clouds of gas and dust clump together under their own gravity. As a clump shrinks, it heats up. When its core reaches about 10 million °C, hydrogen fusion starts and a star is born. Nebulae like Orion are star nurseries.",
+          "proof": "3 steps: collapse, heating, fusion starting.",
+          "pitfall": "Thinking stars form from explosions.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In the Orion Nebula, what pulls a gas cloud together into a star?",
+              "answer": "Gravity",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "At about what core temperature, in °C, does a collapsing cloud become a true star?",
+              "answer": "About 10 million °C, when fusion starts.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 famous star-forming nebula.",
+              "answer": "The Orion Nebula, or the Eagle Nebula.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Main Sequence to Red Giant",
+          "mastery": "Explain how a Sun-like star swells into a red giant when its core hydrogen runs out.",
+          "practice": "Write 4 steps of the Sun's future after its core hydrogen runs out, and estimate how big it will grow.",
+          "detail": "When the core runs out of hydrogen, it contracts and heats, and hydrogen burns in a shell around it. The outer layers swell and cool, making a red giant hundreds of times wider. The Sun will do this in about 5 billion years and may swallow Earth.",
+          "proof": "4 steps, ending with the Sun swelling to about Earth's orbit.",
+          "pitfall": "Thinking the Sun will explode as a supernova.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why does a star like the Sun leave the main sequence?",
+              "answer": "Its core runs out of hydrogen.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "1 red giant has a cool surface. Why is it so bright?",
+              "answer": "It's huge, so it has a vast surface area.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In about how many billion years will the Sun become a red giant: 5 or 50?",
+              "answer": "5",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "White Dwarfs",
+          "mastery": "Explain how a Sun-like star ends, shedding its outer layers and leaving a hot, Earth-sized white dwarf.",
+          "practice": "Find a planetary nebula, like the Ring Nebula, in photos, and mark the white dwarf at its center.",
+          "detail": "Near the end, a Sun-like star puffs off its outer layers as a glowing shell called a planetary nebula. The exposed core is a white dwarf: about the size of Earth, with about half the Sun's mass. It no longer fuses and slowly cools over billions of years.",
+          "proof": "A photo with the white dwarf marked inside the nebula.",
+          "pitfall": "Thinking planetary nebulae have something to do with planets.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "About how big is a white dwarf: the size of Earth or of Jupiter?",
+              "answer": "Earth",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is a planetary nebula, like the Ring Nebula?",
+              "answer": "The shell of gas a dying Sun-like star throws off.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Does a white dwarf like Sirius B still fuse hydrogen?",
+              "answer": "No. It just cools over time.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Supernovae",
+          "mastery": "Explain how stars of more than about 8 solar masses end in a supernova.",
+          "practice": "Write the 4 steps from a massive star's iron core forming to its collapse and explosion.",
+          "detail": "Massive stars fuse heavier and heavier elements in layers until the core is iron. Fusing iron takes energy instead of releasing it, so the core collapses in under a second and rebounds, blasting the star apart. Supernovae spread heavy elements through space.",
+          "proof": "4 steps: layers of fusion, iron core, collapse, explosion.",
+          "pitfall": "Thinking the explosion comes from fusion running too fast.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In a star of 20 solar masses, which element in the core ends fusion?",
+              "answer": "Iron",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A supernova can outshine its whole galaxy for about 2 weeks. True or false?",
+              "answer": "True",
+              "answer_kind": "truefalse"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Where did the gold in 1 gold ring likely form?",
+              "answer": "In supernovae or neutron star mergers.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Mass Decides the Ending",
+          "mastery": "Read a star's fate straight off its starting mass.",
+          "practice": "Sort 4 stars, of 0.5, 1, 15 and 40 solar masses, by how each will end.",
+          "detail": "Below about 8 solar masses, a star ends as a white dwarf. Between about 8 and 20 or so, it explodes and leaves a neutron star. The most massive leave black holes. The exact boundaries are uncertain, but the pattern holds.",
+          "proof": "White dwarf, white dwarf, neutron star, black hole.",
+          "pitfall": "Thinking every star ends in a supernova.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A 1 solar mass star ends as what?",
+              "answer": "A white dwarf",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which remnant does a 15 solar mass star leave behind?",
+              "answer": "A neutron star, after a supernova.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "After its supernova, what's most likely left of a 40 solar mass star?",
+              "answer": "A black hole",
+              "answer_kind": "word"
             }
           ]
         }
@@ -12493,6 +13189,180 @@
         }
       ]
     },
+    "ast.observe": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Keep a Sky Journal",
+          "mastery": "Log every observation with the date, time, place, conditions, equipment and what you saw.",
+          "practice": "Make a journal page with 7 fields, and log 3 observations this week, including a sketch.",
+          "detail": "A journal turns casual looking into real observing. Noting conditions explains why the same object looks different on different nights. Sketching makes you notice detail you'd otherwise skip. Over months, the log shows your progress.",
+          "proof": "3 logged observations with all 7 fields filled.",
+          "pitfall": "Observing without writing anything down and forgetting it all.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name 3 things to log for every observation.",
+              "answer": "Date, time and sky conditions.",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why rate the seeing and transparency out of 5?",
+              "answer": "They explain why the same object looks different on different nights.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why make 1 sketch even if you take photos?",
+              "answer": "Sketching makes you notice detail.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Work Through the Messier List",
+          "mastery": "Work through a target list like the Messier catalog, logging each object you find.",
+          "practice": "Find 5 Messier objects this month, starting with M31, M42 and M45, and log each one.",
+          "detail": "Charles Messier listed fuzzy objects in the 1700s so comet hunters wouldn't be fooled. His 110 objects, clusters, nebulae and galaxies, became a classic checklist. Working through them teaches star hopping and builds a record of your progress.",
+          "proof": "5 Messier objects found and logged.",
+          "pitfall": "Jumping to faint objects before finding the bright ones on the list.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many objects are in the Messier catalog?",
+              "answer": "110",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is M45?",
+              "answer": "The Pleiades, a star cluster.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What is M42?",
+              "answer": "The Orion Nebula",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Start Astrophotography",
+          "mastery": "Take a first astrophoto with a phone or camera on a tripod, using long exposures.",
+          "practice": "Photograph Orion from a tripod with a 10-second exposure and the widest lens, then count the stars you caught.",
+          "detail": "A steady camera and a long exposure collect far more light than your eye. Keep exposures short enough that Earth's rotation doesn't turn stars into streaks. Stacking many shots in free software cuts noise and brings out faint detail.",
+          "proof": "A photo of Orion with its stars counted.",
+          "pitfall": "Handholding the camera for a 10-second exposure.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why use a tripod for a 10-second exposure?",
+              "answer": "Long exposures blur if the camera moves.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Stars turn into short streaks in a 60-second shot. Why?",
+              "answer": "Earth's rotation moves them across the frame.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What is stacking 50 photos for?",
+              "answer": "Combining them cuts noise and shows faint detail.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Measure Something",
+          "mastery": "Turn observations into measurements, like timing Jupiter's moons or tracking a variable star.",
+          "practice": "Sketch Jupiter's 4 moons on 5 nights, and use their positions to estimate Io's orbital period.",
+          "detail": "Measuring makes you an observer rather than a sightseer. Jupiter's moons move visibly in hours, and Io circles in under 2 days. Variable stars change brightness, and comparing them with steady stars nearby lets you plot their light curve.",
+          "proof": "An estimate of Io's period, close to 1.8 days.",
+          "pitfall": "Only looking, never recording numbers you can check.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Io takes about 1.8 days to orbit Jupiter. About how many orbits does it make in 9 days?",
+              "answer": "5",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is a variable star, like Algol?",
+              "answer": "A star whose brightness changes.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why compare a variable star to 2 nearby steady stars?",
+              "answer": "They give a fixed brightness to measure against.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Science Olympiad Astronomy",
+          "mastery": "Prepare for the Science Olympiad astronomy event with its yearly topic list and a binder of notes.",
+          "practice": "Get this year's Science Olympiad astronomy rules, list the 5 main topics, and make 1 binder page for each.",
+          "detail": "The event's topics change every year and are listed in the rules. Teams usually bring a binder of notes, so building it steadily through the season pays off. Practice identifying objects from images and working distance and mass problems.",
+          "proof": "5 topics listed and 5 binder pages started.",
+          "pitfall": "Building the whole binder the week before the competition.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Where do you find the Science Olympiad astronomy event's topics?",
+              "answer": "In that year's official rules.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 1 kind of question the event often uses.",
+              "answer": "Identifying objects from images, or working out distances and masses.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why build the binder of 5 topics through the year instead of the week before?",
+              "answer": "It's large, and steady work makes it organized and useful.",
+              "answer_kind": "sentence"
+            }
+          ]
+        }
+      ]
+    },
     "ast.planets": {
       "model": "claude-opus-5-5",
       "verifier": "rules+authored",
@@ -12662,6 +13532,180 @@
               "prompt": "Jupiter's radius is about 11 times Earth's. Roughly how many times Earth's volume is that?",
               "answer": "About 1300",
               "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "ast.remnants": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Neutron Stars",
+          "mastery": "Describe neutron stars: more than a Sun's worth of mass packed into a ball about 20 km across.",
+          "practice": "Work out the density of a 1.4 solar mass neutron star 20 km across, and compare it with water.",
+          "detail": "When a massive star's core collapses, protons and electrons are crushed into neutrons. The result is a city-sized ball so dense that a teaspoon would weigh about as much as a mountain. It spins fast and has an enormous magnetic field.",
+          "proof": "About 7 × 10¹⁷ kg/m³, hundreds of trillions of times denser than water.",
+          "pitfall": "Picturing a neutron star as a planet-sized object.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "About how wide is a neutron star: 20 km or 20,000 km?",
+              "answer": "20 km",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "1 teaspoon of neutron star is roughly as heavy as what: a car or a mountain?",
+              "answer": "A mountain",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "1.4 solar masses of neutron star is made mostly of what?",
+              "answer": "Neutrons",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Pulsars",
+          "mastery": "Explain pulsars as spinning neutron stars whose beams sweep past Earth like a lighthouse.",
+          "practice": "Listen to pulsar recordings online, and note the pulse rate of the Crab Pulsar, about 30 per second.",
+          "detail": "A neutron star sends beams of radio waves from its magnetic poles. If a beam sweeps across Earth as it spins, we see a pulse every turn, as regular as a clock. Jocelyn Bell Burnell found the first one in 1967.",
+          "proof": "The Crab Pulsar's rate of about 30 pulses a second noted.",
+          "pitfall": "Thinking pulsars pulse because they're blinking on and off.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is a pulsar, like the Crab Pulsar?",
+              "answer": "A spinning neutron star whose beam sweeps past us.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "The Crab Pulsar spins about 30 times a second. How many spins is that in 1 minute?",
+              "answer": "1800",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Who discovered the first pulsar in 1967?",
+              "answer": "Jocelyn Bell Burnell",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Black Holes",
+          "mastery": "Explain a black hole as matter so compressed that not even light escapes from inside its event horizon.",
+          "practice": "Work out the event horizon radius for 1, 10 and 1 million solar masses, using about 3 km per solar mass.",
+          "detail": "Squeeze enough mass into a small enough space and the escape speed exceeds the speed of light. The boundary where that happens is the event horizon, and its radius grows in step with the mass. From far away, a black hole's gravity is the same as any object of that mass.",
+          "proof": "3 km, 30 km and 3 million km.",
+          "pitfall": "Thinking black holes suck in everything around them like vacuum cleaners.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "About how big is the event horizon of a 10 solar mass black hole?",
+              "answer": "About 30 km",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is the event horizon of 1 black hole?",
+              "answer": "The boundary past which nothing can escape.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "If the Sun became a black hole of the same mass, would Earth fall in?",
+              "answer": "No. Its gravity at our distance wouldn't change.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Detect the Invisible",
+          "mastery": "Explain how we detect black holes: from orbiting stars, glowing disks, gravitational waves and images.",
+          "practice": "Read about the 2019 Event Horizon Telescope image of M87's black hole, and list 3 ways black holes are detected.",
+          "detail": "A black hole gives off no light, but its effects do. Stars orbiting an unseen mass reveal its weight. Gas swirling in heats up and glows in X-rays. Merging black holes shake space with gravitational waves. And radio telescopes linked across Earth have imaged the shadow directly.",
+          "proof": "3 methods listed, like star orbits, X-ray disks and gravitational waves.",
+          "pitfall": "Thinking black holes can never be studied because they're invisible.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How did astronomers weigh the black hole at the Milky Way's center?",
+              "answer": "By tracking stars orbiting it.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What did LIGO first detect in 2015?",
+              "answer": "Gravitational waves from 2 black holes merging.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does gas around M87's black hole glow?",
+              "answer": "It heats up as it swirls in fast.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Sagittarius A*",
+          "mastery": "Describe the supermassive black hole at the Milky Way's center, about 4 million solar masses.",
+          "practice": "Find Sagittarius in the summer sky, and note that the galaxy's central black hole lies about 26,000 light years beyond it.",
+          "detail": "Stars near the Milky Way's center race around something unseen at thousands of km/s. Their orbits show a mass of about 4 million Suns packed into a tiny space: a supermassive black hole called Sagittarius A*. Most large galaxies have one.",
+          "proof": "Sagittarius found, with the direction to the galactic center noted.",
+          "pitfall": "Thinking the central black hole is pulling the whole galaxy in.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "About how massive is Sagittarius A*?",
+              "answer": "About 4 million solar masses",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "About how far is Sagittarius A* from Earth?",
+              "answer": "About 26,000 light years",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Do most large galaxies, like M87, have a supermassive black hole at their center?",
+              "answer": "Yes.",
+              "answer_kind": "yesno"
             }
           ]
         }
@@ -13010,6 +14054,354 @@
               "prompt": "Name 1 dwarf planet besides Pluto.",
               "answer": "Ceres or Eris",
               "answer_kind": "word"
+            }
+          ]
+        }
+      ]
+    },
+    "ast.stars": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Apparent and Absolute Brightness",
+          "mastery": "Tell how bright a star looks from how bright it really is, using apparent and absolute magnitude.",
+          "practice": "Compare Sirius and Deneb: Sirius looks brighter, but find which one really gives off more light.",
+          "detail": "How bright a star looks depends on its power and its distance. Apparent magnitude is how bright it looks, and absolute magnitude is how bright it would look from a standard 10 parsecs. Lower numbers are brighter, and 5 magnitudes is a factor of 100.",
+          "proof": "Deneb gives off vastly more light. It just lies much farther away.",
+          "pitfall": "Assuming the brightest-looking star is the most powerful.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "On the magnitude scale, is magnitude 1 brighter or fainter than magnitude 5?",
+              "answer": "Brighter",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A difference of 5 magnitudes means how many times brighter?",
+              "answer": "100",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why can a faint-looking star like Deneb be more powerful than a bright-looking one?",
+              "answer": "It may be much farther away.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Distance by Parallax",
+          "mastery": "Measure star distances by parallax, the small shift a star shows as Earth orbits the Sun.",
+          "practice": "Hold a finger at arm's length and blink each eye, then use distance in parsecs = 1 / parallax in arcseconds for a star at 0.5 arcsec.",
+          "detail": "As Earth moves around the Sun, nearby stars seem to shift slightly against distant ones, just as your finger jumps when you switch eyes. The closer the star, the bigger the shift. A parallax of 1 arcsecond means a distance of 1 parsec, about 3.26 light years.",
+          "proof": "1 / 0.5 is 2 parsecs.",
+          "pitfall": "Thinking a bigger parallax means a farther star.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A star's parallax is 0.1 arcseconds. How far is it, in parsecs?",
+              "answer": "10",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "1 parsec is about how many light years?",
+              "answer": "3.26",
+              "answer_kind": "decimal"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Do stars within 10 parsecs have bigger or smaller parallax than distant ones?",
+              "answer": "Bigger",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Read the HR Diagram",
+          "mastery": "Read the HR diagram of temperature against luminosity, and find the main sequence, the giants and the white dwarfs.",
+          "practice": "Plot 6 stars, the Sun, Sirius A and B, Betelgeuse, Rigel and Proxima Centauri, on a sketched HR diagram.",
+          "detail": "The HR diagram puts temperature along the bottom, hot on the left, and luminosity up the side. Most stars fall on a diagonal band, the main sequence. Giants sit top right, cool but huge, and white dwarfs bottom left, hot but tiny.",
+          "proof": "6 stars placed, with Sirius B bottom left and Betelgeuse top right.",
+          "pitfall": "Putting hot stars on the right, as on a normal graph.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Where are white dwarfs on the HR diagram: top right or bottom left?",
+              "answer": "Bottom left",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which way does temperature run along the HR diagram's bottom axis?",
+              "answer": "Hot on the left, cool on the right.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Where does the Sun sit on the HR diagram?",
+              "answer": "On the main sequence, near the middle.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Spectral Classes",
+          "mastery": "Name the spectral classes O B A F G K M, from hottest to coolest.",
+          "practice": "Write OBAFGKM with an example star and a rough temperature for each class.",
+          "detail": "Stars are sorted by the lines in their spectra, which track temperature. O stars are blue and over 30,000 K, and M stars are red and under 3500 K. The Sun is a G. A phrase like Oh Be A Fine Girl or Guy, Kiss Me keeps the order.",
+          "proof": "7 classes, each with an example, like Rigel for B and the Sun for G.",
+          "pitfall": "Thinking the letters run in alphabetical order.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Of the 7 classes, which is hottest: O or M?",
+              "answer": "O",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which class is the Sun?",
+              "answer": "G",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which class are most stars in the Milky Way?",
+              "answer": "M, red dwarfs",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Mass Sets Everything",
+          "mastery": "Explain that a main-sequence star's mass sets its temperature, brightness and lifespan.",
+          "practice": "Compare a 0.5, a 1 and a 10 solar mass star by color and lifetime, using the rule that big stars burn out fast.",
+          "detail": "More mass means more crushing pressure in the core, so fusion runs much faster. Massive stars are hot, blue and brilliant, and burn out in millions of years. Small red dwarfs sip their fuel for trillions. The Sun gets about 10 billion.",
+          "proof": "Red and longest-lived, yellow and middling, blue and shortest-lived.",
+          "pitfall": "Thinking big stars last longer because they have more fuel.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which lives longer: a 10 solar mass star or a 1 solar mass star?",
+              "answer": "The 1 solar mass star",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "About how long will the Sun stay on the main sequence?",
+              "answer": "About 10 billion years",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A main-sequence star is blue and very bright. Is it more or less massive than the Sun?",
+              "answer": "More massive",
+              "answer_kind": "word"
+            }
+          ]
+        }
+      ]
+    },
+    "ast.sun": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Fusion in the Core",
+          "mastery": "Explain how the Sun fuses hydrogen into helium in its core, turning a little mass into a lot of energy.",
+          "practice": "Work out how much mass the Sun turns into energy each second from its power of 3.8 × 10²⁶ W, using E = mc².",
+          "detail": "In the core, at about 15 million °C, hydrogen nuclei fuse step by step into helium. The helium weighs slightly less than the 4 hydrogen nuclei that made it, and that missing mass becomes energy. It takes many thousands of years for that energy to reach the surface.",
+          "proof": "About 4.2 billion kg, roughly 4 million tonnes, every second.",
+          "pitfall": "Thinking the Sun burns like a fire.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does the Sun fuse in its core?",
+              "answer": "Hydrogen into helium",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "About how hot is the Sun's core: 15 million °C or 15 thousand °C?",
+              "answer": "15 million °C",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many hydrogen nuclei fuse to make 1 helium nucleus in the Sun?",
+              "answer": "4",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Layers of the Sun",
+          "mastery": "Name the Sun's layers from the core outward, and how energy moves through each one.",
+          "practice": "Draw the Sun's 6 layers, core, radiative zone, convection zone, photosphere, chromosphere and corona, and label how energy moves in the first 3.",
+          "detail": "Energy made in the core creeps outward as light through the radiative zone, then rises in boiling currents through the convection zone. The photosphere is the surface we see. Above it, the thin corona is mysteriously far hotter than the surface.",
+          "proof": "A labeled cross section with fusion, radiation and convection marked.",
+          "pitfall": "Thinking the visible surface is the hottest part outside the core.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Of the Sun's 6 layers, which is the visible surface?",
+              "answer": "The photosphere",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In which of the Sun's zones does hot gas rise and sink like boiling water?",
+              "answer": "The convection zone",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "The corona is about 1 million °C, far hotter than the surface. Is that expected?",
+              "answer": "No. It's a puzzle astronomers still study.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Sunspots and the Cycle",
+          "mastery": "Explain sunspots as cooler, magnetic regions, and the 11-year cycle of their numbers.",
+          "practice": "Look up sunspot counts for the last 25 years, and find the years of the last 2 maximums.",
+          "detail": "Sunspots are spots where strong magnetic fields hold back the heat, so they're cooler and look dark against the bright surface. Their numbers rise and fall in a cycle of about 11 years. Flares and storms are most common near the maximum.",
+          "proof": "Peaks near 2001, 2014 and 2024, about 11 years apart.",
+          "pitfall": "Thinking sunspots are holes or burnt patches.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why does 1 sunspot look dark?",
+              "answer": "It's cooler than the gas around it.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "About how long is the Sun's sunspot cycle?",
+              "answer": "11 years",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A solar maximum came in 2014. About when was the next one?",
+              "answer": "Around 2024 or 2025",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Flares and Space Weather",
+          "mastery": "Explain solar flares and coronal mass ejections, and how they affect Earth.",
+          "practice": "Read today's report from NOAA's Space Weather Prediction Center, and note the Kp index.",
+          "detail": "Twisted magnetic fields on the Sun can snap and release huge energy as a flare, sometimes hurling a cloud of charged gas into space. When that reaches Earth, it can spark auroras and also disrupt satellites, GPS and power grids. The Kp index rates the disturbance from 0 to 9.",
+          "proof": "Today's Kp index written down, with what it means for auroras.",
+          "pitfall": "Thinking space weather only matters to astronauts.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What causes the Northern Lights?",
+              "answer": "Charged particles from the Sun hitting our upper atmosphere.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 1 thing a big solar storm can disrupt.",
+              "answer": "Satellites, GPS or power grids.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does CME stand for?",
+              "answer": "Coronal mass ejection",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "An Average Star",
+          "mastery": "Place the Sun among other stars as a middle-aged, medium-sized G-type star.",
+          "practice": "Compare the Sun with Sirius, Betelgeuse and Proxima Centauri by size and temperature in a 4-row table.",
+          "detail": "The Sun looks special only because it's close. It's a G2 star about 4.6 billion years old, halfway through a main-sequence life of about 10 billion years. Some stars are far bigger and hotter, and most are smaller and cooler red dwarfs.",
+          "proof": "A table showing the Sun in the middle of the range.",
+          "pitfall": "Thinking the Sun is unusually large or bright for a star.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What spectral type is the Sun?",
+              "answer": "G, a G2 star",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "About how old is the Sun: 4.6 billion or 46 billion years?",
+              "answer": "4.6 billion years",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Of its roughly 10 billion year main-sequence life, about how much does the Sun have left?",
+              "answer": "About 5 billion years",
+              "answer_kind": "phrase"
             }
           ]
         }
