@@ -135641,6 +135641,2268 @@
         }
       ]
     },
+    "pn.chords": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Play Block Triads",
+          "mastery": "Play major and minor triads in root position as block chords, with fingers 1, 3 and 5.",
+          "practice": "Play C, F and G major triads as block chords in the right hand with fingers 1-3-5, 4 times each at 60 BPM.",
+          "detail": "A root-position triad is the root, the note a 3rd up and the note a 5th up, which on the keys looks like play one, skip one, play one, skip one, play one. All three keys should go down together. Switching between major and minor only moves the middle note.",
+          "proof": "C E G, F A C and G B D, each played cleanly 4 times.",
+          "pitfall": "Letting the notes land one after another instead of together.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which 3 notes are in an F major triad?",
+              "answer": "F, A and C",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which right-hand fingers play the 3 notes of a root-position triad?",
+              "answer": "1, 3 and 5",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Change the 3-note C major chord to C minor. Which note moves, and where to?",
+              "answer": "E moves down to Eb.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Use Inversions",
+          "mastery": "Use inversions so chords move to the nearest notes instead of jumping.",
+          "practice": "Play C to F to G to C in the right hand, using C in root position, F in second inversion and G in first inversion, so no note moves more than a 3rd.",
+          "detail": "Jumping the whole hand from root position to root position sounds choppy. Inversions rearrange the same notes so the shared or nearby ones stay close. The hand barely moves, and the chords flow into each other.",
+          "proof": "C E G, then C F A, then B D G, then C E G again, with every note moving a 3rd or less.",
+          "pitfall": "Playing every chord in root position and leaping the whole hand.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What are the 3 notes of a C major triad in first inversion, from the bottom?",
+              "answer": "E, G, C",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which inversion of F major has C4 on the bottom?",
+              "answer": "Second inversion",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Moving from C4 E4 G4 to C4 F4 A4, how many notes change?",
+              "answer": "2",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Left-Hand Chord Patterns",
+          "mastery": "Accompany with left-hand patterns like block chords, broken chords and root-fifth-octave.",
+          "practice": "Play a C-G-Am-F progression with the left hand in 3 patterns, block, broken and root-fifth-octave, 2 bars each.",
+          "detail": "The same chords can feel very different depending on the pattern. Block chords are firm and simple. Broken chords flow and fill space. Root-fifth-octave gives a big, open sound. Pick the pattern that fits the song's mood and tempo.",
+          "proof": "6 bars played, 2 in each pattern, with the chords changing in time.",
+          "pitfall": "Using block chords for everything, which can sound stiff in slow songs.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A root-fifth-octave pattern on C3 plays which 3 notes?",
+              "answer": "C3, G3 and C4",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is a 3-note broken chord?",
+              "answer": "A chord played one note at a time.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which left-hand pattern fills more space in a ballad at 60 BPM: block or broken?",
+              "answer": "Broken",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Seventh Chords",
+          "mastery": "Play dominant, major and minor seventh chords, and hear how each one pulls.",
+          "practice": "Play G7, Cmaj7 and Am7 in the right hand, then resolve G7 to C 5 times and listen to the pull.",
+          "detail": "A seventh chord adds one more 3rd on top of a triad. G7 has a tense pull toward C, because its B wants to rise to C and its F wants to fall to E. Major and minor sevenths sound softer and are common in jazz and pop.",
+          "proof": "3 sevenths played, and G7 resolving to C each time.",
+          "pitfall": "Playing Cmaj7 when the chart says C7, which has a Bb.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Spell the 4 notes of G7.",
+              "answer": "G, B, D, F",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Spell the 4 notes of Cmaj7.",
+              "answer": "C, E, G, B",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "When G7 resolves to C, which of its 4 notes pulls down to E?",
+              "answer": "F",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Voice for Color",
+          "mastery": "Spread or rearrange a chord's notes to change its color, like an open voicing split across both hands.",
+          "practice": "Play C major 3 ways, close in 1 hand, open across 2 hands, and with the 3rd on top, and describe how each one sounds.",
+          "detail": "Voicing is the order and spacing of a chord's notes. Close voicings sound tight, and open ones sound full and rich. The top note is what the ear hears as the melody. Keep notes spread apart in the low register, where close notes turn muddy.",
+          "proof": "3 voicings played, with a word or two on how each one sounds.",
+          "pitfall": "Stacking close chords low in the bass, which sounds muddy.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A C chord has E on top. Which note of the chord is in the melody?",
+              "answer": "The 3rd",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which usually sounds fuller: C-E-G in 1 hand, or C2-G2 plus E4-C5 across 2 hands?",
+              "answer": "Across 2 hands",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why avoid a close chord low in the bass, like C2-E2-G2?",
+              "answer": "Low notes close together sound muddy.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "pn.dynamics": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Speed, Not Force",
+          "mastery": "Control volume with how fast the key goes down, not by pushing harder with the arm.",
+          "practice": "Play C4 10 times, getting a little louder each time by dropping the key faster, with a loose arm.",
+          "detail": "A piano hammer is thrown at the string, and the speed of the key sets how hard it hits. Once the note sounds, pressing harder does nothing. Loud playing comes from arm weight and a quick drop, with the arm staying loose.",
+          "proof": "10 notes rising evenly in volume, with no tension in the arm.",
+          "pitfall": "Pressing harder into the key after the note sounds.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What makes 1 note on C4 louder: key speed or how long you hold it?",
+              "answer": "Key speed",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Your arm goes tense when you play loud at bar 9. What's a better way?",
+              "answer": "Use arm weight and a faster key drop, staying loose.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does pressing harder 1 second after the note sounds do nothing?",
+              "answer": "The hammer has already left the string.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Use the Whole Range",
+          "mastery": "Play the full range of dynamics, pp to ff, with 4 or 5 clear levels you can repeat.",
+          "practice": "Play a C major scale 5 times, at pp, p, mf, f and ff, and record whether each level is clearly different.",
+          "detail": "Many players only use two volumes, medium and loud. Clear, repeatable levels give music shape and contrast. Practice the soft end most, since playing very quietly while staying even is the hardest part.",
+          "proof": "5 recordings, each clearly softer or louder than its neighbor.",
+          "pitfall": "Playing everything at mf and calling it expressive.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which is softer: 'mp' or 'mf'?",
+              "answer": "mp",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does 'cresc.' tell you to do?",
+              "answer": "Gradually get louder.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Order these 5 from softest to loudest: f, pp, mf, p, ff.",
+              "answer": "pp, p, mf, f, ff",
+              "answer_kind": "list"
+            }
+          ]
+        },
+        {
+          "title": "Balance the Hands",
+          "mastery": "Keep the tune on top while the accompaniment stays soft underneath it.",
+          "practice": "Play an 8-bar melody at mf in the right hand while the left hand plays block chords at p.",
+          "detail": "Listeners follow the melody, so it should sit on top of the accompaniment. Each hand needs its own volume at once, which takes practice. Try the accompaniment alone at its soft level first, then add the melody over it.",
+          "proof": "8 bars with the melody clearly above the chords.",
+          "pitfall": "Letting the left hand match the melody's volume and cover it.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In an 8-bar song, which is usually louder: the melody or the accompaniment?",
+              "answer": "The melody",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 1 drill for hand balance.",
+              "answer": "Touch the left-hand keys silently, then add it softly under the melody.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why practice the accompaniment alone at 'p' first?",
+              "answer": "So you learn how soft it can be before adding the melody.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Voice the Top Note",
+          "mastery": "Bring out the top note of a chord in one hand by putting more weight on that finger.",
+          "practice": "Play 4 chords in the right hand and make the top note ring louder than the other 2, by leaning toward finger 5.",
+          "detail": "In many pieces the melody is the top note of chords. Tilt the hand slightly toward the pinky and let that finger arrive a touch faster. The other notes go down softer, so the tune sings over them.",
+          "proof": "4 chords with the top note clearly loudest.",
+          "pitfall": "Playing every note of the chord at the same volume, hiding the tune.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which finger, 1 to 5, usually plays the top note of a right-hand chord?",
+              "answer": "5",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why bring out the top note of a 3-note chord?",
+              "answer": "It's usually the melody.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A hymn tune sits on top of 4-part chords. Which voice should sound most?",
+              "answer": "The top, soprano voice.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Articulation",
+          "mastery": "Play legato, staccato and accents cleanly, and switch between them on purpose.",
+          "practice": "Play 2 bars legato, 2 bars staccato and 2 bars with accents on beats 1 and 3, at 80 BPM.",
+          "detail": "Legato connects notes smoothly, with each key held until the next goes down. Staccato makes them short and separated. Accents stress single notes. Switching cleanly between them is what makes a passage sound alive instead of flat.",
+          "proof": "6 bars played, with each kind of touch clearly different.",
+          "pitfall": "Making staccato so short and stiff that it sounds harsh.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does 1 dot over a note mean?",
+              "answer": "Staccato, short and detached.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A curved line over 4 notes means what?",
+              "answer": "Play them legato, smooth and connected.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does '>' over a note mean?",
+              "answer": "An accent, so play it louder.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "pn.fingering": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Learn the Finger Numbers",
+          "mastery": "Number the fingers 1 to 5, from thumb to pinky, in both hands, and read them in music.",
+          "practice": "Place each finger on its own key from C4 to G4 in the right hand, say its number out loud, then repeat with the left hand from C3 to G3.",
+          "detail": "Both hands use the same numbers, thumb 1 to pinky 5, so the hands mirror each other. Numbers printed above or below notes tell you which finger to use. Reading them is the first step to good fingering.",
+          "proof": "Both hands play 5 notes with the right numbers, mirrored.",
+          "pitfall": "Numbering the left hand from the pinky, as if the hands matched.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What finger number, from 1 to 5, is the right-hand pinky?",
+              "answer": "5",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "The left hand plays C D E F G starting with its pinky on C. Which finger plays G?",
+              "answer": "1",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A '3' appears above a note for the right hand. Which finger plays it?",
+              "answer": "The middle finger",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Write the Fingering In",
+          "mastery": "Decide the fingering for tricky spots in advance, and write it on the music.",
+          "practice": "Pick 4 bars that trip you up, try 2 fingerings for each, and pencil in the one that works.",
+          "detail": "Fingering chosen on the spot changes from day to day, so the passage never settles. Decide once, write it down, and use it every time. Only mark the places that aren't obvious: shifts, crossings and stretches.",
+          "proof": "4 bars with fingering penciled in where it matters.",
+          "pitfall": "Deciding fresh each time you play, so your hands never learn it.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why write fingering in for 4 tricky bars rather than deciding each time?",
+              "answer": "Using the same fingers every time builds reliable muscle memory.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You use finger 2 on Monday and finger 3 on Tuesday for the same note. What happens?",
+              "answer": "The passage never settles, so it keeps tripping you.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In a 32-bar piece, should you write fingering on every note?",
+              "answer": "No. Only where it's not obvious, like shifts and crossings.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Thumb Under, Finger Over",
+          "mastery": "Pass the thumb under, or a finger over, to cover more than 5 notes smoothly.",
+          "practice": "Play C major up 1 octave in the right hand with 1 2 3 1 2 3 4 5 at 60 BPM, keeping the thumb pass smooth.",
+          "detail": "Five fingers only reach five notes, so longer lines need the thumb to slide under the hand going up, or a finger to cross over going down. Keep the wrist level and move the thumb early, so there's no bump in the sound.",
+          "proof": "An even scale with no gap at the thumb pass.",
+          "pitfall": "Lifting the whole hand and jumping instead of passing the thumb.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Going up 1 octave of right-hand C major, after which finger does the thumb pass under?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Going down 1 octave of right-hand C major, which finger crosses over the thumb?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why keep the wrist level during a thumb pass at 60 BPM?",
+              "answer": "A dipping wrist makes a bump in the sound.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Fit Fingering to the Hand",
+          "mastery": "Choose fingering that suits the passage, with strong fingers on accents and the hand kept in one place when possible.",
+          "practice": "Finger a 2-bar melody 3 ways, and record which one sounds most even at 80 BPM.",
+          "detail": "Good fingering keeps shifts to a minimum and puts strong fingers on the notes that matter. The thumb is short and suits white keys. Fingers 4 and 5 are weaker, so they need care on important notes.",
+          "proof": "3 recordings compared, with the most even fingering chosen.",
+          "pitfall": "Putting the thumb on a black key in a fast passage.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Should a black key like F# usually go to the thumb?",
+              "answer": "Usually not. The thumb is short, so it suits white keys.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A melody spans 5 notes, C to G. How many hand shifts does it need?",
+              "answer": "0",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Of fingers 1 to 5, which is usually weakest and needs the most careful practice?",
+              "answer": "4",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Keep It Consistent",
+          "mastery": "Stick to the chosen fingering every time, even when practicing slowly, so it becomes automatic.",
+          "practice": "Play your hardest 4 bars 10 times slowly with the written fingering, starting over whenever you use a different finger.",
+          "detail": "Your hands learn whatever you repeat, including mistakes. Practicing slowly with the real fingering builds the same motions you'll use at speed. If a fingering really doesn't work, change it on purpose and retrain it.",
+          "proof": "10 clean runs with the written fingering.",
+          "pitfall": "Using an easier fingering when slow and switching at full speed.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You played 10 times and switched fingers 3 times. What should you do?",
+              "answer": "Slow down until the written fingering is automatic.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why practice at 60 BPM with the final fingering, not a simpler one?",
+              "answer": "Slow practice trains the same motion you'll use at speed.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Can you change a fingering after 2 weeks of practice?",
+              "answer": "Yes, but decide once and then retrain it on purpose.",
+              "answer_kind": "yesno"
+            }
+          ]
+        }
+      ]
+    },
+    "pn.hands": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Hands Separately First",
+          "mastery": "Learn each hand alone until it plays without thought, before putting them together.",
+          "practice": "Play the right hand of 8 bars 5 times without a mistake, then the left hand 5 times, before trying both.",
+          "detail": "When both hands are new, your attention splits and both fall apart. Get each hand automatic first, so combining them only asks for coordination. Most beginners need extra time on the left hand.",
+          "proof": "5 clean runs of each hand before the first try together.",
+          "pitfall": "Combining hands on day one and practicing the mistakes in.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many clean runs of 8 bars per hand is a good target before combining?",
+              "answer": "About 5",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why does hands-separate practice of 8 bars help?",
+              "answer": "Each hand becomes automatic, so your attention is free for combining.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Of the 2 hands, which usually needs more solo practice for beginners?",
+              "answer": "The left",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Combine Slowly",
+          "mastery": "Put the hands together at a slow tempo, often half speed, where every note is clean.",
+          "practice": "Play 4 bars hands together at 50 BPM with a metronome, then raise it by 4 BPM each time it's clean 3 times in a row.",
+          "detail": "Speed hides mistakes and makes them stick. Start slow enough to be clean, and climb in small steps. If mistakes appear, drop back to the last clean tempo. It feels slow, and it's the fastest route to the real tempo.",
+          "proof": "A log of tempos, rising 4 BPM at a time.",
+          "pitfall": "Jumping straight to the target tempo and repeating errors.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Your target is 100 BPM. What's a good starting tempo for hands together?",
+              "answer": "50",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You start at 50 BPM and raise it 4 BPM each time. After 5 raises, what is it?",
+              "answer": "70",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "At 66 BPM you make 2 mistakes. What should you do?",
+              "answer": "Drop back to the last clean tempo.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Work in Small Chunks",
+          "mastery": "Combine the hands in chunks of 1 or 2 bars, overlapping into the next bar.",
+          "practice": "Practice bars 1 to 2 hands together, then 2 to 3, then 3 to 4, always including the first note of the next bar.",
+          "detail": "Short chunks keep the challenge small. Overlapping each chunk into the next bar trains the joins, which is where most stumbles happen. Once each chunk is clean, link them into longer runs.",
+          "proof": "Every overlapping chunk clean, then all 4 bars played through.",
+          "pitfall": "Practicing chunks that stop dead at the bar line, so the joins never get trained.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why include the first note of the next bar in each 2-bar chunk?",
+              "answer": "It joins chunks, so the seams don't trip you.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "An 8-bar piece is practiced in 2-bar chunks that overlap by 1 bar. How many chunks is that?",
+              "answer": "7",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You can play every chunk but stumble across bar 4 to 5. What should you practice?",
+              "answer": "The chunk from bar 4 to bar 5.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Find Where the Hands Line Up",
+          "mastery": "Mark where the hands play together on the beat, and use those spots as anchors.",
+          "practice": "Circle every beat in 4 bars where both hands play at once, and play just those notes in rhythm first.",
+          "detail": "The moments where both hands strike together hold the two parts in time. Practicing those first gives you a skeleton. Then add the notes in between, one hand at a time, while keeping the anchors steady.",
+          "proof": "4 bars with the together beats circled and played as a skeleton.",
+          "pitfall": "Treating the two hands as unrelated, so they drift apart.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why practice only the together notes in 4 bars first?",
+              "answer": "They're the anchors that hold the two hands in time.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "The left hand plays on beats 1 and 3, the right on every beat. On which beats do they line up?",
+              "answer": "1 and 3",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "The right hand plays 2 eighths per beat and the left hand 1 quarter. How many right-hand notes per left-hand note?",
+              "answer": "2",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Play Without Looking Down",
+          "mastery": "Play hands together with your eyes on the music, finding the keys by touch.",
+          "practice": "Play 8 bars hands together at a slow tempo while looking only at the music, glancing down no more than 2 times.",
+          "detail": "Every glance down risks losing your place on the page. Learn hand positions and the feel of the black-key groups so you can find keys by touch. Start with short passages and allow a glance only for big jumps.",
+          "proof": "8 bars played with 2 glances down or fewer.",
+          "pitfall": "Watching your hands the whole time and stalling at each new line.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You look down 8 times in 8 bars. What should you practice?",
+              "answer": "Feeling key distances with your eyes on the page.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name the 2 black-key groups that help you find your place by touch.",
+              "answer": "The groups of 2 and 3.",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many glances down in 8 bars is a good target to start with?",
+              "answer": "2 or fewer",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "pn.keys": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Twelve Keys Repeating",
+          "mastery": "See the keyboard as one pattern of 12 keys, 7 white and 5 black, repeating up and down.",
+          "practice": "Count the keys from C4 up to C5, not counting C5 itself, and sort them into white and black.",
+          "detail": "Every octave has the same layout, so once you know one, you know them all. An 88-key piano runs that pattern about 7 times, plus a few extra keys at each end. The repeating layout is why scales look the same shape in every octave.",
+          "proof": "12 keys, 7 white and 5 black.",
+          "pitfall": "Counting the top C too and getting 13.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many keys are in 1 octave pattern, counting white and black?",
+              "answer": "12",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many white keys are in that 12-key pattern?",
+              "answer": "7",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "An 88-key piano has how many black keys?",
+              "answer": "36",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Use the Black-Key Landmarks",
+          "mastery": "Use the groups of 2 and 3 black keys as landmarks to find any white key at a glance.",
+          "practice": "Play every C and then every F on the keyboard, finding each from the black-key groups, in under 20 seconds each.",
+          "detail": "C sits just left of each pair of black keys, and F just left of each group of three. D sits between the pair, and so on. Finding keys this way is instant, while counting from the bottom is slow and error-prone.",
+          "proof": "All 8 Cs and all the Fs found in under 20 seconds each.",
+          "pitfall": "Counting white keys from the left end every time.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which white key sits just left of each group of 2 black keys?",
+              "answer": "C",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which white key sits between the 2 black keys of a pair?",
+              "answer": "D",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name the white key between the 2nd and 3rd black keys of a group of 3.",
+              "answer": "A",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Half Steps and Whole Steps",
+          "mastery": "Find half steps, the very next key, and whole steps, two keys apart, anywhere on the keyboard.",
+          "practice": "Starting on D4, play a half step up, then a whole step up, then a half step down, naming each note.",
+          "detail": "A half step is the next key in either direction, black or white. A whole step skips one key. Between E and F, and between B and C, there's no black key, so those white keys are only a half step apart.",
+          "proof": "D#4, then F4, then E4.",
+          "pitfall": "Thinking every pair of white keys is a whole step apart.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is a half step up from E4?",
+              "answer": "F4",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is a whole step up from B3?",
+              "answer": "C#4",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many half steps are in 1 octave?",
+              "answer": "12",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Name Sharps and Flats",
+          "mastery": "Name each black key both ways, like C sharp and D flat, and find the white-key sharps like E sharp.",
+          "practice": "Name all 5 black keys between C4 and C5 with both their sharp and their flat names.",
+          "detail": "A sharp is a half step up and a flat is a half step down, so each black key has two names. The key sets which one you write. E sharp is just F, and C flat is just B, which looks strange but follows the same rule.",
+          "proof": "C#/Db, D#/Eb, F#/Gb, G#/Ab and A#/Bb.",
+          "pitfall": "Thinking sharps and flats are always black keys.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the other name for the black key G#?",
+              "answer": "Ab",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which white key is also called E#?",
+              "answer": "F",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which white key is also called 'Cb'?",
+              "answer": "B",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "See Theory on the Keys",
+          "mastery": "Use the keyboard to see scales and intervals as shapes you can count.",
+          "practice": "Play the C major scale on white keys only, then play G major and find the 1 black key it needs.",
+          "detail": "The piano lays music theory out in a line. C major is all white keys, and every other major scale needs some black keys to keep the same pattern of steps. Counting half steps on the keys makes any interval easy to check.",
+          "proof": "G major uses F# as its only black key.",
+          "pitfall": "Memorizing scales as lists of letters without seeing the shape.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many of the 5 black keys in an octave does C major use?",
+              "answer": "0",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "G major needs 1 black key. Which one?",
+              "answer": "F#",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Count half steps from C4 up to G4. How many are there?",
+              "answer": "7",
+              "answer_kind": "integer"
+            }
+          ]
+        }
+      ]
+    },
+    "pn.pedal": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "What the Pedal Does",
+          "mastery": "Explain that the right pedal lifts the dampers, so notes keep ringing after you let go of the keys.",
+          "practice": "Play C4 and lift your finger, first without the right pedal and then with it, and listen to how long it rings each time.",
+          "detail": "Each string has a felt damper that stops it the moment you release the key. The sustain pedal lifts every damper at once, so released notes keep sounding and other strings ring along in sympathy. That's what gives pedaled music its warm, connected sound.",
+          "proof": "Without the pedal, C4 stops right away. With it, C4 rings on.",
+          "pitfall": "Thinking the pedal makes the piano louder. It makes notes last longer.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which of the 3 pedals is the sustain pedal?",
+              "answer": "The right one",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "With the sustain pedal down, what happens when you release C4?",
+              "answer": "The note keeps ringing.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Of your 2 feet, which one works the sustain pedal?",
+              "answer": "The right foot",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Change After the Chord",
+          "mastery": "Use legato pedaling: change the pedal just after the new chord sounds, not at the same moment.",
+          "practice": "Play C, F, G, C as block chords at 60 BPM, lifting and pressing the pedal just after each new chord.",
+          "detail": "If the foot comes up exactly as the new chord goes down, the dampers cut off the new notes and you hear a gap. Playing the chord first and then changing the pedal catches it cleanly. It feels backward at first: hand, then foot.",
+          "proof": "4 chords connected smoothly, with no gaps and no blur.",
+          "pitfall": "Pressing the pedal at the same time as the chord, leaving a gap.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In legato pedaling at 60 BPM, does the foot go down before, with, or just after the new chord?",
+              "answer": "Just after",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You change the pedal at the same moment as each chord on beat 1 and hear a gap. Why?",
+              "answer": "The dampers drop as the new notes start, cutting them short.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What happens if you never change the pedal through a change from C to G over 2 bars?",
+              "answer": "The 2 chords blur into a muddy sound.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Listen for Blur",
+          "mastery": "Change the pedal whenever the harmony changes, using your ears to catch any blur.",
+          "practice": "Play 8 bars with the pedal, record it, and mark every place where 2 different chords blur together.",
+          "detail": "The rule of thumb is a new pedal for each new chord. But pianos and rooms differ, so listen. Passing notes and scales under a held pedal smear together. If it sounds muddy, change the pedal more often or use less of it.",
+          "proof": "8 bars with every blur marked, and a cleaner second take.",
+          "pitfall": "Holding the pedal down for whole lines because it sounds smoother.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "An 8-note scale with the pedal held down sounds smeared. What should you do?",
+              "answer": "Change the pedal more often, or use less of it.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In 4/4, should you usually change the pedal on each new beat or on each new chord?",
+              "answer": "On each new chord",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why trust your ears over the 'Ped.' markings alone?",
+              "answer": "Pianos and rooms differ, so the right amount changes.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Use Less Pedal",
+          "mastery": "Use partial pedal, or none, for clarity in fast or low passages.",
+          "practice": "Play a fast 4-bar passage 3 ways, with no pedal, half pedal and full pedal, and choose the clearest.",
+          "detail": "Full pedal isn't always right. Half pedaling presses the pedal partway, so the dampers only brush the strings and some ring remains. Fast runs, Bach and low passages often sound best with little or no pedal, since low strings ring longest.",
+          "proof": "3 versions recorded, with the clearest one chosen.",
+          "pitfall": "Using full pedal on a fast Bach passage and losing every note in the wash.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is 'half pedaling'?",
+              "answer": "Pressing the pedal partway, so the dampers only lightly touch the strings.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Should a fast Bach passage usually get heavy pedal?",
+              "answer": "No. It needs clarity, so little or none.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Low notes ring longer. Below C3, should you pedal less or more?",
+              "answer": "Less",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Read Pedal Markings",
+          "mastery": "Read the pedal markings, Ped. and the release star, and the bracket lines used in newer editions.",
+          "practice": "Find every pedal marking on 1 page of music, and mark in pencil exactly where your foot will go down and up.",
+          "detail": "Older editions write Ped. to press and a star to release. Newer ones draw a line under the staff, with a notch where you change. Markings are a starting point, and your ears decide the final amount on your piano.",
+          "proof": "Every marking on the page found, with your foot's moves penciled in.",
+          "pitfall": "Ignoring the markings and pedaling the whole page the same way.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does 'Ped.' tell you to do?",
+              "answer": "Press the sustain pedal.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does the '*' after a Ped. marking mean?",
+              "answer": "Release the pedal.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A pedal bracket line has 1 small notch in it. What does the notch tell you?",
+              "answer": "Change the pedal there, up and down quickly.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "pn.phrase": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Find the Phrases",
+          "mastery": "Mark where each phrase starts and ends, usually every 4 bars, by finding the cadences.",
+          "practice": "Mark the phrases in a 16-bar piece with pencil arcs, and write which bar each one ends in.",
+          "detail": "Phrases are musical sentences, and cadences are their punctuation. Most classical phrases are 4 bars long, sometimes 8. Knowing where they end tells you where to breathe, where to ease off and how the piece is built.",
+          "proof": "16 bars with 4 phrase arcs, each ending at a cadence.",
+          "pitfall": "Playing straight through with no sense of where sentences end.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How long, in bars, is a typical classical phrase: 4 or 7?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A phrase ends on a V chord in bar 4. What does it feel like?",
+              "answer": "Like a comma, waiting for more.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In a 16-bar piece, where should you breathe, like a singer?",
+              "answer": "At the end of each phrase, often every 4 bars.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Find the High Point",
+          "mastery": "Find each phrase's high point, and shape the dynamics to grow toward it and ease away.",
+          "practice": "Mark the high point of each phrase in 16 bars, then play it with a slight crescendo in and diminuendo out.",
+          "detail": "Most phrases rise toward one peak, often the highest note or the most tense chord, and then relax. Growing toward it and easing away gives the line direction. The peak is relative: in a quiet piece it might only reach mp.",
+          "proof": "16 bars with a high point marked in each phrase and shaped around it.",
+          "pitfall": "Giving every phrase the same flat volume.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Where is the high point of a 4-bar phrase usually found?",
+              "answer": "Near the top note or most tense chord, often past the middle.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Should every phrase reach 'ff' at its peak?",
+              "answer": "No. The peak is relative to the phrase's level.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Once an 8-bar phrase passes its peak, should it keep growing or ease off?",
+              "answer": "Ease off toward the end.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Shape the Ending",
+          "mastery": "End phrases gently, with a slightly softer last note, unless the music asks for otherwise.",
+          "practice": "Play the last 2 notes of 4 phrases with the second one softer, like a sigh, and compare with even endings.",
+          "detail": "A phrase that ends with a bump sounds like a hiccup. Most endings, especially a stressed note falling to a weaker one, want the last note softer. Strong final cadences at the very end of a piece can break the rule.",
+          "proof": "4 endings played softer on the last note, compared with even ones.",
+          "pitfall": "Accenting the last note of every phrase.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A phrase ends on 1 long note after a step down. Should that last note be louder or softer?",
+              "answer": "Softer, like a sigh.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why avoid a bump on the last note of a 4-bar phrase?",
+              "answer": "It sounds like a hiccup instead of an ending.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What is a 'sigh' figure?",
+              "answer": "A stressed note falling to a softer one.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Direction and Breath",
+          "mastery": "Give each phrase a sense of motion toward somewhere, and leave a tiny breath between phrases.",
+          "practice": "Sing 1 phrase of your piece, then play it, copying where you breathed and where the line grew.",
+          "detail": "Singers can't help phrasing, because they run out of breath. Singing a line shows its natural rise, fall and breathing spots. At the piano, copy that: lean toward the goal, then leave a tiny lift before the next phrase, without stopping the beat.",
+          "proof": "1 phrase sung, then played with the same shape and breath.",
+          "pitfall": "Gluing phrases together with no breath, so they run into each other.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why sing 1 phrase before playing it?",
+              "answer": "Singing shows its natural shape and breaths.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Between 2 phrases, should the breath be a full stop or a tiny lift?",
+              "answer": "A tiny lift, keeping the beat.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A phrase of 8 notes sounds flat, like a list. What's missing?",
+              "answer": "Direction toward a goal, and dynamic shape.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Make It Musical",
+          "mastery": "Combine dynamics, timing and touch so a correct performance sounds like music.",
+          "practice": "Record a 16-bar piece twice, once just correct and once with phrasing, and write 3 differences you hear.",
+          "detail": "Correct notes are the start, not the goal. Phrasing uses small changes in volume, timing and touch to make the music speak. Rubato bends the tempo slightly and gives the time back. Recording yourself shows whether it comes across.",
+          "proof": "2 recordings and a list of 3 differences.",
+          "pitfall": "Adding so much rubato that the beat disappears.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name 3 tools of phrasing.",
+              "answer": "Dynamics, timing and articulation.",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is 'rubato'?",
+              "answer": "Small give and take in the tempo for expression.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Over a 4-bar phrase, should rubato change the overall tempo by the end?",
+              "answer": "No. You borrow time and pay it back.",
+              "answer_kind": "yesno"
+            }
+          ]
+        }
+      ]
+    },
+    "pn.posture": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Set the Bench Height",
+          "mastery": "Set the bench so your forearms sit level with the keys and your elbows hang just above them.",
+          "practice": "Sit at the piano, raise or lower the bench in 1 cm steps until your forearms are level with the white keys, and write the height down.",
+          "detail": "Too low and your wrists bend up, too high and your shoulders hunch. Level forearms let the weight of the arm do the work. Sit on the front half of the bench with your feet flat, so your legs help hold you steady.",
+          "proof": "Forearms level with the keys, and the bench height written down for next time.",
+          "pitfall": "Sitting at whatever height the bench happens to be.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Your wrists sit 5 cm below the keys. Should the bench go up or down?",
+              "answer": "Up",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "At a 50 cm deep bench, should you sit on all of it or the front half?",
+              "answer": "The front half, so your feet can help support you.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Your elbows are about 10 cm in front of your body. Too close, too far or about right?",
+              "answer": "About right. Elbows should sit a little in front of you.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Curve the Fingers",
+          "mastery": "Hold the fingers curved, as if around a ball, so each fingertip meets the key.",
+          "practice": "Hold a tennis ball in your right hand, then put the hand on 5 white keys from middle C without the ball and keep the same curve.",
+          "detail": "Curved fingers let each one drop straight down onto the key from the knuckle. Flat fingers slide and collapse. Play on the pad just behind the fingertip, and keep the first joint from caving in. Thumb is finger 1, and pinky is finger 5.",
+          "proof": "A curved hand resting on C, D, E, F and G.",
+          "pitfall": "Letting the fingertip joint buckle inward on every press.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which part of finger 2 should touch the key: the pad near the tip or the flat middle?",
+              "answer": "The pad near the tip",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Finger 3's joints collapse inward when you press. What should you practice?",
+              "answer": "Slow presses, keeping the knuckle firm and curved.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which number, 1 to 5, is the thumb in piano fingering?",
+              "answer": "1",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Relax the Arm",
+          "mastery": "Keep the shoulders, arms and wrists loose, using only the effort each note needs.",
+          "practice": "Play a C major 5-finger pattern 10 times, checking after each time that your shoulders haven't crept up.",
+          "detail": "Tension spreads: a tight shoulder makes a tight wrist, which makes slow, uneven fingers. Press each key only as hard as the sound needs, then let go. If anything aches, stop and loosen up before going on.",
+          "proof": "10 runs of the pattern with the shoulders still down at the end.",
+          "pitfall": "Pushing harder on the keys to play louder, which locks the arm.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "After 5 minutes your forearm aches. What's the most likely cause?",
+              "answer": "Too much tension in the arm or wrist.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "During a 5-note pattern, should your wrist be locked stiff or flexible?",
+              "answer": "Flexible",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 quick check for tension during practice.",
+              "answer": "Drop your shoulders and shake out your hands between passages.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Find Middle C",
+          "mastery": "Sit centered at middle C, so each hand can reach its end of the keyboard equally.",
+          "practice": "Find C4, middle C, sit with your belly button in line with it, and play the lowest and highest C with each hand.",
+          "detail": "Middle C is the C nearest the center of the keyboard, just left of a pair of black keys. Sitting in line with it lets both hands reach without leaning. It's also the note the treble and bass staves share, so it anchors your reading too.",
+          "proof": "You're centered on C4 and can reach C1 and C8 without leaning far.",
+          "pitfall": "Sitting off to one side and twisting to reach the far notes.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "On an 88-key piano, which C is middle C in scientific pitch?",
+              "answer": "C4",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Middle C sits just left of which group of black keys: the 2 or the 3?",
+              "answer": "The group of 2",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many Cs are there on an 88-key piano?",
+              "answer": "8",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Warm Up Without Strain",
+          "mastery": "Warm up with slow, easy patterns before hard pieces, and stop when anything hurts.",
+          "practice": "Play 3 minutes of slow 5-finger patterns in C, G and F before your next practice, at 60 BPM.",
+          "detail": "Cold hands are stiff and easier to strain. A few minutes of easy patterns gets the blood moving and settles the arm before you ask for speed. Sharp pain is a stop sign, not something to play through.",
+          "proof": "3 minutes of patterns in 3 keys before the first real piece.",
+          "pitfall": "Opening with your hardest passage at full speed.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Should you start practice with your hardest piece at 120 BPM?",
+              "answer": "No. Warm up slowly first.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Your wrist hurts sharply in a fast passage at bar 12. What should you do?",
+              "answer": "Stop, rest, and play it slower later.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How long is a sensible warm-up for a 30 minute practice?",
+              "answer": "About 3 to 5 minutes.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "pn.readbass": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Bass Landmarks",
+          "mastery": "Learn bass staff landmarks, like F3 on line 4 and middle C on the 1st ledger line above.",
+          "practice": "Memorize 3 bass landmarks, C3 in space 2, F3 on line 4 and middle C above the staff, and name 10 notes from them.",
+          "detail": "The bass clef's two dots sit around line 4, the F line, which is why it's called the F clef. From F3 and C3 you can reach any note in a step or two. Middle C sits on the first ledger line above, linking the bass staff to the treble.",
+          "proof": "10 bass notes named from the 3 landmarks.",
+          "pitfall": "Reading bass lines as if they were treble notes.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which note sits on line 4 of the bass staff?",
+              "answer": "F3",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which note sits in space 2 of the bass staff?",
+              "answer": "C3",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name the bass staff note 2 steps below C3.",
+              "answer": "A2",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Read Bass on Its Own Terms",
+          "mastery": "Read bass notes directly, without shifting them from treble names.",
+          "practice": "Run a 2-minute bass-only flashcard drill daily for 7 days, and count the notes you name each day.",
+          "detail": "It's tempting to read a bass note as its treble name and then shift it. That adds a step every time and stays slow forever. Learn the bass staff as its own map, with its own landmarks, until the names come straight away.",
+          "proof": "7 daily counts from bass-only drills.",
+          "pitfall": "Translating every bass note through its treble name.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A bass note sits where E4 would be on treble line 1. What note is it in bass?",
+              "answer": "G2",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why avoid translating bass notes through treble names, 1 step at a time?",
+              "answer": "It adds a step every time, so reading stays slow.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You named 30 bass notes on day 1 and 42 on day 7. What percent gain is that?",
+              "answer": "40%",
+              "answer_kind": "percent"
+            }
+          ]
+        },
+        {
+          "title": "Ledger Lines Below",
+          "mastery": "Read the ledger lines below the bass staff, down to about C2.",
+          "practice": "Write and play the notes from G2 down to C2 using ledger lines.",
+          "detail": "From G2 on the bottom line, the space below is F2, the first ledger line is E2, and the second is C2. Low left-hand bass notes live down here, especially in octaves. Learn C2 as a landmark.",
+          "proof": "G2, F2, E2, D2 and C2 written and played.",
+          "pitfall": "Counting ledger lines as single steps.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What note sits on the 1st ledger line below the bass staff?",
+              "answer": "E2",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What note sits in the space just below line 1 of the bass staff?",
+              "answer": "F2",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many ledger lines below the bass staff does C2 need?",
+              "answer": "2",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Read the Grand Staff",
+          "mastery": "Read the grand staff as one system, with middle C shared between the 2 staves.",
+          "practice": "Write C4, middle C, on both staves of a grand staff, then play notes stepping outward from it in both hands.",
+          "detail": "The grand staff joins treble and bass with middle C in the gap, a ledger line below one and a ledger line above the other. Seeing it as one tall staff helps you judge how far apart the hands are.",
+          "proof": "Middle C written on both staves and played as the same key.",
+          "pitfall": "Thinking middle C on the two staves means two different keys.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Middle C on the treble staff sits on the 1st ledger line. Above or below the staff?",
+              "answer": "Below",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "On the bass staff, is C4's ledger line above or below the 5 lines?",
+              "answer": "Above",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which is higher: B3 in the bass or D4 in the treble?",
+              "answer": "D4",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Read Left-Hand Patterns",
+          "mastery": "Recognize common left-hand patterns, like root and fifth or broken chords, as shapes.",
+          "practice": "Play 4 bars of a C-G-C-G root and fifth bass at 72 BPM, then 4 bars of a C-E-G-E broken chord.",
+          "detail": "Left-hand parts repeat a handful of patterns: root and fifth, octaves, block chords and broken chords such as the Alberti bass. Recognizing the pattern means reading one shape instead of every note, which frees your eyes for the melody.",
+          "proof": "8 bars played, 4 of each pattern, at a steady 72 BPM.",
+          "pitfall": "Reading each left-hand note one by one when it's the same shape over and over.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "The left hand plays C3 and G3 again and again. What pattern is it?",
+              "answer": "Root and fifth",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A left hand plays C E G E in a loop. What's that pattern called?",
+              "answer": "An Alberti bass, a broken chord.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why read 4 bars of left-hand pattern as one shape?",
+              "answer": "You read one pattern instead of every note.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "pn.readtreble": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Treble Landmarks",
+          "mastery": "Learn a few landmark notes on the treble staff, like G4 on line 2, and read the rest from them.",
+          "practice": "Memorize 3 landmarks, middle C, G4 on line 2 and C5 in space 3, then name 10 notes by stepping from the nearest one.",
+          "detail": "Counting from the bottom line every time is slow. Landmarks let you jump to the nearest known note and step from there. The treble clef curls around line 2, which is why it's also called the G clef.",
+          "proof": "10 notes named by stepping from the nearest landmark.",
+          "pitfall": "Counting up from the bottom line for every single note.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "On the treble staff, which note sits on line 2?",
+              "answer": "G4",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which note is in space 3 of the treble staff?",
+              "answer": "C5",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A note sits one step above G4 on the treble staff. Name it.",
+              "answer": "A4",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Steps and Skips",
+          "mastery": "Read melodies by their intervals, seeing a step as line to space and a skip as line to line.",
+          "practice": "Read a 16-note melody naming only the first note, then saying 'step up', 'skip down' and so on for the rest.",
+          "detail": "Most melodies move by steps and small skips, so reading the distance between notes is faster than naming each one. A step goes from a line to the next space. A skip goes from a line to the next line, or a space to the next space.",
+          "proof": "16 notes read as 1 name and 15 moves.",
+          "pitfall": "Naming every note from scratch instead of reading the moves between them.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A note moves from line 2 to line 3. Is that a step or a skip?",
+              "answer": "Skip",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A note moves from line 4 to the space just above it. Step or skip?",
+              "answer": "Step",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Starting on E4, a melody goes skip up, step up, skip down. What are the 4 notes?",
+              "answer": "E4, G4, A4, F4",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Ledger Lines Above",
+          "mastery": "Read the first few ledger lines above the treble staff by counting up from the top line, F5.",
+          "practice": "Write the notes from F5 up to C6 on a staff, using ledger lines, and play each one.",
+          "detail": "Ledger lines extend the staff, and the line-space pattern carries on. From F5 on the top line, the space above is G5, the first ledger line is A5, and the second is C6. Learn A5 and C6 as landmarks of their own.",
+          "proof": "F5, G5, A5, B5 and C6 written and played.",
+          "pitfall": "Treating each ledger line as a step instead of a skip.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What note sits on the 1st ledger line above the treble staff?",
+              "answer": "A5",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What note sits in the space just above A5's ledger line?",
+              "answer": "B5",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many ledger lines above the treble staff does C6 need?",
+              "answer": "2",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Read Faster",
+          "mastery": "Name treble notes on sight in under a second each, using flashcards or an app.",
+          "practice": "Run a 2-minute treble flashcard drill each day for 7 days, and write down your count each day.",
+          "detail": "Reading has to be automatic before it's useful at the piano. A short timed drill every day builds that far faster than a long one now and then. The count tells you whether notes are instant or still being worked out.",
+          "proof": "7 daily counts, ideally climbing.",
+          "pitfall": "Drilling only the notes you already know well.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You named 45 notes in 2 minutes. How many is that per minute?",
+              "answer": "22.5",
+              "answer_kind": "decimal"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Day 1 is 30 notes and day 7 is 48. How many more is that?",
+              "answer": "18",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why time the 2-minute drill?",
+              "answer": "Speed shows whether a note is automatic or still being counted.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Read and Play Together",
+          "mastery": "Read a treble melody and play it at the same time, keeping your eyes on the music.",
+          "practice": "Play an 8-bar right-hand melody at 60 BPM while looking only at the music, not at your hands.",
+          "detail": "Looking down breaks the flow of reading, and finding your place again costs beats. Trust your hand position and feel the black keys for landmarks. Keep the beat going even if a note goes wrong.",
+          "proof": "8 bars played without looking down, with the beat kept steady.",
+          "pitfall": "Looking down every bar and losing your place on the page.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why keep your eyes on the music for 8 bars instead of on your hands?",
+              "answer": "Looking down makes you lose your place.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You lose your place in bar 5. What should you do?",
+              "answer": "Find the next bar's first note and keep the beat going.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A melody moves C5, D5, E5. Which right-hand fingers might play it?",
+              "answer": "1, 2 and 3",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "pn.rhythm": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Count Out Loud",
+          "mastery": "Count every beat aloud while playing, so each hand's rhythm lines up with the count.",
+          "practice": "Play 4 bars hands together while counting '1 and 2 and' out loud at 60 BPM.",
+          "detail": "Counting in your head lets the beat stretch without you noticing. Saying it out loud keeps it honest. Each note has a place in the count, so you can check that the hands land on exactly the right beat or 'and'.",
+          "proof": "4 bars played with the count spoken and steady.",
+          "pitfall": "Counting only when the rhythm gets hard, and losing the beat in between.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In 4/4 counted '1 and 2 and 3 and 4 and', where does an eighth note on the off-beat of 2 fall?",
+              "answer": "On the 'and' of 2",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why count out loud at 60 BPM instead of in your head?",
+              "answer": "Speaking keeps the beat steady and exposes rushing.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A dotted quarter on beat 1 is followed by an eighth. On which count does the eighth fall?",
+              "answer": "The 'and' of 2",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Different Rhythms per Hand",
+          "mastery": "Play one rhythm in the right hand and a different one in the left, starting with simple combinations.",
+          "practice": "Play right-hand eighth notes over left-hand quarter notes on C major, 4 bars at 60 BPM.",
+          "detail": "Start with rhythms that divide evenly, like 2 notes to 1. Feel the slower hand as the beat and the faster hand as the subdivision. Once that's easy, try 4 to 1 and then mixed rhythms in each hand.",
+          "proof": "4 steady bars with 2 right-hand notes to each left-hand note.",
+          "pitfall": "Letting the hands drift into the same rhythm.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "The right hand plays 16th notes and the left hand plays half notes. How many right-hand notes per left-hand note?",
+              "answer": "8",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In 4/4, the left hand plays whole notes and the right hand plays quarters. How many right-hand notes per bar?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which is harder to coordinate: 2 eighths against 1 quarter, or 3 triplets against 2 eighths?",
+              "answer": "3 triplets against 2 eighths",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Two Against Three",
+          "mastery": "Play 2 against 3 by learning the combined rhythm first, using 'nice cup of tea'.",
+          "practice": "Tap 3 in the right hand against 2 in the left on a table, saying 'nice cup of tea', 20 times at 60 BPM.",
+          "detail": "Split the beat into 6 equal slices. The triplet lands on slices 1, 3 and 5, and the duplet on 1 and 4. Together that's 'nice' with both hands, then 'cup' and 'of' from one hand each, then 'tea'. Learn the combined pattern first, then feel the two lines.",
+          "proof": "20 even repeats of 'nice cup of tea' at 60 BPM.",
+          "pitfall": "Turning the 3 into a dotted rhythm by guessing.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In 3 against 2, the beat is split into how many equal slices to line both up?",
+              "answer": "6",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In 3 against 2, on how many of those 6 slices does a note sound?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which word in 'nice cup of tea' do both hands play together?",
+              "answer": "Nice",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Swing and Dotted Rhythms",
+          "mastery": "Play dotted and swung rhythms evenly, without blurring one into the other by accident.",
+          "practice": "Play 2 bars of straight eighths, then 2 bars of dotted eighth-sixteenth, then 2 of swung eighths, at 72 BPM.",
+          "detail": "Dotted eighth-sixteenth is a sharp 3 to 1 split. Swung eighths are a looser long-short, closer to 2 to 1, like a triplet with the middle left out. Straight eighths are even. Mixing them up changes the whole style.",
+          "proof": "6 bars played, with each rhythm clearly different.",
+          "pitfall": "Playing every dotted rhythm as a lazy triplet.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A dotted eighth plus a sixteenth fill how many beats in 4/4?",
+              "answer": "1",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In swing, how is 1 pair of eighths usually played?",
+              "answer": "Long-short, roughly 2 parts to 1.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What's the length ratio of a dotted eighth to a sixteenth?",
+              "answer": "3 to 1",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Rhythm Under Pressure",
+          "mastery": "Keep the rhythm steady as you add speed, using a metronome on beats 2 and 4 or every other beat.",
+          "practice": "Play a 4-bar passage with the metronome clicking only on beats 2 and 4 at 80 BPM, and stay locked in.",
+          "detail": "With a click on every beat, the metronome holds the time for you. Moving it to 2 and 4, or every other beat, makes you hold it yourself. That inner time is what keeps you steady in loud or exciting passages, where most players rush.",
+          "proof": "4 bars played in time with clicks only on 2 and 4.",
+          "pitfall": "Relying on the metronome so much that you rush the moment it's off.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why put the click on beats 2 and 4 instead of every beat?",
+              "answer": "You hold the beat yourself, which builds inner time.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You rush in the loud bars 9 to 12. What should you check?",
+              "answer": "Count aloud and play those bars with a metronome.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "At 80 BPM, how many seconds long is 1 beat?",
+              "answer": "0.75",
+              "answer_kind": "decimal"
+            }
+          ]
+        }
+      ]
+    },
+    "pn.scales": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "C Major, Hands Separate",
+          "mastery": "Play C major 2 octaves in each hand with standard fingering, at an even tempo.",
+          "practice": "Play C major 2 octaves up and down in the right hand, fingering 1-2-3-1-2-3-4-1-2-3-1-2-3-4-5, at 60 BPM in eighth notes.",
+          "detail": "Standard fingering puts the thumb under after finger 3 and after finger 4, in turn. The left hand mirrors this. Keep it slow and even with a metronome, since evenness at a slow speed is what makes speed possible later.",
+          "proof": "2 octaves up and down in each hand, with no bumps.",
+          "pitfall": "Speeding up on the easy notes and slowing at the thumb passes.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many notes are in a 2-octave scale going up, counting both ends?",
+              "answer": "15",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Left-hand C major going up is 5 4 3 2 1 3 2 1. After the 5th note, which finger crosses over?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "At 60 BPM in eighth notes, how many notes do you play per second?",
+              "answer": "2",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Scales Hands Together",
+          "mastery": "Play scales hands together, an octave apart, with the thumbs passing at different moments.",
+          "practice": "Play C major 1 octave hands together at 50 BPM, saying the finger numbers of both hands out loud.",
+          "detail": "The hard part is that the two thumbs pass at different notes. Going up C major, the right thumb passes on F while the left hand crosses over on A. Saying the numbers aloud keeps both hands honest until it's automatic.",
+          "proof": "1 octave played together at 50 BPM, with the numbers spoken.",
+          "pitfall": "Letting one hand copy the other's fingering.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Going up 1 octave of C major hands together, do both thumbs pass at the same note?",
+              "answer": "No. They pass at different notes, which is the hard part.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In 1 octave of C major hands together, where do most stumbles happen?",
+              "answer": "Where one thumb passes and the other hand doesn't.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You start at 50 BPM and add 5 BPM each clean day. On which day do you reach 80 BPM?",
+              "answer": "7",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Make It Even",
+          "mastery": "Make every note of a scale even in time and volume, especially around the thumb pass.",
+          "practice": "Record C major at 72 BPM, listen back, and mark any note that's late, early or louder than the rest.",
+          "detail": "Uneven scales usually bump at the thumb pass, where the thumb lands late or heavy. Rhythms help: play the scale long-short, then short-long, then even again. Recording yourself reveals bumps you can't hear while playing.",
+          "proof": "A recording with every uneven note marked, then a second, cleaner take.",
+          "pitfall": "Judging evenness only while playing, when you can't really hear it.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You hear a bump right after note 3, where the thumb passes. What's the likely cause?",
+              "answer": "The thumb is landing late or heavy.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 1 drill for evenness.",
+              "answer": "Play the scale in dotted rhythms, long-short then short-long.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why record yourself at 72 BPM instead of just listening as you play?",
+              "answer": "You hear unevenness better when you're not busy playing.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Play Arpeggios",
+          "mastery": "Play arpeggios, the notes of a chord one at a time, across 2 octaves with a smooth thumb pass.",
+          "practice": "Play a C major arpeggio, C-E-G-C, 2 octaves in the right hand with 1-2-3-1-2-3-5 at 60 BPM.",
+          "detail": "Arpeggios stretch the hand wider than scales, so the thumb has farther to travel. Move the thumb early and keep the wrist level as it passes. They build the reach and shape you'll use in broken-chord accompaniments.",
+          "proof": "2 smooth octaves with no gap at the thumb pass.",
+          "pitfall": "Twisting the wrist sharply to reach the thumb under.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which 3 notes make a C major arpeggio?",
+              "answer": "C, E and G",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many notes does a 2-octave arpeggio going up have, counting both ends?",
+              "answer": "7",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Spell the A minor arpeggio from A3 up 1 octave.",
+              "answer": "A3, C4, E4, A4",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Work Through the Keys",
+          "mastery": "Learn scales in other keys, adding sharps one at a time around the circle of fifths.",
+          "practice": "Learn G, D and A major in the right hand this week, 1 octave each, naming the sharps before you play.",
+          "detail": "Each step up the circle of fifths adds one sharp: G has 1, D has 2, A has 3. Name them first so your fingers aren't guessing. Many keys share C major's fingering, which makes the first few quick to learn.",
+          "proof": "3 new scales, each with its sharps named before playing.",
+          "pitfall": "Learning a new key by trial and error, hunting for the black keys.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many sharps, from 0 to 7, does D major have?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which 2 sharps are in D major?",
+              "answer": "F# and C#",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What's the usual right-hand fingering for G major going up 1 octave?",
+              "answer": "1 2 3 1 2 3 4 5",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "pn.sight": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Read Easy and Often",
+          "mastery": "Sight-read new, easy music every day, about 2 levels below what you're learning.",
+          "practice": "Sight-read 1 new 8-bar piece every day for 7 days, from a book 2 levels below your current pieces.",
+          "detail": "Sight-reading improves with the number of new pages you read, not with how hard they are. Easy music lets you keep going in time, which is the actual skill. Read each piece once or twice, then move on to a new one.",
+          "proof": "7 new pieces read in a week, each one played through.",
+          "pitfall": "Sight-reading pieces so hard you stop every bar.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Should sight-reading material be harder or easier than your pieces, by about 2 levels?",
+              "answer": "Easier",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many new pieces do you read in 7 days of daily sight-reading?",
+              "answer": "7",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why read lots of easy 8-bar pieces rather than a little hard music?",
+              "answer": "Volume builds fluent reading, and hard music makes you stop.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Keep Going",
+          "mastery": "Keep the beat going through mistakes, never stopping to fix a note.",
+          "practice": "Sight-read 16 bars with a metronome at 60 BPM, and keep playing through every mistake.",
+          "detail": "Stopping to fix things is the habit that ruins sight-reading. Listeners barely notice a wrong note, but they always notice a stop. Choose a tempo slow enough to keep going, drop notes if you have to, and keep the beat.",
+          "proof": "16 bars played through without stopping.",
+          "pitfall": "Stopping to fix every wrong note.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You hit a wrong note in bar 3. What should you do?",
+              "answer": "Keep going in time.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In 16 bars, why does keeping the beat matter more than every note?",
+              "answer": "Listeners notice a stop far more than a wrong note.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You stop 5 times in 16 bars. What should you change?",
+              "answer": "Slow the tempo until you can play through.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Scan First",
+          "mastery": "Spend 30 seconds scanning the key, time signature, tempo and hardest spots before playing.",
+          "practice": "Before each of 5 sight-reading pieces, spend 30 seconds naming the key, the time signature and the hardest bar.",
+          "detail": "A short scan prevents the most common mistakes: wrong key, wrong meter, or a surprise leap. Find the hardest spot and set your tempo so you can play it. Then hum the rhythm of the first line in your head and start.",
+          "proof": "5 scans, each naming key, meter and the hardest bar.",
+          "pitfall": "Starting right away and finding the key change halfway down the page.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name 3 things to check in a 30-second scan.",
+              "answer": "Key signature, time signature and the hardest spot.",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A piece has 2 sharps and ends on D. What key is it probably in?",
+              "answer": "D major",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You spot a leap in bar 6 during your scan. What can you do before starting?",
+              "answer": "Find the hand position for it in advance.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Read Ahead",
+          "mastery": "Look a beat or more ahead of what you're playing.",
+          "practice": "Ask someone to cover each bar as you play it, so you must read the next bar while finishing the current one, for 8 bars.",
+          "detail": "Fluent readers' eyes are always slightly ahead of their hands, so the next notes are ready before they're needed. Covering the current bar forces that habit. Start slowly, since it feels strange at first.",
+          "proof": "8 bars played with each bar covered as you reach it.",
+          "pitfall": "Reading exactly the note you're playing, so every new note is a surprise.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How far ahead should a good sight-reader look: 0 beats or 1 to 2 beats?",
+              "answer": "1 to 2 beats",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why read ahead by 1 beat or more?",
+              "answer": "So you know what's coming before your hands get there.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 drill for reading ahead.",
+              "answer": "Cover each bar as you play it.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Read in Patterns",
+          "mastery": "Read in patterns, like scale runs, chord shapes and repeated rhythms, instead of note by note.",
+          "practice": "In 3 new pieces, circle every scale run, chord shape and repeated rhythm before playing.",
+          "detail": "Experienced readers see shapes: a run of steps, a stacked chord, a rhythm that repeats. One shape is faster to take in than each separate note. Theory helps here, since knowing chords makes them easy to spot.",
+          "proof": "3 pieces with the patterns circled before playing.",
+          "pitfall": "Reading every note separately, even when they form an obvious scale.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A run goes C D E F G in steps. What pattern is it?",
+              "answer": "A scale fragment",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "3 notes are stacked on lines 1, 2 and 3 of the treble staff. What do they form?",
+              "answer": "A chord, E G B, an E minor triad.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why read the 3 new pieces in patterns?",
+              "answer": "One pattern is faster to read than each note.",
+              "answer_kind": "sentence"
+            }
+          ]
+        }
+      ]
+    },
     "py.basics": {
       "model": "claude-opus-5-5",
       "verifier": "rules+authored",
