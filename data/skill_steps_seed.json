@@ -37556,6 +37556,1224 @@
         }
       ]
     },
+    "db.aggregate": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "COUNT, SUM and AVG",
+          "mastery": "Boil a whole column down to a single number, like a total or an average.",
+          "practice": "On scores of 90, 80, 70, 85 and 95, compute COUNT(*), SUM(score), AVG(score), MIN(score) and MAX(score) in SQL.",
+          "detail": "Aggregate functions collapse many rows into one value. COUNT counts, SUM adds, AVG averages, and MIN and MAX find the extremes. Without GROUP BY, they summarize the whole table into a single row.",
+          "proof": "5, 420, 84, 70 and 95.",
+          "pitfall": "Expecting an aggregate to return one row per input row.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is AVG(score) for 90, 80, 70, 85 and 95?",
+              "answer": "84",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is COUNT(*) for those 5 rows?",
+              "answer": "5",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does MAX(score) - MIN(score) give for those scores?",
+              "answer": "25",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "GROUP BY",
+          "mastery": "Compute aggregates for each group with GROUP BY.",
+          "practice": "Find each course's average score with SELECT course, AVG(score) FROM enrollments GROUP BY course.",
+          "detail": "GROUP BY splits the rows into groups that share a value, then runs the aggregate on each group. You get one row per group. It's how you answer questions like 'average per course' or 'orders per customer'.",
+          "proof": "One row for each course with its average score.",
+          "pitfall": "Forgetting GROUP BY and getting one average for everything.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Math scores are 90, 70 and 85. What is the average, to 2 decimals?",
+              "answer": "81.67",
+              "answer_kind": "decimal"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "GROUP BY course runs on rows for Math and Art only. How many rows come back?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write a query counting rows of 'enrollments' per student.",
+              "answer": "SELECT student, COUNT(*) FROM enrollments GROUP BY student;",
+              "answer_kind": "code"
+            }
+          ]
+        },
+        {
+          "title": "HAVING and WHERE",
+          "mastery": "Know which of the 2 filters runs before grouping and which runs after it.",
+          "practice": "Find courses with an average score over 85 using HAVING AVG(score) > 85.",
+          "detail": "WHERE runs first, on individual rows, before any grouping. HAVING runs after, on the groups and their aggregates. So a condition on AVG or COUNT goes in HAVING, while a condition on a plain column usually belongs in WHERE.",
+          "proof": "Only Art, with an average of 87.5, is returned.",
+          "pitfall": "Putting an aggregate in WHERE, which is an error.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which course averages over 85: Math at 81.67 or Art at 87.5?",
+              "answer": "Art",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Can you write WHERE AVG(score) > 85?",
+              "answer": "No. Aggregates go in HAVING.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write a query for the students who are in more than 1 course.",
+              "answer": "SELECT student FROM enrollments GROUP BY student HAVING COUNT(*) > 1;",
+              "answer_kind": "code"
+            }
+          ]
+        },
+        {
+          "title": "Group or Aggregate Every Column",
+          "mastery": "Make every selected column either part of GROUP BY or inside an aggregate.",
+          "practice": "Fix SELECT student, course, AVG(score) FROM enrollments GROUP BY student so it runs in PostgreSQL.",
+          "detail": "After grouping by student, each group has many courses, so the database can't know which one you mean. Either group by course too, or drop it, or wrap it in an aggregate like COUNT. Some databases guess for you, which hides bugs.",
+          "proof": "Grouping by student and course, or removing course from SELECT.",
+          "pitfall": "Relying on a database that silently picks one value.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why does SELECT student, course, AVG(score) ... GROUP BY student fail in PostgreSQL?",
+              "answer": "course isn't grouped or aggregated.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 2 ways to fix it.",
+              "answer": "Add course to GROUP BY, or remove it from SELECT.",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "5 enrollments have 5 different student and course pairs. After GROUP BY student, course, how many rows?",
+              "answer": "5",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "COUNT in Detail",
+          "mastery": "Know that COUNT(*) counts rows, COUNT(column) skips NULLs and COUNT(DISTINCT x) counts unique values.",
+          "practice": "On a table where 2 of 6 rows have a NULL email, compare COUNT(*), COUNT(email) and COUNT(DISTINCT course).",
+          "detail": "COUNT(*) counts every row. COUNT(email) counts only rows where email isn't NULL. COUNT(DISTINCT x) counts different values. Other aggregates like AVG also skip NULLs rather than treating them as zero.",
+          "proof": "COUNT(*) is 6 and COUNT(email) is 4.",
+          "pitfall": "Expecting COUNT(email) to include the NULL rows.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "6 rows, 2 with a NULL email. What is COUNT(email)?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is COUNT(DISTINCT student) for Ana, Ana, Ben, Cy, Cy?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Does AVG(score) count NULL scores as 0?",
+              "answer": "No. It skips them.",
+              "answer_kind": "yesno"
+            }
+          ]
+        }
+      ]
+    },
+    "db.joins": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Inner Join",
+          "mastery": "Combine 2 tables with INNER JOIN on matching keys.",
+          "practice": "Match each row of a 3-row students table to its enrollments with ON students.id = enrollments.student_id.",
+          "detail": "A join pairs rows from two tables wherever the ON condition holds. An inner join keeps only pairs that match, so a student with no enrollments disappears. Every match becomes its own row, so a student in 2 courses appears twice.",
+          "proof": "One row per enrollment, each with the student's name.",
+          "pitfall": "Forgetting the ON condition and pairing every row with every row.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Ana takes 2 courses, Ben 1 and Cy none. How many rows does the inner join return?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "With 3 students and Cy in no course, does Cy appear in the inner join?",
+              "answer": "No. Cy has no matching enrollment.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write the ON clause that joins students to enrollments.",
+              "answer": "ON students.id = enrollments.student_id",
+              "answer_kind": "code"
+            }
+          ]
+        },
+        {
+          "title": "Left Join",
+          "mastery": "Keep every row from the left table with LEFT JOIN, filling missing matches with NULL.",
+          "practice": "Rewrite the students-enrollments join as a LEFT JOIN, and find who has no courses.",
+          "detail": "A left join keeps every row of the first table, even with no match, and fills the other side with NULL. That makes it the tool for questions like 'who hasn't enrolled', by keeping only the rows where the right side is NULL.",
+          "proof": "Every student appears, and Cy shows NULL for course.",
+          "pitfall": "Using an inner join when you need to see the rows with no match.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Ana takes 2 courses, Ben 1 and Cy none. How many rows does students LEFT JOIN enrollments give?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In that LEFT JOIN, what appears in the course column for Cy?",
+              "answer": "NULL",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "After the LEFT JOIN, write a WHERE clause that keeps only students with no enrollments.",
+              "answer": "WHERE enrollments.student_id IS NULL",
+              "answer_kind": "code"
+            }
+          ]
+        },
+        {
+          "title": "Aliases and 3 Tables",
+          "mastery": "Use table aliases, and chain joins across 3 tables.",
+          "practice": "Chain courses c onto students s and enrollments e with a 2nd JOIN, so each result shows a course title.",
+          "detail": "Short aliases keep long joins readable: s.name instead of students.name. To reach a third table, add another JOIN with its own ON. A many-to-many relationship always needs two joins, one to the join table and one past it.",
+          "proof": "Each student's name next to each course title.",
+          "pitfall": "Leaving column names unqualified when two tables share them, like id.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write the FROM clause joining students s to enrollments e.",
+              "answer": "FROM students s JOIN enrollments e ON s.id = e.student_id",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many JOIN clauses link 3 tables in a chain?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why use short aliases like s and e for 3 tables?",
+              "answer": "They keep long joins readable.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Predict the Row Count",
+          "mastery": "Predict how many rows a join returns, and spot when a join multiplies rows unexpectedly.",
+          "practice": "Join orders to order_items for 2 orders with 3 items each, predict the row count first, then run it.",
+          "detail": "Each row on one side repeats once for every match on the other. That's correct, but it means sums of order-level values get multiplied when you join to items. Predict the count before running a join, and be suspicious when it surprises you.",
+          "proof": "You predicted 6 rows, and the join returned 6.",
+          "pitfall": "Summing an order total after joining to its items.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "2 orders have 3 items each. How many rows does orders JOIN order_items return?",
+              "answer": "6",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You sum order totals after joining to items and get 3 times too much. Why?",
+              "answer": "Each order's total repeats once per item.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A join returns 1000 rows when you expected 10. What's the likely cause?",
+              "answer": "A missing or wrong ON condition.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Self Joins",
+          "mastery": "Find each person's manager when both live in the same employees table.",
+          "practice": "Join employees e to employees m ON e.manager_id = m.id to list each employee with their manager's name.",
+          "detail": "When a table points at itself, like employees with a manager_id, join it to a second copy of itself. Two aliases tell the copies apart. Use a left join to keep people with no manager, like the CEO.",
+          "proof": "Each employee listed with their manager's name.",
+          "pitfall": "Using an inner join and losing the CEO from the results.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In employees(id, name, manager_id), how do you get each manager's name?",
+              "answer": "Join employees to itself on manager_id = id.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "The CEO has manager_id NULL. Does the CEO appear in an inner self join?",
+              "answer": "No. Use a LEFT JOIN to keep them.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does a self join need 2 aliases?",
+              "answer": "To tell the 2 copies of the table apart.",
+              "answer_kind": "sentence"
+            }
+          ]
+        }
+      ]
+    },
+    "db.keys": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Primary Keys",
+          "mastery": "Give every table a primary key that names each row uniquely and never changes.",
+          "practice": "Add id INTEGER PRIMARY KEY to a pets table, insert 3 pets, and try inserting a 4th with a repeated id.",
+          "detail": "A primary key is how you point at exactly one row. It must be unique and never NULL, and it shouldn't change, since other tables refer to it. A generated number is the usual choice, because real-world values like emails can change.",
+          "proof": "3 pets inserted, and the 4th rejected for a duplicate id.",
+          "pitfall": "Using a changeable value like an email as the primary key.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Can 2 rows share the same 'id' if it's the primary key?",
+              "answer": "No.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why is a user's 'email' a risky primary key?",
+              "answer": "People change emails, and keys shouldn't change.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Can a primary key be NULL?",
+              "answer": "No.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Foreign Keys",
+          "mastery": "Connect 2 tables by storing a reference to the other table's row instead of copying its data.",
+          "practice": "Create owners(id, name) and pets(id, name, owner_id REFERENCES owners(id)), then insert a pet for owner 1.",
+          "detail": "A foreign key stores the other row's primary key instead of copying its data. The owner's name lives only in owners, so changing it means one update. With the constraint declared, the database refuses pets that point at owners who don't exist.",
+          "proof": "A pet linked to owner 1, and a pet for a missing owner refused.",
+          "pitfall": "Copying the owner's name into every pet row.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "pets.owner_id points to owners.id. Which column is the foreign key?",
+              "answer": "pets.owner_id",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You insert a pet with owner_id 99, and no owner 99 exists. What should happen?",
+              "answer": "It fails with a foreign key error.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why store owner_id instead of the owner's name in 'pets'?",
+              "answer": "The name lives in one place, so a change only happens once.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "One-to-Many",
+          "mastery": "Model one-to-many relationships by putting the foreign key on the 'many' side.",
+          "practice": "Model 1 teacher with many classes by adding teacher_id to classes, and insert 3 classes for teacher 1.",
+          "detail": "Each class has one teacher, and a teacher has many classes, so each class row carries a teacher_id. Never store a list of class ids in the teachers table. Finding a teacher's classes is then one simple WHERE teacher_id = 1.",
+          "proof": "3 class rows, each with teacher_id 1.",
+          "pitfall": "Putting a comma-separated list of class ids in the teachers table.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "1 author writes many books. Which table gets the foreign key?",
+              "answer": "books, with an author_id column.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Teacher 1 has 3 classes. How many rows in classes have teacher_id = 1?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why not store a list like '4, 7, 9' of class ids in the teachers table?",
+              "answer": "A column should hold one value, and lists break that.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Many-to-Many",
+          "mastery": "Model many-to-many relationships with a join table that holds 2 foreign keys.",
+          "practice": "Create enrollments(student_id, course_id) linking students and courses, and enroll 2 students in 2 courses each.",
+          "detail": "When both sides have many of the other, neither table can hold the link. A join table holds one row per pairing, and it can also carry facts about the pairing, like a grade. The pair of ids together makes a natural primary key.",
+          "proof": "4 enrollment rows linking 2 students to 2 courses.",
+          "pitfall": "Trying to put the link on one side of a many-to-many relationship.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Students take many courses, and courses have many students. What do you add besides the 2 tables?",
+              "answer": "A join table like enrollments.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "2 students each take 2 courses. How many rows are in enrollments?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What's a good primary key for enrollments(student_id, course_id)?",
+              "answer": "The pair (student_id, course_id).",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Natural and Surrogate Keys",
+          "mastery": "Choose between a natural key, like an ISBN, and a generated id, and know the trade-offs.",
+          "practice": "For 3 tables, books, users and countries, choose a natural key or a generated id, and give 1 reason for each.",
+          "detail": "A natural key comes from the real world, like an ISBN or a country code. A surrogate key is a generated id with no outside meaning. Natural keys can change or turn out not to be unique, so most tables use a surrogate id and add a unique constraint on the natural value.",
+          "proof": "3 choices, each with a reason.",
+          "pitfall": "Trusting a real-world value never to change.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is a surrogate key, like id 42?",
+              "answer": "A generated id with no meaning outside the database.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Is ISBN a natural or a surrogate key for books?",
+              "answer": "Natural",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 risk of natural keys.",
+              "answer": "Real-world values can change or turn out not to be unique.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "db.select": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "SELECT and WHERE",
+          "mastery": "Select the columns you want and filter the rows with WHERE.",
+          "practice": "From students(id, name, grade, gpa), select the names of students in grade 10.",
+          "detail": "SELECT lists the columns, FROM names the table, and WHERE keeps only rows that pass a condition. Comparisons like =, >, >= and <> work on numbers, text and dates. Select only what you need instead of *, especially on wide tables.",
+          "proof": "SELECT name FROM students WHERE grade = 10; returns the grade 10 names.",
+          "pitfall": "Using == instead of = in a WHERE clause.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write a query for the names of students with a gpa over 3.5.",
+              "answer": "SELECT name FROM students WHERE gpa > 3.5;",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "5 students have gpas of 3.8, 3.1, 2.9, 3.5 and 3.9. How many rows does WHERE gpa >= 3.5 return?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does SELECT name, gpa FROM students; return?",
+              "answer": "The name and gpa of every student.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Combine Conditions",
+          "mastery": "Filter rows on several conditions at once with AND, OR, NOT, IN and BETWEEN.",
+          "practice": "Find students in grade 11 or 12 with a gpa of at least 3.5, using IN and AND.",
+          "detail": "AND needs both sides true, and OR needs either. IN checks against a list, which is cleaner than a chain of ORs. BETWEEN includes both ends. Mixing AND and OR without brackets is a classic bug, so add parentheses.",
+          "proof": "WHERE grade IN (11, 12) AND gpa >= 3.5 returns the right students.",
+          "pitfall": "Writing grade = 10 OR 11, which doesn't mean what it looks like.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write a WHERE clause for grade 10 or 12 using IN.",
+              "answer": "WHERE grade IN (10, 12)",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Is 3.5 included in gpa BETWEEN 3.0 AND 3.5?",
+              "answer": "Yes. BETWEEN includes both ends.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What's wrong with WHERE grade = 10 OR 11?",
+              "answer": "It needs grade = 10 OR grade = 11, or IN (10, 11).",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Sort and Limit",
+          "mastery": "Sort results with ORDER BY and take the top few with LIMIT.",
+          "practice": "Find the 3 students with the highest gpa, using ORDER BY gpa DESC and LIMIT 3.",
+          "detail": "ORDER BY sorts ascending by default, and DESC reverses it. You can sort by several columns, with later ones breaking ties. LIMIT keeps only the first rows of the sorted result, which is how you get top 10 lists.",
+          "proof": "The 3 highest gpas, largest first.",
+          "pitfall": "Using LIMIT without ORDER BY and getting any 3 rows.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write a query for the 2 students with the lowest gpa.",
+              "answer": "SELECT * FROM students ORDER BY gpa ASC LIMIT 2;",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "With gpas of 3.8, 3.1, 2.9, 3.5 and 3.9, which gpa comes first in ORDER BY gpa DESC?",
+              "answer": "3.9",
+              "answer_kind": "decimal"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Can you sort by 2 columns, like grade and then name?",
+              "answer": "Yes: ORDER BY grade, name.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Patterns and NULL",
+          "mastery": "Match text with LIKE, and test for missing values with IS NULL rather than = NULL.",
+          "practice": "Find students whose name starts with 'A' using LIKE 'A%', and students with no gpa using IS NULL.",
+          "detail": "In LIKE, % matches any run of characters and _ matches exactly one. NULL means unknown, and comparing anything to unknown gives unknown, so = NULL never matches. Use IS NULL and IS NOT NULL instead.",
+          "proof": "LIKE 'A%' finds Ana, and IS NULL finds rows with a missing gpa.",
+          "pitfall": "Writing WHERE gpa = NULL and getting no rows.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which names match LIKE '%n'?",
+              "answer": "Names ending in n.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why does WHERE gpa = NULL return nothing?",
+              "answer": "NULL isn't equal to anything, so use IS NULL.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write a WHERE clause for names with 'an' anywhere in them.",
+              "answer": "WHERE name LIKE '%an%'",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Computed Columns",
+          "mastery": "Compute new columns in a query with arithmetic, functions and AS aliases.",
+          "practice": "Select each student's name and their gpa times 25 as score_out_of_100.",
+          "detail": "A SELECT can hold any expression, not just column names. Arithmetic, text functions like UPPER and date functions all work. AS gives the result a readable name, which also helps code that reads the results.",
+          "proof": "Each name with a score out of 100, like 95 for a 3.8.",
+          "pitfall": "Leaving computed columns unnamed, so they come back with odd names.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does SELECT name, gpa * 25 AS pct FROM students; show for a gpa of 3.8?",
+              "answer": "95",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write a query showing each name in capitals, using UPPER.",
+              "answer": "SELECT UPPER(name) FROM students;",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does AS do in SELECT gpa * 25 AS pct?",
+              "answer": "It names the new column pct.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "db.tables": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "One Table, One Kind of Thing",
+          "mastery": "Split mixed data so every table holds a single sort of record.",
+          "practice": "Take a messy sheet of 6 columns mixing students and their classes, and split it into a students table and a classes table.",
+          "detail": "Deciding what one row means is the most important design choice. When a table mixes kinds of thing, facts repeat: the teacher's phone appears on every class row, and changing it means finding them all. Separate tables store each fact once.",
+          "proof": "2 tables, each holding one kind of thing.",
+          "pitfall": "Putting everything about a student and their classes on one wide row.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A table has the columns student_name, class_title and teacher_phone. How many kinds of thing does it mix?",
+              "answer": "3: students, classes and teachers.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What should 1 row in a 'students' table represent?",
+              "answer": "One student.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why avoid putting 2 kinds of thing in 1 table?",
+              "answer": "Facts get repeated and go out of sync.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Columns Are Facts",
+          "mastery": "Make each column one fact about the row, holding a single value.",
+          "practice": "Fix a column 'phones' that holds '555-1234, 555-9876' by moving the phone numbers into their own table.",
+          "detail": "A column should hold one value, not a list. Lists in a column are hard to search, sort and validate, and they break as soon as someone has one more than you planned for. Repeating groups like phone1, phone2 and phone3 have the same problem.",
+          "proof": "A phones table with one row per number, linked to its person.",
+          "pitfall": "Adding phone1, phone2 and phone3 columns and hoping nobody needs a 4th.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A column holds 'red, blue, green'. What's wrong?",
+              "answer": "It holds 3 values in 1 column.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Should a 'full_name' column be split into first_name and last_name?",
+              "answer": "Usually yes, if you sort or search by either.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A row has 3 phone columns, phone1 to phone3. What breaks when someone has 4?",
+              "answer": "There's no column for the 4th.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Name Things Clearly",
+          "mastery": "Name tables and columns clearly and consistently, like students and student_id.",
+          "practice": "Rename 5 columns in a table, like 'x', 'dt' and 'nm', to clear names such as 'created_at' and 'name'.",
+          "detail": "Names are read far more often than they're written. Pick a style, like lowercase with underscores, and stick to it everywhere. Name foreign keys after what they point to, like customer_id, so joins are obvious.",
+          "proof": "5 columns renamed so their meaning is clear without comments.",
+          "pitfall": "Using cryptic abbreviations that only you understand.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which is a clearer column name: 'd1' or 'due_date'?",
+              "answer": "due_date",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A column in 'orders' points to a customer. What's a clear name for it?",
+              "answer": "customer_id",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Across 10 tables, should names be all plural, all singular, or a mix?",
+              "answer": "Pick one style and use it everywhere.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Rows Have No Order",
+          "mastery": "Remember that rows have no built-in order, so use ORDER BY whenever order matters.",
+          "practice": "Run SELECT name FROM pets; twice on a table with 5 rows, then add ORDER BY name and explain why it's needed.",
+          "detail": "A table is a set of rows, not a list. Without ORDER BY, the database can return rows in any order, and that order can change as the data or the query plan changes. If your code depends on order, say so in the query.",
+          "proof": "The same query with ORDER BY name, returning a reliable order.",
+          "pitfall": "Assuming rows come back in the order they were inserted.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Does SQL promise to return rows in the order they were inserted?",
+              "answer": "No. Only ORDER BY guarantees an order.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write a query for 'pets' sorted by age, oldest first.",
+              "answer": "SELECT * FROM pets ORDER BY age DESC;",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does ORDER BY name ASC do?",
+              "answer": "Sorts by name from A to Z.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Insert, Update and Delete",
+          "mastery": "Change data with INSERT, UPDATE and DELETE, always with a WHERE on updates and deletes.",
+          "practice": "Insert 2 rows into pets, update 1 pet's age, then delete 1 pet, each with a WHERE clause on name.",
+          "detail": "UPDATE and DELETE without WHERE hit every row in the table, which is one of the most common disasters in databases. Run a SELECT with the same WHERE first, check it returns exactly the rows you mean, then change SELECT to UPDATE or DELETE.",
+          "proof": "2 inserts, 1 update and 1 delete, each touching only the intended row.",
+          "pitfall": "Running UPDATE without WHERE and changing every row.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What happens with UPDATE pets SET age = 5; and no WHERE?",
+              "answer": "Every pet's age becomes 5.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write the statement that deletes the pet named Rex.",
+              "answer": "DELETE FROM pets WHERE name = 'Rex';",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why run a SELECT with the same WHERE before a DELETE?",
+              "answer": "To check exactly which rows will be removed.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "db.types": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Pick the Type",
+          "mastery": "Choose a type for each column, like INTEGER, TEXT, DATE or BOOLEAN, to match what it holds.",
+          "practice": "Pick types for 6 columns of a users table: id, email, birth_date, is_active, balance and bio.",
+          "detail": "The type is a promise about what a column holds. Whole numbers are INTEGER, true or false is BOOLEAN, calendar dates are DATE, and free text is TEXT or VARCHAR. Picking well makes sorting, math and validation work without extra code.",
+          "proof": "id INTEGER, email VARCHAR, birth_date DATE, is_active BOOLEAN, balance NUMERIC, bio TEXT.",
+          "pitfall": "Making every column TEXT because it accepts anything.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which type fits a birth date: TEXT or DATE?",
+              "answer": "DATE",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which type fits an 'is_active' column?",
+              "answer": "BOOLEAN",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which type fits a user's bio of about 300 characters?",
+              "answer": "TEXT",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Money and Decimals",
+          "mastery": "Store money as an exact type, like NUMERIC or whole cents in an integer, never as a float.",
+          "practice": "Add 0.1 + 0.2 as floats in Python, then store the same amounts as NUMERIC(10, 2) and compare.",
+          "detail": "Floats are stored in binary, so amounts like 0.1 can't be held exactly, and sums drift by tiny amounts. For money that's not acceptable. NUMERIC stores exact decimals, and many systems simply store whole cents as integers.",
+          "proof": "The float sum shows 0.30000000000000004, and NUMERIC shows 0.30.",
+          "pitfall": "Storing prices as FLOAT and finding a total off by a cent.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why not store prices as FLOAT?",
+              "answer": "Floats can't hold amounts like 0.1 exactly, so sums drift.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "$19.99 stored as whole cents in an integer is what number?",
+              "answer": "1999",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "NUMERIC(10, 2) allows how many digits after the decimal point?",
+              "answer": "2",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Dates and Times",
+          "mastery": "Store dates and times in real date types, in UTC, so sorting and date math work.",
+          "practice": "Store '03/04/2025' as TEXT and as DATE, sort a few such values, and see which order is right.",
+          "detail": "Dates stored as text sort as text, so '12/01/2024' lands after '02/01/2025'. Formats like 03/04 mean different days in different countries. Real date types sort correctly and support math like adding 30 days. Store timestamps in UTC and convert when you display them.",
+          "proof": "The DATE column sorts by real date, and the TEXT column doesn't.",
+          "pitfall": "Storing dates as text in a format like MM/DD/YYYY.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why is '03/04/2025' ambiguous as text?",
+              "answer": "It could mean March 4 or April 3.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Dates are stored as 'MM/DD/YYYY' text. Does 12/01/2024 sort before or after 02/01/2025?",
+              "answer": "After, which is the wrong order.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why store timestamps in UTC?",
+              "answer": "So times from different time zones compare correctly.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Length and Size Limits",
+          "mastery": "Set sensible limits, like VARCHAR(255) for an email, and know what happens when a value is too long.",
+          "practice": "Create a VARCHAR(10) column in PostgreSQL, insert a 15-character value, and read the error.",
+          "detail": "A length limit catches values that are clearly wrong, like a 2000-character phone number. Set it generously for real data, since names and emails can be long. PostgreSQL rejects values that don't fit rather than cutting them short, which is what you want.",
+          "proof": "An error saying the value is too long for the column.",
+          "pitfall": "Setting limits so tight that real names don't fit.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does VARCHAR(50) limit?",
+              "answer": "The text to 50 characters.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "PostgreSQL gets a 15-character value for VARCHAR(10). What happens?",
+              "answer": "It rejects it with an error.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which is a safe length for an email column: VARCHAR(20) or VARCHAR(255)?",
+              "answer": "VARCHAR(255)",
+              "answer_kind": "code"
+            }
+          ]
+        },
+        {
+          "title": "Types as Validation",
+          "mastery": "Use column types as the first, cheapest check that keeps bad data out.",
+          "practice": "Try inserting 'abc' into an INTEGER column and '2025-13-45' into a DATE column in PostgreSQL, and note both errors.",
+          "detail": "Every row that comes in is checked against the types for free. A date column refuses February 30, and an integer column refuses letters. That catches bugs at the door instead of months later. SQLite is looser by default, so use strict tables or constraints there.",
+          "proof": "2 errors, one for each bad value.",
+          "pitfall": "Validating everything in application code and storing it all as text.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A DATE column gets '2025-02-30'. What should happen?",
+              "answer": "An error, since February 30 doesn't exist.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "SQLite accepts 'abc' in an INTEGER column by default. Why does that matter?",
+              "answer": "Type checks are weak there, so you need constraints or strict tables.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "For a 'birth_date' column, which catches more bad data for free: TEXT or the right type?",
+              "answer": "The right type",
+              "answer_kind": "word"
+            }
+          ]
+        }
+      ]
+    },
+    "db.what": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Beat the Shared File",
+          "mastery": "Explain what a database does that a plain file or spreadsheet can't: safe writes from many users, fast lookups and enforced rules.",
+          "practice": "List 3 problems with keeping 10,000 customer orders in a CSV file that 5 people edit at once, and say how a database solves each.",
+          "detail": "A file has no idea who else is writing to it, so two saves can wipe each other out. Finding one row means reading the whole thing, and nothing stops a typo in a required field. A database handles many writers safely, uses indexes for fast lookups and refuses data that breaks its rules.",
+          "proof": "Lost edits, slow searches and bad data, solved by locking, indexes and constraints.",
+          "pitfall": "Thinking a database is just a bigger spreadsheet.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "2 people save the same CSV file at the same moment. What can happen?",
+              "answer": "One person's changes overwrite the other's.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 1 thing a database enforces that a CSV file doesn't.",
+              "answer": "Rules like unique IDs or required fields.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Finding 1 order in a file of 10 million rows means reading how many rows in the worst case?",
+              "answer": "All 10 million",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Tables, SQL and the Engine",
+          "mastery": "Describe the 3 parts: tables hold the data, SQL asks the questions, and the engine works out how to answer.",
+          "practice": "Write 1 SELECT query in SQLite against a 3-row table, and say which part you wrote and which part the engine decided.",
+          "detail": "You describe the result you want in SQL, and the engine decides how to get it: which index to use, what order to read things in. That split is why the same query keeps working as the data grows from 3 rows to 3 million.",
+          "proof": "A working query, with a note that you wrote the what and the engine chose the how.",
+          "pitfall": "Writing SQL as if it were step-by-step instructions.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does SQL stand for?",
+              "answer": "Structured Query Language",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In SQL, do you describe the steps to find data, or the result you want?",
+              "answer": "The result you want.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 2 popular SQL database engines.",
+              "answer": "PostgreSQL and SQLite",
+              "answer_kind": "list"
+            }
+          ]
+        },
+        {
+          "title": "Relational and Other Kinds",
+          "mastery": "Place a database product in the right family before choosing it, since each family suits different jobs.",
+          "practice": "Sort 4 products, PostgreSQL, MySQL, MongoDB and Redis, into relational and non-relational.",
+          "detail": "Relational databases store tables with fixed columns and link them with keys, and SQL queries them. Document stores like MongoDB keep flexible records that look like JSON. Key-value stores like Redis map a key straight to a value, which is very fast for simple lookups.",
+          "proof": "PostgreSQL and MySQL are relational, and MongoDB and Redis aren't.",
+          "pitfall": "Choosing a non-relational store because it sounds newer.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Is MongoDB relational, or a document store?",
+              "answer": "A document store",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Of the 2 kinds, which stores data in tables with rows and columns?",
+              "answer": "Relational",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which kind of data does Redis mostly store?",
+              "answer": "Key-value pairs",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Create and Query a Table",
+          "mastery": "Create a table, insert rows and read them back in a real database.",
+          "practice": "In SQLite, run CREATE TABLE pets (name TEXT, age INTEGER), insert 3 pets, and SELECT them all.",
+          "detail": "CREATE TABLE defines the columns and their types. INSERT adds rows, and SELECT reads them back. SQLite needs no server, so it's the fastest way to try SQL: one command opens a file and you're typing queries.",
+          "proof": "3 pets inserted and all 3 returned by SELECT.",
+          "pitfall": "Forgetting the quotes around text values in INSERT.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write the statement that adds a pet named Rex, age 4, to pets.",
+              "answer": "INSERT INTO pets (name, age) VALUES ('Rex', 4);",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does SELECT * FROM pets; return?",
+              "answer": "Every column of every row in pets.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You inserted 3 pets. What number does SELECT COUNT(*) FROM pets; show?",
+              "answer": "3",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Know When You Need One",
+          "mastery": "Decide when an app needs a database and when a plain file is enough.",
+          "practice": "For 4 projects, a to-do app for 1 person, a school grade system, a game's high scores and a store with 1000 orders a day, pick a file or a database and say why.",
+          "detail": "A small amount of data used by one person on one machine is fine in a file. Many users, data that must never be lost, or questions like 'every order over $50 this week' call for a database. SQLite is a good middle step, since it's a database stored in a single file.",
+          "proof": "4 projects, each with a choice and a one-line reason.",
+          "pitfall": "Setting up a full database server for a 20-item list.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A to-do list for 1 person has 20 items. Database or file?",
+              "answer": "A file is fine.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A store takes 1000 orders a day from many users. Database or file?",
+              "answer": "A database",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What's the usual first database for a small app on 1 machine?",
+              "answer": "SQLite",
+              "answer_kind": "word"
+            }
+          ]
+        }
+      ]
+    },
     "de.check": {
       "model": "claude-opus-5-5",
       "verifier": "rules+authored",
