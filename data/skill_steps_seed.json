@@ -135641,6 +135641,180 @@
         }
       ]
     },
+    "pn.accomp": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Follow the Soloist",
+          "mastery": "Follow the singer or player's tempo and breaths instead of driving your own tempo.",
+          "practice": "Accompany a recording of a singer for 16 bars, matching every slowdown and breath.",
+          "detail": "The soloist leads and the accompanist follows. Watch for breaths and know where the phrases end, since that's where they'll stretch. Listening matters more than your own part.",
+          "proof": "16 bars where the piano stays with every slowdown.",
+          "pitfall": "Keeping strict time while the singer slows, so you pull apart.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "The singer slows at bar 12. What should you do?",
+              "answer": "Slow with them.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In a 16-bar song, who usually sets the tempo: the soloist or the accompanist?",
+              "answer": "The soloist",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How can you see a singer's breath coming at bar 8?",
+              "answer": "Watch them, and know where the phrase ends.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Stay Under the Soloist",
+          "mastery": "Keep the accompaniment softer than the soloist, especially in their low notes.",
+          "practice": "Play 8 bars at mp under a singer, and drop to p whenever their line goes below C4.",
+          "detail": "A piano can easily cover a voice, especially in the singer's low range, which is quieter. Play softer there, thin out the texture, and avoid doubling the melody all the time so the soloist stays in front.",
+          "proof": "8 bars where the piano drops whenever the voice goes low.",
+          "pitfall": "Playing at the same volume as when you play alone.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A singer's line drops below C4. Should you play louder or softer?",
+              "answer": "Softer",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why do a singer's notes below C4 need more space?",
+              "answer": "They're quieter, so a loud piano covers them.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Should the piano's right hand double the melody for all 16 bars?",
+              "answer": "No. It can thin out or drop the melody, so the voice leads.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Introductions and Endings",
+          "mastery": "Play an intro that sets the key and tempo, and an ending that gives the soloist room to finish.",
+          "practice": "Write a 4-bar intro for a song in G major that ends on D7, so the singer knows when to come in.",
+          "detail": "An intro sets the key, the tempo and the mood, and ending it on V points straight to the singer's entry. At the end, follow the soloist's last note and finish with them, not before.",
+          "proof": "A 4-bar intro ending on D7, played into the singer's entry.",
+          "pitfall": "Starting so fast or so long that the singer can't find their entry.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why end an intro in G on V, the D7 chord?",
+              "answer": "It points to the key, so the singer's entry feels natural.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How long is a common song intro: 4 bars or 32 bars?",
+              "answer": "4 bars",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A singer holds the last note for 4 beats. Should you cut off before or with them?",
+              "answer": "With them, or just after.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Simplify When Needed",
+          "mastery": "Simplify a hard accompaniment to keep time and support, rather than playing every note badly.",
+          "practice": "Take a dense 8-bar accompaniment and write a simpler version that keeps the bass notes and a chord on each beat.",
+          "detail": "A soloist needs steady time and clear harmony more than every written note. Drop inner notes and fast decorations first, and keep the bass line and the rhythm of the chords. A simple part played well beats a hard one played shakily.",
+          "proof": "A simplified 8 bars that keeps the bass and the beat.",
+          "pitfall": "Struggling through every note and dragging the tempo.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "An accompaniment is too hard at 120 BPM. What can you drop first?",
+              "answer": "Inner notes and fast decorations, keeping the bass and rhythm.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In 8 bars, which matters most to a soloist: every written note or steady time?",
+              "answer": "Steady time",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which 2 parts of the texture should stay when you simplify?",
+              "answer": "The bass line and the rhythm of the chords.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Know When to Drop Out",
+          "mastery": "Leave space for the soloist by dropping out or thinning out when they need the spotlight.",
+          "practice": "Mark 2 places in a song where you'll play only single notes or rest, and try it with a singer or recording.",
+          "detail": "Sometimes the best accompaniment is almost nothing. A quiet, exposed line or a fast run sounds better with space around it. Contrast also makes the full moments feel bigger when you come back in.",
+          "proof": "2 marked places where the piano thins out, tried with a soloist.",
+          "pitfall": "Playing full chords under every note the soloist sings.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A singer has a quiet, exposed line in bar 20. What can you do?",
+              "answer": "Play very little, or drop out for a moment.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why can less piano in 2 places make a song stronger?",
+              "answer": "Contrast gives the big moments more weight.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "The soloist has a fast run in bar 8. Should you play busy chords under it?",
+              "answer": "No. Hold a chord or rest so the run is clear.",
+              "answer_kind": "yesno"
+            }
+          ]
+        }
+      ]
+    },
     "pn.chords": {
       "model": "claude-opus-5-5",
       "verifier": "rules+authored",
@@ -136337,6 +136511,354 @@
         }
       ]
     },
+    "pn.harmony": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Spot the Chords",
+          "mastery": "Find the chord behind each bar of written music by stacking its notes in thirds.",
+          "practice": "Name the chord in each of 8 bars of a simple piece, writing the letter name above every bar.",
+          "detail": "Collect the notes from both hands in a bar, drop the repeats, and stack them in thirds. The bottom of the stack is the root. Notes that don't fit are usually passing notes. A bar can hold two chords, so check each beat if the notes don't settle.",
+          "proof": "A chord name written over each of the 8 bars.",
+          "pitfall": "Naming the chord from the lowest note alone, which fails on inversions.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A bar's left hand has G2 and D3, and the right hand has B4. Which chord is it?",
+              "answer": "G major",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Bar 3 holds A, C and E spread over both hands. Which chord is it?",
+              "answer": "A minor",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A bar holds D, F#, A and C. Which chord is it?",
+              "answer": "D7",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Roman Numerals at the Keys",
+          "mastery": "Label a piece's chords with Roman numerals, so you see each one's job in the key.",
+          "practice": "Label the chords of 8 bars in C major with Roman numerals, and play the progression as block chords.",
+          "detail": "Letter names tell you what a chord is. Numerals tell you what it does: I is home, V pulls back to it, and IV moves away. Seeing the numerals makes patterns jump out, and the same pattern then works in any key.",
+          "proof": "8 bars labeled, such as I, IV, V7, I, and played as blocks.",
+          "pitfall": "Writing every numeral in capitals and losing the major or minor quality.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In C major, what numeral is G7?",
+              "answer": "V7",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In G major, with 1 sharp, what numeral is the D chord?",
+              "answer": "V",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A piece in F major goes F, Bb, C7, F. Write the numerals.",
+              "answer": "I, IV, V7, I",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Reduce to Block Chords",
+          "mastery": "Reduce a busy passage to block chords to learn and memorize it faster.",
+          "practice": "Take 8 bars of broken-chord accompaniment and play them as block chords, 1 per beat.",
+          "detail": "Broken chords and patterns hide simple harmony. Playing the notes together shows the hand shapes and how they change. Once the blocks are easy, add the pattern back in. It cuts learning time a lot.",
+          "proof": "8 bars played as block chords, then with the pattern restored.",
+          "pitfall": "Learning each broken note one by one without seeing the chord.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A left hand plays C-E-G-E twice in 1 bar. What block chord is that?",
+              "answer": "C major",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why practice 8 bars of a broken-chord passage as blocks first?",
+              "answer": "You learn the hand positions and changes before the pattern.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "An Alberti bass goes C G E G. What chord does it outline?",
+              "answer": "C major",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Common Progressions",
+          "mastery": "Recognize I IV V I, I vi IV V and ii V I in pieces, and play them in several keys.",
+          "practice": "Play I-vi-IV-V in C, G and F major, 2 bars per chord, naming each one.",
+          "detail": "A few progressions turn up again and again. I-vi-IV-V runs through countless 1950s songs, and ii-V-I is the backbone of jazz. Learn them as hand shapes in several keys, and you'll recognize them on the page and by ear.",
+          "proof": "C Am F G, then G Em C D, then F Dm Bb C.",
+          "pitfall": "Learning a progression in one key only.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Play I-vi-IV-V in G major. Which 4 chords is that?",
+              "answer": "G, Em, C, D",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which progression underlies many 1950s songs: I-vi-IV-V or I-iii-ii-vii?",
+              "answer": "I-vi-IV-V",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write the 3 chords of ii-V-I in F major.",
+              "answer": "Gm, C, F",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Harmonize a Melody",
+          "mastery": "Choose chords for a simple melody using I, IV and V, matching chord tones to the strong beats.",
+          "practice": "Harmonize 'Twinkle Twinkle' in C major with only C, F and G, choosing a chord for each bar.",
+          "detail": "Look at the melody notes on the strong beats and pick the chord that contains them. Notes in between can be passing notes. End with V to I for a strong finish. Three chords cover a surprising number of folk and children's songs.",
+          "proof": "A chord chosen for every bar, ending G to C.",
+          "pitfall": "Choosing chords by guessing instead of checking the strong-beat notes.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In C major, a bar's melody has E and G on beats 1 and 3. Which chord fits: C or F?",
+              "answer": "C",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Melody notes A and F fall on the strong beats of bar 6. Pick the chord from C, F and G.",
+              "answer": "F",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A C major melody ends B then C. Which 2 chords make a strong ending?",
+              "answer": "G then C, V to I.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "pn.improv": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Chords Below, Notes Above",
+          "mastery": "Improvise over a simple progression with block chords in the left hand and chord tones in the right.",
+          "practice": "Loop C-Am-F-G in the left hand, 1 bar each, and improvise using only the notes of each chord in the right.",
+          "detail": "Start with the safest notes, the ones in the chord under you. They always fit. Once that's easy, add passing notes between them, but land on chord tones on the strong beats. The keyboard makes chord shapes easy to see.",
+          "proof": "A loop of 4 chords with a right-hand line built from chord tones.",
+          "pitfall": "Playing random notes and hoping they fit.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Over an F chord, which 3 notes are safest to play?",
+              "answer": "F, A and C",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Over the 3-note C chord, is F a chord tone?",
+              "answer": "No. It's a passing note, so don't land on it.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Over 1 bar of G, which notes are chord tones?",
+              "answer": "G, B and D",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Use the Pentatonic",
+          "mastery": "Improvise with the major pentatonic scale, which has no notes that clash.",
+          "practice": "Improvise for 2 minutes over a C-F-G loop using only C D E G A in the right hand.",
+          "detail": "The major pentatonic leaves out the 2 notes of the major scale that form half steps, so nothing clashes hard. That makes it a great first scale for improvising. Many folk, pop and blues melodies use it.",
+          "proof": "2 minutes of improvising with no clashing notes.",
+          "pitfall": "Running up and down the scale instead of making melodies.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which 5 notes make up the C major pentatonic scale?",
+              "answer": "C, D, E, G, A",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which 2 notes of C major are left out of C pentatonic?",
+              "answer": "F and B",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does the 5-note pentatonic rarely clash?",
+              "answer": "It leaves out the 2 notes that form half steps.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Make Phrases",
+          "mastery": "Improvise in short phrases with rests between them, like sentences in a conversation.",
+          "practice": "Improvise 8 bars where every phrase is 2 bars long, followed by a 2-beat rest.",
+          "detail": "Nonstop notes are hard to follow. Short phrases with space between them let each idea land. Repeat an idea, then change its ending, and you've started developing it, which is what makes a solo sound planned.",
+          "proof": "8 bars of 2-bar phrases, each followed by a rest.",
+          "pitfall": "Filling every beat with notes.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why leave a rest of 2 beats between improvised phrases?",
+              "answer": "Space lets the listener hear each idea.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 1 way to develop a 2-bar idea.",
+              "answer": "Repeat it, then change its ending.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Should every bar be packed with 16th notes?",
+              "answer": "No. Fewer notes with space often sound better.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Call and Response",
+          "mastery": "Build solos from a short idea and its answer, the way a singer and a choir trade lines.",
+          "practice": "Play a 1-bar question, then a 1-bar answer that changes its ending, 8 times in a row.",
+          "detail": "A call rises or leaves something open. The response answers it, often falling back home. It gives a solo a conversational shape that listeners can follow. Keep both parts short at first.",
+          "proof": "8 question-and-answer pairs.",
+          "pitfall": "Making the answer identical to the call.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A 'call' rises at its end. How might the 'response' end?",
+              "answer": "Falling, landing on the tonic.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How long should a beginner's call be: 1 bar or 8 bars?",
+              "answer": "1 bar",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does call and response make 8 bars of solo easier to follow?",
+              "answer": "Each idea gets a clear answer, like a conversation.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Play From a Lead Sheet",
+          "mastery": "Read a lead sheet, a melody with chord symbols, and improvise an arrangement from it.",
+          "practice": "Take a 16-bar lead sheet and play it 3 times: melody with block chords, melody with broken chords, then a short solo.",
+          "detail": "A lead sheet gives the melody and the chord names, and the accompaniment is up to you. Read the symbols as chords for the left hand. A slash chord like C/E tells you which note goes in the bass.",
+          "proof": "3 versions of the same 16 bars.",
+          "pitfall": "Freezing because the accompaniment isn't written out.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A lead sheet shows Dm7 over bar 5. What should your left hand play?",
+              "answer": "D, F, A and C, or part of that chord.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does a 16-bar lead sheet usually leave out?",
+              "answer": "The full accompaniment, which you make up.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A chord symbol says C/E. Which note goes in the bass?",
+              "answer": "E",
+              "answer_kind": "word"
+            }
+          ]
+        }
+      ]
+    },
     "pn.keys": {
       "model": "claude-opus-5-5",
       "verifier": "rules+authored",
@@ -136511,6 +137033,180 @@
         }
       ]
     },
+    "pn.memory": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Memorize by Structure",
+          "mastery": "Map the piece's sections and repeats before memorizing, so you know its plan.",
+          "practice": "Write a map of a 32-bar piece, like A A B A, with the bar numbers where each section starts.",
+          "detail": "Most pieces repeat material, so you rarely need to memorize every bar from scratch. A map shows what repeats, what changes and where. Mark the small differences between repeated sections, since that's where memory slips happen.",
+          "proof": "A one-line map with each section's letter and starting bar.",
+          "pitfall": "Memorizing bar by bar from the start, with no idea of the shape.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A 32-bar piece is AABA in 8-bar sections. At which bar does B start?",
+              "answer": "17",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why map the sections of 32 bars before memorizing?",
+              "answer": "Repeated sections only need learning once, and the map guides you.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Sections 1 and 3 match except for the last bar. What should you mark?",
+              "answer": "Where they differ, so you don't mix them up.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Know the Harmony",
+          "mastery": "Memorize each section's chord progression, so you know where the music goes even if your fingers slip.",
+          "practice": "Write the chords of 16 bars from memory, then check them against the score.",
+          "detail": "Finger memory alone is fragile, and it's the first thing nerves knock out. If you know the chords, you can rejoin the music at the next one. Combine muscle memory with harmonic memory, visual memory of the page and memory of the sound.",
+          "proof": "16 bars of chords written from memory and checked.",
+          "pitfall": "Relying only on finger memory, which fails under pressure.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Your fingers slip in bar 9. How does knowing the chords help?",
+              "answer": "You know the chord and can rejoin with the next one.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 3 kinds of memory a pianist should combine.",
+              "answer": "Muscle, harmonic and visual memory.",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You can write the chords of 16 bars from memory. What does that show?",
+              "answer": "You know the harmony, not just the finger motions.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Start From Anywhere",
+          "mastery": "Practice starting from any section, so a slip never forces you back to the beginning.",
+          "practice": "Number 6 starting points in a piece, roll a die, and start from that point without looking at the music.",
+          "detail": "Players who can only start at bar 1 are stuck if they slip in the middle. Starting points spread through the piece give you places to land. Practicing them in random order tests each section's memory on its own.",
+          "proof": "All 6 starting points played from memory, in random order.",
+          "pitfall": "Always starting from the beginning, so the end is the least secure part.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You can only start from bar 1. What happens if you slip in bar 20?",
+              "answer": "You may have to restart, since you can't jump back in.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A 48-bar piece has a starting point every 8 bars. How many starting points is that?",
+              "answer": "6",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why start from your 6 points in random order instead of in order?",
+              "answer": "It tests each section's memory on its own.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Memorize Each Hand",
+          "mastery": "Memorize each hand alone, so you can play either part without the other.",
+          "practice": "Play the left hand of 8 bars from memory 3 times without the right hand, then the right hand alone.",
+          "detail": "Hands-together memory often leans on one hand to cue the other, so a slip in one stops both. Knowing each part alone, especially the left hand, makes the whole thing much sturdier.",
+          "proof": "Each hand played alone from memory 3 times.",
+          "pitfall": "Only ever playing hands together from memory.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why can hands-together memory fail in bar 12 in public?",
+              "answer": "One hand leans on the other, so a slip in one stops both.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Of the 2 hands, which is more often forgotten under pressure?",
+              "answer": "The left",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many clean runs of each hand alone, over 8 bars, is a good check?",
+              "answer": "3",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Test Under Pressure",
+          "mastery": "Test your memory away from the piano and in front of others, where slips actually happen.",
+          "practice": "Write out the first 4 bars from memory on blank staff paper, then play the piece for 1 person.",
+          "detail": "Memory that feels solid alone can vanish with an audience. Writing music out away from the keys shows whether you know the notes or only the feel. Playing for even one person adds enough pressure to find the weak spots.",
+          "proof": "4 bars written out, plus 1 performance for a listener.",
+          "pitfall": "Testing only when alone, where everything feels secure.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why write the first 4 bars out away from the piano?",
+              "answer": "It shows whether you know the notes or only the feel.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Where do memory slips most often happen: practicing alone, or playing for 1 or more listeners?",
+              "answer": "Playing for listeners, under pressure.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You blank in bar 10 in front of 1 person. What should you practice next?",
+              "answer": "Starting from bar 10 and the section around it.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
     "pn.pedal": {
       "model": "claude-opus-5-5",
       "verifier": "rules+authored",
@@ -136680,6 +137376,180 @@
               "prompt": "A pedal bracket line has 1 small notch in it. What does the notch tell you?",
               "answer": "Change the pedal there, up and down quickly.",
               "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "pn.perform": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Practice Performing",
+          "mastery": "Practice performing as its own skill, playing straight through for someone without stopping.",
+          "practice": "Play your piece for 1 person this week from start to finish, without stopping for any mistake.",
+          "detail": "In practice you stop and fix things. In performance you never stop. Those are different habits, so the second one needs its own practice. Play through for family, friends or a phone camera as often as you can.",
+          "proof": "1 complete run for a listener, with no stops.",
+          "pitfall": "Only ever practicing in stop-and-fix mode, then expecting a clean run on stage.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Of the 2 modes, practice and performance, in which do you stop to fix mistakes?",
+              "answer": "Practice",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You stop to fix a mistake in bar 10 during a performance. What does the audience notice?",
+              "answer": "The stop, far more than the mistake.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Your recital is in 3 weeks. How many trial runs for people is a good goal before it?",
+              "answer": "3 or more",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Recover From Slips",
+          "mastery": "Recover from a slip by keeping the beat and jumping to the next secure spot.",
+          "practice": "Ask a friend to call 'skip' while you play, and jump to the next of your 4 marked recovery points on the beat.",
+          "detail": "Slips happen to everyone. The skill is keeping the music going. Mark recovery points you know cold, like the starts of sections. If one hand slips, keep the other going so the harmony and beat carry on.",
+          "proof": "4 recovery points marked, each reached on the beat when called.",
+          "pitfall": "Going back to the start of the piece after a slip.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You blank in bar 13. Your recovery points are bars 9 and 17. Which bar do you jump to?",
+              "answer": "17",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why keep the left hand going after a right-hand slip in bar 13?",
+              "answer": "The harmony and beat continue, so the listener barely notices.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What makes a good 1 of your 4 recovery points?",
+              "answer": "A clear section start you know well.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Manage Nerves",
+          "mastery": "Use a pre-performance routine, slow breathing and a deliberate first tempo to settle nerves.",
+          "practice": "Write a 2-minute routine for before you play, like breathing, hands on lap and hearing the first bar, and use it 3 times this week.",
+          "detail": "Nerves speed you up and cool your hands. A routine gives your mind something steady to do. Slow breathing settles the body, and hearing the first bar's tempo in your head before starting stops a rushed opening.",
+          "proof": "A written 2-minute routine, used 3 times.",
+          "pitfall": "Sitting down and starting at once, at a nervous tempo.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Nerves make you start at 120 BPM instead of 96. What helps?",
+              "answer": "Hear the first bar's tempo in your head before playing.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Your hands are cold before a recital. Name 1 fix.",
+              "answer": "Warm them under warm water, or keep them in gloves.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You feel nervous for 5 minutes before playing. Is that normal?",
+              "answer": "Yes. It's energy you can use.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Communicate the Music",
+          "mastery": "Play to get a mood or story across, not just the correct notes.",
+          "practice": "Write 1 sentence describing the mood of your piece, then play it to make that mood obvious to a listener.",
+          "detail": "A performance can be note-perfect and still leave people cold. Deciding what the piece should feel like gives every choice of tempo, touch and dynamics a purpose. Ask a listener what mood they heard.",
+          "proof": "1 sentence on the mood, and a listener's description that matches it.",
+          "pitfall": "Playing carefully and safely, with no mood at all.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "After 1 run, a listener says it sounded correct but flat. What should you work on?",
+              "answer": "Phrasing, dynamics and the mood you want to show.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why decide on a mood in 1 sentence before playing?",
+              "answer": "It gives every choice of touch and timing a purpose.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 2 tools that change the mood of the same passage.",
+              "answer": "Tempo and dynamics.",
+              "answer_kind": "list"
+            }
+          ]
+        },
+        {
+          "title": "Stage Basics",
+          "mastery": "Handle everything around the playing: walking on, adjusting the bench, bowing and taking the applause.",
+          "practice": "Rehearse walking to the piano, adjusting the bench, playing the first 8 bars and bowing, 3 times.",
+          "detail": "The moments before and after the music are part of the performance. A calm walk, a moment to adjust the bench and a breath before the first note set you up. Waiting for the last note to fade before you move lets the music finish.",
+          "proof": "3 full rehearsals of walk-on, bench, opening and bow.",
+          "pitfall": "Rushing to the bench and starting before you're settled.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What should you do before playing the 1st note?",
+              "answer": "Adjust the bench and take a breath.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "After the last of 3 pieces, when should you bow?",
+              "answer": "After the last note has fully faded.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why rehearse the walk-on and bow 3 times?",
+              "answer": "They're part of the performance, and practice makes them calm.",
+              "answer_kind": "sentence"
             }
           ]
         }
@@ -137381,6 +138251,180 @@
         }
       ]
     },
+    "pn.rep": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Keep a List",
+          "mastery": "Keep a written list of the pieces you can play today, with a rating for each one.",
+          "practice": "List every piece you can play now, and rate each from 1 to 3: ready, nearly, or needs work.",
+          "detail": "Repertoire means what you can play today, not what you learned once. A written list with honest ratings shows what's actually ready. It also shows when an old favorite has slipped and needs a refresh.",
+          "proof": "A list of pieces, each with a rating of 1, 2 or 3.",
+          "pitfall": "Counting pieces you learned years ago and can't play now.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Your list has 8 pieces, and 3 are rated ready. What fraction are ready?",
+              "answer": "3/8",
+              "answer_kind": "fraction"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why write a list of your 8 pieces down?",
+              "answer": "You see what you can actually play, not what you once learned.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A piece you learned 2 years ago is now rated 3. Is it still repertoire?",
+              "answer": "Not yet. It needs work before you can play it today.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Polish a Few",
+          "mastery": "Polish a small number of pieces to performance level rather than half-learning many.",
+          "practice": "Pick 3 pieces to bring to 'ready' in the next 6 weeks, and pause the rest.",
+          "detail": "Half-learned pieces never get played for anyone. Three polished ones give you something to play whenever someone asks. Focus brings each one to a finished state much faster than spreading time thin.",
+          "proof": "3 pieces chosen, with the rest paused for now.",
+          "pitfall": "Starting a new piece every week and finishing none.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which is better to play for guests: 3 polished pieces or 20 half-learned ones?",
+              "answer": "3 polished pieces",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You're working on 9 pieces and none is ready. What should you change?",
+              "answer": "Focus on 3 and pause the rest.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "6 weeks for 3 pieces is about how many weeks per piece, one at a time?",
+              "answer": "2",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Maintain What You Have",
+          "mastery": "Schedule regular play-throughs of finished pieces so they stay ready.",
+          "practice": "Add 1 play-through of a finished piece to each practice day, rotating through your list.",
+          "detail": "Finished pieces fade without use: memory drifts and small habits creep in. A short rotation keeps them ready. When a play-through reveals a weak bar, fix it the next day before it spreads.",
+          "proof": "A rotation where each finished piece is played regularly.",
+          "pitfall": "Never playing a piece again once it's finished.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You have 6 ready pieces and play 1 a day in rotation. How often does each get played?",
+              "answer": "Every 6 days",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why do finished pieces fade after 3 months?",
+              "answer": "Memory and fingers drift without regular use.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A play-through reveals a weak bar 14. What should you do?",
+              "answer": "Practice that bar slowly the next day.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Choose for Variety",
+          "mastery": "Choose pieces that cover different periods, moods and tempos.",
+          "practice": "Sort your list by period and tempo, and pick 1 new piece that fills the biggest gap.",
+          "detail": "Each style trains different skills: Bach builds independence, Mozart builds clarity, and Romantic pieces build tone and pedal. Variety also makes a set more interesting to hear. Contrast fast with slow and light with heavy.",
+          "proof": "A sorted list and 1 new piece chosen to fill a gap.",
+          "pitfall": "Choosing only pieces that sound alike.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Your 4 pieces are all slow and Romantic. What should the next one be?",
+              "answer": "Something fast, or from another period, like a Bach invention.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why spread your repertoire across 3 periods?",
+              "answer": "Each style trains different skills and keeps programs interesting.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A recital set of 3 pieces opens slow. What should come 2nd?",
+              "answer": "Something faster, for contrast.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Grow Steadily",
+          "mastery": "Add new pieces at a steady pace, about 1 every month or two, just above your current level.",
+          "practice": "Choose your next piece by playing 4 bars of 3 candidates and picking the one that's hard but manageable.",
+          "detail": "Pieces far above your level take forever and build bad habits. Pieces just above it stretch you and get finished. Testing a few bars of several options is a quick way to find the right level.",
+          "proof": "1 new piece chosen from 3 candidates.",
+          "pitfall": "Picking a famous showpiece years above your level.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Should a new piece be far above your level, or about 1 level above?",
+              "answer": "About 1 level above",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "At 1 new piece every 2 months, how many is that in a year?",
+              "answer": "6",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You can sight-read a candidate's first 4 bars easily. Is it a good challenge?",
+              "answer": "Probably too easy. Pick something a bit harder.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
     "pn.rhythm": {
       "model": "claude-opus-5-5",
       "verifier": "rules+authored",
@@ -137898,6 +138942,180 @@
               "prompt": "Why read the 3 new pieces in patterns?",
               "answer": "One pattern is faster to read than each note.",
               "answer_kind": "sentence"
+            }
+          ]
+        }
+      ]
+    },
+    "pn.style": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Play Baroque Music",
+          "mastery": "Play Baroque music like Bach with clear lines, little or no pedal, and steady time.",
+          "practice": "Play 8 bars of a Bach minuet with no pedal, detached eighth notes and an even beat at 90 BPM.",
+          "detail": "Bach wrote for harpsichord, clavichord and organ, not the modern piano. His music is built from separate lines that should each be heard. Light, slightly detached touch, steady time and little pedal keep those lines clear.",
+          "proof": "8 clear bars at 90 BPM with no pedal.",
+          "pitfall": "Drowning Bach in pedal so the lines blur.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Did Bach write for the modern piano?",
+              "answer": "No. He wrote for harpsichord, clavichord and organ.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Should a Bach minuet get heavy pedal?",
+              "answer": "No. Little or none, to keep the lines clear.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Bach died in which year, often used as the end of the Baroque period?",
+              "answer": "1750",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Play Classical Music",
+          "mastery": "Play Classical music like Mozart with balance, clarity, a light touch and clear phrase endings.",
+          "practice": "Play 8 bars of a Mozart sonata with an even Alberti bass at p and a singing right hand at mf.",
+          "detail": "Classical music sounds elegant and balanced. The accompaniment stays light and even under a clear melody, and phrases end gracefully. Rubato is small, and pedal is used sparingly to keep things clean.",
+          "proof": "8 bars with a quiet, even bass and a clear melody on top.",
+          "pitfall": "Pounding the Alberti bass so it covers the tune.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name 1 Classical-period composer besides Mozart.",
+              "answer": "Haydn or Beethoven",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In Mozart, should the Alberti bass be louder or softer than the melody?",
+              "answer": "Softer",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In Classical music, should rubato be large or small?",
+              "answer": "Small, keeping a steady beat.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Play Romantic Music",
+          "mastery": "Play Romantic music like Chopin with a singing line, rich pedal and flexible time.",
+          "practice": "Play 8 bars of a Chopin nocturne with full legato pedal and gentle rubato in the melody.",
+          "detail": "Romantic music asks for a long singing melody, warm pedaling and freedom with the beat. Chopin's rubato usually keeps the left hand fairly steady while the right hand bends the time. The freedom should sound natural, not random.",
+          "proof": "8 bars with a singing line, connected pedal and gentle rubato.",
+          "pitfall": "Playing Chopin stiffly in strict time.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which composer is famous for nocturnes for solo piano: Chopin or Bach?",
+              "answer": "Chopin",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Is more pedal usual in Chopin or in Bach?",
+              "answer": "Chopin",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In Chopin's rubato, which hand usually keeps steadier time?",
+              "answer": "The left hand",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Learn From Recordings",
+          "mastery": "Learn a style by listening to several great recordings and noticing how they differ.",
+          "practice": "Listen to 3 pianists play the same piece, and write 2 differences in tempo, pedal or dynamics for each.",
+          "detail": "Comparing several recordings shows what every good player does, which is the style, and what each one chooses, which is personal. Copying one recording exactly gives you someone else's choices without the reasons behind them.",
+          "proof": "3 recordings compared, with 6 differences noted.",
+          "pitfall": "Copying a single recording note for note.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why listen to 3 recordings instead of 1?",
+              "answer": "You hear what's essential and what's personal choice.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You copy 1 recording exactly. What's the risk?",
+              "answer": "You copy someone's choices without understanding them.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 thing to compare between 2 recordings.",
+              "answer": "Tempo, pedaling, dynamics or rubato.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Match Touch to the Period",
+          "mastery": "Change touch, pedal and timing to fit each period instead of playing everything the same way.",
+          "practice": "Play 4 bars each of Bach, Mozart and Chopin back to back, and write how your touch and pedal changed.",
+          "detail": "Many students play everything like Chopin, with lots of pedal and rubato. Each period has its own sound. Bach wants clarity and steady time, Mozart wants balance and elegance, and Chopin wants a singing line and freedom.",
+          "proof": "12 bars across 3 styles, with notes on each change.",
+          "pitfall": "Using the same heavy pedal and rubato for every period.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Rank Bach, Mozart and Chopin from least to most pedal, usually.",
+              "answer": "Bach, Mozart, Chopin",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which period values steady time more: Baroque or Romantic?",
+              "answer": "Baroque",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why is playing Bach like Chopin a problem?",
+              "answer": "Heavy pedal and rubato blur Bach's separate lines.",
+              "answer_kind": "phrase"
             }
           ]
         }
