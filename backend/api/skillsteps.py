@@ -84,6 +84,11 @@ def read_steps(nodes: str = Query('', description='Comma-separated node ids')):
 
     # Dashes and curly quotes from older generated content never reach a page.
     programmes = plain(skillsteps.programmes_for(ids, drawn=True), semicolons=False)
+    # How a check marks an answer is the check's business, not the panel's.
+    for steps in programmes.values():
+        for step in steps:
+            for problem in step.get('problems') or []:
+                problem.pop('grading', None)
     return ok(
         steps=programmes,
         missing=[one for one in ids if one not in programmes],

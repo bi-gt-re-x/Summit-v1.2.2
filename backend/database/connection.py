@@ -242,6 +242,11 @@ ADDED_COLUMNS = (
     # every one of them was. See data/sql/skillsteps.sql.
     ('skill_problems', 'aids', 'TEXT'),
     ('skill_problems', 'answer_kind', 'TEXT'),
+    # How a problem that isn't one number is marked, as JSON: the answers it
+    # accepts, the key ideas a sentence must say, the options of a choice. NULL
+    # reads as a problem marked from its answer alone. See
+    # backend/tracking/answer_match.py.
+    ('skill_problems', 'grading', 'TEXT'),
 )
 
 # Indexes on columns that ADDED_COLUMNS supplies. Their own list, applied after
@@ -3591,13 +3596,15 @@ def _step_row(record):
         # JSON_COLUMNS fallback above: degrade the metadata, not the content.
         decoded = []
     row['checks'] = decoded if isinstance(decoded, list) else []
-    # Only problems have `aids`; a step row passes through untouched.
-    if 'aids' in row:
-        try:
-            aids = json.loads(row['aids']) if row['aids'] else {}
-        except (TypeError, ValueError):
-            aids = {}
-        row['aids'] = aids if isinstance(aids, dict) else {}
+    # Only problems have `aids` and `grading`; a step row passes through
+    # untouched.
+    for name in ('aids', 'grading'):
+        if name in row:
+            try:
+                value = json.loads(row[name]) if row[name] else {}
+            except (TypeError, ValueError):
+                value = {}
+            row[name] = value if isinstance(value, dict) else {}
     return row
 
 
@@ -3819,7 +3826,7 @@ def step_audit_summary(run_id=None):
 SKILL_PROBLEM_COLUMNS = (
     'node_id', 'ordinal', 'slot', 'weight', 'prompt', 'answer', 'hint',
     'tree_id', 'model', 'generated_at', 'verified_at', 'verifier', 'checks',
-    'aids', 'answer_kind',
+    'aids', 'answer_kind', 'grading',
 )
 
 
@@ -3874,9 +3881,10 @@ def save_step_problems(node_id, ordinal, rows):
                 checks = values.get('checks') or []
                 if not isinstance(checks, str):
                     values['checks'] = json.dumps(list(checks))
-                aids = values.get('aids')
-                values['aids'] = (aids if isinstance(aids, str)
-                                  else json.dumps(aids, ensure_ascii=False) if aids else None)
+                for name in ('aids', 'grading'):
+                    value = values.get(name)
+                    values[name] = (value if isinstance(value, str)
+                                    else json.dumps(value, ensure_ascii=False) if value else None)
                 columns = ', '.join('"{}"'.format(n) for n in SKILL_PROBLEM_COLUMNS)
                 marks = ', '.join('?' for _ in SKILL_PROBLEM_COLUMNS)
                 con.execute(

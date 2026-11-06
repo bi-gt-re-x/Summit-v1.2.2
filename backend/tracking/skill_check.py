@@ -19,20 +19,27 @@ climbs.
 
 ## Grading
 
-A written answer is a sentence more often than a number, and a sentence cannot
-be marked by string comparison without marking right answers wrong. So:
+Every answer the library can mark is marked here, and the reader only marks
+their own where there is nothing to mark it by. Which is which goes by shape:
 
-    the answer is one number      graded here, on the number the reader typed
+    one number                    graded here, on the number the reader typed
     (with a unit or %, or not)    ("15.", "-60 kJ.", "3/4", "60%")
 
-    anything else                 the reader sees the worked answer and says
+    yes or no, true or false      by the first word
+
+    math, coordinates, a list,    backend/tracking/answer_match.py: the same
+    a word, a choice, code, a     value, the same items, an accepted answer, or
+    sentence with key ideas       every key idea the problem names
+
+    a sentence with no key ideas  the reader sees the worked answer and says
                                   whether theirs matched
 
-The same split Khan Academy's free-response items make between a numeric
-input and a self-graded one. A number is compared exactly where the answer is
-a whole number, and to the answer's own last decimal place where it is not, so
-24.73 accepts 24.734 and 15 does not accept 15.4. A fraction accepts a decimal
-that is right to the places typed (1/6 takes 0.17 or 0.1667, not 0.2).
+A number is compared exactly where the answer is a whole number, and to the
+answer's own last decimal place where it is not, so 24.73 accepts 24.734 and
+15 does not accept 15.4. A fraction accepts a decimal that is right to the
+places typed (1/6 takes 0.17 or 0.1667, not 0.2). A problem stores how it is
+marked in `grading` (skill_problems.grading), and the library tests hold every
+stored answer to passing its own marking.
 
 PASS_SHARE of the questions right passes: 3 of 3, 3 of 4, 4 of 5.
 
@@ -52,6 +59,7 @@ import random
 import re
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
+from backend.tracking import answer_match
 from backend.tracking.mathtext import has_math, to_plain, typed_plain
 
 #: Questions in a check, when the node has that many problems.
@@ -260,6 +268,8 @@ KINDS = {
                   'refuse': 'Start this one with true or false.'},
     'code': {'label': 'Code', 'note': 'Type the code itself.',
              'refuse': 'This one needs code.'},
+    'choice': {'label': 'Pick one', 'note': 'Choose one of the options.',
+               'refuse': 'Pick one of the options.'},
     'word': {'label': 'Word or term', 'note': 'A word or two is enough.',
              'refuse': 'Keep this one to a word or short term.'},
     'phrase': {'label': 'Short answer', 'note': 'A few words is enough.',
@@ -379,12 +389,15 @@ def format_of(kind: str) -> Dict[str, str]:
     return {'kind': kind if kind in KINDS else 'phrase', 'label': entry['label'], 'note': entry['note']}
 
 
-def fits(kind: str, given: str) -> bool:
+def fits(kind: str, given: str, grading: Optional[Dict[str, Any]] = None) -> bool:
     """Whether what was typed is the shape asked for. Says nothing on whether
     it's right."""
     text = typed_plain(given).strip()
     if not text:
         return False
+    if kind == 'choice':
+        choices = (grading or {}).get('choices') or []
+        return not choices or answer_match.matches_one(text, choices, answer_match.SLACK['choice'])
     clean = _clean(text).lstrip('$')
     if kind in ('integer', 'decimal', 'fraction', 'percent'):
         numbers = _numbers(clean)
@@ -426,22 +439,49 @@ def fits(kind: str, given: str) -> bool:
     return True
 
 
-def refusal(kind: str, given: str) -> Optional[str]:
+def refusal(kind: str, given: str, grading: Optional[Dict[str, Any]] = None) -> Optional[str]:
     """The message for an answer of the wrong shape, or None if it's fine."""
-    if fits(kind, given):
+    if fits(kind, given, grading):
         return None
     return (KINDS.get(kind) or KINDS['phrase'])['refuse']
 
 
-def auto_graded(kind: str, answer: str) -> bool:
-    return kind in ('yesno', 'truefalse') or gradable(answer)
+_NUMBER_KINDS = ('integer', 'decimal', 'fraction', 'percent')
 
 
-def grade_as(kind: str, answer: str, given: str) -> Optional[bool]:
-    """`grade`, plus the shapes that go by their first word."""
+def number_answer(kind: str, answer: str) -> Optional[str]:
+    """The number a number-shaped problem wants, when its stored answer says it
+    with words around it ("About 20.", "x = 15", "50 microcoulombs.")."""
+    if kind not in _NUMBER_KINDS:
+        return None
+    if gradable(answer):
+        return answer
+    found = _numbers(_clean(to_plain(answer)))
+    return found[0] if len(found) == 1 else None
+
+
+def auto_graded(kind: str, answer: str, grading: Optional[Dict[str, Any]] = None) -> bool:
+    """Whether the server marks this problem, rather than asking the reader."""
+    if kind in ('yesno', 'truefalse') or gradable(answer) or number_answer(kind, answer):
+        return True
+    return answer_match.can_grade(kind, answer, grading)
+
+
+def grade_as(kind: str, answer: str, given: str,
+             grading: Optional[Dict[str, Any]] = None, prompt: str = '') -> Optional[bool]:
+    """Right or wrong, by the problem's shape: a number by its value, a yes or
+    no by its first word, everything else by backend/tracking/answer_match.py.
+    None only for a problem that has nothing to be marked by."""
     if kind == 'yesno':
         want, got = _first_word(to_plain(answer)), _first_word(given)
-        return (want in _YES and got in _YES) or (want in _NO and got in _NO)
+        right = (want in _YES and got in _YES) or (want in _NO and got in _NO)
+        return right and not answer_match.rejected(given, (grading or {}).get('reject') or [])
     if kind == 'truefalse':
         return _first_word(to_plain(answer))[:1] == _first_word(given)[:1] != ''
-    return grade(answer, given)
+    number = number_answer(kind, answer)
+    if number:
+        return grade(number, given)
+    found = grade(answer, given)
+    if found is not None:
+        return found
+    return answer_match.grade(kind, answer, given, grading, prompt)

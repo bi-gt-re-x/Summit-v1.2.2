@@ -214,6 +214,39 @@ describe('the skill check', () => {
     expect(await screen.findByText(/still locked/)).toBeInTheDocument();
   });
 
+  it('answers a choice by picking one of its options', async () => {
+    const check = fresh();
+    check.questions[0] = {
+      ...check.questions[0]!,
+      prompt: 'Are bird and insect wings homologous or analogous?',
+      format: { kind: 'choice', label: 'Pick one', note: 'Choose one of the options.' },
+      choices: ['Homologous', 'Analogous'],
+    };
+    startCheck.mockResolvedValue({ success: true, check, resumed: false });
+    serve(check);
+    render(<SkillCheck nodeId="m.arith" nodeName="Arithmetic" onClose={vi.fn()} />);
+    await screen.findByText('Are bird and insect wings homologous or analogous?');
+    expect(screen.queryByRole('textbox')).toBeNull();
+    expect(screen.getByRole('button', { name: 'Check' })).toBeDisabled();
+    await act(async () => {
+      fireEvent.click(screen.getByRole('radio', { name: 'Analogous' }));
+    });
+    expect(screen.getByRole('radio', { name: 'Analogous' })).toHaveAttribute('aria-checked', 'true');
+    await press('Check');
+    expect(answer).toHaveBeenCalledWith({ id: 'c1', index: 0, given: 'Analogous' });
+  });
+
+  it('answers a yes or no with two buttons', async () => {
+    const check = fresh();
+    check.questions[0] = {
+      ...check.questions[0]!,
+      format: { kind: 'yesno', label: 'Yes or no', note: 'Start with yes or no.' },
+    };
+    await open(check);
+    expect(screen.getByRole('radio', { name: 'Yes' })).toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: 'No' })).toBeInTheDocument();
+  });
+
   it('closes on Escape and on the close button', async () => {
     const { onClose } = await open();
     fireEvent.keyDown(window, { key: 'Escape' });

@@ -122,6 +122,7 @@ def _problems_of(raw_step, ordinal, tree=''):
             'hint': str(problem.get('hint', '') or '').strip(),
             **({'answer_kind': problem['answer_kind']} if problem.get('answer_kind') else {}),
             **({'aids': problem['aids']} if problem.get('aids') else {}),
+            **({'grading': problem['grading']} if problem.get('grading') else {}),
         }, tree))
     return out
 
@@ -158,7 +159,8 @@ def export():
                      'prompt': one['prompt'], 'answer': one['answer'],
                      **({'hint': one['hint']} if one['hint'] else {}),
                      **({'answer_kind': one['answer_kind']} if one.get('answer_kind') else {}),
-                     **({'aids': one['aids']} if one.get('aids') else {})}
+                     **({'aids': one['aids']} if one.get('aids') else {}),
+                     **({'grading': one['grading']} if one.get('grading') else {})}
                     for one in sets.get(row['ordinal'], [])]}
                    if sets.get(row['ordinal']) else {}),
             } for row in rows],

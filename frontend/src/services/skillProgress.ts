@@ -122,11 +122,13 @@ export interface CheckQuestion {
   weight: 'warmup' | 'core' | 'stretch';
   prompt: string;
   hint: string;
-  /** Graded on what's typed. Otherwise the reader compares with the
-   *  worked answer and says whether theirs matched. */
+  /** Marked by the server on what's typed or picked. Otherwise the reader
+   *  compares with the worked answer and says whether theirs matched. */
   auto: boolean;
   /** What shape the answer has to take. */
   format?: AnswerFormat;
+  /** For a choice: the options, drawn as buttons. */
+  choices?: string[];
   /** Drawn under the question. */
   figure?: Figure;
   /** What the reader may open while working it. */

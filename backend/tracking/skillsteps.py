@@ -52,7 +52,7 @@ from functools import lru_cache
 
 from backend.config.shared import RULES
 from backend.database import connection
-from backend.tracking import skill_check
+from backend.tracking import answer_match, skill_check
 from backend.tracking.mathtext import to_latex, to_plain
 
 # ---------------------------------------------------------------------------
@@ -511,6 +511,7 @@ def programmes_for(node_ids, drawn=False):
                 'format': skill_check.format_of(problem.get('answer_kind') or skill_check.classify(
                     problem['prompt'], problem['answer'], problem.get('tree_id') or '')),
                 **({'aids': problem['aids']} if problem.get('aids') else {}),
+                **({'grading': problem['grading']} if problem.get('grading') else {}),
             })
         out[node_id] = [{
             'ordinal': row['ordinal'],
@@ -689,11 +690,16 @@ def problem_failures(problem, step, others=()):
             break
 
     kind = written.get('answer_kind')
+    grading = written.get('grading') or {}
     if kind:
         if kind not in skill_check.KINDS:
             bad.append('format:answer_kind {!r} is not a known shape'.format(kind))
-        elif not skill_check.fits(kind, problem['answer']):
+        elif kind != 'choice' and not skill_check.fits(kind, problem['answer']):
             bad.append('format:the answer does not fit its own shape, {}'.format(kind))
+        else:
+            bad.extend(answer_match.grading_failures(kind, written.get('answer', ''), grading))
+            if kind == 'choice' and not grading.get('choices'):
+                bad.append('grading:a choice needs its choices')
 
     return bad
 

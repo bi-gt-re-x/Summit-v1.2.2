@@ -78,6 +78,15 @@ def _kind(problem):
     return (problem.get('format') or {}).get('kind') or 'phrase'
 
 
+def _grading(problem):
+    return problem.get('grading') or {}
+
+
+def _choices(problem):
+    """The options a choice is answered from, as buttons. Never the answer."""
+    return list(_grading(problem).get('choices') or []) if _kind(problem) == 'choice' else []
+
+
 def _aids(problem):
     """What goes out with the question: its figure and its tools. The answer's
     figure is the answer, so it waits (`_worked`)."""
@@ -110,8 +119,9 @@ def _public(row, problems):
             'weight': question.get('weight') or problem.get('weight') or 'core',
             'prompt': problem.get('prompt', ''),
             'hint': problem.get('hint', ''),
-            'auto': skill_check.auto_graded(_kind(problem), problem.get('answer', '')),
+            'auto': skill_check.auto_graded(_kind(problem), problem.get('answer', ''), _grading(problem)),
             'format': skill_check.format_of(_kind(problem)),
+            **({'choices': _choices(problem)} if _choices(problem) else {}),
             **_aids(problem),
             'result': None,
         }
@@ -245,10 +255,10 @@ def answer(body: Answer, username: str = Depends(current_username)):
         kind = _kind(problem)
         # The wrong shape isn't a miss. Nothing is recorded, and they try again.
         if given:
-            refused = skill_check.refusal(kind, given)
+            refused = skill_check.refusal(kind, given, _grading(problem))
             if refused:
                 return ok(check=_public(row, problems), invalid={'index': body.index, 'message': refused})
-        auto = skill_check.grade_as(kind, problem['answer'], given)
+        auto = skill_check.grade_as(kind, problem['answer'], given, _grading(problem), problem.get('prompt', ''))
         if auto is not None:
             if not given:
                 return fail('Type an answer first, or show the answer.')

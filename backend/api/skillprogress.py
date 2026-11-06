@@ -58,8 +58,10 @@ def reading(username):
     sittings = db.columns_for('focus_sittings', username, SITTING_COLUMNS)
     checks = db.rows_for('skill_checks', username)
     _tasks, goals, _matches = db.topic_inputs(username, with_tasks=False)
+    opened = db.user_setting(username, skill_progress.OPEN_ALL_KEY) or {}
     return skill_progress.read(tasks, sittings, checks,
-                               db.checkable_nodes(skill_progress.CHECK_MIN), goals)
+                               db.checkable_nodes(skill_progress.CHECK_MIN), goals,
+                               open_all=isinstance(opened, dict) and bool(opened.get('all')))
 
 
 @router.get('/api/skill-progress')

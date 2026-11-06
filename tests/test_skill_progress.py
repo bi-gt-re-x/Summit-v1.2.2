@@ -159,6 +159,19 @@ def test_a_node_with_no_check_is_done_at_its_target():
     assert done['nodes']['m.arith']['on'] == '2026-10-{:02d}'.format(target)
 
 
+def test_an_account_can_open_every_node():
+    status = sp.read([], open_all=True)['status']
+    assert set(status) == set(sp.catalog())
+    assert set(status.values()) == {'available'}
+
+
+def test_opening_every_node_masters_nothing():
+    status = sp.read(_arithmetic(1), open_all=True)['status']
+    assert status['m.arith'] == 'progress'
+    assert status['m.order'] == 'available'
+    assert 'complete' not in status.values()
+
+
 def test_finishing_a_node_opens_what_needs_it():
     status = sp.read(_arithmetic(sp.target_for('m.arith')))['status']
     assert status['m.order'] == 'available'
@@ -347,7 +360,7 @@ STEP_ROW = {
 }
 
 
-SENTENCES = ('Carry the one.', 'Because 9 plus 1 carries.')
+SENTENCES = ('You carry the one into the tens.', 'Because 9 plus 1 carries.')
 
 
 def _number(question):
@@ -599,6 +612,14 @@ def test_a_locked_node_cannot_be_checked(client):
     reply = client.post('/api/skill-checks/start', json={'node_id': 'm.order'}).json()
     assert reply['success'] is False
     assert 'locked' in reply['message']
+
+
+def test_an_open_tree_lets_a_locked_node_be_checked(client):
+    _seed_check('m.order')
+    db.set_user_setting('tester', sp.OPEN_ALL_KEY, {'all': True})
+    reply = client.post('/api/skill-checks/start', json={'node_id': 'm.order'}).json()
+    assert reply['success'] is True, reply
+    assert client.get('/api/skill-progress').json()['status']['m.order'] == 'available'
 
 
 def test_a_node_with_no_problems_has_no_check(client):

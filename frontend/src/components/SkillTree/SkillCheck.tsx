@@ -10,18 +10,25 @@
  * Academy's exercises use, because it is the shape that works: one decision on
  * screen, feedback straight after it, and the next question one key away.
  *
- * ## Two kinds of question
+ * ## Who marks it
  *
- * The server grades an answer that is one number or a yes or no (backend/
- * tracking/skill_check.py), so those get a verdict the moment Check is pressed.
- * An answer that is a sentence cannot be marked by matching text, so Check shows
- * the worked answer and the reader says whether theirs matched. "Show me the
- * answer" is there for both and counts as missed, which is what lets a reader
- * be honest about not knowing instead of guessing.
+ * The server marks nearly everything (backend/tracking/skill_check.py and
+ * answer_match.py): a number by its value, math by what it equals, a word or a
+ * pick by the answers the problem accepts, a sentence by the key ideas it has
+ * to say. Those get a verdict the moment Check is pressed. Only a problem with
+ * nothing to mark it by still shows the worked answer and asks the reader
+ * whether theirs matched. "Show me the answer" is there for all of them and
+ * counts as missed, which is what lets a reader be honest about not knowing
+ * instead of guessing.
  *
- * Every question says what shape its answer takes, next to the box. Type the
- * wrong shape and the server says so without marking anything, and the message
- * sits under the box until the answer changes.
+ * ## The box fits the answer
+ *
+ * Every question says what shape its answer takes, and the box follows it: a
+ * yes or no, a true or false, and a choice are buttons; a number, a word or a
+ * point is a short box; math and code are fixed-width; a sentence or a
+ * paragraph gets room to write. Type the wrong shape and the server says so
+ * without marking anything, and the message sits under the box until the
+ * answer changes.
  *
  * ## What the result does
  *
@@ -43,8 +50,27 @@ import { MathText } from './MathText';
 import { ProblemFigure } from './ProblemFigure';
 import '@/styles/skillcheck.css';
 
-/** Answers that take more than one line get a bigger box. */
-const LONG_FORMS = new Set(['paragraph', 'sentence', 'phrase', 'code', 'list']);
+/** Answers that take more than one line get a bigger box, with this many rows. */
+const LONG_FORMS: Record<string, number> = { paragraph: 6, sentence: 3, code: 4, phrase: 2 };
+
+/** Shapes answered by picking, not typing. The words on the buttons are what
+    gets sent, so the server marks a pick exactly as it marks typing. */
+const PICKS: Record<string, string[]> = {
+  yesno: ['Yes', 'No'],
+  truefalse: ['True', 'False'],
+};
+
+/** Short answers get a short box, so the box says how much is wanted. */
+const SHORT_FORMS = new Set(['integer', 'decimal', 'fraction', 'percent', 'word', 'coordinates']);
+
+/** Math and code read better in a fixed-width face. */
+const MONO_FORMS = new Set(['expression', 'coordinates', 'code']);
+
+function picksFor(question: CheckQuestion): string[] {
+  const kind = question.format?.kind ?? '';
+  if (kind === 'choice') return question.choices ?? [];
+  return PICKS[kind] ?? [];
+}
 
 /** What the problems' three grades are called on screen. */
 const LEVEL: Record<CheckQuestion['weight'], string> = {
@@ -283,19 +309,42 @@ export function SkillCheck({ nodeId, nodeName, onClose, onProgress }: SkillCheck
         )}
 
         <div className="skc-answer-head">
-          <label className="skc-label" htmlFor={`${titleId}-answer`}>
+          <label className="skc-label" id={`${titleId}-label`} htmlFor={`${titleId}-answer`}>
             Your answer
           </label>
           <AnswerFormat format={question.format} />
         </div>
-        {!LONG_FORMS.has(question.format?.kind ?? '') ? (
+        {picksFor(question).length > 0 ? (
+          <div className="skc-picks" role="radiogroup" aria-labelledby={`${titleId}-label`}>
+            {picksFor(question).map((option) => (
+              <button
+                key={option}
+                type="button"
+                role="radio"
+                aria-checked={given === option}
+                className={`skc-pick${given === option ? ' is-picked' : ''}`}
+                disabled={locked || busy}
+                onClick={() => {
+                  setGiven(option);
+                  setInvalid('');
+                }}
+              >
+                <MathText text={option} />
+              </button>
+            ))}
+          </div>
+        ) : !(question.format?.kind && question.format.kind in LONG_FORMS) ? (
           <input
             id={`${titleId}-answer`}
             ref={field}
-            className="skc-input"
+            className={`skc-input${SHORT_FORMS.has(question.format?.kind ?? '') ? ' skc-input--short' : ''}${
+              MONO_FORMS.has(question.format?.kind ?? '') ? ' skc-input--mono' : ''
+            }`}
             value={given}
             disabled={locked || busy}
             autoComplete="off"
+            autoCapitalize="off"
+            spellCheck={false}
             inputMode="text"
             aria-invalid={Boolean(invalid)}
             aria-describedby={invalid ? `${titleId}-invalid` : undefined}
@@ -309,13 +358,14 @@ export function SkillCheck({ nodeId, nodeName, onClose, onProgress }: SkillCheck
           <textarea
             id={`${titleId}-answer`}
             ref={field}
-            className="skc-input skc-input--long"
+            className={`skc-input skc-input--long${MONO_FORMS.has(question.format?.kind ?? '') ? ' skc-input--mono' : ''}`}
             value={given}
-            rows={question.format?.kind === 'paragraph' ? 6 : 3}
+            rows={LONG_FORMS[question.format?.kind ?? ''] ?? 3}
             disabled={locked || busy}
+            spellCheck={question.format?.kind !== 'code'}
             aria-invalid={Boolean(invalid)}
             aria-describedby={invalid ? `${titleId}-invalid` : undefined}
-            placeholder="Write it out, then check it against the worked answer"
+            placeholder={question.auto ? 'Write your answer' : 'Write it out, then check it against the worked answer'}
             onChange={(event) => {
               setGiven(event.target.value);
               setInvalid('');

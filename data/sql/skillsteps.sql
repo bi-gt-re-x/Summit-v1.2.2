@@ -243,6 +243,14 @@ CREATE TABLE IF NOT EXISTS skill_problems (
     -- markup; backend/tracking/skillsteps.py checks its shape and
     -- frontend/src/components/SkillTree/ProblemFigure.tsx draws it.
     aids         TEXT,
+    -- The answer's shape ('integer', 'choice', 'sentence', ...), from
+    -- KINDS in backend/tracking/skill_check.py.
+    answer_kind  TEXT,
+    -- How an answer that isn't one number is marked, as JSON: `accept` (whole
+    -- answers that count), `keys` (the ideas a sentence must say, each a list
+    -- of ways to say it), `need`, `choices`, `reject` and `order`. NULL for a
+    -- problem marked from its answer alone. backend/tracking/answer_match.py.
+    grading      TEXT,
 
     tree_id      TEXT    NOT NULL,
     model        TEXT    NOT NULL,

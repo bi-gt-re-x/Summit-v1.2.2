@@ -38,6 +38,13 @@ doing derivatives homework is doing derivatives whatever the tree says about
 limits, and drawing that tile as locked would be the tree arguing with the
 record.
 
+## Every node open, for an account that asks
+
+An account whose OPEN_ALL_KEY setting is on sees every node open: nothing is
+locked behind what comes before it, so any skill can be booked or checked out
+of order. It opens, and nothing more. Mastered still means passed, and the bars
+still fill only from real work, so the record stays what the reader did.
+
 ## Nothing is stored
 
 Every figure is a function of tasks, sittings and checks, read fresh. A GET
@@ -75,6 +82,9 @@ RECENT = 5
 
 #: How many unfiled task names a tree carries back as examples.
 UNFILED_SAMPLES = 3
+
+#: The user_settings key that opens every node: {"all": true}.
+OPEN_ALL_KEY = 'skill_tree_open'
 
 
 # --------------------------------------------------------------------------
@@ -394,12 +404,13 @@ def _check_summary(rows: Sequence[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
 
 def read(tasks: Sequence[Dict[str, Any]], sittings: Sequence[Dict[str, Any]] = (),
          checks: Sequence[Dict[str, Any]] = (), checkable: Iterable[str] = (),
-         goals: Sequence[Dict[str, Any]] = ()) -> Dict[str, Any]:
+         goals: Sequence[Dict[str, Any]] = (), open_all: bool = False) -> Dict[str, Any]:
     """The whole account's standing, for the page.
 
     `tasks` are every task (done and open), `sittings` the focus sittings,
     `checks` the skill_checks rows, `checkable` the node ids that have a
-    check, `goals` the active goals.
+    check, `goals` the active goals. `open_all` opens every node whatever
+    comes before it (the account's OPEN_ALL_KEY setting).
 
     Answers with:
 
@@ -476,7 +487,7 @@ def read(tasks: Sequence[Dict[str, Any]], sittings: Sequence[Dict[str, Any]] = (
         gates = [gate for gate in node['requires'] if gate in nodes]
         if worked:
             status[node_id] = 'progress'
-        elif not gates or all(gate in complete for gate in gates):
+        elif open_all or not gates or all(gate in complete for gate in gates):
             status[node_id] = 'available'
 
     unfiled = {

@@ -151610,8 +151610,21 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "What does input() return when a user just presses Enter?",
-              "answer": "''",
-              "answer_kind": "word"
+              "answer": "An empty string, ''.",
+              "answer_kind": "code",
+              "grading": {
+                "accept": [
+                  "''",
+                  "\"\""
+                ],
+                "keys": [
+                  [
+                    "empty string",
+                    "empty str",
+                    "blank string"
+                  ]
+                ]
+              }
             }
           ]
         },
