@@ -110556,6 +110556,1398 @@
         }
       ]
     },
+    "mt.clefs": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Treble Clef Lines and Spaces",
+          "mastery": "Read the 9 treble clef spots, 5 lines and 4 spaces, as fast as you read letters.",
+          "practice": "Say the 5 treble lines from the bottom, E G B D F, and the 4 spaces, F A C E, then quiz yourself on 10 random notes.",
+          "detail": "Learn the lines and spaces as two separate sets, then learn a few landmark notes cold: G on the second line, where the clef curls, and the C in the third space. Read every other note from the nearest landmark instead of counting up from the bottom.",
+          "proof": "10 notes named in under 30 seconds with no mistakes.",
+          "pitfall": "Counting up from the bottom line every time, which never gets faster.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In treble clef, which note sits on line 1, the bottom line?",
+              "answer": "E",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In treble clef, which note is in space 3, counting from the bottom?",
+              "answer": "C",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which note sits on the 1st ledger line below the treble staff?",
+              "answer": "Middle C",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Bass Clef Lines and Spaces",
+          "mastery": "Read the 9 bass clef spots as quickly as the treble ones.",
+          "practice": "Learn the bass lines G B D F A and spaces A C E G from the bottom, then name 10 random bass notes in under a minute.",
+          "detail": "The two dots of the bass clef sit around the F line, which is why it's called the F clef. The same spot on the staff reads two letters higher in bass than in treble, so the bottom line is G in bass and E in treble. Use F and middle C as landmarks.",
+          "proof": "10 bass notes named in under a minute.",
+          "pitfall": "Reading bass clef as if it were treble, which puts every note two letters off.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In bass clef, which note sits on line 5, the top line?",
+              "answer": "A",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In bass clef, which note is in space 1, the bottom space?",
+              "answer": "A",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A bass clef note has one ledger line above the staff. Name it.",
+              "answer": "Middle C",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Read Alto Clef",
+          "mastery": "Read alto clef, where the middle line is middle C.",
+          "practice": "Write out the alto clef lines from the bottom, F A C E G, and name 6 notes from a Viola part.",
+          "detail": "The alto clef's center points at the middle line, and that line is middle C. Every other note follows from there, step by step. Violas read it almost all the time, so it's worth learning if you play or arrange for strings.",
+          "proof": "6 viola notes named correctly, starting from the C line.",
+          "pitfall": "Assuming the middle line is B, as in treble clef.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In alto clef, which note is on line 3, the middle line?",
+              "answer": "Middle C",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In alto clef, which note is on line 1?",
+              "answer": "F",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which orchestra instrument reads alto clef as its main clef: Viola or Cello?",
+              "answer": "Viola",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Ledger Lines and Octaves",
+          "mastery": "Read notes on ledger lines, and name a note's octave number, like C4 for middle C.",
+          "practice": "Name the treble notes 1, 2 and 3 ledger lines above the staff, and give each one's octave number.",
+          "detail": "Ledger lines extend the staff, so keep alternating line, space, line as you go. Octave numbers start over on every C, and middle C is C4. So the B just below middle C is B3. The numbers let you name exact pitches without a staff.",
+          "proof": "A5, C6 and E6.",
+          "pitfall": "Starting a new octave number on A instead of C.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In scientific pitch notation, the A above middle C is A4. What number does middle C get?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In treble clef, what note and octave sits on the 1st ledger line above the staff?",
+              "answer": "A5",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many half steps up is C5 from C4?",
+              "answer": "12",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Sharps, Flats and Naturals",
+          "mastery": "Read accidentals, and name enharmonic pairs like F sharp and G flat.",
+          "practice": "Write the enharmonic spelling of C#, Eb, B and F, then play each pair on a keyboard to hear that they match.",
+          "detail": "A sharp raises a note one half step and a flat lowers it one. A natural cancels either. An accidental lasts until the end of the bar, for that pitch only. Enharmonic notes sound the same but are spelled differently, and the key decides which spelling is right.",
+          "proof": "Db, D#, Cb and E#.",
+          "pitfall": "Forgetting that an accidental carries through the rest of the bar.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the enharmonic spelling of G#?",
+              "answer": "Ab",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A sharp raises a note by how many half steps, 1 or 2?",
+              "answer": "1",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A bar has F#, then later an F with no sign. Is that second F still sharp?",
+              "answer": "Yes. An accidental lasts to the end of the bar.",
+              "answer_kind": "yesno"
+            }
+          ]
+        }
+      ]
+    },
+    "mt.ear": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Link Intervals to Songs",
+          "mastery": "Tie each interval to the opening of a song you know, so you can recognize it fast.",
+          "practice": "Pick a song for each interval from a minor 2nd to a perfect 5th, and sing each opening from a note someone plays.",
+          "detail": "A familiar song turns an abstract distance into a sound you already know. Use songs whose first two notes make the interval. Practice both directions, since a falling 5th sounds different from a rising one. After a few weeks you'll stop needing the songs.",
+          "proof": "A list of 6 songs, each sung correctly from a played note.",
+          "pitfall": "Picking songs you only half know, so the reference is shaky too.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "'Here Comes the Bride' opens with which interval?",
+              "answer": "A perfect fourth",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "The 'Jaws' theme moves back and forth by which interval?",
+              "answer": "A minor second",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "'Twinkle Twinkle' jumps from its 2nd note to its 3rd by which interval?",
+              "answer": "A perfect fifth",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Hear Triad Qualities",
+          "mastery": "Tell major from minor triads by ear, then add diminished and augmented.",
+          "practice": "Use an app to play 20 random major and minor triads, name each one, and log your score out of 20.",
+          "detail": "Start with only two choices until you score 90%, then add the other two. Major sounds open and minor sounds darker. Diminished sounds tight and tense, and augmented sounds stretched and unresolved. Sing the notes of the chord if you're unsure.",
+          "proof": "A score out of 20 logged for the day.",
+          "pitfall": "Adding all four qualities at once, which makes every guess a coin flip.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A triad stacks 2 minor thirds and sounds tense. What quality is it?",
+              "answer": "Diminished",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A triad stacks 2 major thirds and sounds unresolved. What quality is it?",
+              "answer": "Augmented",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You named 16 of 20 triads right. What percent is that?",
+              "answer": "80%",
+              "answer_kind": "percent"
+            }
+          ]
+        },
+        {
+          "title": "Hear Scale Degrees",
+          "mastery": "Hear a note against the key and name its scale degree, starting with do, mi and sol.",
+          "practice": "Play a C major chord, then a random note from C major, and name its degree out loud 15 times.",
+          "detail": "Every degree has its own feel in a key. Do feels at rest, ti leans up, and fa leans down. Set the key with a chord first, then judge the note against it. This skill is the base of dictation and of playing by ear.",
+          "proof": "15 notes named, with your score written down.",
+          "pitfall": "Judging each note on its own pitch without setting the key first.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In C major, which scale degree, 1 to 7, is G?",
+              "answer": "5",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A melody in D major ends on the note that feels fully at rest. Which note is it?",
+              "answer": "D",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In G major, which note, degree 7, pulls hardest up to the tonic?",
+              "answer": "F#",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Practice a Little Daily",
+          "mastery": "Keep ear practice to about 10 minutes a day and track your scores, so you can see progress.",
+          "practice": "Spend 10 minutes a day for 7 days on one app drill, and write each day's score out of 20.",
+          "detail": "Ears improve with frequent short sessions far more than with rare long ones. Track one number per day, so a plateau is obvious. When a score stalls, narrow the drill to the pairs you confuse most, like 4ths and 5ths.",
+          "proof": "A week of scores, ideally rising.",
+          "pitfall": "Cramming for an hour before a test and forgetting it all by the next week.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Day 1 you score 12 of 20 and day 7 you score 17. How many points did you gain?",
+              "answer": "5",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which builds a better ear: 10 minutes for 7 days, or 70 minutes on one day?",
+              "answer": "10 minutes for 7 days.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Your interval score is stuck at 80% for a week. What should you change?",
+              "answer": "Narrow the drill to the pairs you mix up, like 4ths and 5ths.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Hear Chord Progressions",
+          "mastery": "Recognize common progressions like I IV V I and I V vi IV by following the bass line.",
+          "practice": "Listen to 5 pop songs and write the progression of each chorus, using the bass note to find each chord.",
+          "detail": "The bass usually plays the root, so following it names most chords. Then decide major or minor. Many songs reuse a handful of progressions, so once you know four of them, you'll hear them everywhere.",
+          "proof": "5 choruses written out in Roman numerals.",
+          "pitfall": "Trying to hear every note of every chord instead of starting from the bass.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A chorus goes C, G, Am, F. Write it in Roman numerals.",
+              "answer": "I V vi IV",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In I IV V I, which chord sounds most like it needs to resolve?",
+              "answer": "V",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A song in G major uses G, C and D. Which numerals are those?",
+              "answer": "I, IV and V",
+              "answer_kind": "list"
+            }
+          ]
+        }
+      ]
+    },
+    "mt.intervals": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Count the Size",
+          "mastery": "Find an interval's number by counting letter names, including both ends.",
+          "practice": "Find the interval number, like 3rd or 5th, for C up to G, D up to B and E up to the D above.",
+          "detail": "Count the starting letter as 1. C, D, E, F, G is five letters, so C to G is a 5th. Ignore sharps and flats at this stage, since they change the quality, not the number. Same letter to same letter is a unison or an octave.",
+          "proof": "A 5th, a 6th and a 7th.",
+          "pitfall": "Starting the count at 0, which makes every interval one too small.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Count letters: what number, like 2nd or 3rd, is C up to E?",
+              "answer": "3rd",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What number, like 4th or 5th, is F up to C?",
+              "answer": "5th",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What number, like 6th or 7th, is B up to the next A?",
+              "answer": "7th",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Major and Perfect Intervals",
+          "mastery": "Know that each note of a major scale sits a major or perfect interval above its tonic.",
+          "practice": "From C, name all 7 intervals up to D, E, F, G, A, B and the next C.",
+          "detail": "Unisons, 4ths, 5ths and octaves are perfect. 2nds, 3rds, 6ths and 7ths above the tonic of a major scale are major. Memorize the half steps too: M2 is 2, M3 is 4, P4 is 5, P5 is 7, M6 is 9 and M7 is 11.",
+          "proof": "M2, M3, P4, P5, M6, M7 and P8.",
+          "pitfall": "Calling a 5th major. 4ths and 5ths are perfect, not major.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "C up to A is a 6th. Is it major or perfect?",
+              "answer": "Major",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many half steps is a perfect 5th?",
+              "answer": "7",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many half steps is a major 7th?",
+              "answer": "11",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Minor, Augmented and Diminished",
+          "mastery": "Shrink a major interval a half step to make it minor, and stretch or squeeze a perfect one to make it augmented or diminished.",
+          "practice": "Name C up to Eb, C up to F#, C up to Gb and C up to Ab.",
+          "detail": "Keep the letters fixed and change only the accidental. A major interval made a half step smaller is minor, and smaller again is diminished. A perfect interval made a half step bigger is augmented, and smaller is diminished. The tritone can be spelled as an A4 or a d5.",
+          "proof": "m3, A4, d5 and m6.",
+          "pitfall": "Calling C up to F# a diminished 5th. The letters make it a 4th.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many half steps is a minor 3rd?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "D up to F is a 3rd. Major or minor?",
+              "answer": "Minor",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "F up to B is a 4th. What quality is it?",
+              "answer": "Augmented",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Spell Intervals Up and Down",
+          "mastery": "Write the note that sits a given interval above or below another, with the right spelling.",
+          "practice": "Write the note a major 3rd above Bb, a perfect 4th below E and a minor 6th above F#.",
+          "detail": "First count letters to get the right letter name. Then count half steps and add a sharp or flat to fix the size. Doing it in that order keeps you from writing A# when the answer needs Bb.",
+          "proof": "D, B and D.",
+          "pitfall": "Getting the right pitch with the wrong letter, like Gb for a 4th above C#.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What note is a perfect 5th above D?",
+              "answer": "A",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What note is a major 3rd above E-flat?",
+              "answer": "G",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What note is a minor 3rd below C#?",
+              "answer": "A#",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Invert Intervals",
+          "mastery": "Invert an interval: the numbers add to 9, major swaps with minor, augmented swaps with diminished, and perfect stays perfect.",
+          "practice": "Invert a major 3rd, a perfect 4th and an augmented 4th, and check that each pair adds to 12 half steps.",
+          "detail": "Inverting means moving the bottom note up an octave. An interval and its inversion always fill an octave together, 12 half steps. That makes big intervals easy: a major 7th is just a minor 2nd short of the octave.",
+          "proof": "m6, P5 and d5.",
+          "pitfall": "Keeping the quality when inverting, so a major 3rd becomes a major 6th.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the inversion of a minor 7th?",
+              "answer": "A major 2nd",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is the inversion of a perfect 5th?",
+              "answer": "A perfect 4th",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A major 6th is 9 half steps. How many half steps is its inversion?",
+              "answer": "3",
+              "answer_kind": "integer"
+            }
+          ]
+        }
+      ]
+    },
+    "mt.keys": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Order of Sharps",
+          "mastery": "Recite the order of sharps, F C G D A E B, and name a sharp key from its signature.",
+          "practice": "Name the keys with 2, 4 and 6 sharps, using the rule that the last sharp is a half step below the tonic.",
+          "detail": "Sharps always appear in the same order, so a signature with 3 sharps holds the first 3: F, C and G. Go up a half step from the last sharp and you have the major key. A phrase like Father Charles Goes Down And Ends Battle helps you remember.",
+          "proof": "D major, E major and F# major.",
+          "pitfall": "Taking the last sharp itself as the key name.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "The key of A major has how many sharps, from 0 to 7?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A signature has F#, C# and G#. Which major key is it?",
+              "answer": "A major",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which major key has 5 sharps?",
+              "answer": "B major",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Order of Flats",
+          "mastery": "Recite the order of flats, B E A D G C F, and name a flat key from its signature.",
+          "practice": "Name the keys with 1, 3 and 5 flats, using the rule that the second-to-last flat names the key.",
+          "detail": "Flats come in the reverse order of sharps. For two or more flats, the second-to-last flat is the major key. F major is the exception to learn by heart, with one flat, Bb. Saying BEAD then GCF gets the whole order.",
+          "proof": "F major, E-flat major and D-flat major.",
+          "pitfall": "Forgetting that F major has a flat, since its name doesn't.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which major key has exactly 1 flat?",
+              "answer": "F major",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A signature has Bb, Eb, Ab and Db. Which major key is it?",
+              "answer": "A-flat major",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many flats does G-flat major have, from 0 to 7?",
+              "answer": "6",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Walk the Circle of Fifths",
+          "mastery": "Walk the circle of fifths: each step clockwise adds a sharp and each step counterclockwise adds a flat.",
+          "practice": "Draw the circle of fifths with all 12 major keys and their relative minors on the inside.",
+          "detail": "Start at C with no sharps or flats. Go up a perfect 5th for each clockwise step, G, D, A and on, adding a sharp each time. Counterclockwise, go down a 5th, F, Bb, Eb, adding a flat. Neighbors on the circle are closely related keys, which matters for modulation.",
+          "proof": "A drawn circle from C round to F, with relative minors like A minor under C.",
+          "pitfall": "Going up a 4th clockwise, which runs the circle backward.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "On the circle of 5ths, going clockwise from G, which key comes next?",
+              "answer": "D",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "F major has 1 flat. Which major key has 2?",
+              "answer": "B-flat major",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which 2 keys sit next to C major on the circle of fifths?",
+              "answer": "G major and F major.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Find the Relative Minor",
+          "mastery": "Find the relative minor that shares each major key's signature, a minor third below its tonic.",
+          "practice": "Give the relative minors of D, B-flat and E major, along with their signatures, like 2 sharps.",
+          "detail": "Count down three half steps from the major tonic and keep the letter three below, so C goes to A. The relative minor uses exactly the same notes and signature. On the circle, it sits inside its major key.",
+          "proof": "B minor with 2 sharps, G minor with 2 flats, and C# minor with 4 sharps.",
+          "pitfall": "Spelling the relative minor of E major as Db minor, which uses the wrong letter.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the relative minor of F major, which shares its 1 flat?",
+              "answer": "D minor",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is the relative major of C# minor?",
+              "answer": "E major",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many sharps does F# minor have?",
+              "answer": "3",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Find the Key of a Piece",
+          "mastery": "Name a piece's key from its signature, its first and last notes, and any raised 7ths.",
+          "practice": "A piece with one sharp ends on E and has several D#s. Decide whether it's G major or E minor, and say why.",
+          "detail": "Each signature fits one major and one minor key. Check the last note and chord, which usually land on the tonic. In minor, the raised 7th shows up as an accidental, so a D# in a one-sharp piece points to E minor.",
+          "proof": "E minor. It ends on E, and D# is the raised 7th of E minor.",
+          "pitfall": "Naming the major key every time because it's the first one you learned.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A piece has no sharps or flats and ends on an A minor chord. What key is it in?",
+              "answer": "A minor",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A piece with 2 flats ends on G and shows F# accidentals. What key is it in?",
+              "answer": "G minor",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A piece with 3 sharps ends on A with no extra accidentals. What key is it in?",
+              "answer": "A major",
+              "answer_kind": "word"
+            }
+          ]
+        }
+      ]
+    },
+    "mt.meter": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Count Note Values",
+          "mastery": "Count note values in quarter-note beats: whole 4, half 2, quarter 1, eighth half a beat, sixteenth a quarter of a beat.",
+          "practice": "Add up the beats in a bar of half, quarter, eighth and eighth, and check that it fills a bar of 4/4.",
+          "detail": "Each note value is half the one before it. Rests follow the same pattern. Once you can add values quickly, you can check any bar fills its time signature and spot a missing beat in your own writing.",
+          "proof": "2 + 1 + 0.5 + 0.5 = 4, so it fills the bar.",
+          "pitfall": "Counting an eighth note as one beat because it has one flag.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many eighth notes fit in 1 half note?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which note value lasts 3 beats in 4/4?",
+              "answer": "A dotted half note.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A dotted quarter gets one beat in 6/8. How many quarter beats does that same note last in 4/4?",
+              "answer": "1.5",
+              "answer_kind": "decimal"
+            }
+          ]
+        },
+        {
+          "title": "Read a Time Signature",
+          "mastery": "Read a time signature's top number as beats per bar and its bottom number as the note that gets the beat.",
+          "practice": "Say what 3/4, 2/2 and 6/8 mean, then clap two bars of each while counting out loud.",
+          "detail": "A bottom number of 4 means the quarter note, 2 means the half note and 8 means the eighth note. So 3/4 has three quarter beats, a waltz, and 2/2 has two half-note beats, often called cut time. 6/8 is the odd one, covered next.",
+          "proof": "3 quarter beats, 2 half-note beats, and 6 eighths per bar.",
+          "pitfall": "Reading the bottom number as a count of beats.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In 3/4, how many quarter notes fill a bar?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In 2/2, which note gets one beat?",
+              "answer": "The half note.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Does a bar of 5/4 hold more beats than a bar of 4/4?",
+              "answer": "Yes. It has 5 quarter-note beats.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Simple and Compound Meter",
+          "mastery": "Tell simple meters, where each beat splits in two, from compound ones, where each beat splits in three.",
+          "practice": "Classify 2/4, 6/8, 3/4, 9/8 and 12/8 as simple or compound, and give the number of main beats per bar.",
+          "detail": "A top number of 6, 9 or 12 usually means compound meter. Divide it by 3 to get the main beats, each a dotted quarter. So 6/8 is felt in 2, not 6. Simple meters like 2/4 and 3/4 split each beat into two eighths.",
+          "proof": "Simple 2, compound 2, simple 3, compound 3, compound 4.",
+          "pitfall": "Counting 6/8 as six slow beats, which kills the lilt.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Is 6/8 simple or compound?",
+              "answer": "Compound.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many main beats does a bar of 12/8 have?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In 6/8 felt in two, which note gets one beat?",
+              "answer": "The dotted quarter note.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Count Rhythms Out Loud",
+          "mastery": "Count rhythms aloud with 1 e & a, so every note lands in the right place.",
+          "practice": "Count and clap a 4/4 bar of quarter, two eighths, dotted quarter and eighth, saying 1, 2 &, 3 and the final &.",
+          "detail": "Say every subdivision even where no note starts, and clap only where one does. That keeps long notes from getting cut short. Counting out loud feels slow at first, but it's the quickest fix for rushed or dragged rhythms.",
+          "proof": "Notes land on 1, 2, the & of 2, 3, and the & of 4.",
+          "pitfall": "Counting only the beats that have notes, so held notes get shortened.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In 4/4 counted '1 e & a', which syllable is the second sixteenth of beat 2?",
+              "answer": "The e of 2.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A bar of 4/4 has a quarter rest, then three quarter notes. On which beats do the notes fall?",
+              "answer": "2, 3 and 4",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In 4/4, an eighth note sits on the & of beat 3. How many eighth-note spots come before it in the bar?",
+              "answer": "5",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Ties, Dots and Syncopation",
+          "mastery": "Read ties and dots, and feel syncopation when accents land between the beats.",
+          "practice": "Clap 'eighth, quarter, quarter, quarter, eighth' in 4/4 and mark which notes start off the beat.",
+          "detail": "A dot adds half the note's own length, and a tie joins two notes into one longer sound. Syncopation puts notes or accents on the & instead of the beat, which pushes a rhythm forward. Keep counting the beats underneath so you don't drift.",
+          "proof": "Every note after the first starts on an &.",
+          "pitfall": "Re-striking the second note of a tie instead of holding through it.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A quarter note is tied to an eighth note. How many beats does it last in 4/4?",
+              "answer": "1.5",
+              "answer_kind": "decimal"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A dot adds what fraction of the note's own length?",
+              "answer": "1/2",
+              "answer_kind": "fraction"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many quarter-note beats is a double-dotted half note in 4/4?",
+              "answer": "3.5",
+              "answer_kind": "decimal"
+            }
+          ]
+        }
+      ]
+    },
+    "mt.roman": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Label Chords in Major",
+          "mastery": "Label chords with Roman numerals, capitals for major and lowercase for minor.",
+          "practice": "In C major, label C, Dm, Em, F, G, Am and Bdim with Roman numerals.",
+          "detail": "The numeral is the scale degree of the chord's root. The case shows the quality, and a small circle marks diminished. Numerals describe a chord's job in the key, so the same progression looks the same in every key.",
+          "proof": "I, ii, iii, IV, V, vi and vii°.",
+          "pitfall": "Writing every numeral in capitals, which hides the quality.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In G major, what Roman numeral is the C chord?",
+              "answer": "IV",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Bm shows up in a D major song. Which Roman numeral is it?",
+              "answer": "vi",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Label E diminished with its Roman numeral in F major.",
+              "answer": "vii°",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Label Chords in Minor",
+          "mastery": "Label chords in minor keys, including the major V that the raised 7th creates.",
+          "practice": "In A minor, label Am, Bdim, C, Dm, E and F, and note why E is major.",
+          "detail": "Natural minor gives i, ii°, III, iv, v, VI and VII. Composers almost always raise the 7th in the V chord so it has a leading tone, which turns v into V. So expect a major V in minor keys, with an accidental.",
+          "proof": "i, ii°, III, iv, V and VI. E is major because G# is the raised 7th.",
+          "pitfall": "Labeling the dominant as minor v when the music shows the raised 7th.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In A minor, what Roman numeral is the C chord?",
+              "answer": "III",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In E minor, spell the 3 notes of the V chord using harmonic minor.",
+              "answer": "B D# F#",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Gm turns up in a D minor piece. Label it with a Roman numeral.",
+              "answer": "iv",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Feel the Dominant Pull",
+          "mastery": "Explain why V goes to I: the leading tone rises a half step and the root falls a fifth.",
+          "practice": "Play G7 to C in C major and trace where the B and the F move.",
+          "detail": "The leading tone in V wants to rise to the tonic. In V7 the 7th wants to fall a step. Together with the bass falling a 5th, those pulls make V to I the strongest move in tonal music. Composers use it to end phrases and confirm keys.",
+          "proof": "B rises to C and F falls to E.",
+          "pitfall": "Moving the leading tone down, which kills the resolution.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In C major, which note of G7 is the leading tone?",
+              "answer": "B",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Where does the 7th of G7, the F, usually move in C major?",
+              "answer": "Down to E.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What is V7 in E-flat major?",
+              "answer": "Bb7",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Play Common Progressions",
+          "mastery": "Recognize I IV V I, ii V I and I V vi IV, and play them in any key.",
+          "practice": "Play ii V I in C, F and B-flat major, naming all 9 chords as you play them.",
+          "detail": "A progression in numerals is a pattern you can drop into any key. Learn the pattern, then find the chords by counting up the scale. ii V I is the backbone of jazz, and I V vi IV runs through countless pop songs.",
+          "proof": "Dm G C, then Gm C F, then Cm F Bb.",
+          "pitfall": "Memorizing a progression in one key only, so it won't move.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write the 3 chords of ii V I in G major.",
+              "answer": "Am, D, G",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write I V vi IV in D major.",
+              "answer": "D, A, Bm, G",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write ii7 V7 Imaj7 in F major.",
+              "answer": "Gm7, C7, Fmaj7",
+              "answer_kind": "list"
+            }
+          ]
+        },
+        {
+          "title": "Analyze a Short Piece",
+          "mastery": "Label every chord in an 8-bar passage and mark where the cadences fall.",
+          "practice": "Take an 8-bar hymn in G major, write a numeral under every chord, and box each V to I.",
+          "detail": "Name the key first, then go chord by chord. Spell each chord, restack it if needed, find the root and write the numeral. Cadences usually land at bar 4 and bar 8. Patterns like IV V I will start to jump out at you.",
+          "proof": "A numeral under every chord, with the cadence at bar 8 boxed.",
+          "pitfall": "Labeling chords before deciding the key.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A phrase in C major goes C, F, G, C. Write the numerals.",
+              "answer": "I IV V I",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A passage in A major goes A, D, E7, A. Which chord is the dominant seventh?",
+              "answer": "E7",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A phrase in D major ends on an A chord. Which numeral is that last chord?",
+              "answer": "V",
+              "answer_kind": "word"
+            }
+          ]
+        }
+      ]
+    },
+    "mt.scales": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Build Major Scales",
+          "mastery": "Build any major scale from the step pattern W W H W W W H.",
+          "practice": "Build D major and E-flat major from the pattern, naming all 8 notes of each.",
+          "detail": "Start on the tonic and write the next 7 letters in order, one of each. Then adjust each note with sharps or flats until the gaps match the pattern. Using every letter exactly once is what keeps the spelling right.",
+          "proof": "D E F# G A B C# D, and Eb F G Ab Bb C D Eb.",
+          "pitfall": "Writing Gb instead of F# in D major, which skips the letter F.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the 4th note of G major?",
+              "answer": "C",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name the 3 sharps in A major.",
+              "answer": "C#, F# and G#",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write the 8 notes of E major.",
+              "answer": "E F# G# A B C# D# E",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Build Natural Minor",
+          "mastery": "Build a natural minor scale from W H W W H W W, or from its relative major.",
+          "practice": "Build A minor and C minor, then check that A minor uses all 7 notes of C major and no others.",
+          "detail": "Natural minor lowers the 3rd, 6th and 7th of the major scale on the same tonic. Or start on the 6th note of a major scale and play its notes. Both ways give the same answer, and checking one against the other catches spelling slips.",
+          "proof": "A B C D E F G A, and C D Eb F G Ab Bb C.",
+          "pitfall": "Lowering only the 3rd and calling it minor.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the 3rd note of D minor?",
+              "answer": "F",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is the relative minor of G major, which has 1 sharp?",
+              "answer": "E minor",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write the 8 notes of F natural minor.",
+              "answer": "F G Ab Bb C Db Eb F",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Harmonic Minor",
+          "mastery": "Raise the 7th of natural minor to get harmonic minor, with its leading tone.",
+          "practice": "Build A harmonic minor and D harmonic minor, and name the gap between the 6th and 7th notes.",
+          "detail": "The raised 7th sits a half step below the tonic, which pulls strongly toward home and makes the V chord major. It also leaves a wide gap of three half steps between the 6th and 7th, the sound people call exotic. The raised note is an accidental, not part of the key signature.",
+          "proof": "A B C D E F G# A and D E F G A Bb C# D, with an augmented 2nd between 6 and 7.",
+          "pitfall": "Writing the raised 7th into the key signature.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In E harmonic minor, which of the 7 notes gets raised?",
+              "answer": "D becomes D#.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many half steps are between the 6th and 7th of harmonic minor?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write the 8 notes of G harmonic minor.",
+              "answer": "G A Bb C D Eb F# G",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Melodic Minor",
+          "mastery": "Raise the 6th and 7th going up in melodic minor, and use natural minor coming down.",
+          "practice": "Write A melodic minor up and down, all 15 notes, marking the 2 that change with direction.",
+          "detail": "Going up, the raised 6th smooths over the awkward gap of harmonic minor while keeping the leading tone. Coming down there's no pull toward the tonic, so both go back to natural. Jazz players often use the rising form both ways.",
+          "proof": "Up: A B C D E F# G# A. Down: A G F E D C B A.",
+          "pitfall": "Using the raised notes on the way down in a classical exam answer.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In A melodic minor going up, what are the 6th and 7th?",
+              "answer": "F# and G#",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Going down, which of the 3 forms of minor does melodic minor usually use?",
+              "answer": "Natural minor.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write the 8 notes of D melodic minor going up.",
+              "answer": "D E F G A B C# D",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Name the Scale Degrees",
+          "mastery": "Name the scale degrees: tonic, supertonic, mediant, subdominant, dominant, submediant and leading tone.",
+          "practice": "Label all 7 degrees of F major with their names and their notes.",
+          "detail": "The names describe position. Dominant is a 5th above the tonic and subdominant a 5th below it, which lands on the 4th degree. Mediant and submediant sit halfway to each. The leading tone leads up to the tonic, a half step away.",
+          "proof": "F tonic, G supertonic, A mediant, Bb subdominant, C dominant, D submediant, E leading tone.",
+          "pitfall": "Calling the 4th degree the dominant because it comes before the 5th.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is the dominant, degree 5, of C major?",
+              "answer": "G",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is the subdominant, degree 4, of D major?",
+              "answer": "G",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In B-flat major, which note is the leading tone, degree 7?",
+              "answer": "A",
+              "answer_kind": "word"
+            }
+          ]
+        }
+      ]
+    },
+    "mt.triads": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Build Major and Minor Triads",
+          "mastery": "Build major and minor triads by stacking thirds: major then minor for a major triad, minor then major for a minor one.",
+          "practice": "Build 6 triads on D, F and A, first as major and then as minor.",
+          "detail": "Write the root, skip a letter, write the next, skip again. That gives a stack of thirds like D F A. Then fix the middle note: a major 3rd above the root makes it major, and a minor 3rd makes it minor. The outer 5th stays perfect in both.",
+          "proof": "D F# A and D F A, F A C and F Ab C, A C# E and A C E.",
+          "pitfall": "Changing the 5th instead of the 3rd to turn major into minor.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Spell a G major triad, root first, with its 3 notes.",
+              "answer": "G B D",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which 3 notes make an E minor triad?",
+              "answer": "E G B",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "B-flat is the root of a major triad. Name its 3rd and 5th.",
+              "answer": "D and F",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Diminished and Augmented",
+          "mastery": "Build diminished triads from two minor thirds and augmented ones from two major thirds.",
+          "practice": "Spell B diminished, C augmented and F# diminished.",
+          "detail": "Diminished is minor with the 5th lowered a half step, and augmented is major with the 5th raised. Keep the letters as a stack of thirds, so C augmented is C E G#, never C E Ab. Diminished chords show up on the 7th degree of every major key.",
+          "proof": "B D F, C E G# and F# A C.",
+          "pitfall": "Spelling C augmented as C E Ab, which breaks the stack of thirds.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Spell a C# diminished triad.",
+              "answer": "C# E G",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Spell the 3 notes of an F augmented triad.",
+              "answer": "F A C#",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In C major, which of the 7 triads is diminished?",
+              "answer": "B diminished, B D F.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Triads in a Key",
+          "mastery": "Know the quality of each triad in a major key: major on I, IV and V, minor on ii, iii and vi, diminished on vii.",
+          "practice": "Write all 7 triads of G major and label each one's quality.",
+          "detail": "Build a triad on every note of the scale using only notes from the key. The qualities always fall in the same pattern, so learn it once and use it everywhere. In minor keys the pattern shifts, and the raised 7th changes v into V.",
+          "proof": "G, Am, Bm, C, D, Em and F# diminished.",
+          "pitfall": "Adding accidentals that aren't in the key to make every chord major.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What quality is the ii chord, built on degree 2, in any major key?",
+              "answer": "Minor",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In F major, spell the IV chord.",
+              "answer": "Bb D F",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In D major, spell the vii chord, built on degree 7.",
+              "answer": "C# E G",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Build Seventh Chords",
+          "mastery": "Build the four common sevenths: major 7, dominant 7, minor 7 and half-diminished 7.",
+          "practice": "Build Cmaj7, C7, Cm7 and Cm7b5, and name the interval from the root to the 7th in each.",
+          "detail": "Add one more third on top of a triad. A major triad with a major 7th is a major 7 chord. A major triad with a minor 7th is a dominant 7, the V7 chord. A minor triad with a minor 7th is a minor 7, and a diminished triad with a minor 7th is half-diminished.",
+          "proof": "C E G B, C E G Bb, C Eb G Bb and C Eb Gb Bb.",
+          "pitfall": "Reading C7 as a major 7th chord. Plain 7 means the dominant, with a flat 7th.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Spell the 4 notes of G7.",
+              "answer": "G B D F",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Spell Dm7.",
+              "answer": "D F A C",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Spell Fmaj7.",
+              "answer": "F A C E",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Name Chords on Sight",
+          "mastery": "Name a chord's root and quality from its notes, even when they're shuffled or inverted.",
+          "practice": "Name the 3 chords E G C, F A D and B D G F, putting each one in stacked thirds first.",
+          "detail": "Rearrange the notes until each sits a third above the last. The bottom note of that stack is the root, whatever note was lowest in the original. Then read the quality from the intervals above the root.",
+          "proof": "C major, D minor and G7.",
+          "pitfall": "Calling the lowest written note the root without restacking.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name the 3-note chord A C F.",
+              "answer": "F major",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name the 3-note chord G Bb E.",
+              "answer": "E diminished",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name the chord D F# A C.",
+              "answer": "D7",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
     "mu.chords": {
       "model": "authored",
       "verifier": "rules+authored",
@@ -126419,6 +127811,180 @@
         }
       ]
     },
+    "py.contest": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Read Input Fast",
+          "mastery": "Read big inputs with sys.stdin instead of input(), so reading alone doesn't use up the time limit.",
+          "practice": "Read 200000 numbers with data = sys.stdin.buffer.read().split() and sum them, then time it against a loop of input().",
+          "detail": "input() is slow when it's called hundreds of thousands of times. Reading everything at once and splitting it is far faster, and then you walk through the tokens with an index. Convert with map(int, ...) in one go.",
+          "proof": "The one-read version runs in a fraction of the input() loop's time.",
+          "pitfall": "Calling input() in a loop for 100,000 lines and timing out before any real work.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which is faster for 100,000 lines: input() in a loop, or sys.stdin.readline?",
+              "answer": "sys.stdin.readline",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "data = sys.stdin.read().split() runs on input '3\\n1 2 3'. What is data[0]?",
+              "answer": "'3'",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write the line that reads all the integers in the input at once into 'nums'.",
+              "answer": "nums = list(map(int, sys.stdin.read().split()))",
+              "answer_kind": "code"
+            }
+          ]
+        },
+        {
+          "title": "Estimate Before You Code",
+          "mastery": "Estimate the operation count from the input size, and pick an algorithm that fits about 10 million Python steps a second.",
+          "practice": "For N = 200000, compare an O(N²) plan and an O(N log N) plan by counting operations, and say which fits in 2 seconds.",
+          "detail": "Python manages roughly ten million simple steps a second. Plug the largest N into your algorithm's growth rate. If it comes out over about 100 million, it won't pass. The limits in the problem are a hint: N up to 20 suggests trying every subset, N up to 100,000 suggests sorting.",
+          "proof": "N² is 40 billion, far too slow. N log N is about 3.5 million, fine.",
+          "pitfall": "Coding the brute force first and only then checking whether it could ever fit.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "N = 1000. Will an O(N²) loop of a million steps run in time?",
+              "answer": "Yes, comfortably.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "N = 100000. About how many steps is O(N²)?",
+              "answer": "10 billion, far too many.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "N is at most 20. What kind of algorithm does that hint at?",
+              "answer": "Trying every subset, since there are about a million of them.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Use the Right Built-ins",
+          "mastery": "Lean on sorted, collections and heapq, which run in C and beat hand-written loops.",
+          "practice": "Solve 'count each word in 100,000 words' with collections.Counter, and 'smallest 5 of a list' with heapq.nsmallest.",
+          "detail": "Built-ins run at C speed, so one call often beats a Python loop by ten times or more. Counter counts, deque gives fast pops at both ends, heapq keeps a priority queue and bisect searches a sorted list. Learning these saves both time and bugs.",
+          "proof": "Counter(words).most_common(1) and heapq.nsmallest(5, nums) each take one line.",
+          "pitfall": "Using list.pop(0) as a queue, which is O(n) per pop.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which module gives a 'deque' with fast pops from both ends?",
+              "answer": "collections",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does Counter('aabbbc').most_common(1) return?",
+              "answer": "[('b', 3)]",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why is list.pop(0) slow on a list of 100,000 items?",
+              "answer": "It shifts every other item down one place, which is O(n).",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Avoid Python Traps",
+          "mastery": "Dodge contest traps like the recursion limit, string building in loops and slow 2D lists.",
+          "practice": "Run a recursive DFS on a path of 100,000 nodes, see the RecursionError, then rewrite it with an explicit stack.",
+          "detail": "Python stops recursion at about 1000 calls by default. You can raise the limit, but deep recursion is still slow and can crash, so an explicit stack is safer. Build strings by joining a list, and avoid recomputing len or attribute lookups inside hot loops.",
+          "proof": "The stack version visits all 100,000 nodes without an error.",
+          "pitfall": "Raising the recursion limit to a million and then crashing on stack memory instead.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is Python's default recursion limit, roughly?",
+              "answer": "1000",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You build a string with s += c inside a 100,000-pass loop. What's the faster way?",
+              "answer": "Collect pieces in a list and ''.join them at the end.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which call raises the recursion limit to 1,000,000?",
+              "answer": "sys.setrecursionlimit(10**6)",
+              "answer_kind": "code"
+            }
+          ]
+        },
+        {
+          "title": "Practice on Real Problems",
+          "mastery": "Solve past USACO Bronze problems under a time limit, and read the official analysis afterward.",
+          "practice": "Solve 2 USACO Bronze problems in 4 hours, submit each one, then read the official analysis for any you missed.",
+          "detail": "Real problems teach reading carefully, picking the method and handling the edge cases the samples skip. Time yourself, because pressure changes how you think. Afterward, read the analysis even for problems you solved, and keep a list of tricks you learned.",
+          "proof": "Two submissions, a note on what passed, and one new trick from the analysis.",
+          "pitfall": "Reading the solution after 5 minutes of being stuck, before really trying.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many problems does a USACO contest give in each division?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Your solution passes the sample but fails test 7. What should you check first?",
+              "answer": "Edge cases and limits, like the largest N or an empty case.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why read USACO's official analysis even for problems you solved?",
+              "answer": "It often shows a simpler or faster method.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
     "py.control": {
       "model": "claude-opus-5-5",
       "verifier": "rules+authored",
@@ -126587,6 +128153,180 @@
               "weight": "stretch",
               "prompt": "best = 0, and a loop keeps the largest of [-4, -2, -9]. What's wrong with the result?",
               "answer": "It stays 0, which isn't in the list. Start best at the first item.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "py.debug": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Print What You Expect",
+          "mastery": "Add prints that show a variable's value at key points, and compare each one with what you expected.",
+          "practice": "Add print(f'{i=} {total=}') inside a buggy loop that should sum 1 to 10, and find the pass where total goes wrong.",
+          "detail": "A bug is the gap between what you expected and what happened. Write down the expected value first, then print the real one at that point. The = trick in f-strings shows the name and value together. Move the print earlier until the two agree.",
+          "proof": "The prints show the last pass is i = 9, so range stops one short.",
+          "pitfall": "Adding prints everywhere at once and drowning in output.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does print(f'{x=}') show when x = 7?",
+              "answer": "x=7",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A loop meant to sum 1 to 5 gives 10. Which number is most likely missing?",
+              "answer": "5, since 1 + 2 + 3 + 4 = 10.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "range(1, 5) sits in a loop meant to include 5. What's the fix?",
+              "answer": "Use range(1, 6).",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Shrink the Problem",
+          "mastery": "Cut a failing program down to the smallest version that still fails.",
+          "practice": "Take a 50-line script that crashes, and remove half of it at a time until a 5-line version still shows the bug.",
+          "detail": "Remove a chunk and run it. If the bug's still there, that chunk was innocent. If it vanished, the bug lives in what you removed, so put it back and remove something smaller. Shrinking the input works the same way, and tiny cases are easy to trace by hand.",
+          "proof": "A 5-line script that still crashes, with the cause in plain view.",
+          "pitfall": "Changing several things at once, so you can't tell which one mattered.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A bug shows up on an input of 1000 rows. What's the first thing to try?",
+              "answer": "Find the smallest input that still fails, maybe 1 or 2 rows.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You deleted half the code and the bug vanished. What does that tell you?",
+              "answer": "The bug is in the half you removed, or depends on it.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why save the 5-line version as a test once you've found the bug?",
+              "answer": "So the bug can't come back without a failing test telling you.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Use the Debugger",
+          "mastery": "Set a breakpoint, step line by line, and inspect variables in the debugger.",
+          "practice": "Put breakpoint() before the line that fails, run the script, and use n, p total and c at the (Pdb) prompt.",
+          "detail": "breakpoint() pauses the program and hands you a prompt in the middle of it. n runs the next line, s steps into a function call, p prints a value, and c continues to the next breakpoint. Editors like VS Code do the same with clickable buttons.",
+          "proof": "The prompt stops right before the bad line, and p total shows the wrong value.",
+          "pitfall": "Leaving breakpoint() in code you hand in, so it freezes for everyone else.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "At the (Pdb) prompt, what does n do?",
+              "answer": "Runs the next line.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does p x print at the (Pdb) prompt?",
+              "answer": "The value of x.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "At the (Pdb) prompt, what's the difference between s and n on a line that calls a function?",
+              "answer": "s steps into the function, while n runs it and stops after.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Explain It Out Loud",
+          "mastery": "Explain the code line by line, to someone or to a rubber duck, until the wrong assumption shows itself.",
+          "practice": "Explain a 10-line function to a friend or a rubber duck, saying what each line does and what each variable holds after it.",
+          "detail": "Reading code in your head lets you skim past what you think it says. Saying each line out loud forces you to state what it really does. The bug usually turns up at the moment you hear yourself say something that isn't true.",
+          "proof": "At some line you say a value out loud and realize it's wrong.",
+          "pitfall": "Explaining what the code should do instead of what it actually does.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "While explaining line 4, you say 'here x is a list' and realize it's a string. What just happened?",
+              "answer": "You found the wrong assumption, which is the bug.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why does explaining a 10-line function out loud find bugs you'd stared past?",
+              "answer": "Saying each step forces you to check it instead of skimming.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You explain 'this loop runs 10 times', but it uses range(1, 10). How many times does it run?",
+              "answer": "9",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Check the Edge Cases",
+          "mastery": "Test boundary inputs like empty, zero, a single item and the largest value.",
+          "practice": "Run a max_of(nums) function on [], [7], [-3, -1] and [5, 5], and note which ones break it.",
+          "detail": "Most bugs live at the edges: the empty list, the one-item list, negative numbers, ties and the biggest allowed input. Code that works on a normal example often fails on these. Make a short list of edges for every function you write and try them.",
+          "proof": "[] crashes it, and if best starts at 0, [-3, -1] gives a wrong answer.",
+          "pitfall": "Testing only the example from the problem, which is usually the easy case.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A function works for [3, 1, 2]. Name 2 inputs worth testing next.",
+              "answer": "An empty list and a one-item list.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "max_of starts with best = 0. Which input breaks it: [-3, -1] or [5, 5]?",
+              "answer": "[-3, -1]",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "average(nums) divides by len(nums). Which input crashes it?",
+              "answer": "An empty list, with ZeroDivisionError.",
               "answer_kind": "phrase"
             }
           ]
@@ -126762,6 +128502,354 @@
               "prompt": "Why can't [1, 2] be a dictionary key?",
               "answer": "Lists can change, so they aren't hashable.",
               "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "py.errors": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Read a Traceback",
+          "mastery": "Read a traceback from the bottom up: the error type, its message, then the line in your own code.",
+          "practice": "Run [1, 2, 3][5] inside a function called from main(), and find the error type and the line of yours that triggered it.",
+          "detail": "The last line names the error and gives a short reason. The lines above list each function call that led there, oldest at the top. Skip past lines inside libraries and find the deepest line in a file you wrote, since that's usually where the fix goes.",
+          "proof": "IndexError: list index out of range, on the line inside the function.",
+          "pitfall": "Fixing the top line of the traceback, which is only where the chain of calls started.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A traceback ends with 'TypeError: can only concatenate str (not int) to str'. What did the code try?",
+              "answer": "Adding a string and a number with +.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A traceback ends with 'ZeroDivisionError: division by zero'. Name a line that could cause it.",
+              "answer": "Something like total / count when count is 0.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A traceback lists main.py line 12, then utils.py line 4, then the error. Which line actually failed?",
+              "answer": "utils.py, line 4.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Catch With try and except",
+          "mastery": "Wrap a risky line in try, and handle one specific exception in except.",
+          "practice": "Write a loop that keeps asking for a number until int(input()) works, catching ValueError each time it fails.",
+          "detail": "Put only the line that can fail inside try, so you don't hide unrelated bugs. Name the exception you expect, like ValueError, so anything else still crashes loudly. In the except block, say what went wrong and recover or ask again.",
+          "proof": "A while True loop with try: n = int(input()), break on success, and except ValueError printing a retry message.",
+          "pitfall": "Writing a bare 'except:' that swallows every error, including typos.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does 'try: int('x')' followed by 'except ValueError: print('bad')' print?",
+              "answer": "bad",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What's wrong with a bare 'except:' around a whole program?",
+              "answer": "It hides every error, even typos and Ctrl+C, so bugs go silent.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "'try: x = 1 / 0' is followed by 'except ZeroDivisionError: x = 0'. What is x?",
+              "answer": "0",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Use else and finally",
+          "mastery": "Use else for code that runs only on success, and finally for cleanup that always runs.",
+          "practice": "Write try, except, else and finally blocks that print 'ok', 'fail' or 'done' while dividing 10 by n = 2 and then by n = 0.",
+          "detail": "else runs only if the try block raised nothing, which keeps the happy path out of the try. finally runs no matter what, even after a return or an uncaught error, so it suits closing files and connections. Most code needs neither, but know they exist.",
+          "proof": "n = 2 prints ok then done, and n = 0 prints fail then done.",
+          "pitfall": "Putting the success code inside try, where its own errors get caught by mistake.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "The blocks are 'try: print(1)', 'except: print(2)' and 'else: print(3)'. What prints?",
+              "answer": "1, then 3",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In a try, except and 'finally' set, when does the finally block run?",
+              "answer": "Always, whether or not an error happened.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A function returns inside try, and its finally block prints 'bye'. Does 'bye' print?",
+              "answer": "Yes. finally runs even after return.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Raise Your Own Errors",
+          "mastery": "Raise a built-in exception with a clear message when a function gets bad input.",
+          "practice": "Make def set_age(n) raise ValueError('age must be 0 to 120') when n is outside that range.",
+          "detail": "Check inputs at the top of a function and raise right away if they're wrong. Pick the built-in that fits: ValueError for a bad value, TypeError for the wrong kind of thing. The message should say what was expected, so the caller can fix it fast.",
+          "proof": "set_age(150) stops with ValueError: age must be 0 to 120.",
+          "pitfall": "Returning -1 or None for bad input, which callers forget to check.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Write the line that raises a TypeError saying 'need a list'.",
+              "answer": "raise TypeError('need a list')",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which built-in fits a negative qty passed to buy(qty): ValueError or KeyError?",
+              "answer": "ValueError",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why raise an error instead of returning -1 from parse_age('abc')?",
+              "answer": "Callers can't ignore an error by accident, and the message says what went wrong.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Fix the Common Five",
+          "mastery": "Recognize NameError, TypeError, ValueError, IndexError and KeyError, and know the usual fix for each.",
+          "practice": "Trigger each of the 5 errors on purpose at the >>> prompt with a one-liner, and write the fix next to each one.",
+          "detail": "NameError means a name doesn't exist yet, often a typo. TypeError means the wrong kind of value, like adding text to a number. ValueError means the right kind with a bad value. IndexError is a position past the end, and KeyError a missing dictionary key.",
+          "proof": "Five one-liners such as print(nope), 'a' + 1, int('x'), [][0] and {}['k'], each with its fix.",
+          "pitfall": "Wrapping each of these in try instead of fixing the real cause.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "print(score) runs before score = 0. Which error appears?",
+              "answer": "NameError",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "{'a': 1}['b'] gives which error?",
+              "answer": "KeyError",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "len(5) gives which error, and why?",
+              "answer": "TypeError, because an int has no length.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "py.files": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Read a Text File",
+          "mastery": "Open notes and data files safely and pull their text into your program.",
+          "practice": "Make notes.txt with 3 lines, then read it with 'with open('notes.txt') as f' and print how many lines it has.",
+          "detail": "A with block closes the file when it ends, even if something fails inside. read() gives the whole file as one string, and looping over f gives one line at a time, which works on files too big for memory. Each line keeps its newline at the end.",
+          "proof": "len(f.readlines()) is 3.",
+          "pitfall": "Opening files without with and never closing them.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Inside 'with open('a.txt') as f', what does f.read() return?",
+              "answer": "The whole file as one string.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A file has 'hi' and 'bye' on two lines. What is the first item of f.readlines()?",
+              "answer": "'hi\\n'",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why do lines from 'for line in f' often need .strip()?",
+              "answer": "Each line keeps its newline character at the end.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Write and Append",
+          "mastery": "Write with mode 'w', add to the end with mode 'a', and know that 'w' empties the file first.",
+          "practice": "Write 'line 1' to log.txt with mode 'w', then add 'line 2' with mode 'a', and read the file back.",
+          "detail": "Mode 'w' creates the file or wipes it and starts fresh. Mode 'a' keeps what's there and adds to the end. write doesn't add a newline, so put '\\n' on each line yourself. Nothing is guaranteed to be on disk until the file closes.",
+          "proof": "The file holds line 1 and line 2 on separate lines.",
+          "pitfall": "Opening a log with 'w' every run, which erases yesterday's entries.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A file has 10 lines. You open it with mode 'w' and write one line. How many lines does it have now?",
+              "answer": "1",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Does f.write('hi') add a newline at the end?",
+              "answer": "No. Add '\\n' yourself.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You want to add today's score to scores.txt without losing the old ones. Which mode do you open it with?",
+              "answer": "'a'",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Paths and Missing Files",
+          "mastery": "Build paths with pathlib, and handle a file that isn't there.",
+          "practice": "Use Path('data') / 'scores.txt' to build a path, check .exists(), and catch FileNotFoundError when opening a missing file.",
+          "detail": "pathlib joins folder names with / and gets the slashes right on every system. Relative paths start from the folder you ran the script from, not where the script lives. Use Path(__file__).parent to find files next to the script itself.",
+          "proof": "Path('data') / 'scores.txt' gives data/scores.txt, and opening it when it's missing raises FileNotFoundError.",
+          "pitfall": "Hard-coding a path like C:\\Users\\me\\data.txt that works on one machine only.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What error does open('nope.txt') raise when the file is missing?",
+              "answer": "FileNotFoundError",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is Path('reports/2024.csv').suffix?",
+              "answer": "'.csv'",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A script opens 'data.txt' fine from its own folder but fails from another one. Why?",
+              "answer": "Relative paths start from the current folder, not the script's folder.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Read and Write CSV",
+          "mastery": "Use the csv module to read and write rows, so commas inside values are handled for you.",
+          "practice": "Write 3 rows of name,score to grades.csv with csv.writer, then read them back with csv.DictReader.",
+          "detail": "Splitting on commas by hand breaks as soon as a value holds a comma. The csv module handles quoting both ways. DictReader uses the header row as keys, so row['score'] reads clearly. Every value comes back as a string, so convert numbers yourself.",
+          "proof": "DictReader gives 3 dicts like {'name': 'Mia', 'score': '88'}.",
+          "pitfall": "Forgetting that '88' from a CSV is a string, so sorting puts '100' before '88'.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Each row from 'csv.reader' comes back as what type?",
+              "answer": "A list of strings.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A CSV row is Lee,\"Smith, Jr\",90. How many fields does csv.reader find?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why pass newline='' when opening a file for csv.writer?",
+              "answer": "It stops blank lines appearing between rows on Windows.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Save Data as JSON",
+          "mastery": "Save dictionaries and lists with json.dump, and load them back with json.load.",
+          "practice": "Save {'level': 3, 'items': ['key']} to save.json with json.dump, then load it into a new variable and compare.",
+          "detail": "JSON is plain text that keeps the shape of dicts, lists, strings, numbers, True, False and None. It's the easiest way to save a game or settings between runs. Sets, tuples and your own objects need converting first, and tuples come back as lists.",
+          "proof": "The loaded dict equals the original, so the comparison is True.",
+          "pitfall": "Trying to json.dump a set and getting a TypeError.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What Python type does json.loads('[1, 2]') give?",
+              "answer": "list",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What text does json.dumps({'a': True}) produce?",
+              "answer": "{\"a\": true}",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Can json.dump save a set like {1, 2}?",
+              "answer": "No. Convert it to a list first.",
+              "answer_kind": "yesno"
             }
           ]
         }
@@ -127115,6 +129203,180 @@
         }
       ]
     },
+    "py.libs": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Fetch Data With requests",
+          "mastery": "Get a web page or JSON from an API with requests, and check the status code.",
+          "practice": "Call requests.get('https://api.github.com'), print .status_code, and read one key from .json().",
+          "detail": "requests.get sends the request and returns a response. Check status_code before using the body: 200 means it worked, 404 means not found and 500 means the server broke. .json() turns a JSON body into a dict. Set a timeout so a slow server can't hang you.",
+          "proof": "status_code is 200 and .json() returns a dict of links.",
+          "pitfall": "Calling .json() on a failed response and getting a confusing error.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What status code means a 'requests' call worked?",
+              "answer": "200",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "r = requests.get(url) comes back with 404. What does that mean?",
+              "answer": "The page wasn't found.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why pass timeout=10 to requests.get?",
+              "answer": "So a dead server can't hang your program forever.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Load Tables With pandas",
+          "mastery": "Load a CSV into a pandas DataFrame and look at its shape, its columns and its first rows.",
+          "practice": "Load grades.csv with pd.read_csv, then print df.shape, df.columns and df.head(3).",
+          "detail": "A DataFrame is a table with named columns. shape gives (rows, columns), head shows the top rows, and df['col'] picks one column. A condition inside the brackets keeps only matching rows. Always look at the data before analyzing it.",
+          "proof": "df.shape gives something like (30, 3), and head(3) shows the first 3 students.",
+          "pitfall": "Looping over rows with a for loop when one column operation would do it.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "df.shape is (120, 4). How many rows does it have?",
+              "answer": "120",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How do you get the 'score' column from df?",
+              "answer": "df['score']",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write the line that keeps only the rows of df where score is over 90.",
+              "answer": "df[df['score'] > 90]",
+              "answer_kind": "code"
+            }
+          ]
+        },
+        {
+          "title": "Summarize With pandas",
+          "mastery": "Answer first questions about a dataset, like averages per group, with a few pandas calls.",
+          "practice": "Find the average score, the count per class and the average score per class in 'grades.csv' with pandas.",
+          "detail": "Column methods like mean, max and sum work on the whole column at once. value_counts tallies each distinct value. groupby splits rows by a column, then you pick a column and a summary for each group. These three answer most first questions about a dataset.",
+          "proof": "df['score'].mean(), df['class'].value_counts() and df.groupby('class')['score'].mean().",
+          "pitfall": "Forgetting to pick a column after groupby, which averages every column at once.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which method gives the average of df['score']?",
+              "answer": "df['score'].mean()",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does df['class'].value_counts() show?",
+              "answer": "How many rows each class has.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write the line that gives the average 'score' for each 'class'.",
+              "answer": "df.groupby('class')['score'].mean()",
+              "answer_kind": "code"
+            }
+          ]
+        },
+        {
+          "title": "Plot With matplotlib",
+          "mastery": "Draw a line or bar chart with matplotlib, with a title and labeled axes.",
+          "practice": "Plot days 1 to 7 against minutes studied as a line chart with plt.plot, add a title and axis labels, and save it as week.png.",
+          "detail": "plt.plot draws lines and plt.bar draws bars. Add plt.title, plt.xlabel and plt.ylabel, because a chart without labels is a puzzle. Save with plt.savefig before plt.show, since showing can clear the figure.",
+          "proof": "week.png shows 7 points joined by a line, with a title and both axes labeled.",
+          "pitfall": "Calling plt.show() before plt.savefig() and saving a blank image.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which call opens the chart window: plt.show() or plt.draw_now()?",
+              "answer": "plt.show()",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which function draws bars: 'plt.bar' or 'plt.plot'?",
+              "answer": "plt.bar",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Your saved PNG is blank because plt.show() ran before plt.savefig(). Why does the order matter?",
+              "answer": "show() can clear the figure, so save first.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Pick the Right Library",
+          "mastery": "Choose a well-known library for a job instead of writing it from scratch.",
+          "practice": "Name a library for each of these 4 jobs: dates and times, web pages, photo editing and a simple game window.",
+          "detail": "Common jobs already have solid libraries that thousands of people have tested. Search PyPI and look at how recently it was updated, how many people use it and whether the docs are clear. Reach for the standard library first, since it needs no install.",
+          "proof": "datetime, requests, Pillow and pygame.",
+          "pitfall": "Writing your own date math or CSV parser and hitting every edge case the hard way.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which library would you use to resize photos: Pillow or pandas?",
+              "answer": "Pillow",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You want a 2D game with a 60 fps window. Which library is the usual pick?",
+              "answer": "pygame",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 2 signs that a library on PyPI is safe to depend on.",
+              "answer": "Recent releases and lots of users, plus good docs.",
+              "answer_kind": "list"
+            }
+          ]
+        }
+      ]
+    },
     "py.lists": {
       "model": "claude-opus-5-5",
       "verifier": "rules+authored",
@@ -127284,6 +129546,528 @@
               "prompt": "What types are (5) and (5,)?",
               "answer": "(5) is an int and (5,) is a tuple.",
               "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "py.modules": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Import From the Standard Library",
+          "mastery": "Import a whole module, a single name from it, or a module under a short alias.",
+          "practice": "Use 'import math', 'from random import choice' and 'import datetime as dt' in one script, calling one thing from each.",
+          "detail": "import math keeps names behind the module, as in math.sqrt, so it's clear where they came from. from math import sqrt brings in one name directly. An alias shortens a long name. The standard library ships with Python, so none of these need installing.",
+          "proof": "math.sqrt(9), choice([1, 2]) and dt.date.today() all run.",
+          "pitfall": "Writing from math import *, which floods the file with names you can't trace.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "After 'import math', how do you get the square root of 16?",
+              "answer": "math.sqrt(16)",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "After 'from math import pi', how do you write pi in your code?",
+              "answer": "pi",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why is 'from math import *' discouraged?",
+              "answer": "It dumps every name into your file, so you can't tell where names came from.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Write Your Own Module",
+          "mastery": "Split code into your own .py files and import functions between them.",
+          "practice": "Move a function greet() into helpers.py and call it from main.py with 'from helpers import greet'.",
+          "detail": "Any .py file is a module, imported by its name without the .py. Keep the files in the same folder to start. Code at the top level of a module runs when it's imported, so wrap test code in if __name__ == '__main__': to keep it quiet.",
+          "proof": "main.py prints the greeting, and helpers.py stays a library of functions.",
+          "pitfall": "Naming your own file random.py or math.py, which hides the real module.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "main.py and tools.py sit in one folder. What line imports tools.py?",
+              "answer": "import tools",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does if __name__ == '__main__': protect?",
+              "answer": "Code that should run only when the file runs directly, not when it's imported.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You named your file random.py, and now 'import random' breaks. Why?",
+              "answer": "Python imports your file instead of the standard one.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Install Packages With pip",
+          "mastery": "Install, list and remove packages with pip, and pin versions in requirements.txt.",
+          "practice": "Run 'pip install requests', then 'pip freeze > requirements.txt', and read the line it wrote for requests.",
+          "detail": "pip downloads packages from PyPI into the Python you run it with. pip freeze lists what's installed with exact versions, and saving that to requirements.txt lets anyone rebuild your setup. Use 'python3 -m pip' if you're unsure which Python pip belongs to.",
+          "proof": "requirements.txt holds a line like requests==2.31.0.",
+          "pitfall": "Installing with one Python and running with another, then wondering why the import fails.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which command installs every package listed in 'requirements.txt'?",
+              "answer": "pip install -r requirements.txt",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "requirements.txt says 'requests==2.31.0'. What does the == part do?",
+              "answer": "It pins that exact version.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "pip says it installed a package, but the import still fails. What's the most likely cause?",
+              "answer": "pip installed into a different Python than the one running the script.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Use a Virtual Environment",
+          "mastery": "Make a venv for each project so their packages don't clash.",
+          "practice": "Create one with 'python3 -m venv .venv', activate it, install one package, and check which python is running.",
+          "detail": "A virtual environment is a private copy of Python with its own packages. One project can need version 1 of a library while another needs version 2, and separate venvs keep both happy. Activate it before installing, and your prompt usually shows its name.",
+          "proof": "'which python' points inside .venv after activating.",
+          "pitfall": "Installing everything globally until two projects need different versions.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What command creates a virtual environment in a folder named '.venv'?",
+              "answer": "python3 -m venv .venv",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "On Mac or Linux, which command activates that .venv?",
+              "answer": "source .venv/bin/activate",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Should .venv go into your Git repo?",
+              "answer": "No. Commit requirements.txt and rebuild the venv from it.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Read the Docs",
+          "mastery": "Find what a function takes and returns in the official docs, or with help().",
+          "practice": "Call help(sorted) and find its key and reverse parameters, then look up random.sample on docs.python.org.",
+          "detail": "help() works on any function or module at the >>> prompt. The official docs add examples and edge cases. Look for three things: the parameters and their defaults, what comes back, and which errors it raises.",
+          "proof": "help(sorted) lists iterable, key=None and reverse=False.",
+          "pitfall": "Guessing a function's arguments from its name instead of checking.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does help(len) show?",
+              "answer": "The docs for len, saying what it takes and returns.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does random.sample(range(10), 3) return?",
+              "answer": "A list of 3 different numbers from 0 to 9.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which standard module gives you date(2026, 11, 5)?",
+              "answer": "datetime",
+              "answer_kind": "word"
+            }
+          ]
+        }
+      ]
+    },
+    "py.oop": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Define a Class",
+          "mastery": "Write a class with __init__ that stores attributes on self, then make objects from it.",
+          "practice": "Write class Dog with __init__(self, name, age), make two dogs, and print each one's name.",
+          "detail": "A class is a blueprint and each object made from it is an instance. __init__ runs when you create one, and self is that new object. Anything you store as self.something stays attached to it, so each dog keeps its own name.",
+          "proof": "Dog('Rex', 3).name gives 'Rex'.",
+          "pitfall": "Leaving self out of a method's parameter list.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "P is 'class P: def __init__(self, x): self.x = x'. What is P(4).x?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does 'self' refer to inside a method?",
+              "answer": "The object the method was called on.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You wrote 'def __init__(name)' with no self. What happens on Dog('Rex')?",
+              "answer": "A TypeError: it gets 2 arguments but takes 1.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Add Methods",
+          "mastery": "Write methods that read and change an object's own attributes.",
+          "practice": "Give a BankAccount class deposit(amount) and withdraw(amount) methods that update self.balance, and test them with 100 in and 30 out.",
+          "detail": "A method is a function inside the class that gets self first. It can read and change the object's attributes, which keeps the rules about a balance in one place. Methods that refuse bad requests protect the object from ending up in a nonsense state.",
+          "proof": "balance is 70 after deposit(100) and withdraw(30).",
+          "pitfall": "Changing acct.balance directly all over the program instead of through methods.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "An account starts at 50, then deposit(20) and withdraw(5) run. What is balance?",
+              "answer": "65",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "C is 'class C: def hi(self): return 'hi''. How do you call hi on c = C()?",
+              "answer": "c.hi()",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "withdraw shouldn't let the balance go below 0. What should withdraw(500) do on a balance of 100?",
+              "answer": "Raise a ValueError, or refuse and leave the balance at 100.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Make Objects Print Nicely",
+          "mastery": "Define __str__ or __repr__ so printing an object shows something useful.",
+          "practice": "Add __repr__ to a Point class so print(Point(2, 3)) shows Point(2, 3).",
+          "detail": "Without these, Python prints the class name and a memory address, which tells you nothing. __repr__ is for developers and should look like the code that made the object. __str__ is for users. print uses __str__ if it exists and falls back to __repr__.",
+          "proof": "repr returns f'Point({self.x}, {self.y})', and print shows Point(2, 3).",
+          "pitfall": "Printing inside __repr__ instead of returning a string.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Without __repr__, what does print(Point(1, 2)) show?",
+              "answer": "Something like <__main__.Point object at 0x...>.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which one does print use first, __str__ or __repr__?",
+              "answer": "__str__",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write a __repr__ for Point that returns 'Point(x, y)' with the real numbers.",
+              "answer": "def __repr__(self): return f'Point({self.x}, {self.y})'",
+              "answer_kind": "code"
+            }
+          ]
+        },
+        {
+          "title": "Class and Instance Attributes",
+          "mastery": "Tell attributes shared by every object from the ones each object owns.",
+          "practice": "Give Dog a class attribute species = 'canine' and an instance attribute name, then change one dog's name and check the other's.",
+          "detail": "An attribute set in the class body is shared by every instance. One set on self belongs to that object alone. Reading a.n looks on the object first, then on the class. Assigning a.n = 9 creates a new attribute on a and leaves the class value alone.",
+          "proof": "Changing rex.name leaves fido.name alone, and both still read species as 'canine'.",
+          "pitfall": "Putting a list in the class body, so every object shares one list.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "C is 'class C: n = 0'. After a = C(), b = C() and C.n = 5, what is b.n?",
+              "answer": "5",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "After that, a.n = 9 runs. What is b.n now?",
+              "answer": "5",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why is 'class Team: members = []' risky?",
+              "answer": "Every team shares the same list, so adding to one adds to all.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Inherit and Override",
+          "mastery": "Make a subclass that reuses a parent's methods and overrides one of them.",
+          "practice": "Write Shape with area() returning 0, then Square(Shape) overriding area() for side 4, calling super().__init__ in the child.",
+          "detail": "A subclass gets every method of its parent for free and can replace any of them. super() reaches the parent's version, which is how a child's __init__ runs the parent's setup too. Inherit only when the child truly is a kind of the parent.",
+          "proof": "Square(4).area() returns 16, and Shape().area() still returns 0.",
+          "pitfall": "Inheriting just to reuse one method, when a plain function would do.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A is 'class A: def f(self): return 1', and B is 'class B(A): pass'. What is B().f()?",
+              "answer": "1",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Now B is 'class B(A): def f(self): return 2'. What is B().f()?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "class Square(Shape) is defined. What is isinstance(Square(4), Shape)?",
+              "answer": "True",
+              "answer_kind": "truefalse"
+            }
+          ]
+        }
+      ]
+    },
+    "py.project": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Pick a Project You Want",
+          "mastery": "Choose a project small enough to finish in a week and interesting enough to keep you going.",
+          "practice": "List 3 project ideas, like a quiz game, a budget tracker or a weather bot, and pick the one you'd use yourself.",
+          "detail": "The best first projects use what you know plus one new thing. If you'd use it yourself, you'll find its bugs and care enough to fix them. Huge ideas like a social network stall. Pick one you can finish, then grow it.",
+          "proof": "One idea chosen, with a sentence on why you'd use it.",
+          "pitfall": "Starting with a giant idea and quitting at 10% done.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which is the better first project: a full social network or a 50-line flashcard quiz?",
+              "answer": "The flashcard quiz. You can finish it.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name one Python project that uses files and a loop.",
+              "answer": "A to-do list that saves to tasks.txt.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why pick a project like a 'budget tracker' you'd use yourself?",
+              "answer": "You'll find its bugs and want to fix them.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Plan the First Version",
+          "mastery": "Write down the smallest working version, with 3 to 5 features, before writing code.",
+          "practice": "Write 5 features for version 1 of a quiz game, and cross out any 2 that can wait.",
+          "detail": "A short plan keeps you from building everything at once. Version 1 should do the core job end to end, even if it's plain. Extras like sound, logins and leaderboards go on a later list. Finishing a small version beats half-building a big one.",
+          "proof": "A list like questions, answers and score kept, with sound and login crossed out.",
+          "pitfall": "Planning 20 features and building the fun extras before the core works.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A quiz game plan lists questions, score, leaderboard, sound and login. Which 2 can wait?",
+              "answer": "Sound and login, or the leaderboard.",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What's an MVP?",
+              "answer": "A minimum viable product: the smallest version that works.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Version 1 works. What's the next step before adding features?",
+              "answer": "Use it, note what's annoying, and fix that first.",
+              "answer_kind": "list"
+            }
+          ]
+        },
+        {
+          "title": "Build in Small Steps",
+          "mastery": "Get one small piece working and run it before adding the next.",
+          "practice": "Build a weather bot in 4 runs: print a fixed city, then read input, then fetch the data, then format the result.",
+          "detail": "Run the program after every small change. When something breaks, the cause is in the last few lines you wrote, which makes it quick to find. Commit each working step so you can always get back to something that ran.",
+          "proof": "Four runs, each one working, and four commits to fall back on.",
+          "pitfall": "Writing 200 lines before the first run and facing a dozen bugs at once.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You wrote 200 lines and it crashes. Why is that harder than crashing after 20?",
+              "answer": "The bug could be anywhere in the 200.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which Git command saves each working step?",
+              "answer": "git commit",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A new step breaks the bot, and your last commit worked. What's the quickest way back?",
+              "answer": "Undo to the last commit with git restore or git checkout.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Handle Real Users",
+          "mastery": "Make the program survive bad input like empty answers, wrong types and typos.",
+          "practice": "Feed your project 5 bad inputs, such as an empty line, letters for a number and a huge value, and fix each crash.",
+          "detail": "Real users type anything. Strip and lowercase text before comparing it, convert numbers inside try, and ask again with a clear message instead of crashing. Test the bad cases on purpose, because a user will find them on the first day.",
+          "proof": "All 5 bad inputs get a polite retry message instead of a traceback.",
+          "pitfall": "Testing only with the inputs you know are right.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Your quiz asks 'Score 1 to 10?' and the user types 'seven'. What should happen?",
+              "answer": "Ask again with a short message, instead of crashing.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which is better for 'Play again? (y/n)': answer == 'y' or answer.strip().lower() == 'y'?",
+              "answer": "answer.strip().lower() == 'y', since it accepts ' Y '.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does input() return when a user just presses Enter?",
+              "answer": "''",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Share It",
+          "mastery": "Write a short README and put the project on GitHub so other people can run it.",
+          "practice": "Write a README with 3 parts: what it does, how to install it and how to run it, then push the repo to GitHub.",
+          "detail": "A README is the front door of a project. Say what it does in one line, list the install steps and show one command that runs it. Include requirements.txt. Keep secrets like API keys out of the repo, in an environment variable or an ignored .env file.",
+          "proof": "A GitHub page that shows the README and runs with two commands.",
+          "pitfall": "Committing an API key, which bots scrape from public repos within minutes.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which file does GitHub show on a repo's front page?",
+              "answer": "README.md",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What should a README's install section usually show?",
+              "answer": "The pip install -r requirements.txt command.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Should you commit your API key in config.py?",
+              "answer": "No. Keep it in an environment variable or an ignored .env file.",
+              "answer_kind": "yesno"
             }
           ]
         }
@@ -127632,6 +130416,180 @@
               "prompt": "line = 'x = 42' comes from a config file. Write one line that puts the int 42 into n.",
               "answer": "n = int(line.split('=')[1])",
               "answer_kind": "code"
+            }
+          ]
+        }
+      ]
+    },
+    "py.testing": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Write a First Test",
+          "mastery": "Write a test_ function with assert, and run it with pytest.",
+          "practice": "Write test_add() that asserts add(2, 3) == 5 in test_math.py, run 'pytest', and watch it pass.",
+          "detail": "pytest finds files named test_*.py and runs every function in them whose name starts with test_. An assert that's true passes quietly. One that's false fails and shows both sides, so you can see what came back instead of what you expected.",
+          "proof": "pytest prints 1 passed.",
+          "pitfall": "Naming the function check_add, which pytest never runs.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "pytest looks for tests in which files: test_*.py or main_*.py?",
+              "answer": "test_*.py",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does pytest report when 'assert 1 + 1 == 3' runs?",
+              "answer": "A failure, showing that 2 != 3.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Your test function is named check_add. Will pytest run it?",
+              "answer": "No. Test functions must start with test_.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Test Several Cases",
+          "mastery": "Cover normal, edge and error cases, using parametrize to keep it short.",
+          "practice": "Use @pytest.mark.parametrize to test is_even on 0, 1, 2 and -3 in one test function.",
+          "detail": "One function plus a list of inputs and expected outputs covers many cases without copying code. Include the boring middle case, the edges like 0 and empty, and negatives. Each case is reported on its own, so you see exactly which one failed.",
+          "proof": "pytest reports 4 tests from one function.",
+          "pitfall": "Testing only one normal value and calling the function tested.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A test function is parametrized with 4 cases. How many tests does pytest count?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which case is most often forgotten: [3, 1, 2] or []?",
+              "answer": "[]",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Write the decorator line that runs a test with x = 1, 2 and 3.",
+              "answer": "@pytest.mark.parametrize('x', [1, 2, 3])",
+              "answer_kind": "code"
+            }
+          ]
+        },
+        {
+          "title": "Test That Errors Happen",
+          "mastery": "Check that bad input raises the right exception, using pytest.raises.",
+          "practice": "Write a test that set_age(-1) raises ValueError, using 'with pytest.raises(ValueError):'.",
+          "detail": "Code inside the with block must raise that exception or the test fails. That locks in your error handling, so a later change can't quietly turn a loud failure into a wrong answer. You can also check the message with match.",
+          "proof": "The test passes while set_age(-1) raises ValueError, and fails if it ever stops raising.",
+          "pitfall": "Wrapping the call in try and except inside the test, which passes even when nothing is raised.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A test uses pytest.raises(KeyError), but no error is raised. What happens?",
+              "answer": "The test fails.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write the lines that check int('x') raises ValueError.",
+              "answer": "with pytest.raises(ValueError): int('x')",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why test that set_age(-1) fails?",
+              "answer": "So bad input keeps failing loudly instead of quietly giving wrong answers.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Share Setup With Fixtures",
+          "mastery": "Share setup between tests with a pytest fixture.",
+          "practice": "Write a fixture that returns a fresh BankAccount with balance 100, and use it in two tests.",
+          "detail": "A fixture is a function marked with @pytest.fixture. A test that names it as a parameter gets its return value. Each test gets a fresh copy by default, so one test's changes can't leak into the next. Fixtures keep setup in one place.",
+          "proof": "Both tests start from a balance of 100, whatever the other one did.",
+          "pitfall": "Sharing one global object between tests, so they pass or fail depending on their order.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which decorator marks a function as a 'pytest' fixture?",
+              "answer": "@pytest.fixture",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A test takes a parameter named account. Where does pytest look for it?",
+              "answer": "A fixture named account.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "2 tests both change the account fixture. Does the second see the first one's change?",
+              "answer": "No. Each test gets a fresh one by default.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Test Before You Fix",
+          "mastery": "Write a failing test that shows a bug, then fix the code until the test passes.",
+          "practice": "Find a bug in a slugify() function, write a test that fails because of it, then fix slugify until pytest is green.",
+          "detail": "A test that fails first proves it can catch the bug. Then the fix turns it green, and the test stays behind to guard against the bug coming back. pytest -x stops at the first failure and -k picks tests by name, which speeds up the loop.",
+          "proof": "The test goes from red to green, and the bug can't return quietly.",
+          "pitfall": "Writing the test after the fix, never seeing it fail, and trusting a test that might not work.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Your new test passed on its 1st run, before any fix. What does that mean?",
+              "answer": "The test doesn't catch the bug yet.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does 'pytest -x' do?",
+              "answer": "Stops at the first failure.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does 'pytest -k slug' do?",
+              "answer": "Runs only the tests whose names match slug.",
+              "answer_kind": "phrase"
             }
           ]
         }
