@@ -77656,6 +77656,3660 @@
         }
       ]
     },
+    "gt.barre": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "The Barre Finger",
+          "mastery": "Flatten finger 1 across all 6 strings so every note rings, using the slightly bony side of the finger.",
+          "practice": "Barre fret 5 with finger 1 only and pick each of the 6 strings, adjusting until all 6 ring clearly.",
+          "detail": "Roll finger 1 slightly onto its bony side, which presses more evenly than the soft pad. Keep it close to the fret. Use a little arm weight pulling back rather than squeezing with the thumb. Dead strings usually sit under a finger crease.",
+          "proof": "All 6 strings ringing under the barre at fret 5.",
+          "pitfall": "Squeezing with the thumb so hard the hand cramps.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "For a barre, which side of finger 1 works best: the soft pad or the slightly bony side?",
+              "answer": "The slightly bony side",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A barre at fret 5 leaves the 3rd string dead. What should you try?",
+              "answer": "Roll the finger slightly, or shift it closer to the fret.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Should a 6-string barre take your full grip strength?",
+              "answer": "No. Use a little arm weight pulling back, not a hard squeeze.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "The E-Shape Barre",
+          "mastery": "Play the E-shape major barre chord, rooted on the 6th string, and move it to any fret.",
+          "practice": "Play F at fret 1 with the E shape, then move the same shape to fret 3 for G and fret 5 for A.",
+          "detail": "The E shape is an open E chord with finger 1 acting as the nut. The root is on the 6th string, so whatever note that string plays at the barre fret is the chord's name. One shape now gives you 12 major chords.",
+          "proof": "F, G and A played with the same shape at frets 1, 3 and 5.",
+          "pitfall": "Forgetting which string holds the root and naming the chord wrong.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "The E-shape barre at fret 3 makes which chord?",
+              "answer": "G major",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "At which fret is the E-shape barre for A major, with its root on string 6?",
+              "answer": "5",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "The E-shape barre at fret 8 is which chord?",
+              "answer": "C major",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "The A-Shape Barre",
+          "mastery": "Play the A-shape barre chord, rooted on the 5th string.",
+          "practice": "Find Bb, C and D with the A shape by putting the barre where the 5th string plays each root, and strum each 4 times.",
+          "detail": "The A shape barres across the 5th string, and the root is the note the 5th string plays at that fret. Many players fret the 3 middle notes with one finger bent back, which is hard at first. Together with the E shape, you can play any major chord in two places.",
+          "proof": "Bb, C and D played with the A shape at frets 1, 3 and 5.",
+          "pitfall": "Letting the 6th string ring under an A-shape barre.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "The A-shape barre at fret 3 gives which chord?",
+              "answer": "C major",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "At which fret is the A-shape barre for D major, with its root on string 5?",
+              "answer": "5",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Of the 6 strings, which one holds the root of an A-shape barre?",
+              "answer": "The 5th",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Minor and Seventh Barres",
+          "mastery": "Change barre shapes to minor and dominant seventh by moving one or two fingers.",
+          "practice": "Play the E shape at fret 5 as A, Am, A7 and Am7, noting which finger moves each time.",
+          "detail": "Each barre shape is an open chord moved up, so its minor and seventh versions follow the open ones. Lift the finger that holds the 3rd to make it minor. Lift the finger holding the doubled root to add the flat 7th.",
+          "proof": "4 chords at fret 5, with the moving finger noted for each.",
+          "pitfall": "Learning each barre chord as a brand new shape.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What 1-finger change turns an E-shape major barre into minor?",
+              "answer": "Lifting the finger that holds the 3rd, on string 3.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "The E-shape minor barre at fret 7 is which chord?",
+              "answer": "B minor",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "The A-shape minor barre at fret 2 is which chord?",
+              "answer": "B minor",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Build Barre Stamina",
+          "mastery": "Build the strength and stamina for barres with short, frequent practice, not long painful sessions.",
+          "practice": "Hold an F barre for 10 seconds, rest 10 seconds, 5 times a day for 2 weeks, and log how many strings ring.",
+          "detail": "Barres feel impossible for a few weeks and then suddenly work. Short holds build strength without strain. Starting around fret 5 is easier than F at fret 1, which takes the most pressure. Stop if anything hurts sharply.",
+          "proof": "A 2-week log showing more strings ringing.",
+          "pitfall": "Grinding through long barre sessions until the hand aches.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How long might it take for barres to start working: 2 days or about 3 weeks?",
+              "answer": "About 3 weeks",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Your hand hurts after 5 minutes of barres. What should you do?",
+              "answer": "Rest, and come back to short holds later.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which barre is easier for beginners: fret 1 or fret 5?",
+              "answer": "Fret 5. F at fret 1 is usually the hardest to press.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "gt.bend": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Bend to a Target Pitch",
+          "mastery": "Bend a string up a half step or a whole step and land exactly on the target pitch.",
+          "practice": "Play fret 9 on the 3rd string, which is E, then bend fret 7 up a whole step to match it, 10 times.",
+          "detail": "A whole-step bend should sound exactly like the note 2 frets higher, and a half step like the note 1 fret higher. Play the target first so your ear knows where to aim. Bending out of tune is the most common lead guitar problem.",
+          "proof": "10 bends that match the fretted E at fret 9.",
+          "pitfall": "Bending until it feels right instead of until it matches the target.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You bend the 2nd string at fret 8 up a whole step. Which fret's note should it match?",
+              "answer": "Fret 10",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A half-step bend raises the note by how many frets' worth?",
+              "answer": "1",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Your bend at fret 7 lands a little low. What should you do?",
+              "answer": "Push the string further until it matches the target.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Bend With Support",
+          "mastery": "Bend with 2 or 3 fingers together and the wrist turning, not one finger alone.",
+          "practice": "Bend the 3rd string at fret 7 with finger 3, backed by fingers 1 and 2 behind it, 10 times, turning the wrist.",
+          "detail": "One finger alone can't bend accurately for long. Put the other fingers behind it on the same string to share the force. Most of the motion comes from turning the wrist, like opening a door handle, with the thumb hooked over the neck.",
+          "proof": "10 steady bends using 3 fingers and the wrist.",
+          "pitfall": "Pushing with one fingertip and running out of strength.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why back up the bending finger with 2 others?",
+              "answer": "They share the force, so the bend is stronger and steadier.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Where does most of the motion in a whole-step bend at fret 7 come from: the finger or the wrist?",
+              "answer": "The wrist, turning like a door handle.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which way do you usually bend strings 1 to 3?",
+              "answer": "Up, toward the ceiling.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Release Bends",
+          "mastery": "Bend up, pick, then let the string fall smoothly back to the starting note.",
+          "practice": "Pre-bend the 3rd string at fret 7 up a whole step without picking, pick it, then release it slowly back to D.",
+          "detail": "A pre-bend is bent before you pick, so the note starts high. Releasing it slowly makes the pitch glide down like a voice. It only sounds right if the pre-bend lands in tune, so check it against the fretted note first.",
+          "proof": "5 pre-bends that start on E and glide down to D.",
+          "pitfall": "Letting go of the bend too fast, so it snaps down.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is a pre-bend, at fret 7 or anywhere?",
+              "answer": "Bending the string before you pick it.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A release bend from E down to D on the 3rd string starts at which fret?",
+              "answer": "7",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does a slow release of 1 whole step sound like a voice?",
+              "answer": "The pitch glides, like a singer sliding down.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Add Vibrato",
+          "mastery": "Add vibrato by bending the string slightly back and forth in a steady rhythm.",
+          "practice": "Hold the 2nd string at fret 8 and add vibrato at 2 wobbles per beat at 60 BPM, for 8 beats.",
+          "detail": "Vibrato is a small, repeated bend that gives a held note life. Keep it even, like a pulse, rather than random shaking. Speed and width can change the mood: slow and wide sounds bluesy, fast and narrow sounds tense.",
+          "proof": "8 beats of even vibrato, 2 wobbles per beat.",
+          "pitfall": "Shaking the string randomly, so the vibrato sounds nervous.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "At 2 wobbles per beat and 60 BPM, how many wobbles happen in 8 beats?",
+              "answer": "16",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "At 60 BPM, should vibrato be random or even?",
+              "answer": "Even, in a steady rhythm.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 2 ways vibrato can vary.",
+              "answer": "Speed and width.",
+              "answer_kind": "list"
+            }
+          ]
+        },
+        {
+          "title": "Bends in Licks",
+          "mastery": "Use bends in pentatonic licks and check them by ear against the target note.",
+          "practice": "Play the classic bend from fret 7 up to fret 9's pitch on the 3rd string in A minor pentatonic, then resolve to fret 5 on the 2nd string, 5 times.",
+          "detail": "The best bends go from one scale note to the next, so they land somewhere that fits. In A minor pentatonic, bending D up to E is a classic move. Check the bent note against the fretted one, then use it in phrases.",
+          "proof": "5 bends that land on E, each resolving to E on the 2nd string.",
+          "pitfall": "Bending to a note outside the scale by accident.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In A minor pentatonic, bending D on the 3rd string up a whole step gives which note?",
+              "answer": "E",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Is E one of the 5 notes of A minor pentatonic?",
+              "answer": "Yes",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why check a bend against the fretted target at fret 9 first?",
+              "answer": "So you know exactly what pitch to aim for.",
+              "answer_kind": "sentence"
+            }
+          ]
+        }
+      ]
+    },
+    "gt.capo": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "What a Capo Does",
+          "mastery": "Use a capo to raise every open string, so familiar shapes sound in a higher key.",
+          "practice": "Put a capo at fret 2, play a G shape, and work out that it sounds as A.",
+          "detail": "A capo acts as a movable nut. Every fret it moves up raises everything a half step. Your fingers play the same shapes, but the sound is higher. To find the real chord, count up from the shape's name by the capo's fret number.",
+          "proof": "A G shape at capo 2 named as the A it really is.",
+          "pitfall": "Naming chords by their shapes and confusing a bandmate playing without a capo.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "With a capo at fret 2, a G shape sounds as which chord?",
+              "answer": "A",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You play a C shape with a capo on fret 3. Name the real chord.",
+              "answer": "Eb",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "With the capo on 5, which chord does a D shape make?",
+              "answer": "G",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Capo for a Singer",
+          "mastery": "Move the capo to put a song in a singer's best range without learning new chord shapes.",
+          "practice": "Sing a G-C-D song with no capo, then with the capo at 2 and at 4, and pick the most comfortable key.",
+          "detail": "Every voice has a sweet spot. If a song sits too low, move the capo up and the whole song rises while your shapes stay the same. That's why singers who play guitar carry a capo everywhere.",
+          "proof": "The song tried in 3 keys, with the best one chosen.",
+          "pitfall": "Straining to sing a song in its original key when a capo would fix it.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A song is too low for you at fret 0 in G. Should the capo move up or down?",
+              "answer": "Up",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A song played in G shapes with a capo at 4 sounds in which key?",
+              "answer": "B",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why do singers love a capo at fret 4?",
+              "answer": "It changes key without new chord shapes.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Find Shapes for a Key",
+          "mastery": "Work out which shapes and capo fret give a song's key using easy open chords.",
+          "practice": "A song is in Eb with the chords Eb, Ab and Bb. Find a capo fret and open shapes that play it.",
+          "detail": "Subtract the capo fret from each real chord to find the shape. Try a few capo spots until all the shapes are easy ones like G, C, D, A and E. Keys full of flats often become simple with a capo at fret 1 or 3.",
+          "proof": "Capo 1 with D, G and A shapes.",
+          "pitfall": "Barring every chord in a flat key when a capo would make them open.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A song uses F, Bb and C. Which 3 open shapes give those with a capo at fret 3?",
+              "answer": "D, G and A",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A capo at 1 with D, G and A shapes gives which 3 chords?",
+              "answer": "Eb, Ab and Bb",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A song is in Bb major. Which capo fret lets you use G-shape chords?",
+              "answer": "3",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Transpose Without a Capo",
+          "mastery": "Transpose a chord progression to a new key by moving every chord the same number of half steps.",
+          "practice": "Transpose G-Em-C-D up 2 half steps, then down 2, and write both new progressions.",
+          "detail": "Move every chord root by the same distance and keep each chord's quality, so minor stays minor. Counting on the neck or a keyboard keeps it accurate. Watch for keys that need flats rather than sharps.",
+          "proof": "A-F#m-D-E going up, and F-Dm-Bb-C going down.",
+          "pitfall": "Moving the roots and forgetting to keep the minor chords minor.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Transpose G-C-D up 2 half steps.",
+              "answer": "A-D-E",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Transpose Am-F-C-G up 3 half steps.",
+              "answer": "Cm-Ab-Eb-Bb",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Transpose C-G-Am-F down 5 half steps.",
+              "answer": "G-D-Em-C",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Capo Tricks",
+          "mastery": "Use a capo for sound as well as key, like a second guitar part high up the neck.",
+          "practice": "Record a G-C-D song with no capo, then play the same song over it with C, F and G shapes at capo 7, and compare.",
+          "detail": "Two guitars playing the same chords in the same shapes sound thick and blurry. A second part with a high capo plays the same chords in different, brighter voicings. It's a classic studio trick for a shimmering sound.",
+          "proof": "2 layered recordings, one open and one at capo 7.",
+          "pitfall": "Doubling a part note for note and getting mud instead of shimmer.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "With a capo at 7, which open shape gives a G chord?",
+              "answer": "C",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why add a capo 7 part to a recording?",
+              "answer": "It adds a bright, different voicing that doesn't clash.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Does a capo at fret 2 change which chord shapes you finger?",
+              "answer": "No. It changes the key they sound in.",
+              "answer_kind": "yesno"
+            }
+          ]
+        }
+      ]
+    },
+    "gt.change": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Practice the Change Itself",
+          "mastery": "Practice the move between 2 chords on its own, going back and forth without strumming.",
+          "practice": "Switch between G and C 20 times without strumming, landing all the fingers at once each time.",
+          "detail": "Forming a chord and changing to it are different skills. Practicing just the move, with no strumming to distract you, trains the fingers to travel together. Aim for all fingers to land at the same moment.",
+          "proof": "20 changes with the fingers landing together.",
+          "pitfall": "Placing fingers one at a time, so every change takes too long.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why practice 20 changes without strumming?",
+              "answer": "You focus on the fingers' move, which is the real skill.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many switches a minute is a good first goal for G to C: about 30, or 100?",
+              "answer": "About 30",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You land the 3 fingers of C one at a time. What should you aim for instead?",
+              "answer": "All fingers landing together.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "One-Minute Changes",
+          "mastery": "Count how many clean changes you make in 1 minute, and track the count daily.",
+          "practice": "Time yourself for 60 seconds switching Em to C, strumming once per chord, and write the count each day for a week.",
+          "detail": "A number makes progress visible and keeps practice honest. Count only clean changes, where every string rings. Work on the slowest pairs first, since one slow change can stall a whole song.",
+          "proof": "7 daily counts, ideally climbing.",
+          "pitfall": "Counting messy changes to make the number look better.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Day 1 is 18 changes and day 7 is 40. How many more is that?",
+              "answer": "22",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What counts as a clean change in a 60-second drill?",
+              "answer": "Every string rings, and you land in time.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which pair should you drill most: one you already do fast, or one under 20 a minute?",
+              "answer": "The one under 20 a minute.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Use Anchor Fingers",
+          "mastery": "Keep a shared finger down, or slide along a string, to make changes shorter.",
+          "practice": "Change from C to Am 10 times, keeping fingers 1 and 2 down and moving only finger 3.",
+          "detail": "Many chord pairs share a note, and leaving that finger in place cuts the move to almost nothing. C to Am keeps two fingers still. Where nothing is shared, a finger can sometimes slide along its string as a guide.",
+          "proof": "10 changes from C to Am with 2 fingers never lifting.",
+          "pitfall": "Lifting every finger off the neck between chords that share notes.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Going from C to 'Am', how many fingers can stay down?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which finger, 1 to 3, moves when you go from C to 'Am'?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why keep 1 anchor finger down during a change?",
+              "answer": "It shortens the move and guides the hand.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Change on Time",
+          "mastery": "Change chords on the beat, strumming open strings at the end of a bar if you need extra time.",
+          "practice": "Strum G for 4 beats and C for 4 beats at 60 BPM, making each change land on beat 1, for 8 bars.",
+          "detail": "A change on time with one wrong note sounds better than a perfect chord that arrives late. If you need a moment, let the last strum of the bar hit the open strings while your hand moves. Listeners rarely notice.",
+          "proof": "8 bars with every change landing on beat 1.",
+          "pitfall": "Stopping the strum to wait for the next chord.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "If a change is running late, what can you strum on the 'and' of beat 4?",
+              "answer": "The open strings, while your hand moves.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "At 60 BPM with 4 beats per chord, how many seconds do you hold each chord?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which matters more to a listener: a perfect chord, or a change on beat 1?",
+              "answer": "A change on beat 1.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Play Song Progressions",
+          "mastery": "Play common progressions like G-C-D and G-Em-C-D in time, as in real songs.",
+          "practice": "Play G-Em-C-D, 1 bar each, around 10 times at 70 BPM without stopping.",
+          "detail": "Most songs loop a few chords. Playing a full progression without stopping is the step from drills to music. If a change goes wrong, keep strumming and catch the next chord, because the loop comes round again.",
+          "proof": "10 loops in a row with no stops.",
+          "pitfall": "Restarting the progression from the top after every mistake.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which chord finishes the common pop loop 'G-Em-C-?'",
+              "answer": "D",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A song in G uses 4 chords: G, Em, C and D. Which is the home chord?",
+              "answer": "G",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A change goes wrong at bar 3. What should you do instead of stopping?",
+              "answer": "Keep the strum going and catch the next chord.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "gt.chords": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "E Minor and A Minor",
+          "mastery": "Play E minor and A minor with every string they use ringing clearly.",
+          "practice": "Play Em with fingers 2 and 3 on fret 2 of strings 5 and 4, strum it 4 times, and pick each string to check it rings.",
+          "detail": "Em is the easiest full chord: two fingers and all six strings. Am skips the 6th string and uses three fingers. Pick through each chord one string at a time, since a strum hides a muted string.",
+          "proof": "Em with all 6 strings ringing, and Am with 5.",
+          "pitfall": "Strumming the 6th string in Am.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many strings ring in a standard 'Em' chord?",
+              "answer": "6",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Of the 6 strings, which one is not played in Am?",
+              "answer": "The 6th, the low E.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "The 1st string sounds dead when you pick through Am. What should you check?",
+              "answer": "Whether a finger is touching it, and arch that finger more.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "C, G and D",
+          "mastery": "Play C, G and D major cleanly, and know which strings each one skips.",
+          "practice": "Play C, G and D, strumming each 4 times, then pick each string slowly to check every note rings.",
+          "detail": "C skips the 6th string, D skips both the 6th and 5th, and G uses all six. These three chords cover a huge number of songs. Learn where each one's lowest string starts, so you strum only the right ones.",
+          "proof": "All 3 chords clean, each strummed from its correct lowest string.",
+          "pitfall": "Strumming all 6 strings on D, which adds a muddy low E.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many of the 6 strings do you strum in a D chord?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In C major, which fret does finger 3 press on the 5th string?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In G major, which fret does the 6th string play?",
+              "answer": "3",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "E Major and A Major",
+          "mastery": "Play E major and A major, and see how each relates to its minor chord.",
+          "practice": "Play Em then E by adding finger 1 at fret 1 of the 3rd string, and Am then A by moving the 2nd-string note from fret 1 to fret 2.",
+          "detail": "E major is Em plus one finger. A major has three fingers crowded on fret 2, which takes care to fit. Seeing major and minor as small changes of the same shape makes both easier to learn.",
+          "proof": "Em to E and Am to A switched cleanly, 4 times each.",
+          "pitfall": "Cramming the 3 fingers of A so they mute the 1st string.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What changes between 'Em' and E major?",
+              "answer": "E adds a note at fret 1 on the 3rd string.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In A major, which fret do 3 fingers share?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In A major, which strings are pressed at fret 2?",
+              "answer": "The 4th, 3rd and 2nd",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Read Chord Diagrams",
+          "mastery": "Read chord diagrams: vertical lines are strings, horizontal lines are frets, dots are fingers, and X means don't play.",
+          "practice": "Draw diagrams for 'Em', C, G and D from memory, marking X and O above the strings.",
+          "detail": "A diagram shows the neck standing up, with the 6th string on the left. Dots show where to press, numbers often show which finger, O means play the string open, and X means skip it. Most songbooks and websites use them.",
+          "proof": "4 correct diagrams drawn from memory.",
+          "pitfall": "Reading the diagram as if the 1st string were on the left.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In a chord diagram, what does an 'X' above a string mean?",
+              "answer": "Don't play that string.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does an 'O' above a string mean?",
+              "answer": "Play it open.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Of the 6 vertical lines in a diagram, which string is the leftmost?",
+              "answer": "The 6th, the low E.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Get One Shape Perfect",
+          "mastery": "Get one chord fully clean before moving on, checking it string by string.",
+          "practice": "Pick your worst chord, play it 20 times, and after each one pick all its strings, counting how many tries were clean.",
+          "detail": "A chord with one dead string sounds wrong even if the rest is fine. Fixing one shape teaches you finger arching, placement and pressure, and those habits carry over to every chord after it. Count clean tries to see progress.",
+          "proof": "20 tries with a count of clean ones, rising over the week.",
+          "pitfall": "Learning 10 sloppy chords instead of 1 clean one.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You strum a chord and 1 string is muted. What's the first thing to check?",
+              "answer": "Which finger is touching it.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You played a chord 20 times and 15 were clean. What percent is that?",
+              "answer": "75%",
+              "answer_kind": "percent"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why perfect 1 shape before learning 8 more?",
+              "answer": "Clean habits carry over, and sloppy ones do too.",
+              "answer_kind": "sentence"
+            }
+          ]
+        }
+      ]
+    },
+    "gt.ear": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Find the Home Note",
+          "mastery": "Find a song's home note by playing along on one string until a note sounds settled everywhere.",
+          "practice": "Play along with a song on the 6th string, moving fret by fret until 1 note sounds settled over the whole chorus.",
+          "detail": "One note in every song feels like home, especially at the ends of lines. Hunting on a single string is quick: move a fret at a time until it fits. That note is your key, and the chords usually follow from it.",
+          "proof": "The home note found, with its fret and name written down.",
+          "pitfall": "Guessing chords before knowing the key.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A note sounds settled at the end of every 4 bars of a song. What is it likely to be?",
+              "answer": "The key's home note.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why search on just 1 string first?",
+              "answer": "It's quick to move fret by fret and compare.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You found the home note at fret 3 of the 6th string. Which key is likely?",
+              "answer": "G major or G minor",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Follow the Bass",
+          "mastery": "Follow the bass line to find each chord's root, one at a time.",
+          "practice": "Play along with the bass of a 4-chord song on the 6th and 5th strings, pausing the track after each change to check.",
+          "detail": "The bass usually plays each chord's root, which is easier to hear than the full chord. Once you have the roots, decide whether each chord is major or minor by trying both over the recording. The key helps you guess.",
+          "proof": "4 roots found, each with its major or minor quality.",
+          "pitfall": "Trying to hear every note of a chord at once.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In a 4-chord song, why follow the bass to find the chords?",
+              "answer": "The bass usually plays each chord's root.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You found the roots G, E, C and D in a song in G. Which chord is E most likely?",
+              "answer": "E minor",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How do you decide whether the E chord in bar 2 is major or minor?",
+              "answer": "Play both over the recording and hear which fits.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Slow It Down",
+          "mastery": "Slow recordings down without changing the pitch, to hear fast parts clearly.",
+          "practice": "Load a fast solo into an app, set it to 50% speed, and work out the first 4 notes.",
+          "detail": "Fast parts blur together at full speed. Slowing them down while keeping the pitch lets you hear each note. Loop a couple of seconds at a time and replay it until you can sing it, then find it on the neck.",
+          "proof": "The first 4 notes of the solo found at half speed.",
+          "pitfall": "Trying to catch a fast solo at full speed over and over.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "At 50% speed, a 10-second solo lasts how long?",
+              "answer": "20 seconds",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Does good slow-down software at 50% change the pitch?",
+              "answer": "No. It keeps the pitch the same.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why loop just 2 seconds of a hard part?",
+              "answer": "Short loops let you hear it many times quickly.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Check Against the Recording",
+          "mastery": "Check each worked-out part by playing along with the recording at full speed.",
+          "practice": "Play your 8-bar transcription along with the song at full speed, and mark any bar that clashes.",
+          "detail": "Some mistakes only show up in real time. Playing along tells you instantly where your notes don't match. Loop any clashing bar slowly to fix it. If a tab online disagrees with what you hear, trust the recording.",
+          "proof": "8 bars checked, with every clashing bar fixed.",
+          "pitfall": "Trusting a tab over your own ears and the recording.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Bar 6 clashes when you play along. What should you do?",
+              "answer": "Loop that bar slowly and fix the note or chord.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why check your 8 bars at full speed at the end?",
+              "answer": "Some mistakes only show in real time.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "1 tab online disagrees with what you hear. Which do you trust?",
+              "answer": "Your ears and the recording.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Build an Ear Habit",
+          "mastery": "Learn 1 song by ear every week, starting with simple ones, so the skill keeps growing.",
+          "practice": "Pick 4 simple songs and learn 1 a week by ear, logging how long each one takes.",
+          "detail": "Learning by ear is slow at first and gets much faster with practice. Simple songs with 3 or 4 chords are the right start. Logging the time shows your progress, and the skill feeds every other part of playing.",
+          "proof": "4 songs learned in 4 weeks, with times logged.",
+          "pitfall": "Starting with a fast jazz solo and giving up.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Song 1 took 90 minutes and song 4 took 40. How many minutes faster is that?",
+              "answer": "50",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which is better to start with: a 3-chord folk song or a fast jazz solo?",
+              "answer": "The 3-chord folk song",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why learn by ear for 4 weeks when tabs exist?",
+              "answer": "It trains your ear, which helps every other skill.",
+              "answer_kind": "sentence"
+            }
+          ]
+        }
+      ]
+    },
+    "gt.finger": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Assign the Fingers",
+          "mastery": "Use the thumb for the bass strings, and index, middle and ring for the top 3 strings.",
+          "practice": "Rest p on the 6th string and i, m and a on strings 3, 2 and 1, then pluck each in turn 10 times.",
+          "detail": "Fingerstyle labels come from the Spanish names: p for thumb, i for index, m for middle and a for ring. In the basic setup, the thumb covers strings 4 to 6 and each finger owns one of the top strings, so the hand barely moves.",
+          "proof": "10 even passes of p, i, m and a in turn.",
+          "pitfall": "Using one finger for everything, which turns patterns into a scramble.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In fingerstyle, which digit usually plays strings 4 to 6?",
+              "answer": "The thumb",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What do the 4 letters 'p, i, m, a' stand for?",
+              "answer": "Thumb, index, middle and ring, from the Spanish names.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In the usual setup, which finger plays the 2nd string?",
+              "answer": "Middle, m",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Keep a Steady Thumb",
+          "mastery": "Keep a steady alternating bass with the thumb while the fingers add notes on top.",
+          "practice": "Play a C chord with the thumb alternating between the 5th and 4th strings on every beat, for 16 beats at 70 BPM.",
+          "detail": "The thumb is the timekeeper in fingerstyle. Get it steady on its own first, alternating between two bass strings. Then add one finger at a time on top. If the thumb stumbles, take the fingers out again.",
+          "proof": "16 beats of steady thumb, then fingers added without breaking it.",
+          "pitfall": "Letting the thumb follow the fingers' rhythm instead of the beat.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In alternating bass on a C chord, which 2 strings does the thumb usually alternate?",
+              "answer": "The 5th and 4th",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Your fingers make the thumb skip beat 3. What should you practice?",
+              "answer": "The thumb alone until it's automatic, then add 1 finger.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 style built on a steady alternating thumb, named after Merle Travis.",
+              "answer": "Travis picking",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Arpeggio Patterns",
+          "mastery": "Play chords as arpeggios with patterns like p-i-m-a, keeping each note ringing.",
+          "practice": "Play p-i-m-a on an Am chord, thumb on the 5th string, for 8 bars at 60 BPM, letting every note ring.",
+          "detail": "Arpeggio patterns turn a chord into a flowing line. Hold the chord shape the whole time so the notes overlap into a full sound. Patterns like p-i-m-a-m-i add a turn back down. Keep each finger's stroke the same strength.",
+          "proof": "8 bars of even p-i-m-a with the chord ringing.",
+          "pitfall": "Lifting the fretting fingers between notes, so the chord stops ringing.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In p-i-m-a on Am, which string does 'a' play?",
+              "answer": "The 1st string",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In 4/4 with 1 note per 8th, how many notes per bar does p-i-m-a give?",
+              "answer": "8",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why let each of the 4 notes of p-i-m-a ring?",
+              "answer": "Overlapping notes sound like a full chord.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Thumb and Fingers Together",
+          "mastery": "Pinch a bass note and a melody note at the same moment.",
+          "practice": "Play 8 pinches, thumb on the 6th string and middle finger on the 1st, on an Em chord at 60 BPM, then mix pinches into a pattern.",
+          "detail": "A pinch plucks a bass and a top note together, which marks strong beats and makes the guitar sound fuller. Both must land at exactly the same moment. Practice them slowly, then drop them into a pattern on beat 1.",
+          "proof": "8 clean pinches, then a pattern with a pinch on each beat 1.",
+          "pitfall": "Rolling the pinch so it sounds like 2 notes.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is a 'pinch' in fingerstyle?",
+              "answer": "Plucking a bass note and a top note together.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In an Em pinch with the thumb on string 6, which strings might the middle finger play?",
+              "answer": "The 1st or 2nd",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Your pinch sounds like 2 separate notes. What's wrong?",
+              "answer": "The thumb and finger aren't striking at the same moment.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Melody on Top",
+          "mastery": "Bring out a melody on the top strings while the thumb keeps the bass going.",
+          "practice": "Play the first 4 bars of a simple melody on strings 1 and 2 over a thumb bass on beats 1 and 3, with the melody louder.",
+          "detail": "This is where one guitar starts to sound like two parts. The thumb holds the bass and beat, and the fingers sing the tune over it. Pluck the melody notes slightly harder so they stand out above the bass.",
+          "proof": "4 bars with the melody clearly above the bass.",
+          "pitfall": "Playing the bass as loud as the melody, so the tune gets lost.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "On strings 1 and 2, which should be louder: the melody or the bass?",
+              "answer": "The melody",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How do you make 1 finger's note louder than the others?",
+              "answer": "Pluck it a little harder and deeper into the string.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why can fingerstyle make 1 guitar sound like 2?",
+              "answer": "The bass and melody move as separate parts at once.",
+              "answer_kind": "sentence"
+            }
+          ]
+        }
+      ]
+    },
+    "gt.hold": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Sit With the Guitar",
+          "mastery": "Sit with the guitar's waist on your leg, the neck angled slightly up and your back straight.",
+          "practice": "Sit on a chair without arms, rest the guitar's waist on your right leg, and tilt the neck up about 15 degrees.",
+          "detail": "The guitar should stay put without your fretting hand holding it up. Keep the body upright rather than tilted back so you can see the strings, since that bends the wrists. A slight upward neck angle keeps the fretting wrist straighter.",
+          "proof": "The guitar stays in place with your fretting hand off the neck.",
+          "pitfall": "Tilting the guitar back to look at the strings, which strains both wrists.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A right-handed player sits in casual style. On which of the 2 legs does the guitar rest?",
+              "answer": "The right leg",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Should you tilt the guitar 45 degrees back so you can see the strings?",
+              "answer": "No. Keep it upright and learn to play without looking at the top.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why angle the neck up about 15 degrees?",
+              "answer": "It keeps the fretting wrist straighter and the frets easier to reach.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Thumb Behind the Neck",
+          "mastery": "Rest the fretting thumb behind the neck, roughly behind finger 2, so the fingers can arch over the strings.",
+          "practice": "Place your thumb behind the neck opposite finger 2, press the 3rd string at fret 2, and check that the note rings clearly.",
+          "detail": "With the thumb behind the neck, the fingers come down on their tips and arch over the other strings. Squeezing is the most common beginner habit, and it tires the hand fast. Press only as hard as a clean note needs.",
+          "proof": "A clear note at fret 2 with a relaxed thumb.",
+          "pitfall": "Squeezing the neck like a handle until the hand aches.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "For open chords, should the thumb sit roughly behind finger 2, or wrap far over the top?",
+              "answer": "Behind finger 2, roughly",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You squeeze the neck hard and your hand aches after 5 minutes. What should you change?",
+              "answer": "Press only as hard as the note needs, and relax the thumb.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why arch finger 2 over the strings instead of laying it flat?",
+              "answer": "So it doesn't touch and mute the next string.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Fingertips and Frets",
+          "mastery": "Press with the fingertips just behind the fret wire, not on top of it or in the middle of the space.",
+          "practice": "Play the 1st string at fret 3 with your fingertip in 3 spots, far from the fret, just behind it and on top of it, and compare the sound.",
+          "detail": "Right behind the fret wire takes the least pressure and gives the cleanest note. Too far back and it buzzes, and on top of the wire it goes dull. Sore fingertips are normal for the first couple of weeks, until calluses form.",
+          "proof": "The note is cleanest with the fingertip just behind the fret.",
+          "pitfall": "Pressing in the middle of the space and fighting buzz with brute force.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Where should the fingertip sit to sound fret 3 cleanly?",
+              "answer": "Just behind the 3rd fret wire.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A note buzzes at fret 5. What's the most likely fix?",
+              "answer": "Move the fingertip closer to the fret and press a little firmer.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why do fingertips hurt in the first 2 weeks?",
+              "answer": "The skin hasn't built calluses yet.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Set the Picking Hand",
+          "mastery": "Rest the picking forearm on the body's edge so the hand hovers over the sound hole or pickups.",
+          "practice": "Rest your forearm on the guitar's upper edge, let your hand hang over the strings near the sound hole, and strum all 6 open strings 8 times.",
+          "detail": "The forearm resting on the body puts the hand in the same place every time. Hold the pick between the thumb and the side of the index finger, with only a little tip showing. A relaxed grip lets the pick flex through the strings.",
+          "proof": "8 even strums across all 6 strings from the same hand position.",
+          "pitfall": "Gripping the pick so tightly that it snags on the strings.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Over which part of a 6-string acoustic should the strumming hand hover?",
+              "answer": "Over the sound hole, or just behind it.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How should you hold a pick: between the thumb and the side of finger 1, or between 2 fingertips?",
+              "answer": "Between the thumb and the side of the index finger.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "About how many millimeters of the pick should stick out past your fingers: 2 to 3, or 10?",
+              "answer": "2 to 3",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Avoid Pain and Tension",
+          "mastery": "Spot the signs of strain, like a sharply bent wrist or a raised shoulder, and fix them before they become habits.",
+          "practice": "Play for 10 minutes, then check 4 things in a mirror: shoulder height, wrist angle, thumb pressure and neck angle.",
+          "detail": "Most beginner pain comes from tension and awkward angles, not from the guitar itself. A mirror shows what you can't feel. Short sessions spread through the week are kinder to the hands than one long one.",
+          "proof": "A 4-point check done, with anything off corrected.",
+          "pitfall": "Playing through wrist pain because you think it's part of learning.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Your fretting wrist is bent at 90 degrees. What should you change?",
+              "answer": "Drop the elbow or angle the neck up to straighten it.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You get a sharp pain in the wrist after 20 minutes. What should you do?",
+              "answer": "Stop and rest, then check your posture.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "To avoid strain, how long should a beginner's sessions be: 15 to 30 minutes or 3 hours?",
+              "answer": "15 to 30 minutes",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "gt.improv": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Start With 3 Notes",
+          "mastery": "Improvise over a simple backing track using 1 pentatonic box, starting with only 3 notes.",
+          "practice": "Improvise over an A minor backing track for 2 minutes using only A, C and D in box 1.",
+          "detail": "Limits make improvising easier. With only 3 notes, you stop hunting and start thinking about rhythm, repetition and space. Once that feels natural, add the other notes of the box one at a time.",
+          "proof": "2 minutes of improvising with only 3 notes.",
+          "pitfall": "Using the whole box at once and running up and down it.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why start improvising with only 3 notes?",
+              "answer": "Fewer choices make you focus on rhythm and phrasing.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which pentatonic box and fret fit an A minor backing track in 4/4?",
+              "answer": "Box 1 at fret 5",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Over an A minor chord in bar 4, which of A, C and D makes the safest ending?",
+              "answer": "A",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Leave Space",
+          "mastery": "Play short phrases with rests between them, like a conversation.",
+          "practice": "Improvise 8 bars where you play for 1 bar, then rest for 1 bar, every time.",
+          "detail": "Players who sound best often play the fewest notes. Rests let each idea land and give the listener time to hear it. Playing one bar and resting one builds the habit of phrasing in sentences instead of a stream.",
+          "proof": "8 bars alternating 1 bar of playing with 1 bar of rest.",
+          "pitfall": "Filling every beat with notes.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why leave a 1-bar rest between phrases?",
+              "answer": "Space lets each idea land.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A solo has no rests for 16 bars. How does it usually sound?",
+              "answer": "Busy and hard to follow.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In 8 bars of play 1, rest 1, how many bars do you play?",
+              "answer": "4",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Repeat and Vary",
+          "mastery": "Build a solo by repeating a short idea and changing it a little each time.",
+          "practice": "Make up a 4-note idea, then play it 4 times, changing 1 thing each time: the rhythm, a note, a bend or the ending.",
+          "detail": "Repetition gives listeners something to hold on to, and small changes keep it interesting. That's how real solos are built, around a few ideas developed over time rather than a string of unrelated licks.",
+          "proof": "1 idea played 4 times, each version slightly different.",
+          "pitfall": "Never repeating anything, so the solo has no shape.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why repeat 1 idea 4 times in a solo?",
+              "answer": "Repetition gives listeners something to hold on to.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 3 things you can change in a repeated lick.",
+              "answer": "The rhythm, a note and the ending.",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A 4-note idea is played 4 times. How many notes is that in total?",
+              "answer": "16",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Target Chord Tones",
+          "mastery": "Aim phrases at notes of the current chord, especially where the chord changes.",
+          "practice": "Over Am to Dm, 2 bars each, end every phrase on A over Am and on D or F over Dm.",
+          "detail": "The pentatonic box always fits the key, but landing on the right note for each chord makes the solo follow the music. At each change, aim for a note of the new chord. It's what separates melodic soloing from noodling.",
+          "proof": "8 bars where every phrase ends on a chord tone.",
+          "pitfall": "Ignoring the chord changes and playing the same box over everything.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Over a Dm chord, which 3 notes are chord tones?",
+              "answer": "D, F and A",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why land on a chord tone at the change in bar 3?",
+              "answer": "It makes the solo follow the music.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Over E7 in a blues in A, which note of the chord leads strongly back to A?",
+              "answer": "G#",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Tell a Story",
+          "mastery": "Shape a whole solo with a start, a build and a climax, like a short story.",
+          "practice": "Improvise 3 rounds of a 12-bar blues: low and simple in round 1, busier in round 2, and high with bends in round 3.",
+          "detail": "A solo that stays at one level gets dull. Start low and sparse, build with more notes and higher positions, and save the biggest moment, the high bend or the fastest run, for near the end. Then wind down cleanly.",
+          "proof": "36 bars that clearly build from round 1 to round 3.",
+          "pitfall": "Opening with the fastest, highest playing and having nowhere to go.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In 3 rounds, where should a solo's high point usually be: at the start or near the end?",
+              "answer": "Near the end",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 1 way to build intensity in a solo.",
+              "answer": "Play higher, busier or louder, or add bends.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "3 rounds of a 12-bar blues is how many bars?",
+              "answer": "36",
+              "answer_kind": "integer"
+            }
+          ]
+        }
+      ]
+    },
+    "gt.penta": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Pentatonic Box 1",
+          "mastery": "Play the minor pentatonic box 1 shape, with the root on the 6th string under finger 1.",
+          "practice": "Play A minor pentatonic box 1 at fret 5, up and down, 4 times at 80 BPM, naming each A.",
+          "detail": "The minor pentatonic has 5 notes, and box 1 plays 2 of them on each string across about 4 frets. Most rock and blues solos start here. Learn where the roots sit inside the box: the 6th string, the 4th string and the 1st string.",
+          "proof": "4 clean passes of box 1 with every A named.",
+          "pitfall": "Playing the box as a pattern without knowing where the roots are.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which 5 notes make up A minor pentatonic?",
+              "answer": "A, C, D, E, G",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A minor pentatonic box 1 starts at which fret of the 6th string?",
+              "answer": "5",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many notes does box 1 put on each of the 6 strings?",
+              "answer": "2",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Move Box 1 to Any Key",
+          "mastery": "Slide box 1 so the root under finger 1 matches the key you need.",
+          "practice": "Play minor pentatonic box 1 at frets 5, 8 and 3, and name each key.",
+          "detail": "The box is a movable shape, just like barre chords. The note under finger 1 on the 6th string names the key. So the low E string notes you already know tell you exactly where to put the box for any song.",
+          "proof": "A, C and G minor pentatonic, each named.",
+          "pitfall": "Staying in A for every song because the box only lives there in your head.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Box 1 with finger 1 at fret 8 of the 6th string is which key?",
+              "answer": "C minor",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Slide box 1 down to fret 3. Which minor key is it now?",
+              "answer": "G minor",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Besides fret 0, which fret starts E minor pentatonic box 1?",
+              "answer": "12",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Major Pentatonic From the Same Box",
+          "mastery": "Use the same box as a major pentatonic by treating a different note as home.",
+          "practice": "Play box 1 at fret 5 over an A minor chord, then over a C major chord, and listen to how the home note changes.",
+          "detail": "A minor pentatonic and C major pentatonic have the same 5 notes, just as A minor and C major share a key signature. Over an A minor chord the box sounds minor and bluesy. Over C it sounds bright and country.",
+          "proof": "The same box played over 2 chords, with the home note named for each.",
+          "pitfall": "Thinking major pentatonic needs a whole new set of shapes.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A minor pentatonic shares its 5 notes with which major pentatonic?",
+              "answer": "C major pentatonic",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You want G major pentatonic. Where can the minor box 1 shape start?",
+              "answer": "Fret 0 or 12, as E minor pentatonic.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which 5 notes are in C major pentatonic?",
+              "answer": "C, D, E, G, A",
+              "answer_kind": "list"
+            }
+          ]
+        },
+        {
+          "title": "Connect the Boxes",
+          "mastery": "Link box 1 to box 2, so you can move along the neck instead of staying in one place.",
+          "practice": "Play box 1 of A minor pentatonic at fret 5, then box 2 starting at fret 8, sliding between them on the 3rd string.",
+          "detail": "There are 5 boxes, and together they cover the whole neck before repeating an octave up. Each box shares notes with its neighbors. Linking 2 boxes with a slide lets your solos travel and reach higher notes.",
+          "proof": "Box 1 and box 2 joined by a slide on the 3rd string.",
+          "pitfall": "Staying in box 1 for every solo forever.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many pentatonic boxes, counting box 1, are there before they repeat?",
+              "answer": "5",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Box 2 of A minor pentatonic starts on which note and fret of the 6th string?",
+              "answer": "C, at fret 8",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why connect the 5 boxes?",
+              "answer": "To play across the neck instead of being stuck in one spot.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Play Some Licks",
+          "mastery": "Learn a few classic pentatonic licks and play them over a backing track.",
+          "practice": "Learn 3 short licks in A minor pentatonic box 1, and play each over a 12-bar blues backing track in A.",
+          "detail": "Licks are the vocabulary of soloing. Learning a few from players you like shows you how they phrase, where they bend and how they end. Playing them over a backing track teaches you when they fit the chords.",
+          "proof": "3 licks played in time over the backing track.",
+          "pitfall": "Learning dozens of licks and never playing them with music.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In a 12-bar blues, which scale do most solos use?",
+              "answer": "The minor pentatonic",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A 12-bar blues in A uses which 3 chords?",
+              "answer": "A, D and E",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why learn 3 licks from records you like?",
+              "answer": "They teach phrasing and how solos are built.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "gt.perform": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Play Through Mistakes",
+          "mastery": "Keep playing through mistakes, so a slip never stops the song.",
+          "practice": "Play a song for 1 person and keep going no matter what, then note every mistake afterward, not during it.",
+          "detail": "In performance, stopping is the real mistake. Listeners forgive a wrong chord and barely notice it if the rhythm keeps going. Review mistakes after the song, never during it, or you'll make more.",
+          "proof": "1 song played through without stopping, with mistakes noted after.",
+          "pitfall": "Stopping to fix a chord in front of people.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You miss a chord in bar 9 of the chorus. What should you do?",
+              "answer": "Keep going and catch the next chord.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What do listeners notice more: 1 wrong chord or a stop?",
+              "answer": "A stop",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "When should you review your mistakes from 1 song?",
+              "answer": "Afterward, not during the song.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Rehearse a Set",
+          "mastery": "Rehearse a short set in order, including tuning, capo moves and talking between songs.",
+          "practice": "Plan a 3-song set, rehearse it start to finish twice, and time how long the changes between songs take.",
+          "detail": "The gaps between songs trip people up as much as the songs do. Rehearse capo moves and retuning until they're quick, decide what you'll say, and play the set in order to build stamina.",
+          "proof": "A 3-song set rehearsed twice, with the changes timed.",
+          "pitfall": "Practicing each song alone and never the changes between them.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Between 3 songs you need a capo change and a retune. What should you do in rehearsal?",
+              "answer": "Practice the change so it's quick and smooth.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A 3-song set has songs of 3, 4 and 3 minutes, with 1 minute between each. How long is it?",
+              "answer": "12 minutes",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why rehearse all 3 songs in order?",
+              "answer": "You find awkward changes and build stamina.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Handle Nerves",
+          "mastery": "Manage nerves with slow breathing, a familiar opening song and a steady first tempo.",
+          "practice": "Before playing for people, take 4 slow breaths and silently count in the first song at the right tempo.",
+          "detail": "Nerves speed you up and make your hands shake. Slow breathing with a long out-breath settles the body. Opening with the song you know best gives you a safe start, and counting in stops a rushed tempo.",
+          "proof": "4 breaths and a silent count-in before the first song.",
+          "pitfall": "Rushing into the hardest song first.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why open a 3-song set with your most familiar song?",
+              "answer": "It settles your nerves while the stakes feel high.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Nerves make you start at 120 BPM instead of 90. What helps?",
+              "answer": "Count yourself in at the right tempo.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Your hands shake before playing. Name 1 fix.",
+              "answer": "Slow breathing, with a longer out-breath.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Connect With the Audience",
+          "mastery": "Look up, smile and say a few words, so the audience feels included.",
+          "practice": "During a 3-song set for friends, look up at least once per song and introduce each song in 1 sentence.",
+          "detail": "An audience enjoys a performer who seems glad to be there. Looking up, even briefly, and a short line about each song make a big difference. Keep introductions to a sentence or two.",
+          "proof": "3 songs, each introduced, with a look up in each.",
+          "pitfall": "Staring at the fretboard the whole time.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name 1 simple way to connect with an audience.",
+              "answer": "Look up and smile, or say a line about the song.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "At a casual 3-song set, how long should a song's introduction be?",
+              "answer": "A sentence or two.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why look up at least 1 time per song?",
+              "answer": "It makes the audience feel included.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Play Anywhere",
+          "mastery": "Find low-pressure chances to play, like open mics, family events or online posts.",
+          "practice": "Find 1 open mic or family event this month, sign up, and play 2 songs.",
+          "detail": "Only performing trains performing. Low-pressure settings let you build the habit before bigger ones. Each time gets a little easier, and you learn which songs hold up under pressure.",
+          "proof": "1 performance this month, 2 songs played.",
+          "pitfall": "Waiting until you feel completely ready, which never happens.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What's a good first performance setting: a big concert or an open mic?",
+              "answer": "An open mic",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many songs do most open mics allow each player: about 2 or 3, or 10?",
+              "answer": "About 2 or 3",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does playing 1 open mic a month help?",
+              "answer": "Each time feels easier, since only performing trains it.",
+              "answer_kind": "sentence"
+            }
+          ]
+        }
+      ]
+    },
+    "gt.pick": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Alternate Picking",
+          "mastery": "Alternate down and up strokes on every note, so the pick never strikes 2 times the same way in a row.",
+          "practice": "Pick the open 1st string in 8th notes, down-up, for 1 minute at 80 BPM, then the same on a 4-note pattern over frets 5 to 8.",
+          "detail": "Alternate picking uses both halves of the hand's motion, so each note costs half the movement of all downstrokes. It also keeps the hand in rhythm, since downs land on the beat and ups between. Start slow and keep it strict.",
+          "proof": "A minute of even down-up picking, then the 4-note pattern, all on the beat.",
+          "pitfall": "Slipping back into all downstrokes when a passage gets hard.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You pick 8 notes with alternate picking, starting down. Which direction is the 8th note?",
+              "answer": "Up",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why does down-up picking beat all downstrokes on a 16-note run?",
+              "answer": "It halves the motion, so you can play faster and more evenly.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "At 90 BPM in 8th notes, how many picks do you make per second?",
+              "answer": "3",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Small Motion and Anchoring",
+          "mastery": "Keep the pick's motion small, just past the string, and decide whether to anchor a finger on the body.",
+          "practice": "Pick the 3rd string at fret 5 in 16th notes at 60 BPM, keeping the pick within 5 mm of the string, for 2 minutes.",
+          "detail": "Speed comes from small, efficient motion, not from swinging harder. Let the pick travel only just past the string. Some players rest a finger or the palm on the guitar for a steady reference, which is called anchoring, and others float the hand. Either works if the motion stays small.",
+          "proof": "2 minutes of 16ths with a small, steady motion.",
+          "pitfall": "Swinging the pick far past the string on every stroke.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Your pick swings 3 cm past the string on each stroke. What does that cost you?",
+              "answer": "Wasted motion, which limits speed and accuracy.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does it mean to anchor 1 finger on the guitar's body?",
+              "answer": "Resting it there for a steady reference while you pick.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "At 60 BPM in 16th notes, how many picks do you make per second?",
+              "answer": "4",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Pick Across Strings",
+          "mastery": "Cross strings cleanly, keeping the alternate picking going as you move from one string to the next.",
+          "practice": "Play frets 5-7-8 on the 6th string, then 5-7-8 on the 5th, up and back, with strict alternate picking at 70 BPM.",
+          "detail": "With 3 notes per string, each new string starts on the opposite stroke from the last, so you cross on an upstroke half the time. With 2 notes per string, every string starts the same way. Both feel strange at first, so practice slowly.",
+          "proof": "The pattern played up and back with no change in picking order.",
+          "pitfall": "Restarting with a downstroke on every new string.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "With 3 notes per string and alternate picking starting down, how does the 1st note on the next string start?",
+              "answer": "Up",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "With 2 notes per string starting down, how does each new string start?",
+              "answer": "Down",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why do crossings between strings 6 and 5 slow beginners down?",
+              "answer": "The pick has to clear one string and land on the next accurately.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Read Tab",
+          "mastery": "Read guitar tab: 6 lines for the 6 strings, with fret numbers written on them.",
+          "practice": "Read and play a 2-bar tab riff, saying the string and fret of each note before you play it.",
+          "detail": "The top line of tab is the high E string and the bottom line is the low E, as if you looked down at the neck. A number is the fret to press, and 0 means play the string open. Numbers stacked vertically are played together.",
+          "proof": "The riff played correctly after naming every note's string and fret.",
+          "pitfall": "Reading the top line as the low E string.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Of the 6 lines in tab, which is the high E string: top or bottom?",
+              "answer": "Top",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A '3' on the 5th line from the top means what?",
+              "answer": "Play the A string at fret 3.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does a '0' on a tab line mean?",
+              "answer": "Play that string open.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Build Speed Slowly",
+          "mastery": "Build picking speed with a metronome, raising the tempo only when a passage is clean 3 times in a row.",
+          "practice": "Pick a 4-note riff at 60 BPM, and add 5 BPM each time you play it cleanly 3 times running, logging your top tempo.",
+          "detail": "Your hands learn whatever motion you repeat. Clean slow reps teach the exact motion, and speed then comes from doing it faster. Rushing ahead just practices mistakes. When things get sloppy, drop back and build again.",
+          "proof": "A log of tempos, rising 5 BPM at a time.",
+          "pitfall": "Playing at full speed every time and never getting clean.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You start at 60 BPM and add 5 BPM 6 times. What's the tempo now?",
+              "answer": "90",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Your picking gets sloppy at 100 BPM. What should you do?",
+              "answer": "Drop back 10 BPM and build up again.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does speed come from clean practice at 60 BPM?",
+              "answer": "Your hands learn the exact motion, then repeat it faster.",
+              "answer_kind": "sentence"
+            }
+          ]
+        }
+      ]
+    },
+    "gt.power": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Two-Note Power Chords",
+          "mastery": "Play power chords, the root and fifth, on the 6th and 5th strings.",
+          "practice": "Play G5 at fret 3 of the 6th string with finger 1 and fret 5 of the 5th string with finger 3, then move it to frets 5 and 7 for A5.",
+          "detail": "A power chord is just a root and the note a fifth above, often with the root doubled an octave up. There's no third, so it's neither major nor minor. That neutral, solid sound is why rock and punk lean on it.",
+          "proof": "G5 and A5 played cleanly, 2 notes each.",
+          "pitfall": "Letting other strings ring and muddy the chord.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which 2 notes make up G5?",
+              "answer": "G and D",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why is G5 neither major nor minor?",
+              "answer": "It has no 3rd.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Where is A5 with its root on the 6th string?",
+              "answer": "Fret 5, with fret 7 on the 5th string.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Move Power Chords",
+          "mastery": "Slide one power chord shape around the neck to play riffs in any key.",
+          "practice": "Play G5, C5 and D5 with the root on the 6th string at frets 3, 8 and 10, then try C5 on the 5th string at fret 3.",
+          "detail": "The shape never changes, so a riff is just the root moving. Know your notes on the 6th and 5th strings and you can find any power chord. Switching the root to the 5th string often saves a big jump up the neck.",
+          "proof": "G5, C5 and D5 found on the 6th string, and C5 on the 5th.",
+          "pitfall": "Jumping far up the neck when the same chord sits close by on the next string.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A power chord's root is on the 6th string at fret 8. Which chord is it?",
+              "answer": "C5",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A power chord's root is on the 5th string at fret 5. Which chord is it?",
+              "answer": "D5",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why is C5 easier to reach from G5 on the 5th string than on the 6th?",
+              "answer": "On the 5th string it's at fret 3, right next to G5.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Palm Muting",
+          "mastery": "Rest the edge of the picking palm lightly on the strings by the bridge for a tight, chugging sound.",
+          "practice": "Palm mute an E5 power chord in steady 8ths for 8 bars at 100 BPM, moving the palm until it chugs but still has pitch.",
+          "detail": "The palm just touches the strings right where they leave the bridge. Too far forward and the notes die completely, too far back and they ring open. Find the spot where you still hear the pitch but the sustain is cut short.",
+          "proof": "8 bars of tight chugs that still have a clear pitch.",
+          "pitfall": "Pressing the palm too far up the strings, so all pitch disappears.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "For palm muting on a 6-string guitar, where should the palm rest?",
+              "answer": "On the strings right by the bridge.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "At 100 BPM your palm mute sounds dead, with no pitch. What should you change?",
+              "answer": "Move the palm closer to the bridge, or press lighter.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 style of music where palm-muted power chords are common.",
+              "answer": "Punk, metal or hard rock.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Accents With Muting",
+          "mastery": "Mix muted chugs with open accents to make riffs punchy.",
+          "practice": "Play 3 muted E5 chugs, then 1 open E5 accent, repeated for 8 bars at 110 BPM.",
+          "detail": "Contrast is what makes a riff jump. Lift the palm for the accent and hit a little harder, then drop it back for the chugs. Keep the picking hand moving in steady 8ths so the accents land in time.",
+          "proof": "8 bars with every 4th note ringing open and loud.",
+          "pitfall": "Accenting every note, which kills the contrast.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "After 3 muted chugs, how do you play the open accent?",
+              "answer": "Lift the palm and strike harder.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why does 8 bars of riff sound punchier with mutes and accents?",
+              "answer": "The contrast makes the open notes jump out.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "3 chugs and 1 accent repeat in 8th notes. How many accents fall in each 4/4 bar?",
+              "answer": "2",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Keep Distortion Clean",
+          "mastery": "Keep power chords clean under distortion by muting the strings you aren't playing.",
+          "practice": "Play G5 with distortion and mute strings 4 to 1 with the underside of finger 1, checking that nothing else rings.",
+          "detail": "Distortion boosts every sound, including strings you didn't mean to play. Let the underside of your fretting fingers rest lightly on the unused strings. Power chords suit distortion because their 2 notes stay clear where full chords turn to mud.",
+          "proof": "G5 under distortion with only its notes sounding.",
+          "pitfall": "Leaving the open strings free to ring under the distortion.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why do power chords, with only 2 notes, work well with distortion?",
+              "answer": "With no 3rd, the notes stay clear instead of muddy.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Strings 4 to 1 ring under distortion. What should you do?",
+              "answer": "Mute them with the fretting fingers or the palm.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which sounds muddier with heavy distortion: a full G major barre or G5?",
+              "answer": "The full G major barre",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "gt.rhythm": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Lock to a Metronome",
+          "mastery": "Strum in time with a metronome so the beat stays steady without rushing or dragging.",
+          "practice": "Strum quarter notes on G with a metronome at 80 BPM for 3 minutes, recording yourself to check you stayed on the click.",
+          "detail": "Steady time is the rhythm guitarist's job. When you're locked in, the click almost disappears under your strum. Recording yourself shows drifting you can't hear while playing, especially rushing in exciting parts.",
+          "proof": "3 minutes on the click, confirmed by the recording.",
+          "pitfall": "Practicing without a click and speeding up without noticing.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "At 80 BPM, how many quarter-note strums do you play in 1 minute?",
+              "answer": "80",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "At 80 BPM, you hear yourself rushing ahead of the click. What should you do?",
+              "answer": "Relax, slow your motion and listen for the click.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why practice rhythm guitar with a click for 3 minutes at a time?",
+              "answer": "It trains steady time, which is the rhythm player's main job.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Be the Timekeeper",
+          "mastery": "Keep steady time, so someone could sing over you without counting.",
+          "practice": "Play 2 rounds of a 4-chord song while a friend or a recording sings, never stopping for a mistake.",
+          "detail": "Singers lean on the rhythm guitar. If you stop or wobble, they lose their place. So keep the strum going through any wrong chord and fix the next one. Simple and steady beats fancy and shaky.",
+          "proof": "2 full rounds with no stops.",
+          "pitfall": "Stopping to fix a chord and leaving the singer stranded.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In a 4-piece band, what's the rhythm guitarist's main job?",
+              "answer": "Keeping steady time.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A chord goes wrong in bar 6. Should you stop?",
+              "answer": "No. Keep the rhythm and fix the next chord.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which matters more to a singer in a 3-minute song: fancy chords or steady time?",
+              "answer": "Steady time",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Play With Recordings",
+          "mastery": "Play along with recordings to match a real band's tempo and feel.",
+          "practice": "Play along with 3 songs you like, matching the chords and the strum, and note where you lose the beat.",
+          "detail": "Recordings don't wait for you, which is the point. They teach you to keep up and to feel a groove. If a song is too fast, slow it down with an app, then work back up. Note the spots where you lose the beat and drill them.",
+          "proof": "3 songs played along, with the trouble spots noted.",
+          "pitfall": "Playing only alone, where you can slow down whenever you like.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "You lose the beat in 1 chorus of a song. What should you practice?",
+              "answer": "The chorus alone with the recording, then join the parts.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A song at 120 BPM is too fast for you. What can you do?",
+              "answer": "Slow the recording down with an app, then speed back up.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 thing to match besides the chords.",
+              "answer": "The strum pattern, the accents or the feel.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Count Bars and Sections",
+          "mastery": "Count bars and sections, so you know when the verse ends and the chorus starts.",
+          "practice": "Count the bars in the verse and chorus of 2 songs, and write each as a number, like 'verse 8, chorus 8'.",
+          "detail": "Most songs are built from sections of 4, 8 or 16 bars. Counting keeps you from switching to the chorus too early or too late, which is one of the most common band mistakes. Write the section lengths on your chord sheet.",
+          "proof": "2 songs with every section's length written down.",
+          "pitfall": "Guessing when the chorus comes and arriving a bar early.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A verse has 4 chords, 2 bars each. How many bars long is it?",
+              "answer": "8",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why count bars as you play an 8-bar verse?",
+              "answer": "So you know when the next section comes.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A song goes verse, chorus, verse, chorus, bridge, chorus, each 8 bars. How many bars is that in total?",
+              "answer": "48",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Fit With Other Players",
+          "mastery": "Leave room for other instruments by choosing where on the neck you play and how busily.",
+          "practice": "Play the same 4 chords twice over a drum loop, once with full strums and once with sparse muted 8ths, and decide which fits better.",
+          "detail": "In a band, every part shares the same space. If the keyboard plays full chords, a guitar strumming the same range clutters it. Higher voicings, a capo, a different rhythm or simply playing less can make the whole band clearer.",
+          "proof": "2 versions recorded, with the better-fitting one chosen.",
+          "pitfall": "Strumming as hard and as full as when playing alone.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A keyboard already plays full 4-note chords. How can you avoid clashing with it?",
+              "answer": "Play higher voicings or a simpler part.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "2 guitars play the same strum. How can one stand apart?",
+              "answer": "Use a capo, different voicings or a different rhythm.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In a 4-piece band, why can playing less make it sound better?",
+              "answer": "Each part gets space to be heard.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "gt.scales": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "The Major Scale Shape",
+          "mastery": "Play a major scale shape starting on the 6th string, and move it to change key.",
+          "practice": "Play G major from fret 3 of the 6th string with a 2-octave shape, then move it to fret 5 for A major.",
+          "detail": "On guitar, scales are shapes. Learn one major shape with its root on the 6th string, and the same fingering plays every major key once you slide it so the root lands on the key's note. Play it slowly with a metronome.",
+          "proof": "G major and A major played with the same fingering.",
+          "pitfall": "Learning each key as a different pattern.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A major scale shape starts at fret 3 of the 6th string. Which key is it?",
+              "answer": "G major",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Move that same shape up 2 frets. Which key is it now?",
+              "answer": "A major",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many different notes are in 1 octave of a major scale?",
+              "answer": "7",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Shapes Move Up the Neck",
+          "mastery": "Use the same scale fingering in any key by sliding it so the root lands on the right fret.",
+          "practice": "Slide 1 fingering so its root lands at frets 7 and 8 of the low E, and name the key at each stop.",
+          "detail": "Because every fret is a half step, the pattern of whole and half steps stays the same wherever you start. That's why shapes move. All you need is the root's fret, which comes from knowing the notes on the low E string.",
+          "proof": "B major at fret 7 and C major at fret 8.",
+          "pitfall": "Moving the shape without knowing which key you've landed in.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "The shape's root is at fret 7 of the 6th string. Which key is it?",
+              "answer": "B major",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Where on the 6th string does the root go for C major?",
+              "answer": "Fret 8",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does 1 shape work in every key across 12 frets?",
+              "answer": "Each fret is a half step, so the pattern of steps stays the same.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Know the Roots",
+          "mastery": "Find the root notes inside each scale shape, so you always know where home is.",
+          "practice": "Play a G major shape and stop on every G, there are 3 in a 2-octave shape, naming each one's string and fret.",
+          "detail": "Knowing where the roots sit inside a shape turns it from a finger exercise into a map. Melodies feel finished when they land on the root. In a 2-octave shape from the 6th string, the roots sit on the 6th, 4th and 1st strings.",
+          "proof": "3 Gs found: 6th string fret 3, 4th string fret 5 and 1st string fret 3.",
+          "pitfall": "Running the shape without knowing where the root is.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In a 2-octave G major shape from fret 3, how many Gs do you play?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In that shape, at which fret is the G on the 4th string?",
+              "answer": "5",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why end a run in G major on 1 of its 3 Gs?",
+              "answer": "It sounds finished, like coming home.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Minor Scale Shapes",
+          "mastery": "Play the natural minor scale, and see it as the major shape started from a different note.",
+          "practice": "Play E minor from the open 6th string and G major across the same frets, and notice they share every note.",
+          "detail": "Every major key has a relative minor that uses the same notes, starting a 6th higher, or a 3rd lower. So the shapes you already know contain the minor scales. What changes is which note feels like home.",
+          "proof": "E minor and G major played over the same frets.",
+          "pitfall": "Learning minor shapes from scratch when they're hiding in the major ones.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "E minor and which major key use the same 7 notes, with 1 sharp?",
+              "answer": "G major",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Where on the 6th string is the root of C major's relative minor?",
+              "answer": "Fret 5, A minor.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "D minor, with 1 flat, is the relative minor of which major key?",
+              "answer": "F major",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Turn Scales Into Music",
+          "mastery": "Use scales to make melodies, not just runs, by playing short phrases that end on chord tones.",
+          "practice": "Play 4 short phrases from the G major scale over a G chord, each 4 to 6 notes long and ending on G, B or D.",
+          "detail": "A scale is a set of notes to choose from, not a tune. Short phrases that land on the notes of the chord sound like music. Landing on other notes sounds unsettled, which can be useful as long as you then resolve.",
+          "proof": "4 phrases, each ending on a note of the G chord.",
+          "pitfall": "Running the scale up and down and calling it a solo.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Over a G chord, which 3 scale notes make the safest endings?",
+              "answer": "G, B and D",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why play 4 short phrases instead of running the scale up and down?",
+              "answer": "Phrases sound like music, and runs sound like exercises.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A phrase ends on C over a G chord. How does it sound?",
+              "answer": "Unsettled, wanting to move to B or D.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "gt.slide": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Hammer-Ons",
+          "mastery": "Sound a note by hammering a fretting finger down hard onto the string, without picking it.",
+          "practice": "Pick the 3rd string at fret 5, then hammer finger 3 onto fret 7, 20 times, matching the two volumes.",
+          "detail": "Only the first note is picked. The second sounds because the finger hits the string firmly, close to the fret. A weak hammer gives a faint note, so practice until both notes sound about the same.",
+          "proof": "20 hammer-ons with both notes at similar volume.",
+          "pitfall": "Tapping lightly, so the hammered note barely sounds.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In tab, what does 'h' between 5 and 7 mean?",
+              "answer": "Hammer on from fret 5 to fret 7.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Your hammered note at fret 7 is much quieter. What should you do?",
+              "answer": "Hammer harder and closer to the fret.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In a hammer-on, do you pick the 2nd note?",
+              "answer": "No. Only the first note is picked.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Pull-Offs",
+          "mastery": "Sound a lower note by flicking the finger off the string slightly downward, so it plucks as it leaves.",
+          "practice": "Hold finger 1 down on the 2nd string at fret 8 and finger 3 at fret 10, pick, and flick finger 3 away so fret 8 rings, 20 times.",
+          "detail": "Both fingers go down first. After picking, the higher finger pulls off slightly sideways, plucking the string as it leaves, so the lower note rings. Lifting straight up just stops the sound.",
+          "proof": "20 pull-offs with the lower note ringing clearly.",
+          "pitfall": "Lifting straight off the string, so the lower note doesn't sound.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In tab, what does 'p' between 7 and 5 mean?",
+              "answer": "Pull off from fret 7 to fret 5.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why flick the finger off fret 7 instead of lifting straight up?",
+              "answer": "The flick plucks the string, so the lower note sounds.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Before a pull-off, must the lower finger already be pressing fret 5?",
+              "answer": "Yes. It must already be fretting the lower note.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Slides",
+          "mastery": "Slide a finger along the string to the next note, keeping the pressure so it keeps sounding.",
+          "practice": "Slide from fret 5 to fret 7 on the 3rd string and back, 10 times each way, keeping the note ringing.",
+          "detail": "Keep pressing as you move, just a little lighter than for a held note, so the string keeps vibrating. Stop exactly on the target fret. A slide passes through the notes in between, which gives it a smooth, vocal sound.",
+          "proof": "20 slides that ring the whole way and stop on the right fret.",
+          "pitfall": "Easing off mid-slide, so the note fades out.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In tab, what does '/' between 5 and 7 mean?",
+              "answer": "Slide up from fret 5 to fret 7.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Your slide from fret 5 to 9 fades halfway. What's wrong?",
+              "answer": "You eased the pressure during the move.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What's the difference between sliding to fret 7 and hammering on to it?",
+              "answer": "A slide glides through the frets between, and a hammer jumps straight there.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Legato Runs",
+          "mastery": "Combine hammers, pulls and slides into smooth legato runs with few picked notes.",
+          "practice": "Play 5h8p5 on the 1st string, then 5h8p5 on the 2nd, picking only the first note on each string, at 70 BPM.",
+          "detail": "Legato means connected. Picking only the first note on each string and sounding the rest with the fretting hand gives a flowing line. Keep every note even in volume and in time, since weak hammers and pulls are the usual problem.",
+          "proof": "Both strings played smoothly, with only 2 picked notes.",
+          "pitfall": "Letting the hammered and pulled notes go quiet and late.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In '5h8p5', how many notes are picked?",
+              "answer": "1",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why does '5h8p5' sound smoother than picking all 3 notes?",
+              "answer": "Fewer pick attacks means a flowing, connected sound.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "How many notes sound in '5h7p5h7'?",
+              "answer": "4",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Mix Legato and Picking",
+          "mastery": "Choose when to pick and when to play legato, to shape how a phrase sounds.",
+          "practice": "Play the same 6-note lick 2 ways, all picked and mostly legato, record both, and describe the difference.",
+          "detail": "Picked notes sound sharp and punchy, and legato notes sound smooth and vocal. Most good players mix them, picking a note when they want it to stand out. The choice is as much a part of the phrase as the notes are.",
+          "proof": "2 recordings with the difference described in a sentence or two.",
+          "pitfall": "Playing everything one way out of habit.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which sounds more aggressive for a 6-note lick: all picked or all legato?",
+              "answer": "All picked",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why might you pick the 4th note inside a legato run?",
+              "answer": "To accent it.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 genre where hammer-ons and pull-offs are common.",
+              "answer": "Rock, blues or folk.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "gt.songs": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Pick the Core",
+          "mastery": "Decide what one guitar must play to carry a band song: the chords, the bass movement and the hook.",
+          "practice": "List the 3 most important parts of a song you love, like the chords, the riff and the bass line, and rank them.",
+          "detail": "One guitar can't play everything a band plays, so choose. The hook, the riff people hum, matters most, because it's what makes the song recognizable. Then the chords, then the bass movement. Everything else is optional.",
+          "proof": "3 parts listed and ranked, with the hook on top.",
+          "pitfall": "Trying to fit every instrument's part onto 6 strings.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A song's 4-bar riff is its best-known part. Should a solo guitar arrangement keep it?",
+              "answer": "Yes. It's what makes the song recognizable.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which matters more to keep: 1 hook or every chord inversion?",
+              "answer": "The hook",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why can't 1 guitar play every part of a band arrangement?",
+              "answer": "There are only 6 strings and 2 hands, so you must choose.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Combine Bass and Chords",
+          "mastery": "Play bass notes on the low strings and chords on the high strings together.",
+          "practice": "Arrange a 4-chord song with the root on the 6th or 5th string on beat 1, and a strum on the top 4 strings for beats 2 to 4.",
+          "detail": "Splitting the guitar into bass and chords makes one player sound like two. Hit the root low on beat 1, then strum the upper strings. Alternating to the chord's 5th on beat 3 keeps the bass moving.",
+          "proof": "The song played with a clear bass on beat 1 and strums after it.",
+          "pitfall": "Strumming all 6 strings on every beat, so the bass is lost.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "On beat 1, which strings carry the bass?",
+              "answer": "The 6th or 5th",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What can you play on beat 3 to keep the bass moving?",
+              "answer": "The chord's 5th, on a different bass string.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why split bass and strum across beats 1 to 4?",
+              "answer": "It sounds like a bass player and a guitarist at once.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Fit the Melody",
+          "mastery": "Put the melody on the top strings with chord notes under it where they fit.",
+          "practice": "Find the first 4 bars of a melody on strings 1 and 2, then add 1 chord note under each bar's first note.",
+          "detail": "In a solo arrangement, the melody sits on top where it's heard. Under each important melody note, add a chord tone or a bass note. You may need to change key so the melody falls where open strings can help.",
+          "proof": "4 bars of melody with a chord note under each bar's first note.",
+          "pitfall": "Burying the melody in the middle strings where nobody hears it.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Of the 6 strings, where should the melody usually sit in a solo arrangement?",
+              "answer": "On the top strings, so it's heard.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A melody note is E and the chord is C. Which other notes of the chord could go under it?",
+              "answer": "C and G",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why might you move an arrangement from Eb up 1 half step to E?",
+              "answer": "So the melody fits where open strings can help.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Simplify Hard Parts",
+          "mastery": "Cut parts that are too hard or crowded, keeping what makes the song recognizable.",
+          "practice": "Take a 4-bar section that's too busy, remove notes until it plays cleanly at tempo, and check it still sounds like the song.",
+          "detail": "A simpler part played cleanly beats a full one played badly. Cut inner notes and fills first, and keep the melody, the bass on strong beats and the hook. Play it for someone and ask if they recognize the song.",
+          "proof": "A trimmed 4 bars that's clean at tempo and still recognizable.",
+          "pitfall": "Keeping every note and stumbling through it at half speed.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A section is unplayable at 120 BPM. What should you cut first?",
+              "answer": "Inner notes and extra fills.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How do you know you cut too much from 4 bars?",
+              "answer": "It no longer sounds like the song.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "At 120 BPM, is a simpler part played cleanly better than a full part played badly?",
+              "answer": "Yes.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Write It Down",
+          "mastery": "Write your arrangement in tab or a chord chart so you can play it the same way later.",
+          "practice": "Write your arrangement's first 8 bars as tab with chord names above, then play it from the page.",
+          "detail": "Arrangements made up on the spot drift and get forgotten. Writing them down keeps your best choices. Tab with chord names above is enough for most guitar arrangements, and free software makes it neat.",
+          "proof": "8 bars of tab with chord names, playable from the page.",
+          "pitfall": "Relying on memory and losing the arrangement in a month.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why write down the first 8 bars of an arrangement?",
+              "answer": "So you can play it the same way later.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What should go above the 6 tab lines?",
+              "answer": "The chord names.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 free tool for writing tab.",
+              "answer": "MuseScore, or a plain text file.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "gt.strings": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Number the Strings",
+          "mastery": "Know the string numbers that tabs and lessons use, and which way they run.",
+          "practice": "Pluck strings 1 to 6 in order, then 6 to 1, saying each number and note name aloud.",
+          "detail": "String 1 is the thinnest and highest, and string 6 is the thickest and lowest. That's backward from what many beginners expect, since the high E sits nearest the floor. Tabs and lessons use these numbers all the time.",
+          "proof": "Both directions named correctly, number and note.",
+          "pitfall": "Calling the thickest string string 1.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "From 1 to 6, which string number is the thickest?",
+              "answer": "6",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What note is string 3?",
+              "answer": "G",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Is string 1 the highest in pitch, or the lowest?",
+              "answer": "Highest",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "One Fret, One Half Step",
+          "mastery": "Know that each fret raises a string by one half step, so 12 frets make an octave.",
+          "practice": "Play the 5th string open, then at frets 1 through 12, naming each note until you reach A again.",
+          "detail": "Each fret is a half step, so the notes climb chromatically: A, A#, B, C and on. Remember there's no sharp between B and C or between E and F. At fret 12, you're back at the open string's note an octave up.",
+          "proof": "A, A#, B, C, C#, D, D#, E, F, F#, G, G#, A.",
+          "pitfall": "Putting a sharp between B and C.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What note is the 5th string at fret 2?",
+              "answer": "B",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What note is the 6th string at fret 12?",
+              "answer": "E",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What note is the 1st string at fret 3?",
+              "answer": "G",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Find Notes on the Low E",
+          "mastery": "Name any fret on the low E string quickly, using the dots on the neck as landmarks.",
+          "practice": "Play E F G A B C D E on the 6th string at frets 0 1 3 5 7 8 10 12, then call out random notes and find them.",
+          "detail": "The 6th string's notes are worth learning cold, since they're the roots of many barre chords. The dots on most necks at frets 3, 5, 7 and 12 help: G, A, B and E. From those landmarks, step up or down to the rest.",
+          "proof": "Random notes found on the 6th string in under 3 seconds each.",
+          "pitfall": "Counting frets from the nut every time.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Your finger is on the 5th fret of the low E. Which note is it?",
+              "answer": "A",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which fret of the thickest of the 6 strings gives C?",
+              "answer": "8",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name the note at fret 10 of string 6.",
+              "answer": "D",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Find Notes on the A String",
+          "mastery": "Find any natural note on the 5th string, which works the same way starting from A.",
+          "practice": "Play A B C D E F G A on the 5th string at frets 0 2 3 5 7 8 10 12, then quiz yourself on 10 notes.",
+          "detail": "With the 6th and 5th strings learned, you can find the root of almost any chord shape. The 5th string's dots give C at 3, D at 5 and E at 7. Practice naming notes in both directions.",
+          "proof": "10 notes found correctly on the 5th string.",
+          "pitfall": "Learning only the 6th string and guessing on the 5th.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "On string 5, which fret gives C?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "On string 5, fret 7 sounds which note?",
+              "answer": "E",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Where on string 5 do you find G?",
+              "answer": "Fret 10",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Octave Shapes",
+          "mastery": "Find the same note an octave higher with the shape that goes 2 strings up and 2 frets up.",
+          "practice": "Play the 6th string at fret 3, which is G, then find its octave on the 4th string at fret 5, and repeat for 5 other notes.",
+          "detail": "From the 6th or 5th string, skip a string and move up 2 frets to find the octave. When the shape crosses onto the B string, add one more fret, because the G and B strings are tuned a 3rd apart instead of a 4th.",
+          "proof": "6 notes each played with their octave.",
+          "pitfall": "Forgetting the extra fret when the shape crosses the B string.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "The 6th string at fret 5 is A. At which fret is the A an octave up on the 4th string?",
+              "answer": "7",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "The 5th string at fret 3 is C. At which fret is its octave on the 3rd string?",
+              "answer": "5",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does the octave shape shift when it crosses onto the 2nd string?",
+              "answer": "The G and B strings are tuned a 3rd apart instead of a 4th.",
+              "answer_kind": "sentence"
+            }
+          ]
+        }
+      ]
+    },
+    "gt.strum": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Keep the Arm Moving",
+          "mastery": "Keep the strumming hand moving down and up in steady 8th notes, even when it doesn't hit the strings.",
+          "practice": "Strum muted strings in down-up 8th notes for 2 minutes at 70 BPM, saying '1 and 2 and' aloud.",
+          "detail": "The hand moves down on every beat and up on every 'and', like a pendulum. Strum patterns come from choosing which passes hit the strings and which miss. Keeping the motion constant is what keeps the rhythm steady.",
+          "proof": "2 minutes of even down-up motion, counted aloud.",
+          "pitfall": "Stopping the hand between strums, so the timing wanders.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In 8th-note strumming, which way does the hand move on a beat number like '2'?",
+              "answer": "Down",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In 8th-note strumming, which way does the hand move on the 'and' of 3?",
+              "answer": "Up",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why keep the arm moving even when you skip 1 strum?",
+              "answer": "It holds the timing, like a pendulum.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Down Down Up Up Down Up",
+          "mastery": "Play the common pattern D D U U D U, keeping the arm moving all the way through.",
+          "practice": "Strum D D U U D U on a G chord for 16 bars at 70 BPM, missing the strings on the beat 3 downstroke.",
+          "detail": "The pattern is down on 1, down on 2, up on the 'and' of 2, a missed down on 3, up on the 'and' of 3, then down on 4 and up on the 'and' of 4. The missed stroke is what makes it groove. Keep the hand moving through it.",
+          "proof": "16 bars of the pattern at 70 BPM with no stops.",
+          "pitfall": "Stopping the hand on beat 3 instead of swinging past the strings.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In 'D D U U D U', on which beat does the hand miss the strings going down?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How many strums are in 1 bar of D D U U D U?",
+              "answer": "6",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which count is the first U of 'D D U U D U' on?",
+              "answer": "The 'and' of 2",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Accents and Dynamics",
+          "mastery": "Accent chosen strums, like beats 2 and 4, to give the rhythm a groove.",
+          "practice": "Strum 8 bars of steady 8ths on C, accenting beats 2 and 4, then 8 bars accenting only beat 1.",
+          "detail": "Accents turn a steady strum into a groove. Hitting 2 and 4 harder gives the backbeat of rock and pop. A faster stroke through the strings makes a strum louder, while a lighter, slower one keeps the in-between strums quiet.",
+          "proof": "16 bars with clearly different accent patterns.",
+          "pitfall": "Strumming every 8th at the same volume, so nothing grooves.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Accenting beats 2 and 4 is called what in rock and pop?",
+              "answer": "The backbeat",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How do you make the strum on beat 2 louder: a faster stroke or a tighter grip?",
+              "answer": "A faster stroke through the strings.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In 8 bars of strumming, should every strum be the same volume?",
+              "answer": "No. Accents give the rhythm shape.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Add Muted Strums",
+          "mastery": "Add percussive muted strums by relaxing the fretting hand, or by slapping the strings with the strumming palm.",
+          "practice": "Strum G for 8 bars with a muted 'chuck' on beats 2 and 4, made by lifting the fretting fingers slightly.",
+          "detail": "A chuck is a strum with no pitch, just a click, like a snare drum. Relax the fretting fingers so they touch the strings without pressing, strum, then press again. It adds drive to acoustic playing without a drummer.",
+          "proof": "8 bars with a clean chuck on every 2 and 4.",
+          "pitfall": "Letting go of the neck completely, so the open strings ring.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is a strum 'chuck'?",
+              "answer": "A muted, percussive strum.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How do you mute the strings with a 3-finger chord without letting go?",
+              "answer": "Ease the pressure so the fingers touch but don't press.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "On which of the 4 beats does a chuck usually land in pop strumming?",
+              "answer": "2 and 4",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Match the Song's Feel",
+          "mastery": "Choose a strumming pattern that fits a song's feel, tempo and time signature.",
+          "practice": "Pick a strum pattern for a 3/4 waltz and one for a 4/4 rock song, and play each for 8 bars.",
+          "detail": "A pattern has to fit the bar: 3 beats for a waltz, 4 for most pop, and 2 big beats for 6/8. Slow, quiet songs often want simple downstrokes, and upbeat songs want busier 8ths or 16ths. Listen to the original to match it.",
+          "proof": "2 patterns, each played for 8 bars and fitting its meter.",
+          "pitfall": "Using the same busy pattern for every song.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A song is in 3/4. How many beats per bar should your pattern cover?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which suits a slow ballad at 60 BPM: busy 16ths or simple downstrokes?",
+              "answer": "Simple downstrokes",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A song in 6/8 feels like how many big beats per bar?",
+              "answer": "2",
+              "answer_kind": "integer"
+            }
+          ]
+        }
+      ]
+    },
+    "gt.tone": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Pickups and Picking Spot",
+          "mastery": "Use the pickup selector and where you pick to change the tone: the neck pickup is warm and the bridge pickup is bright.",
+          "practice": "Play the same lick on the neck pickup, then the bridge pickup, then picking near the neck and near the bridge, 4 versions in all.",
+          "detail": "The neck pickup hears the string where it moves most, giving a round, warm sound. The bridge pickup sounds thinner and brighter, and it cuts through a band. Where you pick changes things the same way, even on an acoustic.",
+          "proof": "4 versions of the lick, each one sounding different.",
+          "pitfall": "Leaving the selector in one place forever.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Of the 2 main pickups, which sounds warmer: neck or bridge?",
+              "answer": "Neck",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Does picking within 2 cm of the bridge make the tone brighter or warmer?",
+              "answer": "Brighter",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A solo needs to cut through a 4-piece band. Which pickup helps?",
+              "answer": "The bridge pickup",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Amp Basics",
+          "mastery": "Set gain, bass, middle and treble on an amp, starting flat and adjusting by ear.",
+          "practice": "Set every amp knob to 5, play a chord, then change 1 knob at a time and note what it does.",
+          "detail": "Gain sets how much distortion you get, and volume sets loudness. The 3 tone knobs cut or boost lows, mids and highs. Starting with everything in the middle and moving one knob at a time teaches you what each one really does.",
+          "proof": "A note for each knob describing its effect.",
+          "pitfall": "Turning every knob at once and not knowing which one helped.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "On a 1 to 10 dial, what does the gain knob mainly control?",
+              "answer": "How much distortion there is.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Your guitar disappears in the band mix. Which 1 knob often helps?",
+              "answer": "Mid, the middle.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why start with every knob at 5?",
+              "answer": "A flat starting point lets you hear what each knob changes.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Clean, Crunch and Lead",
+          "mastery": "Set 3 basic sounds, clean, crunch and lead, and know when each one fits.",
+          "practice": "Write down 3 amp settings, clean at gain 2, crunch at 5 and lead at 7, and play the same riff through each.",
+          "detail": "Most songs need one of three sounds. Clean suits strumming, ballads and funk. Crunch, a light distortion, suits rock rhythm. Lead has more gain for sustain on solos. Too much gain turns chords to mud.",
+          "proof": "3 settings written down, with the riff played through each.",
+          "pitfall": "Using full gain for everything.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which sound fits a strummed ballad: clean at gain 2 or lead?",
+              "answer": "Clean",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which sound gives solos more sustain, at about gain 7?",
+              "answer": "Lead",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Too much gain, like 10, makes chords sound how?",
+              "answer": "Muddy and buzzy.",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Effects That Matter",
+          "mastery": "Know the few effects most players use, overdrive, delay, reverb and chorus, and what each one does.",
+          "practice": "Try 4 effects, overdrive, delay, reverb and chorus, on the same 4-bar part, and write 1 word for each sound.",
+          "detail": "Overdrive adds grit, delay repeats notes like an echo, reverb adds the sound of a room, and chorus makes one guitar sound shimmery and doubled. Most great tones use only a couple of these, set lightly.",
+          "proof": "4 effects tried, each with a word describing it.",
+          "pitfall": "Stacking every effect at once until the guitar disappears.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Of these 4, which effect repeats your notes like an echo?",
+              "answer": "Delay",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Of the same 4, which effect sounds like a big room?",
+              "answer": "Reverb",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 effect that adds distortion.",
+              "answer": "Overdrive",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Tone Is in the Hands",
+          "mastery": "Get most of your tone from how you play, pick attack, muting and vibrato, before buying gear.",
+          "practice": "Play 1 riff 3 ways, soft attack, hard attack and with palm muting, on the same settings, and record all 3.",
+          "detail": "Two players on the same guitar and amp sound different because of their hands. Attack, muting, vibrato and where you pick shape the sound more than most pedals. Work on those first, then add gear for what's left.",
+          "proof": "3 recordings of the same riff that sound clearly different.",
+          "pitfall": "Buying gear to fix a sound that comes from technique.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name 2 things in the hands that shape tone.",
+              "answer": "Pick attack and vibrato.",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "You want a better sound. What should you try before buying a $200 pedal?",
+              "answer": "Change your attack, muting and amp settings.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why do 2 players sound different on the same guitar and amp?",
+              "answer": "Their hands play differently.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "gt.tune": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Standard Tuning",
+          "mastery": "Know standard tuning, E A D G B E from the thickest string to the thinnest.",
+          "practice": "Say the 6 open string names from the 6th string to the 1st 5 times, then play each string while naming it.",
+          "detail": "Standard tuning from the thickest string is E, A, D, G, B, E. Both E strings are E, two octaves apart. A phrase like Eddie Ate Dynamite, Good Bye Eddie helps you remember the order.",
+          "proof": "E, A, D, G, B, E named correctly 5 times.",
+          "pitfall": "Mixing up the order of G and B.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which note is the 5th string in standard tuning?",
+              "answer": "A",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Of the 2 E strings, which number is the high one?",
+              "answer": "1",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name all 6 open strings from the 6th to the 1st.",
+              "answer": "E A D G B E",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Use a Tuner",
+          "mastery": "Tune with a clip-on or app tuner, bringing each string up to pitch from slightly below.",
+          "practice": "Detune all 6 strings a little, then tune each one with a clip-on tuner, always tuning up to the note.",
+          "detail": "Pluck the string, read the note and the needle, and turn the peg until the needle sits in the center. If you go past, drop below and come up again. Tuning up keeps the string from slipping flat as the gear settles.",
+          "proof": "All 6 strings showing the right note, centered.",
+          "pitfall": "Tuning the 4th string to C# because the tuner showed the nearest note.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A tuner shows the 4th string at C#. What note should it be?",
+              "answer": "D",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why tune up to the note from 1 note below?",
+              "answer": "It keeps the string from slipping flat as the gear settles.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "The tuner needle sits 10 cents left of center. Is the string sharp or flat?",
+              "answer": "Flat",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Tune by Ear With Fret 5",
+          "mastery": "Tune each string to the one below it by matching the 5th fret, except the B string, which uses the 4th.",
+          "practice": "Tune the 5th string to the 6th string's 5th fret, and carry on up, using the 4th fret of the G string for B.",
+          "detail": "Fret the lower string and play it with the next open string, then turn the open one until they match. The G to B pair is the odd one, a 3rd apart instead of a 4th, so use fret 4 there. Errors add up, so recheck from the bottom.",
+          "proof": "All 6 strings matched to each other by ear.",
+          "pitfall": "Using the 5th fret for the B string and ending up out of tune.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which fret on the 6th string matches the open 5th string?",
+              "answer": "5",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which fret on the 3rd string matches the open 2nd string?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You tune by ear and the 1st string ends up off. Which string should you check first?",
+              "answer": "The 2nd, since each string was tuned from the one before.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Hear the Beats",
+          "mastery": "Hear the wobble, called beats, when 2 strings are close but not matched, and tune until it stops.",
+          "practice": "Play the 6th string at fret 5 and the open 5th string together, and turn the 5th string's peg slowly until the wobble disappears.",
+          "detail": "Two pitches that are almost the same make a slow pulsing sound. The pulse rate equals the difference in their frequencies. As you get closer, the wobble slows down, and when it stops, they match.",
+          "proof": "The wobble slowed and then stopped.",
+          "pitfall": "Turning the peg fast and missing the point where the wobble stops.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "2 notes are almost in tune and you hear a slow wobble. What does it mean?",
+              "answer": "They're slightly apart, and it stops when they match.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "The wobble gets faster as you turn the 5th string's peg. Are you getting closer or farther?",
+              "answer": "Farther",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A wobble of 2 per second means the 2 notes differ by how many hertz?",
+              "answer": "2",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Keep It in Tune",
+          "mastery": "Check the tuning at the start of every session, and after big temperature changes or new strings.",
+          "practice": "Check your tuning at the start of 5 sessions this week, and note which strings drift the most.",
+          "detail": "Guitars drift with temperature and humidity, and new strings stretch for several days. A minute of tuning at the start of each session saves you from practicing out of tune, and it trains your ear to notice when something's off.",
+          "proof": "5 tuning checks logged, with the drifting strings noted.",
+          "pitfall": "Practicing out of tune because it was fine yesterday.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why do new strings go out of tune for the first 3 days?",
+              "answer": "They stretch until they settle.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 1 thing that makes a guitar drift out of tune.",
+              "answer": "Temperature or humidity changes, or new strings stretching.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Should you tune before each of your 5 sessions?",
+              "answer": "Yes. It takes a minute and trains your ear.",
+              "answer_kind": "yesno"
+            }
+          ]
+        }
+      ]
+    },
     "hi.archive": {
       "model": "claude-opus-5-5",
       "verifier": "rules+authored",
