@@ -37730,6 +37730,180 @@
         }
       ]
     },
+    "db.backup": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Make a Backup",
+          "mastery": "Make a full backup of a database with its own tool, like pg_dump.",
+          "practice": "Run pg_dump on a test database into a file, and note the file's size and how long it took.",
+          "detail": "A database's own backup tool takes a consistent snapshot even while it's running. Copying the data files by hand can catch them mid-change and give you a broken copy. The backup should include the schema as well as the data.",
+          "proof": "A dump file, with its size and the time taken noted.",
+          "pitfall": "Copying the data folder of a running database and calling it a backup.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which PostgreSQL tool writes a logical backup?",
+              "answer": "pg_dump",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Is copying the data folder of 1 running database a safe backup?",
+              "answer": "No. Files can be caught mid-change.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 thing a backup should include besides the data.",
+              "answer": "The schema: tables, indexes and constraints.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Restore It",
+          "mastery": "Test every backup by actually restoring it to a fresh database.",
+          "practice": "Restore your pg_dump file into a new, empty database and check that the row counts match the original for 3 tables.",
+          "detail": "An untested backup is a belief, not a backup. Restores fail for many reasons: missing permissions, a truncated file, a version mismatch. Restore on a schedule, check counts and spot-check data, and time it so you know how long recovery takes.",
+          "proof": "Row counts match for all 3 tables.",
+          "pitfall": "Discovering a backup is broken on the day you need it.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why test-restore 1 backup that looks fine?",
+              "answer": "An untested backup might not work when you need it.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Row counts match in 3 of 4 tables after a restore. What should you do?",
+              "answer": "Find out why the 4th is missing data.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which tool restores a pg_dump custom-format file?",
+              "answer": "pg_restore",
+              "answer_kind": "code"
+            }
+          ]
+        },
+        {
+          "title": "Set RPO and RTO",
+          "mastery": "Set how much data you can afford to lose, the RPO, and how long you can be down, the RTO.",
+          "practice": "For a store taking 500 orders an hour, write an RPO and an RTO and the backup schedule that meets them.",
+          "detail": "RPO is how far back you may have to go: with nightly backups, up to a day of data can be lost. RTO is how long recovery may take. A store losing 500 orders an hour wants a small RPO, which nightly dumps can't meet on their own.",
+          "proof": "An RPO, an RTO and a schedule that actually meets both.",
+          "pitfall": "Running nightly backups for a system that can't afford to lose an hour.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Backups run every 24 hours. What's the most data you could lose?",
+              "answer": "About 24 hours of changes.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does RTO measure?",
+              "answer": "How long recovery may take.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "RPO is 1 hour. Is a nightly backup enough?",
+              "answer": "No. You need backups or log shipping at least hourly.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Point-in-Time Recovery",
+          "mastery": "Use a base backup plus write-ahead logs to restore to any moment, like just before a bad delete.",
+          "practice": "Read your database's point-in-time recovery docs, and write the 3 steps to restore to 14:05 yesterday.",
+          "detail": "PostgreSQL records every change in its write-ahead log. Keep a base backup plus the logs since, and you can replay up to any moment. That's how you undo a DELETE run without WHERE at 14:06, losing only a minute instead of a day.",
+          "proof": "3 steps: restore the base backup, replay the logs, stop at 14:05.",
+          "pitfall": "Relying on nightly dumps to undo a mistake made in the afternoon.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Someone ran DELETE without WHERE at 14:06. Which moment should you restore to?",
+              "answer": "Just before 14:06, like 14:05.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does PostgreSQL's WAL record?",
+              "answer": "Every change, in order.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why isn't a nightly dump enough to undo a mistake at 14:06?",
+              "answer": "It would lose everything since the night before.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Follow 3-2-1",
+          "mastery": "Follow the 3-2-1 rule: 3 copies, on 2 kinds of storage, with 1 off-site.",
+          "practice": "Write your backup setup as a 3-2-1 checklist, and fix any part that's missing.",
+          "detail": "One copy can fail. Two on the same disk can fail together. A copy in the same building can burn with it. 3-2-1 guards against all of these. An offline or immutable copy also protects against ransomware that encrypts everything it can reach.",
+          "proof": "A checklist with all 3 parts ticked.",
+          "pitfall": "Keeping the only backup on a drive plugged into the same server.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In the 3-2-1 rule, how many copies of the data are kept?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why keep 1 copy off-site?",
+              "answer": "So a fire or flood can't destroy every copy.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Ransomware encrypts your server and its 1 attached backup drive. What would have saved you?",
+              "answer": "An off-site or offline copy.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
     "db.constraint": {
       "model": "claude-opus-5-5",
       "verifier": "rules+authored",
@@ -37899,6 +38073,180 @@
               "prompt": "2 app servers check 'email is unused' at the same instant. What stops a duplicate?",
               "answer": "A UNIQUE constraint.",
               "answer_kind": "word"
+            }
+          ]
+        }
+      ]
+    },
+    "db.design": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Start From the Questions",
+          "mastery": "Design a schema from the questions the system must answer, listed before any table.",
+          "practice": "List 8 questions a school app must answer, like 'which students are in Math 101?', before drawing any tables.",
+          "detail": "A schema exists to answer questions, so start there. Each question tells you what must be stored and how things connect. Questions about history, like grades over 4 years, also tell you what you must never overwrite.",
+          "proof": "8 questions written before any table was drawn.",
+          "pitfall": "Drawing tables first and finding later they can't answer a key question.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why list 8 questions before drawing tables?",
+              "answer": "The schema exists to answer them, so they shape it.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A question asks for grades by student over 4 years. What must the schema keep?",
+              "answer": "Every grade with its date or term.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 question a library app must answer.",
+              "answer": "Which books a member has out.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Find the Entities",
+          "mastery": "Pick out the entities and relationships from a plain description of the system.",
+          "practice": "From 'members borrow books, books have authors, each loan has a due date', list the entities and the relationships.",
+          "detail": "Nouns usually become entities and verbs become relationships. Check each relationship's cardinality: one-to-many or many-to-many. Facts about a relationship, like a loan's due date, often mean the relationship deserves its own table.",
+          "proof": "Members, books, authors and loans, with books and authors many-to-many.",
+          "pitfall": "Missing that a relationship with its own facts needs its own table.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In 'members borrow books', which 2 entities are there?",
+              "answer": "Members and books",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A book can have 2 authors, and an author many books. Which relationship is that?",
+              "answer": "Many-to-many",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Where does 1 loan's due date belong?",
+              "answer": "In a loans table linking members and books.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Draw the ER Diagram",
+          "mastery": "Draw an entity-relationship diagram with the tables, keys and cardinality of each link.",
+          "practice": "Draw an ER diagram for members, books, authors and loans, marking each link as one-to-many or many-to-many.",
+          "detail": "A diagram makes the whole design visible at once, so gaps and loops stand out. Mark primary and foreign keys and the cardinality of each line. Crow's foot notation shows the many side with a three-pronged end.",
+          "proof": "A diagram of 5 tables, including the book_authors join table.",
+          "pitfall": "Designing only in your head and missing a join table.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A many-to-many link between 2 tables, books and authors, needs how many tables in total?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does the 'crow's foot' end of a line mean?",
+              "answer": "The many side.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 free tool for drawing ER diagrams.",
+              "answer": "dbdiagram.io or draw.io",
+              "answer_kind": "code"
+            }
+          ]
+        },
+        {
+          "title": "Plan for Change",
+          "mastery": "Design so likely changes, like new fields or new kinds of thing, need small migrations rather than rewrites.",
+          "practice": "List 3 changes a school app might need next year, and check your schema handles each with 1 migration.",
+          "detail": "Schemas live for years and the questions change. Join tables bend more easily than single foreign keys when 'one' becomes 'many'. Never store data in column names, like a column per year. But don't build for every imaginable future either.",
+          "proof": "3 likely changes, each handled by 1 small migration.",
+          "pitfall": "Making a column per year, like grade_2024 and grade_2025.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A school adds a 2nd teacher per class. Which design handles it with 1 small change?",
+              "answer": "A class_teachers join table, rather than a teacher_id column.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why avoid columns like 'grade_2025'?",
+              "answer": "Each new year then needs a schema change.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Should you add 50 fields now in case you need them someday?",
+              "answer": "No. Add what you need, in a shape that's easy to extend.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Review a Schema",
+          "mastery": "Review a schema against a checklist: keys, types, constraints, indexes and the questions it must answer.",
+          "practice": "Review a 5-table schema with a 6-point checklist, and write 1 fix for each problem you find.",
+          "detail": "A checklist catches what a quick look misses: a missing primary key, a date stored as text, a foreign key with no index, a rule only the app enforces. Finally, run each key question as a query and see whether it's simple or a struggle.",
+          "proof": "A filled checklist with a fix written for each problem.",
+          "pitfall": "Reviewing by eye without a checklist and missing the boring problems.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Name 3 things on a schema review checklist.",
+              "answer": "Primary keys, types and constraints.",
+              "answer_kind": "list"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A review finds a date stored as TEXT. What's the fix?",
+              "answer": "Change it to a DATE column with a migration.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A key question needs a join through 5 tables. What might that suggest?",
+              "answer": "The schema may need a more direct link.",
+              "answer_kind": "phrase"
             }
           ]
         }
@@ -38948,6 +39296,180 @@
         }
       ]
     },
+    "db.nosql": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Store Documents",
+          "mastery": "Store records as JSON-like documents, with nested fields and no fixed columns.",
+          "practice": "Write 2 MongoDB documents for blog posts, one with tags and one without, and query for posts tagged 'sql'.",
+          "detail": "A document holds a whole record, including nested lists and objects, like a post with its comments inside. Documents in one collection can have different fields. That fits data whose shape varies or that's always read as one piece.",
+          "proof": "2 posts stored, and the query returns only the one tagged 'sql'.",
+          "pitfall": "Splitting documents into many small linked pieces as if it were a relational database.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Can 2 documents in one MongoDB collection have different fields?",
+              "answer": "Yes.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In MongoDB, where do a post's comments often go?",
+              "answer": "Nested inside the post document.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What is MongoDB's name for a group of documents, like a table?",
+              "answer": "A collection",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Key-Value Stores",
+          "mastery": "Reach for Redis when all you need is the value stored under a key, such as a session or a cached page.",
+          "practice": "In Redis, SET session:42 to a user id with a 30 minute expiry, then GET it back.",
+          "detail": "A key-value store does one thing very fast: given a key, return the value. Redis keeps data in memory, so lookups take well under a millisecond. Expiry times make it perfect for sessions and caches that should vanish on their own.",
+          "proof": "GET session:42 returns the user id until the 30 minutes run out.",
+          "pitfall": "Using a key-value store for data you need to search by anything other than the key.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does Redis return for SET user:7 'Ana' followed by GET user:7?",
+              "answer": "Ana",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why is Redis so fast?",
+              "answer": "It keeps data in memory.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does an expiry of 1800 seconds do to a key?",
+              "answer": "Deletes it after 30 minutes.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "The Schema Still Exists",
+          "mastery": "Know that flexible stores move the schema into your code, so you still need rules.",
+          "practice": "List 3 fields your app expects in every user document, and write the check that runs before saving one.",
+          "detail": "Schemaless doesn't mean your data has no shape. Your code still expects certain fields, and old documents may lack new ones. The schema just moves from the database into the code, where it's easier to forget. Many document stores can validate a shape for you.",
+          "proof": "3 required fields and a check that refuses documents missing them.",
+          "pitfall": "Assuming no schema means no rules to keep.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A MongoDB collection has no fixed schema. Does your code still expect certain fields?",
+              "answer": "Yes. The schema just lives in the code.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Old documents lack 1 field added last month. What must your code do?",
+              "answer": "Handle the missing field.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 way to enforce a document's shape.",
+              "answer": "Schema validation in the database, or checks in the code.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Pick the Right Store",
+          "mastery": "Choose a relational, document or key-value store by the questions you'll ask of the data.",
+          "practice": "Pick a store for 3 jobs, bank accounts, a product catalog with varied fields, and a login session cache, and justify each one.",
+          "detail": "Data that links across tables and must stay consistent, like money, suits a relational database. Records with varied shapes read as a whole suit documents. Simple fast lookups by key suit a key-value store. Many systems use more than one.",
+          "proof": "Relational for accounts, documents for the catalog, key-value for sessions.",
+          "pitfall": "Choosing a store for its popularity instead of the questions you'll ask.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Bank balances for 2 accounts must stay consistent across tables. Which kind of store?",
+              "answer": "Relational",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A cache of 1 million session tokens looked up by key. Which kind?",
+              "answer": "Key-value",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "2 kinds of products, shoes and laptops, have very different fields. Which kind fits well?",
+              "answer": "A document store",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Scaling Out",
+          "mastery": "Explain why document and key-value stores spread across machines more easily, and what you give up.",
+          "practice": "Write 2 sentences on why joins are hard across 10 machines, and how document stores avoid needing them.",
+          "detail": "Joining rows that live on different machines means shipping data across the network, which is slow. Document stores avoid most joins by keeping related data in one document on one machine. The price is often weaker transactions and consistency across documents.",
+          "proof": "2 sentences on joins across machines and nesting as the workaround.",
+          "pitfall": "Assuming scaling out comes free with no trade-offs.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why are joins hard when data is split across 10 machines?",
+              "answer": "Matching rows means moving data between machines.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "How does MongoDB avoid most joins?",
+              "answer": "It nests related data in one document.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 thing you often give up when scaling out a store.",
+              "answer": "Strong consistency, or multi-record transactions.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
     "db.plan": {
       "model": "claude-opus-5-5",
       "verifier": "rules+authored",
@@ -39116,6 +39638,180 @@
               "weight": "stretch",
               "prompt": "WHERE lower(email) = 'x' stops the email index being used. What's a fix?",
               "answer": "Create an index on lower(email).",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "db.scale": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Read Replicas",
+          "mastery": "Add read replicas, copies that serve reads, so the main database handles fewer queries.",
+          "practice": "Draw a primary with 2 replicas, mark which handles writes and which handle reads, and note the lag risk.",
+          "detail": "All writes go to the primary, which streams changes to its replicas. Reads can go to replicas, spreading the load. Replicas trail slightly behind, so a user might not see their own change right away. They don't help if writes are the bottleneck.",
+          "proof": "A diagram with writes to the primary and reads to the 2 replicas.",
+          "pitfall": "Sending a user's read straight after their write to a lagging replica.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Of 3 servers, 1 primary and 2 replicas, which takes the writes?",
+              "answer": "The primary",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A user posts a comment, reads from a replica 50 ms later, and doesn't see it. Why?",
+              "answer": "Replication lag.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Do replicas help an app slowed by 10,000 writes a second?",
+              "answer": "No. Every write still goes to the primary.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Failover",
+          "mastery": "Promote a replica to primary when the primary fails, and know what can be lost.",
+          "practice": "Write the 4 steps of a failover: detect the failure, promote a replica, point the app at it, and rebuild the old primary.",
+          "detail": "When the primary dies, a replica takes over. With asynchronous replication, writes that hadn't reached it are lost. Synchronous replication waits for a replica to confirm each write, which is safer but slower. Practice failover before you need it.",
+          "proof": "4 steps written in order.",
+          "pitfall": "Never testing failover and finding it fails during an outage.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "The primary dies. What happens to 1 replica in a failover?",
+              "answer": "It's promoted to become the new primary.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "With async replication, can a failover lose the last 3 or 4 writes?",
+              "answer": "Yes, if they hadn't reached the replica yet.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does synchronous replication to 1 replica trade for safety?",
+              "answer": "Slower writes, since each waits for the replica.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Sharding",
+          "mastery": "Split data across machines by a shard key when one machine can't hold it all.",
+          "practice": "Shard 10 million users across 4 machines by user_id mod 4, and say which shard user 42 lands on.",
+          "detail": "Each machine holds a slice of the data, chosen by a shard key. A lookup by that key goes to one shard. A query that needs everyone has to ask every shard and merge the answers, which is slower and more complex.",
+          "proof": "42 mod 4 is 2, so user 42 lands on shard 2.",
+          "pitfall": "Sharding before you've outgrown one machine.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "With 4 shards chosen by user_id mod 4, which shard holds user 42?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "User 100 signs up. Using the same mod 4 rule, where does their row go?",
+              "answer": "Shard 0",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why is a query across all users slower with 4 shards?",
+              "answer": "It must ask every shard and combine the results.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Pick a Shard Key",
+          "mastery": "Choose a shard key that spreads data evenly and keeps related data together.",
+          "practice": "Compare user_id and country as shard keys for a social app, and say which spreads 10 million users more evenly.",
+          "detail": "A good shard key spreads data and traffic evenly, so no shard runs hot. It also keeps things that are read together on the same shard, like a user and their posts. Country is a poor key when most users are in one country.",
+          "proof": "user_id spreads users evenly, and country piles them onto one shard.",
+          "pitfall": "Picking a key that sends most traffic to one shard.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why is 'country' a poor shard key for an app where 80% of users are in the US?",
+              "answer": "Most data lands on 1 shard.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is a 'hot shard'?",
+              "answer": "A shard getting far more traffic than the rest.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why keep a user's posts on the same shard as the user?",
+              "answer": "Queries for 1 user then hit only 1 shard.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Consistency Trade-offs",
+          "mastery": "Explain the trade-off between consistency and availability when machines lose contact, the CAP idea.",
+          "practice": "Write what your app should do when 2 data centers lose contact: refuse writes, or accept them and reconcile later.",
+          "detail": "When parts of a system can't talk, you choose. Refuse requests and stay consistent, or keep serving and let copies differ for a while. A bank picks consistency. A social feed often picks availability, with eventual consistency once contact returns.",
+          "proof": "A written choice for your app, with the reason.",
+          "pitfall": "Assuming a distributed system can be perfectly consistent and always available.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In CAP, what does P stand for?",
+              "answer": "Partition tolerance",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "During 1 network split, should a bank favor consistency or availability?",
+              "answer": "Consistency",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does 'eventual consistency' mean?",
+              "answer": "Copies may differ for a while but converge.",
               "answer_kind": "phrase"
             }
           ]
@@ -39813,6 +40509,354 @@
               "prompt": "For a 'birth_date' column, which catches more bad data for free: TEXT or the right type?",
               "answer": "The right type",
               "answer_kind": "word"
+            }
+          ]
+        }
+      ]
+    },
+    "db.views": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Create a View",
+          "mastery": "Save a query as a view that behaves like a table.",
+          "practice": "Create a view active_users AS SELECT id, name FROM users WHERE is_active, then query it with a WHERE on name.",
+          "detail": "A view is a named query. You select from it like a table, and the database runs the underlying query each time. It hides joins and filters behind a simple name, so other queries and other people don't need to know the details.",
+          "proof": "SELECT * FROM active_users WHERE name = 'Ana' returns only active users.",
+          "pitfall": "Thinking a plain view stores its own copy of the data.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Does 1 plain view store its own copy of the data?",
+              "answer": "No. It runs its query each time.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write the statement that creates a view of students with a gpa over 3.5.",
+              "answer": "CREATE VIEW honor_roll AS SELECT * FROM students WHERE gpa > 3.5;",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 reason to use a view.",
+              "answer": "To hide a complex join behind a simple name.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Views for Access",
+          "mastery": "Use views to give users only the columns and rows they should see.",
+          "practice": "Create a view of employees without the 'salary' column, and grant a reporting user access to the view but not the table.",
+          "detail": "Permissions can be set on views separately from the tables underneath. A reporting tool can read a view that leaves out salaries and only shows one department, without ever touching the full table. It's a simple way to share data safely.",
+          "proof": "The reporting user can read the view, and gets an error on the table.",
+          "pitfall": "Giving a reporting tool access to every column of every table.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A report tool should see names but not salaries from 1 employees table. What can you give it?",
+              "answer": "A view without the salary column.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Write the GRANT that lets user reporter read the view staff_public.",
+              "answer": "GRANT SELECT ON staff_public TO reporter;",
+              "answer_kind": "code"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Can a view also filter rows, like showing only 1 department?",
+              "answer": "Yes, with a WHERE clause.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Materialized Views",
+          "mastery": "Use a materialized view to store a slow query's result, and refresh it on a schedule.",
+          "practice": "Create a materialized view of daily sales totals in PostgreSQL, query it, then run REFRESH MATERIALIZED VIEW.",
+          "detail": "A materialized view saves the query's result like a table, so reads are fast. The trade is that it goes stale until you refresh it. It suits dashboards and reports where data from a few hours ago is good enough.",
+          "proof": "Fast reads of daily totals, updated after the refresh.",
+          "pitfall": "Using a materialized view where users need up-to-the-second data.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In PostgreSQL, how is a materialized view different from a plain view?",
+              "answer": "It stores the result, so reads are fast but can be stale.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A materialized view was refreshed at 2 am. A sale happens at 9 am. Does the view show it?",
+              "answer": "No, not until the next refresh.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which command updates a materialized view in PostgreSQL?",
+              "answer": "REFRESH MATERIALIZED VIEW",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Functions and Procedures",
+          "mastery": "Write a stored function that runs logic inside the database.",
+          "practice": "Write a PostgreSQL function full_name(first TEXT, last TEXT) that returns them joined, and call it in a SELECT.",
+          "detail": "Functions keep logic next to the data, so every app that uses the database gets the same rule. They can be fast because the data doesn't travel. The cost is that database code is harder to test, review and version than application code, so use them for small, stable rules.",
+          "proof": "SELECT full_name('Ada', 'Lovelace') returns Ada Lovelace.",
+          "pitfall": "Putting a whole application's logic into stored procedures.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does SELECT full_name('Ada', 'Lovelace'); return from that function?",
+              "answer": "Ada Lovelace",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 1 benefit of logic in the database for 3 apps that share it.",
+              "answer": "Every app gets the same rule without copying code.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 drawback of 1 stored procedure compared with app code.",
+              "answer": "It's harder to test and version.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Triggers",
+          "mastery": "Use a trigger to run logic automatically when rows change, like stamping updated_at.",
+          "practice": "Write a trigger that sets updated_at = now() on every UPDATE of a posts table, and update 1 post to check it.",
+          "detail": "A trigger fires on insert, update or delete, before or after each row changes. It's handy for timestamps and audit logs that must never be skipped. But logic hidden in triggers surprises people, so keep triggers small and document them.",
+          "proof": "The post's updated_at changes to the current time after the update.",
+          "pitfall": "Hiding important business logic in triggers that nobody knows about.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "When does a BEFORE UPDATE trigger run?",
+              "answer": "Just before each row is updated.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why can 1 hidden trigger make bugs hard to find?",
+              "answer": "It runs logic that isn't in the app code.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 good use of a trigger.",
+              "answer": "Stamping updated_at, or writing an audit log.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "db.warehouse": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Row and Column Storage",
+          "mastery": "Explain why column storage suits analysis that reads a few columns of many rows.",
+          "practice": "For a 100-column sales table, work out how much data a query summing 1 column reads in row storage versus column storage.",
+          "detail": "Row storage keeps each record together, which is perfect for fetching one customer. Column storage keeps each column together, so a sum over one column reads only that column. Similar values in a column also compress very well.",
+          "proof": "Row storage reads all 100 columns, and column storage reads about 1% as much.",
+          "pitfall": "Running big analytical scans on a row store built for single records.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A query sums 1 of 100 columns. In column storage, about what fraction of the data is read?",
+              "answer": "1/100",
+              "answer_kind": "fraction"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "To look up 1 full customer record, which is better: row or column storage?",
+              "answer": "Row storage",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does 1 column of similar values compress well?",
+              "answer": "Similar values pack tightly.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "OLTP and OLAP",
+          "mastery": "Tell transactional workloads, many small reads and writes, from analytical ones, a few big scans.",
+          "practice": "Sort 6 queries, like 'add 1 order' and 'total sales by month for 5 years', into OLTP and OLAP.",
+          "detail": "OLTP is the app's everyday work: small, fast queries touching a few rows. OLAP is analysis: big scans and aggregates over years of data. Running heavy OLAP queries on the OLTP database slows the app, which is why warehouses exist.",
+          "proof": "6 queries sorted into the 2 kinds.",
+          "pitfall": "Running a 5-year report on the live app database at peak hours.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "'Insert 1 order' is OLTP or OLAP?",
+              "answer": "OLTP",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "'Average order size by region over 3 years' is OLTP or OLAP?",
+              "answer": "OLAP",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why not run big reports on the main app database at 9 am?",
+              "answer": "They slow down the app's everyday queries.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Star Schemas",
+          "mastery": "Model analytics with a star schema: a fact table of events surrounded by dimension tables.",
+          "practice": "Design a star schema for sales with fact_sales and 3 dimensions: date, product and store.",
+          "detail": "The fact table holds one row per event with its numbers, like amount and quantity, plus keys to the dimensions. Dimension tables describe the who, what, where and when. Queries then group facts by any dimension with simple joins.",
+          "proof": "fact_sales with keys to dim_date, dim_product and dim_store.",
+          "pitfall": "Putting product names and store cities straight into every fact row.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In a star schema, where do measured numbers like 'amount' go?",
+              "answer": "The fact table",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What do the 3 dimension tables hold?",
+              "answer": "Descriptions, like product names or store cities.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Each sale has 1 date, 1 product and 1 store. How many dimension keys does a fact row need?",
+              "answer": "3",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "ETL and ELT",
+          "mastery": "Move data from app databases into the warehouse with extract, transform and load steps.",
+          "practice": "Write the 3 steps to load yesterday's orders into a warehouse each night, naming what happens in each.",
+          "detail": "Extract pulls data from the source, transform cleans and reshapes it, and load writes it into the warehouse. Modern ELT loads raw data first and transforms it inside the warehouse. Loading only what changed since last time keeps it fast.",
+          "proof": "Extract yesterday's orders, transform them, and load them into the fact table.",
+          "pitfall": "Reloading 5 years of data every night.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What does ETL stand for?",
+              "answer": "Extract, transform, load",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In ELT, where does the transform happen?",
+              "answer": "Inside the warehouse, after loading.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why load only yesterday's changes instead of all 5 years of data?",
+              "answer": "It's much faster and cheaper.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Query a Warehouse",
+          "mastery": "Write analytical queries that group, window and compare over large data.",
+          "practice": "Write a query for monthly sales totals and each month's change from the month before, using LAG.",
+          "detail": "Window functions compute across rows without collapsing them. LAG reads the previous row's value, which makes month-over-month change easy. Combined with GROUP BY on a date dimension, they answer most trend questions.",
+          "proof": "Monthly totals with the change from the previous month beside each.",
+          "pitfall": "Pulling all the raw rows into a spreadsheet to do the math.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which window function reads the previous row's value?",
+              "answer": "LAG",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Sales are 100, 120 and 90 over 3 months. What is the change in month 3?",
+              "answer": "-30",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 popular cloud data warehouse.",
+              "answer": "BigQuery, Snowflake or Redshift.",
+              "answer_kind": "phrase"
             }
           ]
         }
