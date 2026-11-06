@@ -11797,6 +11797,1398 @@
         }
       ]
     },
+    "ast.gravity": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Kepler's First Law",
+          "mastery": "State that planets orbit in ellipses, with the Sun at one focus.",
+          "practice": "Draw an ellipse with 2 pins and a loop of string, mark the Sun at 1 focus, and mark the closest and farthest points.",
+          "detail": "An ellipse is a stretched circle with two foci. Kepler found that every planet follows one with the Sun at a focus, not the center. The closest point is perihelion and the farthest is aphelion. Earth's orbit is nearly a circle.",
+          "proof": "An ellipse with the Sun at 1 focus and perihelion and aphelion marked.",
+          "pitfall": "Putting the Sun at the center of the ellipse.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "By Kepler's 1st law, what shape is a planet's orbit?",
+              "answer": "An ellipse",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name the point of Earth's orbit closest to the Sun.",
+              "answer": "Perihelion",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Is Earth's orbit nearly circular or very stretched?",
+              "answer": "Nearly circular",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Kepler's Second Law",
+          "mastery": "Explain that a planet moves fastest when closest to the Sun, sweeping equal areas in equal times.",
+          "practice": "On your ellipse drawing, shade 2 equal-area wedges, one near the Sun and one far away, and compare the arc lengths.",
+          "detail": "A line from the Sun to a planet sweeps out equal areas in equal times. Near the Sun the wedge is short and wide, so the planet covers more distance and moves faster. Far away it crawls. Comets show this dramatically.",
+          "proof": "The near wedge has a longer arc, showing faster motion there.",
+          "pitfall": "Assuming planets move at a constant speed.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Where does Mars move fastest: at perihelion or at aphelion?",
+              "answer": "Perihelion",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A comet takes 1 month near the Sun and 10 years far away to sweep equal areas. Where is it slower?",
+              "answer": "Far from the Sun.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does Earth move a little faster in January?",
+              "answer": "It's closest to the Sun then.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Kepler's Third Law",
+          "mastery": "Use P squared equals a cubed, with P in years and a in AU, to relate a planet's period to its distance.",
+          "practice": "Find the orbital period of a planet 4 AU from the Sun, using P squared equals a cubed.",
+          "detail": "Farther planets take longer to orbit, and Kepler found the exact rule. With the period in years and the distance in AU, the period squared equals the distance cubed. Earth, at 1 AU and 1 year, fits perfectly.",
+          "proof": "4 cubed is 64, and the square root of 64 is 8 years.",
+          "pitfall": "Mixing units, like the distance in km with the period in years.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A planet orbits at 1 AU. What is its period in years?",
+              "answer": "1",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A planet orbits at 9 AU. What is its period in years?",
+              "answer": "27",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "A planet takes 8 years to orbit the Sun. How far is it, in AU?",
+              "answer": "4",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Newton's Gravity",
+          "mastery": "Use Newton's law: gravity grows with mass and weakens with the square of distance.",
+          "practice": "Work out how gravity changes if you double the distance, then if you double 1 mass, then if you do both.",
+          "detail": "Gravity is proportional to each mass and inversely proportional to the distance squared. Double one mass and the pull doubles. Double the distance and it drops to a quarter. These ratios answer most questions without plugging in the constant.",
+          "proof": "1/4, then 2 times, then 1/2.",
+          "pitfall": "Thinking doubling the distance halves the force.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Double the distance between 2 objects. Gravity becomes what fraction?",
+              "answer": "1/4",
+              "answer_kind": "fraction"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Triple 1 of the masses. Gravity changes by what factor?",
+              "answer": "3",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Move 2 objects to 3 times their distance apart. What fraction of the old gravity is left?",
+              "answer": "1/9",
+              "answer_kind": "fraction"
+            }
+          ]
+        },
+        {
+          "title": "Orbits Are Falling",
+          "mastery": "Explain an orbit as falling toward a body while moving sideways fast enough to keep missing it.",
+          "practice": "Explain Newton's cannonball in 3 sentences, using launch speeds of 1 km/s, 8 km/s and 12 km/s.",
+          "detail": "Fire a cannonball sideways and it falls to the ground. Fire it faster and it lands farther away. At about 8 km/s, the ground curves away as fast as the ball falls, so it orbits. Above about 11 km/s it escapes Earth entirely.",
+          "proof": "3 sentences: lands, orbits, escapes.",
+          "pitfall": "Thinking astronauts float because there's no gravity in space.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "About what speed does an object need to orbit just above Earth: 8 km/s or 80 km/s?",
+              "answer": "8 km/s",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why do astronauts on the ISS float?",
+              "answer": "They're falling around Earth along with the station.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What happens to a cannonball fired at 12 km/s?",
+              "answer": "It escapes Earth's gravity.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "ast.light": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Spread Light Into a Spectrum",
+          "mastery": "Spread light into a spectrum with a prism or a grating, and name its colors in order.",
+          "practice": "Look at a lamp through a cheap 500-line diffraction grating, and list the colors you see from shortest to longest wavelength.",
+          "detail": "White light is a mix of colors, and a prism or grating spreads them out. Violet has the shortest wavelength and red the longest, roughly 400 to 700 nm. Beyond the red lies infrared and radio, and beyond the violet, ultraviolet and X-rays.",
+          "proof": "Violet, blue, green, yellow, orange, red.",
+          "pitfall": "Thinking visible light is all the light there is.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "In the visible spectrum from 400 to 700 nm, which has the shorter wavelength: red or violet?",
+              "answer": "Violet",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Name 1 kind of light with a longer wavelength than red.",
+              "answer": "Infrared or radio",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Visible light runs from about 400 to 700 nm. Where does green sit?",
+              "answer": "Around 500 to 550 nm, in the middle.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Read Spectral Lines",
+          "mastery": "Explain that each element makes its own set of spectral lines, like a barcode.",
+          "practice": "Compare the spectra of 2 gas tubes, hydrogen and neon, through a grating, or from photos, and sketch their lines.",
+          "detail": "Atoms absorb and give off light only at certain wavelengths, set by their electrons. Each element has its own pattern of lines. A star's light, passing through its outer layers, shows dark absorption lines that reveal what it's made of.",
+          "proof": "2 sketches with clearly different line patterns.",
+          "pitfall": "Thinking astronomers need samples to know what stars are made of.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How can astronomers tell that Vega contains hydrogen?",
+              "answer": "Hydrogen's lines appear in its spectrum.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Dark lines in a spectrum like the Sun's are called what?",
+              "answer": "Absorption lines",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which element was found in the Sun's spectrum before it was found on Earth?",
+              "answer": "Helium",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Color and Temperature",
+          "mastery": "Read a star's temperature from its color: blue stars are hot and red stars are cool.",
+          "practice": "Rank Betelgeuse, the Sun, Sirius and Rigel by temperature, using their colors of red, yellow, white and blue.",
+          "detail": "Hotter objects glow at shorter wavelengths, as a heated metal goes from red to white. Wien's law makes it exact: the peak wavelength times the temperature is constant. So a star twice as hot peaks at half the wavelength.",
+          "proof": "Betelgeuse, the Sun, Sirius, then Rigel, from coolest to hottest.",
+          "pitfall": "Thinking red stars are the hottest because red looks hot.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which is hotter: red Betelgeuse or blue Rigel?",
+              "answer": "Rigel",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "The Sun's surface is about how hot: 5800 K or 58,000 K?",
+              "answer": "5800 K",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "By Wien's law, a star twice as hot peaks at what fraction of the wavelength?",
+              "answer": "1/2",
+              "answer_kind": "fraction"
+            }
+          ]
+        },
+        {
+          "title": "Doppler Shift",
+          "mastery": "Use redshift and blueshift to tell whether a star is moving away from us or toward us.",
+          "practice": "Compare a hydrogen line at 656.3 nm in the lab with 656.5 nm in a star, and say which way the star is moving.",
+          "detail": "Motion stretches or squeezes light waves. A star moving away has its lines shifted to longer, redder wavelengths, and one moving toward us is shifted bluer. The size of the shift gives the speed along our line of sight.",
+          "proof": "Redshifted, so the star is moving away from us.",
+          "pitfall": "Thinking a redshifted star looks red to the eye.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A star's lines shift toward 700 nm, the red end. Is it moving toward us or away?",
+              "answer": "Away",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "A line shifts from 656.3 nm to 656.1 nm. Toward us or away?",
+              "answer": "Toward",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 thing astronomers learn from Doppler shifts.",
+              "answer": "How fast a star moves along our line of sight.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "See Across the Spectrum",
+          "mastery": "Explain why astronomers use radio, infrared, X-ray and other telescopes, since each sees different things.",
+          "practice": "Match 4 telescopes, a radio dish, JWST, Chandra and Hubble, to the light each one mainly sees.",
+          "detail": "Different objects shine in different light. Infrared sees through dust to newborn stars. X-rays show the hottest, most violent places. Radio maps cold gas. Earth's air blocks X-rays and much infrared, which is why those telescopes go to space.",
+          "proof": "Radio, infrared, X-ray, and visible light for Hubble.",
+          "pitfall": "Thinking every telescope works like a big pair of binoculars.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which light does JWST mainly see?",
+              "answer": "Infrared",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why are X-ray telescopes like Chandra put in space?",
+              "answer": "Earth's air blocks X-rays.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What can infrared telescopes like JWST see that visible light can't?",
+              "answer": "Through dust, to stars forming inside clouds.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "ast.moon": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Why the Moon Has Phases",
+          "mastery": "Explain the Moon's phases as our changing view of its sunlit half as it orbits Earth.",
+          "practice": "Hold a ball at arm's length in a room with 1 lamp, turn slowly, and sketch the 8 phases you see.",
+          "detail": "The Sun always lights half of the Moon. As the Moon orbits, we see different amounts of that lit half. When it's between us and the Sun, we see the dark side, a new moon. When it's opposite the Sun, we see the whole lit half, a full moon.",
+          "proof": "8 sketches from new to full and back.",
+          "pitfall": "Thinking Earth's shadow causes the phases.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What phase is the Moon when it sits between Earth and the Sun?",
+              "answer": "New moon",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "About how many days is the Moon's cycle from new moon to new moon?",
+              "answer": "29.5",
+              "answer_kind": "decimal"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "What does 'waxing' mean?",
+              "answer": "The lit part is growing.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Name the Phases in Order",
+          "mastery": "Name the 8 phases in order and tell waxing from waning.",
+          "practice": "Write the 8 phases starting from new moon, and draw each one as seen from the northern hemisphere.",
+          "detail": "New, waxing crescent, first quarter, waxing gibbous, full, waning gibbous, third quarter, waning crescent. From the north, a waxing moon is lit on the right. A memory aid: if the lit side looks like the curve of a D, it's growing.",
+          "proof": "8 drawings in order, with waxing lit on the right.",
+          "pitfall": "Calling the half-lit moon a half moon instead of a quarter.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which phase comes right after the 1st quarter?",
+              "answer": "Waxing gibbous",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In the northern hemisphere, which side of a waxing crescent Moon is lit?",
+              "answer": "The right",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Roughly how many days after new moon is the Moon full?",
+              "answer": "About 15",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Predict Moonrise",
+          "mastery": "Predict when each phase rises and sets, since the Moon rises about 50 minutes later each day.",
+          "practice": "Look up tonight's moonrise, then predict tomorrow's by adding 50 minutes, and check it.",
+          "detail": "The Moon moves east along its orbit, so Earth has to turn a bit more each day to bring it back into view. That makes moonrise about 50 minutes later daily. A full moon rises at sunset, and a first quarter moon rises around noon.",
+          "proof": "A prediction for tomorrow's moonrise within about 15 minutes of the real time.",
+          "pitfall": "Expecting the Moon to rise at the same time every night.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Around what time does a full Moon rise?",
+              "answer": "Sunset",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Moonrise is 8:10 pm tonight. About when is it tomorrow?",
+              "answer": "9:00 pm",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Can you see a 1st quarter moon in the afternoon?",
+              "answer": "Yes. It rises around noon.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Solar and Lunar Eclipses",
+          "mastery": "Explain solar and lunar eclipses as the Moon or Earth's shadow lining up exactly.",
+          "practice": "Draw the Sun, Earth and Moon for a solar eclipse and for a lunar eclipse, and shade each shadow.",
+          "detail": "A solar eclipse is the Moon's shadow falling on Earth, so it happens at new moon. A lunar eclipse is Earth's shadow falling on the Moon, at full moon. The Moon's orbit is tilted about 5 degrees, so most months the shadows miss.",
+          "proof": "2 drawings, with the Moon between in one and Earth between in the other.",
+          "pitfall": "Expecting an eclipse every month.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "During 1 lunar eclipse, which phase is the Moon?",
+              "answer": "Full moon",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why isn't there a solar eclipse at every new moon?",
+              "answer": "The Moon's orbit is tilted about 5 degrees, so it usually passes above or below the Sun.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does the Moon look red in a total lunar eclipse?",
+              "answer": "Sunlight bent through Earth's air reaches it, and red light gets through best.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Tides",
+          "mastery": "Explain tides as the Moon's and the Sun's gravity pulling Earth's oceans into 2 bulges.",
+          "practice": "Look up the tide times for a coastal city over 2 days, and note how much later each high tide comes.",
+          "detail": "The Moon's pull makes one bulge of water facing it and another on the far side, so most coasts get 2 high tides a day. They come about 25 minutes later each time, following the Moon. When the Sun and Moon line up, at new and full moon, tides are biggest.",
+          "proof": "High tides about 12 hours 25 minutes apart.",
+          "pitfall": "Thinking there's only one high tide a day.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many high tides does the Moon cause on most coasts each day?",
+              "answer": "2",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Spring tides, the biggest, happen at which 2 phases?",
+              "answer": "New and full moon",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "High tide is at 6:00 am. About when is the next high tide?",
+              "answer": "About 6:25 pm",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "ast.motion": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Day and Night",
+          "mastery": "Explain day and night as Earth spinning on its axis once every 24 hours.",
+          "practice": "Shine a flashlight on a globe in a dark room, give it 1 full turn, and mark sunrise and sunset for your city.",
+          "detail": "Half of Earth faces the Sun at any moment, and spinning carries each place through day and night. Earth turns west to east, so the Sun appears to rise in the east and set in the west. One spin relative to the Sun takes 24 hours.",
+          "proof": "Your city crossing into the light at sunrise and out of it at sunset.",
+          "pitfall": "Thinking the Sun moves around Earth each day.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How long does Earth take to spin once relative to the Sun?",
+              "answer": "24 hours",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Seen from above the North Pole, which way does Earth spin?",
+              "answer": "Counterclockwise, west to east.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why does the Sun seem to cross the sky from east to west in about 12 hours?",
+              "answer": "Earth spins west to east.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Seasons From Tilt",
+          "mastery": "Explain the seasons by Earth's 23.5 degree tilt, not by its distance from the Sun.",
+          "practice": "Tilt a globe 23.5 degrees, carry it around a lamp, and note where sunlight hits most directly in June and December.",
+          "detail": "Earth's axis stays pointed the same way all year. In June the northern half leans toward the Sun, so its sunlight is more direct and its days are longer. In December it leans away. Distance barely changes, and Earth is actually closest in January.",
+          "proof": "Sunlight most direct on the north in June and the south in December.",
+          "pitfall": "Saying summer happens because Earth is closer to the Sun.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What causes Earth's 4 seasons?",
+              "answer": "Earth's tilt, which changes how directly sunlight hits.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Earth is closest to the Sun in early January. Is it summer then in the US?",
+              "answer": "No. It's winter, because tilt matters more than distance.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "In June, which of the 2 hemispheres tilts toward the Sun?",
+              "answer": "The northern",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Solstices and Equinoxes",
+          "mastery": "Name the solstices and equinoxes and what the Sun does on each.",
+          "practice": "Mark the 4 dates, about June 21, September 22, December 21 and March 20, on a calendar with your city's daylight hours.",
+          "detail": "At the June solstice the Sun reaches its farthest north, giving the north its longest day. At the December solstice it's farthest south. On the 2 equinoxes the Sun is over the equator, and day and night are about 12 hours each everywhere.",
+          "proof": "4 dates marked, with daylight longest in June and shortest in December.",
+          "pitfall": "Thinking every place gets 12 hours of daylight all year.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which day of the year has the most daylight north of the equator, in June or December?",
+              "answer": "The June solstice, around June 21.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "On the March equinox, about how many hours of daylight does everyone get?",
+              "answer": "12",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "At the equator on an equinox, where is the Sun at noon?",
+              "answer": "Directly overhead.",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Stars Shift Through the Year",
+          "mastery": "Explain why different constellations are visible in different seasons as Earth orbits the Sun.",
+          "practice": "Use Stellarium to compare the 9 pm sky on January 15 and July 15, and list 2 constellations that swap.",
+          "detail": "As Earth orbits, the night side faces a different part of space. Constellations behind the Sun are up in the daytime and lost in its glare. Each night a star rises about 4 minutes earlier, which adds up to a full turn of the sky in a year.",
+          "proof": "2 constellations listed, like Orion in January and Scorpius in July.",
+          "pitfall": "Thinking the stars themselves change through the year.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Orion is a winter constellation in the north. Why can't you see it at midnight in July?",
+              "answer": "It's in the daytime sky, behind the Sun.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Each night, a star rises about how many minutes earlier: 4 or 40?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Over 1 year, how far around the sky does the Sun move against the stars?",
+              "answer": "All the way around, 360 degrees.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Latitude Changes the View",
+          "mastery": "Explain how your latitude decides which stars you can see and how high they climb.",
+          "practice": "Compare the sky from 40 degrees north and 30 degrees south in Stellarium, and list 2 constellations only visible from the south.",
+          "detail": "Your latitude sets how high the celestial pole sits above your horizon. From the North Pole, Polaris is straight overhead. From Australia it's below the horizon, but the Southern Cross and the Magellanic Clouds are in view.",
+          "proof": "2 southern constellations listed, like Crux and Centaurus.",
+          "pitfall": "Assuming everyone on Earth sees the same stars.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "At the North Pole, how high is Polaris?",
+              "answer": "Straight overhead, 90 degrees.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Can people in Australia see Polaris?",
+              "answer": "No. It's below their horizon.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 constellation seen best from the southern hemisphere.",
+              "answer": "The Southern Cross, Crux.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "ast.planets": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Rocky and Giant Planets",
+          "mastery": "Group the 8 planets into 3 families by what they're made of.",
+          "practice": "List the 8 planets in order from the Sun, and label each one rocky, gas giant or ice giant.",
+          "detail": "Mercury, Venus, Earth and Mars are small and rocky. Jupiter and Saturn are gas giants, mostly hydrogen and helium. Uranus and Neptune are ice giants, with more water, ammonia and methane. A phrase like My Very Educated Mother Just Served Us Nachos keeps the order.",
+          "proof": "4 rocky, 2 gas giants and 2 ice giants, in order.",
+          "pitfall": "Calling Uranus and Neptune gas giants just like Jupiter.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Of the 8 planets, how many are rocky?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which 2 planets are ice giants?",
+              "answer": "Uranus and Neptune",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Of the 8 planets, which is the largest?",
+              "answer": "Jupiter",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Picture the Scale",
+          "mastery": "Use AU and scale models to picture how far apart the planets are.",
+          "practice": "Make a scale model with the Sun as a 10 cm ball, and place Earth at its scaled distance, about 10.7 m away.",
+          "detail": "Pictures squash the solar system to fit a page. At a scale where the Sun is a 10 cm ball, Earth is a grain of sand about 11 m away and Neptune is about 320 m off. The AU, Earth's distance from the Sun, keeps the numbers simple.",
+          "proof": "Earth placed about 11 m from a 10 cm Sun.",
+          "pitfall": "Picturing the planets as close neighbors, like in textbook diagrams.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How far is Earth from the Sun in AU?",
+              "answer": "1",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Jupiter is about 5.2 AU from the Sun. How many times farther than Earth is that?",
+              "answer": "5.2",
+              "answer_kind": "decimal"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Sunlight takes about 8.3 minutes to reach Earth. About how long does it take to reach Jupiter at 5.2 AU?",
+              "answer": "About 43 minutes",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Compare Atmospheres",
+          "mastery": "Compare planet atmospheres, and explain Venus's runaway greenhouse effect.",
+          "practice": "Make a table of Venus, Earth and Mars with each one's main atmospheric gas and surface temperature.",
+          "detail": "Venus has a thick carbon dioxide atmosphere that traps heat, making it hotter than Mercury at around 465°C. Earth's nitrogen and oxygen air keeps it mild. Mars also has carbon dioxide, but its air is so thin it holds little heat.",
+          "proof": "Venus: CO2, about 465°C. Earth: N2, about 15°C. Mars: CO2, about -60°C.",
+          "pitfall": "Assuming the planet closest to the Sun must be the hottest.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which planet is hottest: Mercury or Venus?",
+              "answer": "Venus",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What gas makes up most of Venus's atmosphere?",
+              "answer": "Carbon dioxide, CO2",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why is Mars so cold despite its CO2 air?",
+              "answer": "Its atmosphere is very thin.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "What Makes Each Weird",
+          "mastery": "Name a standout feature of each planet, like Uranus's sideways spin or Jupiter's Great Red Spot.",
+          "practice": "Write 1 odd fact for each of the 8 planets, and check each one against NASA's planet pages.",
+          "detail": "Every planet has a quirk. Venus spins backward and so slowly its day outlasts its year. Uranus rolls on its side. Jupiter has a storm bigger than Earth that has lasted centuries. Facts like these stick and help you tell the planets apart.",
+          "proof": "8 facts, each checked against NASA.",
+          "pitfall": "Repeating planet facts from memory without checking them.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Of the 8 planets, which spins on its side?",
+              "answer": "Uranus",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What is Jupiter's Great Red Spot?",
+              "answer": "A giant storm bigger than Earth.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which of the 8 planets has a day longer than its year?",
+              "answer": "Venus",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Compare With Data",
+          "mastery": "Compare planets using real data like radius, mass, density and distance.",
+          "practice": "Make a 4-column table of radius, mass, density and distance for 4 planets from NASA data, and find 1 pattern.",
+          "detail": "Numbers reveal what pictures hide. Density tells rocky from gassy: Earth is about 5.5 g/cm³, and Saturn about 0.7, less than water. Volume grows with radius cubed, so a planet 11 times wider holds about 1300 Earths.",
+          "proof": "A table for 4 planets, with 1 pattern written below it.",
+          "pitfall": "Comparing planets by how big they look in photos.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Saturn's density is about 0.7 g/cm³. Would it float in a big enough bathtub of water?",
+              "answer": "Yes. It's less dense than water.",
+              "answer_kind": "yesno"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Earth's density is about 5.5 g/cm³. Is it rocky or gassy?",
+              "answer": "Rocky",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Jupiter's radius is about 11 times Earth's. Roughly how many times Earth's volume is that?",
+              "answer": "About 1300",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
+    "ast.sky": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Learn 5 Anchor Constellations",
+          "mastery": "Find 5 anchor constellations, like the Big Dipper and Orion, and use them to find the others.",
+          "practice": "On a clear night, find the Big Dipper, Cassiopeia, Orion, Leo and Cygnus, checking each with a free app like Stellarium.",
+          "detail": "A handful of bright, easy shapes act as signposts for the rest of the sky. Once you know them, you can hop from each to its neighbors. Learn them in the season they're best placed, since the sky changes through the year.",
+          "proof": "All 5 found and confirmed in the app.",
+          "pitfall": "Trying to learn all 88 constellations at once.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which constellation has 3 stars in a row forming a belt?",
+              "answer": "Orion",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "The Big Dipper is part of which larger constellation?",
+              "answer": "Ursa Major",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Which W-shaped constellation sits across Polaris from the Big Dipper?",
+              "answer": "Cassiopeia",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Find Polaris",
+          "mastery": "Find Polaris by following the pointer stars of the Big Dipper, and use it to find north.",
+          "practice": "Follow the 2 pointer stars at the end of the Big Dipper's bowl about 5 times their gap to reach Polaris.",
+          "detail": "Polaris isn't especially bright, but it sits almost directly above Earth's north pole, so it barely moves while everything else circles around it. Its height above your horizon equals your latitude, which made it a navigator's best friend.",
+          "proof": "Polaris found, and north marked on the ground.",
+          "pitfall": "Assuming Polaris is the brightest star in the sky.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which 2 stars of the Big Dipper point to Polaris?",
+              "answer": "Dubhe and Merak, at the end of the bowl.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why does Polaris barely move during the night?",
+              "answer": "It sits almost exactly above Earth's north pole.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "At latitude 40° N, about how high above the horizon is Polaris?",
+              "answer": "40°",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Bright Stars and Star Hopping",
+          "mastery": "Use bright stars as signposts, and star hop from them to fainter targets.",
+          "practice": "Follow the arc of the Big Dipper's handle to Arcturus, then speed on to Spica, and note each star's color.",
+          "detail": "Star hopping means moving from something you can find to something you can't, one easy step at a time. Simple phrases help: arc to Arcturus, speed on to Spica. Notice colors as you go, since they hint at each star's temperature.",
+          "proof": "Arcturus and Spica found, with orange and blue-white noted.",
+          "pitfall": "Hunting for a faint target with no bright star to start from.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "'Arc to Arcturus' starts from which constellation?",
+              "answer": "The Big Dipper",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which reddish star marks Orion's shoulder?",
+              "answer": "Betelgeuse",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Orion's belt points down and to the left toward which brightest night-sky star?",
+              "answer": "Sirius",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "The Sky Turns",
+          "mastery": "Explain why the stars move west across the sky overnight, about 15 degrees each hour.",
+          "practice": "Photograph Orion at 8 pm and at 10 pm from the same spot, and measure how far it moved.",
+          "detail": "Earth spins once a day, so the whole sky seems to turn around the poles: 360 degrees in 24 hours is 15 degrees an hour. Stars rise in the east and set in the west, like the Sun, and those near Polaris circle without setting.",
+          "proof": "Orion moved about 30 degrees west in 2 hours.",
+          "pitfall": "Thinking the stars themselves are moving across the sky.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many degrees does the sky turn in 1 hour?",
+              "answer": "15",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "In 4 hours, how many degrees does a star move across the sky?",
+              "answer": "60",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Like the Sun, do stars rise in the east or the west?",
+              "answer": "The east",
+              "answer_kind": "word"
+            }
+          ]
+        },
+        {
+          "title": "Use a Star Map",
+          "mastery": "Read a planisphere or a sky app to know what's up at a given date and time.",
+          "practice": "Set a planisphere or Stellarium to 9 pm tonight, list 3 constellations above the horizon, then go out and find them.",
+          "detail": "A planisphere lines up the date with the time to show tonight's sky. Star maps show east and west swapped because they're meant to be held over your head while you look up. Apps do the same automatically and show the planets too.",
+          "proof": "3 constellations listed from the map and found outside.",
+          "pitfall": "Holding a star map like a road map and getting east and west backward.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "On a planisphere, what do you line up on the 2 dials?",
+              "answer": "The date and the time.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why does a Stellarium-style star chart show east and west swapped?",
+              "answer": "They're drawn to be held over your head, looking up.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 free sky app.",
+              "answer": "Stellarium or SkySafari",
+              "answer_kind": "word"
+            }
+          ]
+        }
+      ]
+    },
+    "ast.small": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Moons",
+          "mastery": "Compare major moons, like our Moon, Io, Europa and Titan, and what makes each special.",
+          "practice": "Make a table of 4 moons, the Moon, Io, Europa and Titan, with 1 standout fact for each.",
+          "detail": "Moons are far more varied than our own. Io is the most volcanic place in the solar system. Europa hides an ocean under its ice. Titan has a thick atmosphere and lakes of liquid methane. Some icy moons are among the best places to look for life.",
+          "proof": "A 4-row table with a fact for each moon.",
+          "pitfall": "Assuming every moon is a gray, cratered ball like ours.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Of Jupiter's 4 big moons, which has the most active volcanoes?",
+              "answer": "Io",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which of Saturn's moons has a thick atmosphere and lakes of methane?",
+              "answer": "Titan",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why do scientists think Europa may have an ocean?",
+              "answer": "Its icy crust shows signs of liquid water below.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Asteroids",
+          "mastery": "Describe asteroids as rocky leftovers, most of them in the belt between Mars and Jupiter.",
+          "practice": "Mark the asteroid belt between Mars at 1.5 AU and Jupiter at 5.2 AU on your solar system scale model.",
+          "detail": "Asteroids are rocky and metal pieces left over from the planets' formation. Most orbit between Mars and Jupiter, where Jupiter's gravity kept them from forming a planet. The belt is mostly empty space, with asteroids typically far apart.",
+          "proof": "The belt marked between Mars and Jupiter on the model.",
+          "pitfall": "Picturing the belt as crowded with rocks, like in films.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "The main asteroid belt lies between which 2 planets?",
+              "answer": "Mars and Jupiter",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which 1 dwarf planet is the largest object in the asteroid belt?",
+              "answer": "Ceres",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Are the belt's asteroids packed close together, like in Star Wars?",
+              "answer": "No. They're usually very far apart.",
+              "answer_kind": "yesno"
+            }
+          ]
+        },
+        {
+          "title": "Comets",
+          "mastery": "Explain comets as icy bodies whose tails form and point away from the Sun when they come close.",
+          "practice": "Draw a comet at 3 points in its orbit, far away, near the Sun and leaving, with its tail pointing the right way each time.",
+          "detail": "A comet is a lump of ice and dust. Far from the Sun it's frozen and tailless. Near the Sun, the ice turns to gas and releases dust, forming a glowing coma and tails. Sunlight and the solar wind push the tails away from the Sun, whichever way the comet moves.",
+          "proof": "3 drawings with the tail always pointing away from the Sun.",
+          "pitfall": "Drawing the tail streaming behind the comet's direction of travel.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which way does 1 comet's tail point?",
+              "answer": "Away from the Sun.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Halley's Comet returns about every how many years?",
+              "answer": "76",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why do comets grow tails only near the Sun?",
+              "answer": "Sunlight warms the ice, which turns to gas and dust.",
+              "answer_kind": "sentence"
+            }
+          ]
+        },
+        {
+          "title": "Meteors",
+          "mastery": "Tell meteoroids, meteors and meteorites apart, and know when meteor showers happen.",
+          "practice": "Watch a meteor shower like the Perseids around August 12 for 30 minutes, and count the meteors.",
+          "detail": "A meteoroid is a small rock in space. When it burns up in our air, the streak of light is a meteor. If a piece reaches the ground, it's a meteorite. Showers happen when Earth crosses a trail of dust left by a comet, on the same dates every year.",
+          "proof": "A count of meteors in 30 minutes.",
+          "pitfall": "Calling the streak of light a meteorite.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "What is 1 meteorite?",
+              "answer": "A space rock that reaches the ground.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Meteor showers like the Perseids come from what?",
+              "answer": "Dust left behind by comets.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "You count 18 meteors in 30 minutes. What rate per hour is that?",
+              "answer": "36",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Dwarf Planets and the Kuiper Belt",
+          "mastery": "Explain why Pluto is a dwarf planet, and what lies in the Kuiper Belt.",
+          "practice": "Write the 3 rules for a planet from the 2006 IAU definition, and say which one Pluto fails.",
+          "detail": "A planet orbits the Sun, is round from its own gravity, and has cleared its orbit of other objects. Pluto meets the first two but shares its region with many Kuiper Belt objects, the icy bodies beyond Neptune. So it's a dwarf planet, along with Eris and Ceres.",
+          "proof": "3 rules written, with 'cleared its orbit' marked as the one Pluto fails.",
+          "pitfall": "Thinking Pluto was demoted for being too small.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Which of the 3 rules does Pluto fail?",
+              "answer": "It hasn't cleared its orbit of other objects.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Where is the Kuiper Belt, past 30 AU?",
+              "answer": "Beyond Neptune.",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Name 1 dwarf planet besides Pluto.",
+              "answer": "Ceres or Eris",
+              "answer_kind": "word"
+            }
+          ]
+        }
+      ]
+    },
+    "ast.telescope": {
+      "model": "claude-opus-5-5",
+      "verifier": "rules+authored",
+      "checks": [
+        "shape",
+        "not-generic",
+        "concrete",
+        "distinct",
+        "on-topic",
+        "ladder"
+      ],
+      "steps": [
+        {
+          "title": "Aperture Matters Most",
+          "mastery": "Explain that aperture, the size of the main lens or mirror, sets how much light a telescope gathers.",
+          "practice": "Compare a 70 mm and a 200 mm telescope by working out how many times more light the bigger one gathers.",
+          "detail": "Light gathered depends on the area of the lens or mirror, which grows with the diameter squared. Doubling the aperture gathers 4 times the light. That's what shows faint galaxies and fine detail, far more than magnification does.",
+          "proof": "About 8 times more light, since (200 / 70) squared is about 8.2.",
+          "pitfall": "Buying a telescope for its magnification number on the box.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A 200 mm telescope against a 100 mm one. How many times more light does the bigger one gather?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "What does a '200 mm' aperture measure?",
+              "answer": "The diameter of the main lens or mirror.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why is a bigger aperture, like 200 mm, better for faint galaxies?",
+              "answer": "It collects more light.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Work Out Magnification",
+          "mastery": "Work out magnification as the telescope's focal length divided by the eyepiece's, and know its limits.",
+          "practice": "Find the magnification of a 1000 mm telescope with a 25 mm eyepiece and with a 10 mm eyepiece.",
+          "detail": "Divide the telescope's focal length by the eyepiece's. Shorter eyepieces magnify more. But past roughly 2 times the aperture in millimeters, the image just gets bigger and blurrier, and on most nights steady air limits it even more.",
+          "proof": "40 times with the 25 mm, and 100 times with the 10 mm.",
+          "pitfall": "Using the highest magnification on every target.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "A 1200 mm telescope with a 20 mm eyepiece gives what magnification?",
+              "answer": "60",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Using about 2 times per mm of aperture, what's the most useful magnification for a 100 mm telescope?",
+              "answer": "200",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "On the same telescope, which eyepiece magnifies more: 25 mm or 10 mm?",
+              "answer": "10 mm",
+              "answer_kind": "integer"
+            }
+          ]
+        },
+        {
+          "title": "Find Objects",
+          "mastery": "Use a finder scope or red dot finder and low power to find objects, then zoom in.",
+          "practice": "Align your finder on a distant treetop in daylight, then find the Moon at night with your lowest-power eyepiece first.",
+          "detail": "The main telescope sees a tiny patch of sky, so finding things through it is hard. A finder shows a wide view. Align it in daylight on something far away, then aim with it at night. Start at low power, center the object, then switch up.",
+          "proof": "The Moon found and centered at low power, then viewed at higher power.",
+          "pitfall": "Starting with high power and never finding anything.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "Why start with the lowest-power eyepiece, like a 25 mm?",
+              "answer": "It shows the widest view, so objects are easier to find.",
+              "answer_kind": "sentence"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "When should you align the finder scope on 1 distant treetop?",
+              "answer": "In daylight, before observing.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Why never point a telescope at the Sun without a proper filter?",
+              "answer": "It can blind you instantly.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Good First Targets",
+          "mastery": "Start with bright, easy targets like the Moon, Jupiter and Saturn before faint ones.",
+          "practice": "Observe the Moon, Jupiter and Saturn this month, and sketch 1 feature of each, like a crater, 4 moons or the rings.",
+          "detail": "Bright targets reward a small telescope right away. The Moon shows craters best near a quarter phase, when shadows are long. Jupiter shows its 4 big moons and cloud bands. Saturn's rings are visible even in a 60 mm scope.",
+          "proof": "3 sketches, one for each target.",
+          "pitfall": "Starting with faint galaxies and deciding the telescope doesn't work.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How many bright moons of Jupiter can a small telescope show?",
+              "answer": "4",
+              "answer_kind": "integer"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Which feature of Saturn shows even in a 60 mm telescope?",
+              "answer": "Its rings",
+              "answer_kind": "word"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "When are the Moon's craters easiest to see: at full moon or near a quarter?",
+              "answer": "Near a quarter, when shadows are long.",
+              "answer_kind": "phrase"
+            }
+          ]
+        },
+        {
+          "title": "Dark Skies and Steady Air",
+          "mastery": "Pick nights and places with dark skies and steady air, and let your eyes adapt.",
+          "practice": "Observe from a dark site, wait 20 minutes for your eyes to adapt using only red light, then compare it with your backyard.",
+          "detail": "City light washes out faint objects, so a dark site shows far more. Your eyes need 20 to 30 minutes to adapt fully, and white light resets them, so use a red flashlight. Twinkling stars mean unsteady air, which blurs planets.",
+          "proof": "A list of objects seen from the dark site that weren't visible at home.",
+          "pitfall": "Checking a phone screen every few minutes and losing dark adaptation.",
+          "minutes": 15,
+          "problems": [
+            {
+              "slot": 1,
+              "weight": "warmup",
+              "prompt": "How long do eyes take to fully adapt to the dark: 2 minutes or 20 to 30?",
+              "answer": "20 to 30 minutes",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 2,
+              "weight": "core",
+              "prompt": "Why use 1 red flashlight at night?",
+              "answer": "It doesn't ruin your dark adaptation.",
+              "answer_kind": "phrase"
+            },
+            {
+              "slot": 3,
+              "weight": "stretch",
+              "prompt": "Stars twinkle a lot tonight. What does that say about the 'seeing'?",
+              "answer": "The air is unsteady, so planets will look blurry.",
+              "answer_kind": "phrase"
+            }
+          ]
+        }
+      ]
+    },
     "bi.biotech": {
       "model": "claude-opus-5-5",
       "verifier": "rules+authored",
