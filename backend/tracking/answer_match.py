@@ -76,7 +76,9 @@ _SAME = {
     'organise': 'organize', 'realise': 'realize', 'recognise': 'recognize',
 }
 _QUOTES = str.maketrans({'‘': "'", '’': "'", '“': '"', '”': '"', '♯': '#', '♭': 'b', '–': '-', '−': '-'})
-_TOKEN = re.compile(r"[a-z0-9]+(?:'[a-z]+)?#?|%|\+\+|#")
+# A minus on a number is part of it ("-1/4" is not "1/4"); a hyphen inside a
+# word ("x-2", "left-to-right") is not.
+_TOKEN = re.compile(r"(?<![a-z0-9.])-?\d+\.\d+|(?<![a-z0-9])-\d+|[a-z0-9]+(?:'[a-z]+)?#?|%|\+\+|#|[≤≥<>≠]")
 #: How many words longer than an accepted answer a reply may run.
 SLACK = {'word': 3, 'phrase': 6, 'choice': 2}
 
@@ -105,8 +107,21 @@ def stem(token: str) -> str:
     return token
 
 
+_INFINITY = ((re.compile(r'(?:-|minus |negative )\s*(?:∞|infinity\b|inf\b)'), ' neginf '),
+             (re.compile(r'(?:\+|plus |positive )\s*(?:∞|infinity\b|inf\b)'), ' posinf '),
+             (re.compile(r'∞'), ' infinity '))
+_NOTES = ((re.compile(r'\b([a-g]) ?flat\b'), r'\1b'), (re.compile(r'\b([a-g]) ?sharp\b'), r'\1#'))
+
+
 def _fold(text: str) -> str:
     text = str(text or '').translate(_QUOTES).lower()
+    text = text.replace('>=', '≥').replace('<=', '≤').replace('!=', '≠').replace('=<', '≤').replace('=>', '≥')
+    for pattern, word in _INFINITY:
+        text = pattern.sub(word, text + ' ').strip()
+    for pattern, note in _NOTES:
+        text = pattern.sub(note, text)
+    # "x = - 1" is how a stored answer spaces a negative; it's still -1.
+    text = re.sub(r'(^|[=(,;:≤≥<>≠])\s*-\s+(?=\d)', r'\1 -', text)
     for long, short in _SAME.items():
         if ' ' in long or not long.isalpha():
             text = text.replace(long, ' {} '.format(short))
@@ -225,7 +240,7 @@ _NAMES = sorted(list(FUNCTIONS) + ['pi', 'theta', 'alpha', 'beta', 'lambda', 'mu
                                    'omega', 'phi', 'Delta', 'delta', 'gamma', 'rho', 'tau',
                                    'epsilon', 'inf', 'infinity'], key=len, reverse=True)
 RELATIONS = ('<=', '>=', '!=', '=', '<', '>')
-_LEX = re.compile(r"\s*(?:(?P<num>\d+(?:\.\d+)?|\.\d+)|(?P<name>[A-Za-z]+)|(?P<op><=|>=|!=|==|\*\*|[-+*/^()\[\],=<>!|√']|_))")
+_LEX = re.compile(r"\s*(?:(?P<num>\d+(?:\.\d+)?|\.\d+)|(?P<name>[A-Za-z]+)|(?P<op><=|>=|!=|==|\*\*|[-+*/^()\[\],=<>!|√'°]|_))")
 
 
 def _group(text: str, at: int) -> Tuple[str, int]:
@@ -246,6 +261,7 @@ def _matrix(body: str) -> str:
     return '[' + ', '.join('[' + ', '.join(cell.strip() for cell in row.split('&')) + ']' for row in rows) + ']'
 
 
+_LATEX_NAMES = frozenset('pi theta alpha beta lambda mu sigma omega phi delta Delta gamma rho tau epsilon'.split())
 _COMMANDS = {
     'cdot': '*', 'times': '*', 'div': '/', 'le': '<=', 'leq': '<=', 'ge': '>=', 'geq': '>=',
     'ne': '!=', 'neq': '!=', 'approx': '=', 'infty': 'inf', 'left': '', 'right': '',
@@ -257,6 +273,7 @@ def delatex(text: str) -> str:
     """LaTeX that to_plain left alone (a fraction with a power inside it, say)
     as plain math: \\frac{a}{b} is ((a)/(b)), \\sqrt{a} is sqrt(a)."""
     text = str(text or '').replace('\\(', ' ').replace('\\)', ' ')
+    text = text.replace('^{\\circ}', '°').replace('^\\circ', '°')
     out, at = [], 0
     while at < len(text):
         char = text[at]
@@ -287,8 +304,14 @@ def delatex(text: str) -> str:
                 end = text.index('\\end{' + env + '}', at)
                 out.append(_matrix(text[at:end]) if env.endswith('matrix') else text[at:end])
                 at = end + len('\\end{' + env + '}')
-            else:
-                out.append(_COMMANDS.get(name, ' {} '.format(name) if name.isalpha() else ''))
+            elif name in _COMMANDS:
+                out.append(_COMMANDS[name])
+            elif name in FUNCTIONS or name in _LATEX_NAMES:
+                out.append(' {} '.format(name))
+            elif name.isalpha():
+                # An arrow, a set, Gamma: not math this module can put a
+                # number to.
+                raise Unreadable(name)
         elif char == '{':
             inner, at = _group(text, at)
             out.append('({})'.format(delatex(inner)))
@@ -304,7 +327,13 @@ def _prepare(text: str) -> str:
         text = delatex(text)
     text = text.replace('−', '-').replace('–', '-').replace('×', '*').replace('·', '*').replace('÷', '/')
     text = text.replace('≤', '<=').replace('≥', '>=').replace('≠', '!=').replace('≈', '=')
-    text = text.replace('°', '').replace('\\', '')
+    # Degrees inside a trig function are degrees: sin 30° is 1/2. Anywhere
+    # else the mark goes, so "30°, 150°" and "30, 150" are the same list.
+    if re.search(r'(?:sin|cos|tan|sec|csc|cot)', text):
+        text = text.replace('°', ' ° ')
+    else:
+        text = text.replace('°', '')
+    text = text.replace('\\', '')
     text = re.sub(r'\s*\+\s*-\s*', ' - ', text)
     for mark, word in _GREEK.items():
         text = text.replace(mark, ' {} '.format(word))
@@ -383,16 +412,19 @@ class _Parser:
         return kind in ('num', 'name') or value in ('(', '√', '[')
 
     def term(self):
+        node = self.implicit()
+        while self.peek()[1] in ('*', '/'):
+            op = self.take()[1]
+            node = (op, node, self.implicit())
+        return node
+
+    def implicit(self):
+        # Written side by side binds before * and /, the way it reads:
+        # dy/dx is dy over dx, and 3/2x is 3 over 2x.
         node = self.unary()
-        while True:
-            value = self.peek()[1]
-            if value in ('*', '/'):
-                self.take()
-                node = (value, node, self.unary())
-            elif self._starts():
-                node = ('*', node, self.power())
-            else:
-                return node
+        while self._starts():
+            node = ('*', node, self.power())
+        return node
 
     def unary(self):
         if self.peek()[1] in ('-', '+'):
@@ -410,9 +442,9 @@ class _Parser:
 
     def postfix(self):
         node = self.primary()
-        while self.peek()[1] == '!':
-            self.take()
-            node = ('!', node)
+        while self.peek()[1] in ('!', '°'):
+            mark = self.take()[1]
+            node = ('!', node) if mark == '!' else ('*', node, ('num', math.pi / 180))
         return node
 
     def primary(self):
@@ -766,11 +798,32 @@ def same_statement(want, got) -> bool:
     return True
 
 
+def _stored(answer: str) -> str:
+    """A stored answer as plain math. Its LaTeX is read here rather than by
+    to_plain, which flattens log_{10}25 into log_1025."""
+    text = str(answer or '')
+    if '\\' in text:
+        try:
+            return delatex(text)
+        except (Unreadable, ValueError):
+            # Not math it can read. to_plain's reading goes on to the parser,
+            # which refuses it in turn.
+            return '\u0000' + to_plain(text)
+    return to_plain(text)
+
+
+def typed_form(kind: str, answer: str) -> str:
+    """A stored answer the way a reader would type it back: math as plain
+    math, anything else as plain words. For tests that hold the library to
+    passing its own marking."""
+    return _stored(answer).lstrip('\u0000') if kind in ('expression', 'coordinates', 'list') else to_plain(answer)
+
+
 def same_math(answer: str, given: str) -> Optional[bool]:
     """Whether a typed answer is the same math as the stored one. None when the
     stored answer isn't math this module can read."""
     try:
-        want = statements(to_plain(answer))
+        want = statements(_stored(answer))
     except (Unreadable, ZeroDivisionError, OverflowError, ValueError, IndexError):
         return None
     if not want:
@@ -800,7 +853,7 @@ def readable_math(answer: str) -> bool:
     """Whether `same_math` can mark this stored answer: it parses, and it has
     a value somewhere."""
     try:
-        found = statements(to_plain(answer))
+        found = statements(_stored(answer))
     except (Unreadable, ZeroDivisionError, OverflowError, ValueError, IndexError):
         return False
     if not found:
@@ -838,15 +891,24 @@ _ITEM_SPLIT = re.compile(r'\s*(?:[,;\n]|\band\b|\bthen\b|→|->)\s*', re.I)
 
 
 def items_of(text: str) -> List[str]:
+    """The items of a list, split at commas, "and", "then" and arrows, but
+    never inside brackets: "(x + 3)^2 - 8, vertex (-3, -8)" is two items."""
     text = str(text or '').strip().rstrip('.').strip()
     if text.startswith('[') and text.endswith(']') and not text.startswith('[['):
         text = text[1:-1]
-    return [one.strip() for one in _ITEM_SPLIT.split(text) if one.strip()]
+    out, last = [], 0
+    for match in _ITEM_SPLIT.finditer(text):
+        before = text[:match.start()]
+        if before.count('(') + before.count('[') - before.count(')') - before.count(']') == 0:
+            out.append(text[last:match.start()])
+            last = match.end()
+    out.append(text[last:])
+    return [one.strip() for one in out if one.strip()]
 
 
 def _number_of(text: str) -> Optional[complex]:
     try:
-        node = parse(text)
+        node = parse(str(text).replace('%', ''))
         if variables(node):
             return None
         value = evaluate(node, {})
@@ -857,7 +919,7 @@ def _number_of(text: str) -> Optional[complex]:
 
 def number_list(answer: str) -> Optional[List[complex]]:
     """The stored answer as numbers, if every item is one."""
-    found = [_number_of(one) for one in items_of(to_plain(answer))]
+    found = [_number_of(one) for one in items_of(_stored(answer))]
     return found if len(found) >= 2 and all(one is not None for one in found) else None
 
 
@@ -957,29 +1019,35 @@ def grade(kind: str, answer: str, given: str, grading: Optional[Dict[str, Any]],
     if kind == 'choice':
         choices = grading.get('choices') or []
         wanted = accept or cores(answer)
-        return matches_one(given, wanted, SLACK['choice'], context) and not any(
-            matches_one(given, [one], SLACK['choice'], context) for one in choices
+        # A pick is one of the buttons, so the question's words don't pad it:
+        # with "-4, 1/4, -1/4 or 4" asked, "-1/4" must not read as "4".
+        return matches_one(given, wanted, SLACK['choice']) and not any(
+            matches_one(given, [one], SLACK['choice']) for one in choices
             if not matches_one(one, wanted, 0))
 
     if kind in ('expression', 'coordinates'):
+        if kind == 'coordinates' and not given.strip().startswith(('(', '[')):
+            given = '({})'.format(given.strip())
         found = same_math(answer, given)
         if found is None:
-            for one in accept:
-                found = same_math(one, given)
-                if found:
-                    return True
-            if accept:
-                return same_code(accept + [answer], given)
-            return None
-        if not found and accept:
-            return any(same_math(one, given) for one in accept) or same_code(accept, given)
+            found = any(same_math(one, given) for one in accept) or (
+                bool(accept) and same_code(accept + [answer], given))
+            if not accept:
+                return None
+        elif not found and accept:
+            found = any(same_math(one, given) for one in accept) or same_code(accept, given)
+        if found and grading.get('form'):
+            found = in_form(grading['form'], accept[0] if accept else answer, given)
+        if found and keys:
+            found = key_ideas(given, keys, need)
         return found
 
     if kind == 'list':
         if keys:
             return same_items(keys, given, order, need)
-        if number_list(answer):
-            return same_numbers(answer, given, order)
+        source = accept[0] if accept and number_list(accept[0]) else answer
+        if number_list(source):
+            return same_numbers(source, given, order)
         if accept:
             return matches_one(given, accept, SLACK['phrase'], context)
         return None
@@ -1027,7 +1095,65 @@ def can_grade(kind: str, answer: str, grading: Optional[Dict[str, Any]]) -> bool
     return False
 
 
-GRADING_FIELDS = frozenset(('accept', 'keys', 'need', 'choices', 'reject', 'order'))
+GRADING_FIELDS = frozenset(('accept', 'keys', 'need', 'choices', 'reject', 'order', 'form'))
+
+#: What `form` can ask of math, on top of its value. Value alone would pass a
+#: "factor this" question answered with the question.
+FORMS = ('product', 'expanded', 'exact', 'short', 'log')
+
+
+def _is_sum(node) -> bool:
+    node = _top(node)
+    return node[0] in ('+', '-') and len(node) == 3
+
+
+def _unexpanded(node) -> bool:
+    """A product, power or function of a sum somewhere inside: (x + 1)(x - 2),
+    (x + 5)^2, sin(x + 60)."""
+    if not isinstance(node, tuple):
+        return False
+    kind = node[0]
+    if kind == '*' and (_is_sum(node[1]) or _is_sum(node[2])):
+        return True
+    if kind == '^' and _is_sum(node[1]) and node[2][0] == 'num' and float(node[2][1]).is_integer():
+        return True
+    if kind == 'fn' and node[1] != 'sqrt' and _is_sum(node[2]):
+        return True
+    return any(_unexpanded(part) for part in node[1:] if isinstance(part, tuple))
+
+
+def _top(node):
+    while node[0] == 'neg':
+        node = node[1]
+    return node
+
+
+def in_form(form: str, answer: str, given: str) -> bool:
+    """Whether a reply that has the right value is also written the way the
+    question asked: factored, expanded, exact, no longer than the answer, or
+    as one logarithm."""
+    if not form:
+        return True
+    text = typed_plain(given)
+    try:
+        parts = statements(text)
+    except (Unreadable, ZeroDivisionError, OverflowError, ValueError, IndexError):
+        return False
+    trees = [part[1] if part[0] == 'expr' else part[2][-1] for part in parts]
+    if form == 'product':
+        return all(_top(tree)[0] in ('*', '^') for tree in trees)
+    if form == 'expanded':
+        return not any(_unexpanded(tree) for tree in trees)
+    if form == 'exact':
+        return not re.fullmatch(r'\s*[-+]?\d*\.\d+\s*', text) and not re.search(r'\d\.\d{3,}', text)
+    if form == 'log':
+        return len(re.findall(r'\b(?:log|ln)', text)) == 1
+    if form == 'short':
+        try:
+            return len(_lex(_prepare(text))) <= len(_lex(_prepare(_stored(answer)))) + 2
+        except Unreadable:
+            return False
+    return True
 
 
 def grading_failures(kind: str, answer: str, grading: Optional[Dict[str, Any]]) -> List[str]:
@@ -1057,8 +1183,23 @@ def grading_failures(kind: str, answer: str, grading: Optional[Dict[str, Any]]) 
         choices = grading.get('choices') or []
         if len(choices) < 2:
             bad.append('grading:a choice needs 2 or more choices')
+    if grading.get('form') and grading['form'] not in FORMS:
+        bad.append('grading:form {!r} is not one of {}'.format(grading['form'], '/'.join(FORMS)))
     if bad:
         return bad
-    if grade(kind, answer, to_plain(answer), grading) is False:
+    accepted = grading.get('accept') or []
+    typed = typed_form(kind, accepted[0] if accepted else answer)
+    if grade(kind, answer, typed, grading) is False:
         bad.append('grading:the answer fails its own marking')
+    # The worked answer and what's accepted have to agree: the reader sees
+    # one and is marked on the other.
+    said = tokens(answer)
+    if accepted and kind in ('word', 'phrase', 'choice') and not any(
+            says(said, tokens(one)) for one in accepted if tokens(one)):
+        bad.append('grading:the worked answer says none of the accepted answers')
+    if accepted and kind in ('integer', 'decimal', 'fraction', 'percent'):
+        want = _number_of(accepted[0].rstrip('.'))
+        found = [_number_of(one) for one in re.findall(r'-?\d[\d,]*(?:\.\d+)?(?:/\d+)?', _stored(answer).replace(',', ''))]
+        if want is None or not any(one is not None and _close(one, want) for one in found):
+            bad.append('grading:the worked answer does not say the accepted number')
     return bad

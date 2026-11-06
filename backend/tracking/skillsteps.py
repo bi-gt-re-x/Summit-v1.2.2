@@ -694,7 +694,8 @@ def problem_failures(problem, step, others=()):
     if kind:
         if kind not in skill_check.KINDS:
             bad.append('format:answer_kind {!r} is not a known shape'.format(kind))
-        elif kind != 'choice' and not skill_check.fits(kind, problem['answer']):
+        elif kind != 'choice' and not skill_check.fits(
+                kind, to_plain(skill_check.shape_of(kind, written.get('answer', ''), grading))):
             bad.append('format:the answer does not fit its own shape, {}'.format(kind))
         else:
             bad.extend(answer_match.grading_failures(kind, written.get('answer', ''), grading))

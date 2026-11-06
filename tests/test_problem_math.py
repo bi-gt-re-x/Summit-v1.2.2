@@ -210,7 +210,8 @@ def test_every_answer_in_the_library_fits_its_own_shape():
             missing.append(problem['prompt'])
         elif kind not in skill_check.KINDS:
             unknown.append(kind)
-        elif skill_check.refusal(kind, problem['answer']):
+        elif skill_check.refusal(kind, skill_check.shape_of(kind, problem['answer'], problem.get('grading')),
+                                 problem.get('grading')):
             wrong.append((kind, problem['answer']))
     assert missing == []
     assert unknown == []

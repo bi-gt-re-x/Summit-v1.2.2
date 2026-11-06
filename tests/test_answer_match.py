@@ -162,26 +162,26 @@ def test_every_problem_in_the_library_passes_its_own_marking():
             wrong.append((node_id, step['title'], problem['slot'], bad))
             continue
         if skill_check.auto_graded(kind, problem['answer'], grading):
-            if skill_check.grade_as(kind, problem['answer'], match.to_plain(problem['answer']), grading) is False:
+            # Typed the way a reader types what they see: math as plain math.
+            typed = match.typed_form(kind, skill_check.shape_of(kind, problem['answer'], grading))
+            if skill_check.grade_as(kind, problem['answer'], typed, grading, problem['prompt']) is False:
                 wrong.append((node_id, step['title'], problem['slot'], 'its own answer is marked wrong'))
     assert wrong == []
 
 
-#: Shapes marked by words. A number or a yes is marked by its value, and two
-#: problems can share one.
-_WORDY = ('word', 'phrase', 'sentence', 'paragraph', 'choice', 'code', 'list')
+#: Shapes marked by an accepted answer. A sentence marked by its key ideas may
+#: share them with the problem next to it, which asks about the same thing.
+_ACCEPTED = ('word', 'choice', 'code')
 
 
 def test_no_marking_in_the_library_takes_the_next_problems_answer():
-    """Marking that would pass the answer to a different question is marking
-    that passes anything."""
+    """An accepted answer that would pass the answer to a different question
+    passes anything."""
     loose = []
     for node_id, step, problem, problems in _library():
         kind = problem.get('answer_kind') or 'phrase'
         grading = problem.get('grading') or {}
-        if kind not in _WORDY or not skill_check.auto_graded(kind, problem['answer'], grading):
-            continue
-        if kind == 'list' and match.number_list(problem['answer']):
+        if kind not in _ACCEPTED or not skill_check.auto_graded(kind, problem['answer'], grading):
             continue
         mine = match.to_plain(problem['answer']).strip().lower()
         for other in problems:

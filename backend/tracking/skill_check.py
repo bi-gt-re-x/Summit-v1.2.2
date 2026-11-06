@@ -256,7 +256,7 @@ KINDS = {
                  'refuse': 'This one needs a fraction, like 3/4.'},
     'percent': {'label': 'Percent', 'note': 'Like 60%.',
                 'refuse': 'This one needs one percent, like 60%.'},
-    'expression': {'label': 'Math expression', 'note': 'Like 2x + 3. Use ^ for powers.',
+    'expression': {'label': 'Math expression', 'note': 'Like 2x + 3 or (x + 1)/2. Use ^ for powers.',
                    'refuse': 'This one needs math, like 2x + 3. Skip the full sentence.'},
     'coordinates': {'label': 'Coordinates', 'note': 'Like (2, 3).',
                     'refuse': 'This one needs coordinates, like (2, 3).'},
@@ -439,6 +439,15 @@ def fits(kind: str, given: str, grading: Optional[Dict[str, Any]] = None) -> boo
     return True
 
 
+def shape_of(kind: str, answer: str, grading: Optional[Dict[str, Any]] = None) -> str:
+    """What a stored answer has to fit: the number it's marked on, for a number
+    problem whose worked answer explains itself; otherwise the answer."""
+    if kind in _NUMBER_KINDS:
+        return number_answer(kind, answer, grading) or answer
+    accepted = (grading or {}).get('accept') or []
+    return accepted[0] if accepted else answer
+
+
 def refusal(kind: str, given: str, grading: Optional[Dict[str, Any]] = None) -> Optional[str]:
     """The message for an answer of the wrong shape, or None if it's fine."""
     if fits(kind, given, grading):
@@ -449,11 +458,16 @@ def refusal(kind: str, given: str, grading: Optional[Dict[str, Any]] = None) -> 
 _NUMBER_KINDS = ('integer', 'decimal', 'fraction', 'percent')
 
 
-def number_answer(kind: str, answer: str) -> Optional[str]:
-    """The number a number-shaped problem wants, when its stored answer says it
+def number_answer(kind: str, answer: str, grading: Optional[Dict[str, Any]] = None) -> Optional[str]:
+    """The number a number-shaped problem wants: the first of its accepted
+    answers when it names one, so the worked answer can explain itself ("214082.
+    The tens digit of 407 is 0..."), or else the answer, when it says one number
     with words around it ("About 20.", "x = 15", "50 microcoulombs.")."""
     if kind not in _NUMBER_KINDS:
         return None
+    accepted = [one for one in (grading or {}).get('accept') or [] if gradable(one)]
+    if accepted:
+        return accepted[0]
     if gradable(answer):
         return answer
     found = _numbers(_clean(to_plain(answer)))
@@ -462,7 +476,7 @@ def number_answer(kind: str, answer: str) -> Optional[str]:
 
 def auto_graded(kind: str, answer: str, grading: Optional[Dict[str, Any]] = None) -> bool:
     """Whether the server marks this problem, rather than asking the reader."""
-    if kind in ('yesno', 'truefalse') or gradable(answer) or number_answer(kind, answer):
+    if kind in ('yesno', 'truefalse') or gradable(answer) or number_answer(kind, answer, grading):
         return True
     return answer_match.can_grade(kind, answer, grading)
 
@@ -478,7 +492,7 @@ def grade_as(kind: str, answer: str, given: str,
         return right and not answer_match.rejected(given, (grading or {}).get('reject') or [])
     if kind == 'truefalse':
         return _first_word(to_plain(answer))[:1] == _first_word(given)[:1] != ''
-    number = number_answer(kind, answer)
+    number = number_answer(kind, answer, grading)
     if number:
         return grade(number, given)
     found = grade(answer, given)
