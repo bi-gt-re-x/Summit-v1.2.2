@@ -80,7 +80,7 @@ _QUOTES = str.maketrans({'‘': "'", '’': "'", '“': '"', '”': '"', '♯': 
 # word ("x-2", "left-to-right") is not.
 # An ion keeps its charge ("ca2+" is not "ca2-"); a hyphen between two words
 # is still a break.
-_TOKEN = re.compile(r"(?<![a-z0-9.])-?\d+\.\d+|(?<![a-z0-9])-\d+|[a-z0-9]+(?:'[a-z]+)?#?(?:\+|-(?![a-z0-9]))?|%|\+\+|#|[≤≥<>≠]")
+_TOKEN = re.compile(r"(?<![a-z0-9.])-?\d+\.\d+|(?<![a-z0-9])-\d+|[a-z0-9]+(?:'[a-z]+)?#?(?:\+|-(?![a-z0-9]))?|%|\+\+|==|\[\]|#|[≤≥<>≠]")
 #: How many words longer than an accepted answer a reply may run.
 SLACK = {'word': 3, 'phrase': 6, 'choice': 2}
 
@@ -270,6 +270,17 @@ def _common(left: Sequence[str], right: Sequence[str]) -> int:
 def rejected(given: str, reject: Iterable[str]) -> bool:
     said = tokens(given, typed=True)
     return any(says(said, tokens(one)) for one in reject or () if tokens(one))
+
+
+_PROSE_WORDS = frozenset('the a an is are was it this that so because which with of to and or but when they its can'.split())
+
+
+def _prose(text: str) -> bool:
+    """Whether a reply reads as sentences rather than code."""
+    words = re.findall(r"[A-Za-z']+", str(text or ''))
+    if len(words) < 8:
+        return False
+    return sum(1 for word in words if word.lower() in _PROSE_WORDS) >= 0.25 * len(words)
 
 
 def key_ideas(given: str, keys: Sequence[Sequence[str]], need: Optional[int] = None) -> bool:
@@ -1197,7 +1208,11 @@ def grade(kind: str, answer: str, given: str, grading: Optional[Dict[str, Any]],
 
     if kind == 'code':
         if accept or keys:
-            return same_code(accept + [answer], given) or (bool(keys) and key_ideas(given, keys, need))
+            if same_code(accept + [answer], given):
+                return True
+            # Key fragments mark code, so an explanation that happens to
+            # name them isn't code.
+            return bool(keys) and not _prose(given) and key_ideas(given, keys, need)
         return None
 
     if kind in ('word', 'phrase'):

@@ -476,7 +476,9 @@ def number_answer(kind: str, answer: str, grading: Optional[Dict[str, Any]] = No
 
 def auto_graded(kind: str, answer: str, grading: Optional[Dict[str, Any]] = None) -> bool:
     """Whether the server marks this problem, rather than asking the reader."""
-    if kind in ('yesno', 'truefalse') or gradable(answer) or number_answer(kind, answer, grading):
+    if kind in ('yesno', 'truefalse') or number_answer(kind, answer, grading):
+        return True
+    if gradable(answer) and kind not in ('code', 'choice', 'list', 'expression', 'coordinates'):
         return True
     return answer_match.can_grade(kind, answer, grading)
 
@@ -495,7 +497,11 @@ def grade_as(kind: str, answer: str, given: str,
     number = number_answer(kind, answer, grading)
     if number:
         return grade(number, given)
-    found = grade(answer, given)
-    if found is not None:
-        return found
+    # Code, picks, lists and math are marked by their own rules even when the
+    # answer happens to be a number: f'{1234567:,}' wants "1,234,567", commas
+    # and all, not the number 1234567.
+    if kind not in ('code', 'choice', 'list', 'expression', 'coordinates'):
+        found = grade(answer, given)
+        if found is not None:
+            return found
     return answer_match.grade(kind, answer, given, grading, prompt)
