@@ -46,6 +46,14 @@ export interface SubjectInsight {
   /** How sure, for a claim that can be wrong. Null on a plain count. */
   evidence: string | null;
   resource: { name: string; url: string } | null;
+  /** A change this reading suggests, ready to start as a test. */
+  test?: {
+    kind: string;
+    title: string;
+    params: Record<string, unknown>;
+    goal: string;
+    subject: string;
+  } | null;
 }
 
 export interface SubjectGoalRow {

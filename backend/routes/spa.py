@@ -58,6 +58,7 @@ SPA_ROUTES = (
     '/recommendations',
     '/subjects',
     '/analytics/growth',
+    '/analytics/review',
     # One page per subject. Missing from this list, a reload or a pasted link
     # to one 404'd on the built app while Vite served it fine.
     '/analytics/subject/{subject_id}',

@@ -18,7 +18,7 @@ import { WINDOWS, type WindowKey } from './data';
 // --------------------------------------------------------------------------
 // The major tabs
 // --------------------------------------------------------------------------
-export type ViewKey = 'recommendations' | 'overview' | 'insights' | 'subjects' | 'growth';
+export type ViewKey = 'review' | 'recommendations' | 'overview' | 'insights' | 'subjects' | 'growth';
 
 export interface View {
   key: ViewKey;
@@ -73,6 +73,16 @@ export interface View {
  * button and a pasted link all agree about which tab is open.
  */
 export const VIEWS: View[] = [
+  {
+    /* The one tab you do rather than read: what moved, what stalled, and one
+       change to test next week. See tabs/ReviewTab. */
+    key: 'review',
+    label: 'Weekly review',
+    path: '/analytics/review',
+    purpose: 'What moved, what stalled, and one thing to test next.',
+    title: 'Weekly review',
+    tone: 'blue',
+  },
   {
     key: 'recommendations',
     label: 'Recommendations',

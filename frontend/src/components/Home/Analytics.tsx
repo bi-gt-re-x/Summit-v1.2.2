@@ -150,6 +150,7 @@ const RING_END = round2(RING_LEN * (1 - SCORE / SCORE_SCALE));
  * free and cannot happen again quietly.
  */
 const TABS = [
+  { label: 'Weekly review', to: '/analytics/review' },
   { label: 'Recommendations', to: '/recommendations' },
   { label: 'Overview', to: '/analytics' },
   { label: 'Insights', to: '/insights' },

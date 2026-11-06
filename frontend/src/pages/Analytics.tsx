@@ -149,6 +149,7 @@ import '@/styles/growth.css';
 import { startAnalyticsReads } from '@/components/Analytics/earlyReads';
 import { SOLID_AT } from '@/components/Analytics/milestones';
 import { SubjectsOpening } from '@/components/Analytics/tabs/SubjectsTab';
+import { ReviewTab } from '@/components/Analytics/tabs/ReviewTab';
 import { useRecordAnalysis } from '@/components/Analytics/RecordsAnalysis';
 
 /* The page's reads begin the moment this module is evaluated — when the route
@@ -640,7 +641,7 @@ export default function Analytics() {
               window picker over a page with nothing in it to scope is a
               control that does nothing. The tabs stay, because they are the
               way out. */}
-          {!showSetup && (
+          {!showSetup && view.key !== 'review' && (
             <Controls
               chosen={span}
               onWindow={chooseSpan}
@@ -670,6 +671,7 @@ export default function Analytics() {
           <OverviewTab model={model} data={data} onEditBaseline={() => setEditingSetup(true)} />
         )}
 
+        {view.key === 'review' && <ReviewTab />}
         {view.key === 'recommendations' && <RecommendationsTab model={model} data={data} />}
         {view.key === 'insights' && <InsightsTab model={model} data={data} subjects={subjects} />}
         {view.key === 'subjects' && (

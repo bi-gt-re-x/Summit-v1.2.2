@@ -303,6 +303,23 @@
 .sgo-dots i.is-on.is-good { background: var(--ax-good); }
 .sgo-dots i.is-on.is-flat { background: var(--ax-amber, var(--ax-muted)); }
 .sgo-reads .stl-more { margin-top: var(--space-3); }
+.sgo-test { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.sgo-test-btn {
+    padding: 4px var(--space-3);
+    border: 1px solid var(--ax-line);
+    border-radius: var(--radius-full);
+    font: inherit;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--ax-text);
+    background: transparent;
+    cursor: pointer;
+}
+.sgo-test-btn:hover { border-color: var(--ax-muted); }
+.sgo-test-btn:disabled { opacity: .5; cursor: default; }
+.sgo-test.is-on { margin: 0; font-size: var(--text-xs); color: var(--ax-good); }
+.sgo-test.is-on a { color: inherit; }
+.sgo-test-error { font-size: var(--text-xs); color: var(--ax-bad); }
 
 @media (max-width: 640px) {
     .sgo-lead-grid { grid-template-columns: 1fr; }

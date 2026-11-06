@@ -337,6 +337,7 @@ export default function App() {
               <Route path="/habits" element={<Analytics />} />
               <Route path="/subjects" element={<Analytics />} />
               <Route path="/analytics/growth" element={<Analytics />} />
+              <Route path="/analytics/review" element={<Analytics />} />
               {/* Tabs that were cut, or moved. Each had its own URL for long
                   enough to be bookmarked, so each redirects to where its
                   content went. See VIEWS in components/Analytics/Header. */}

@@ -266,6 +266,7 @@ export function showsSessionVolume(style: LogStyle | undefined): boolean {
 // --------------------------------------------------------------------------
 
 const HOME_TAB_PATHS: Record<string, string> = {
+  review: '/analytics/review',
   recommendations: '/recommendations',
   overview: '/analytics',
   insights: '/insights',

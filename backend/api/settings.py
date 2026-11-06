@@ -410,7 +410,7 @@ FIELDS: Dict[str, Any] = {
                                          'developing', 'full')),
     #: Which tab the page opens on. The same keys as VIEWS in
     #: frontend/src/components/Analytics/Header.tsx.
-    'analytics_home_tab': ('overview', _one_of('recommendations', 'overview', 'insights', 'subjects',
+    'analytics_home_tab': ('overview', _one_of('review', 'recommendations', 'overview', 'insights', 'subjects',
                                                    'growth')),
     #: How the account records work, and therefore which figure leads the row
     #: of tiles: the tasks it finished, the hours it sat, or both.

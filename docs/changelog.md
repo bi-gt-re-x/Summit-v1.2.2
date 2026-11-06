@@ -2,6 +2,26 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-11-05 — Weekly review and experiments
+
+Analytics read like a recital: it said what happened and stopped. Two things turn it
+into something you do.
+
+**Experiments** (backend/tracking/experiments.py). Pick a change, like doing sessions in
+the morning, keeping them under an hour or putting the phone in another room, and Summit
+watches the work that follows. When the time is up it says whether it worked, made no
+difference, or made things worse, as strongly as the evidence table allows. A split test
+compares sessions done the new way against the rest during the test. A before/after test
+compares the test's days against the same number before it. Proposals come from your own
+record (the part of the day your work goes best, what goes wrong most, long sessions that
+rate worse, easy work that goes worse than hard), and the subject page's readings have a
+"Test it for 2 weeks" button.
+
+**Weekly review** (backend/tracking/weekly.py), a new first tab at /analytics/review.
+Monday to Sunday: four tiles, what moved, what stalled, last week's test graded with
+keep or drop, and the bet for next week. Finishing it keeps a streak. The weekly
+notification now says the review is ready, and a finished test raises one too.
+
 ## 2026-11-04 — Subject pages read against the goal
 
 The per-subject analytics pages knew a goal only by the subject it was filed under, and

@@ -33,7 +33,8 @@ from datetime import date
 from statistics import mean
 from typing import Any, Callable, Dict, List, Optional, Sequence
 
-from backend.tracking import evidence, forecast, goal_why, growth_reads, next_sessions, priority, record, topics
+from backend.tracking import (evidence, experiments, forecast, goal_why, growth_reads, next_sessions, priority,
+                              record, topics)
 from backend.tracking.measures import kind_of
 
 #: The window the page's counts read, against the one before it.
@@ -258,9 +259,15 @@ def _no_goal_card(name: str, work: Dict[str, Any], top: Optional[Dict[str, Any]]
 #   part:    a share, e.g. 5 of 23 topics
 # ---------------------------------------------------------------------------
 def _read(id_: str, tone: str, tag: str, title: str, chart: Dict[str, Any], tip: str,
-          sure: Optional[Dict[str, Any]] = None, resource=None) -> Dict[str, Any]:
+          sure: Optional[Dict[str, Any]] = None, resource=None, test=None) -> Dict[str, Any]:
     return {'id': id_, 'tone': tone, 'tag': tag, 'title': title, 'chart': chart, 'tip': tip,
-            'evidence': sure['label'] if sure else None, 'resource': resource}
+            'evidence': sure['label'] if sure else None, 'resource': resource, 'test': test}
+
+
+def _test(kind: str, title: str, how: str, **params) -> Dict[str, Any]:
+    """A test the page can start from a reading (backend/tracking/experiments.py).
+    The goal and subject it's scoped to are added by `insights`."""
+    return {'kind': kind, 'title': title, 'params': {**params, 'how': how}}
 
 
 def _compare(rows: List[Any], top: Optional[float] = 5) -> Dict[str, Any]:
@@ -305,7 +312,9 @@ def _levels(rows: Sequence[Dict[str, Any]], today: date, aim: str) -> Optional[D
         chart = _compare([('Easy work', mean(easy)), ('Hard work', mean(hard))])
         if mean(easy) < mean(hard):
             return _read('level', 'bad', 'Difficulty', 'Easy work goes worse than hard', chart,
-                         'Check the easy ones before calling them done.', sure)
+                         'Check the easy ones before calling them done.', sure,
+                         test=_test('check_easy', 'Check easy work before calling it done',
+                                    'Before you tick off an easy task, go over it once more.'))
         return _read('level', 'bad', 'Difficulty', 'It falls off when it gets hard', chart,
                      'Do your next session at the hard level, slower.', sure)
     leveled = [task for task in recent if _level(task) is not None]
@@ -326,9 +335,36 @@ def _reason(rows: Sequence[Dict[str, Any]], today: date, aim: str) -> Optional[D
     sure = evidence.counted(count)
     if not evidence.speaks(sure):
         return None
+    key = next((key for key, name in next_sessions.STRUGGLES.items() if name == label), '')
+    test = (_test('reason', experiments.FOR_REASON[key][0], experiments.FOR_REASON[key][1], reason=key)
+            if key in experiments.FOR_REASON else None)
     return _read('reason', 'bad', 'What goes wrong', '"{}" comes up most'.format(label),
                  _part(count, len(named), 'times something went wrong'),
-                 TRY_FOR.get(label, "Decide before the next session how you'll handle it."), sure)
+                 TRY_FOR.get(label, "Decide before the next session how you'll handle it."), sure, test=test)
+
+
+def _when(rows: Sequence[Dict[str, Any]], today: date, aim: str) -> Optional[Dict[str, Any]]:
+    """The part of the day the work goes best, when that's clear from the rest."""
+    recent = _within(rows, today, LOOKBACK_DAYS)
+    by_part: Dict[str, List[float]] = {}
+    for task in recent:
+        part, rating = experiments.part_of(task), _rating(task)
+        if part and rating is not None:
+            by_part.setdefault(part, []).append(rating)
+    sized = {part: values for part, values in by_part.items() if len(values) >= evidence.FLOOR}
+    if len(sized) < 2:
+        return None
+    best = max(sized, key=lambda part: mean(sized[part]))
+    rest = [value for part, values in by_part.items() if part != best for value in values]
+    sure = evidence.means(rest, sized[best])
+    if not (evidence.speaks(sure) and sure['clear']) or mean(sized[best]) <= mean(rest):
+        return None
+    when = experiments.IN_PART[best]
+    return _read('when', 'good', 'When', '{} sessions go best'.format(experiments.PART_WORD[best]),
+                 _compare([(experiments.PART_WORD[best], mean(sized[best])), ('Other times', mean(rest))]),
+                 'Try doing them {} for two weeks.'.format(when), sure,
+                 test=_test('time_of_day', 'Do {} sessions {}'.format(aim, when),
+                            'Schedule them {} for the next two weeks.'.format(when), part=best))
 
 
 def _works(rows: Sequence[Dict[str, Any]], today: date, aim: str) -> Optional[Dict[str, Any]]:
@@ -398,8 +434,11 @@ def insights(rows: Sequence[Dict[str, Any]], work: Dict[str, Any], today: date, 
         here = [row for row in topic_rows if row.get('subject') == subject]
         found += [_weak_topic(goal, here, aim), _coverage(goal, topic_rows, worked, aim)]
     found += [_trend(rows, today, aim, behind), _levels(rows, today, aim), _reason(rows, today, aim),
-              _attended(work, name, aim), _works(rows, today, aim)]
+              _attended(work, name, aim), _when(rows, today, aim), _works(rows, today, aim)]
     said = [one for one in found if one]
+    for one in said:
+        if one.get('test'):
+            one['test'].update(goal=str(goal.get('id')) if goal else '', subject=subject)
     return sorted(said, key=lambda one: ORDER[one['tone']])[:MOST_INSIGHTS]
 
 

@@ -22,6 +22,7 @@ const askReadSubject = vi.fn(async () => ({
   reading: { diagnosis: [], priorities: [], insights: [], next_steps: [], for_goal: 'g1' },
 }));
 let canRead = false;
+const startTest = vi.fn(async () => ({ success: true, id: 'x1', ends_on: '2026-11-17' }));
 let saved: unknown = null;
 const recommendations: unknown[] = [];
 const outcomes: unknown[] = [];
@@ -93,6 +94,10 @@ vi.mock('@/services/goals', async (original) => {
     getGoals: async () => ({ success: true, goals }),
     updateGoal: (...args: unknown[]) => (updateGoal as (...a: unknown[]) => unknown)(...args),
   };
+});
+vi.mock('@/services/experiments', async (original) => {
+  const real = await original<Record<string, unknown>>();
+  return { ...real, startTest: (...args: unknown[]) => (startTest as (...a: unknown[]) => unknown)(...args) };
 });
 vi.mock('@/services/subjectGoal', () => ({
   subjectGoalRead: async () => ({ success: true, ...goalRead }),
@@ -171,7 +176,10 @@ const feedsTopGoal = () => ({
   misfiled: [{ goal_id: 'g3', title: 'Ship the app', work_here: 1, work_total: 160, home: 'programming', home_name: 'Programming' }],
   insights: [
     reading('topic', 'bad', 'Geometry is your weakest topic', 'Emerging pattern'),
-    reading('level', 'bad', 'It falls off when it gets hard'),
+    {
+      ...reading('level', 'bad', 'It falls off when it gets hard'),
+      test: { kind: 'check_easy', title: 'Check easy work before calling it done', params: { how: 'Go over it once.' }, goal: 'g1', subject: 'algebra' },
+    },
     reading('coverage', 'flat', 'Only 5 of 23 AIME topics touched'),
     reading('attended', 'flat', 'More sitting in than practicing'),
     reading('works', 'good', '"Was fresh" helps most'),
@@ -300,6 +308,20 @@ describe('what the work says about the goal', () => {
     expect(reads.getByRole('img', { name: '5 of 23 topics with work' })).toBeInTheDocument();
     expect(reads.getByText(/Try something about topic\./)).toBeInTheDocument();
     expect(reads.getByText('Emerging')).toHaveAttribute('title', 'How sure: emerging pattern');
+  });
+
+  it('turns a reading into a two-week test, and says where to find it', async () => {
+    await show({ read: feedsTopGoal() });
+
+    const reads = section('What the work says');
+    expect(reads.getAllByRole('button', { name: 'Test it for 2 weeks' })).toHaveLength(1);
+    await userEvent.click(reads.getByRole('button', { name: 'Test it for 2 weeks' }));
+    expect(startTest).toHaveBeenCalledWith({
+      kind: 'check_easy', title: 'Check easy work before calling it done', params: { how: 'Go over it once.' },
+      goal: 'g1', subject: 'algebra', why: 'It falls off when it gets hard', days: 14,
+    });
+    expect(reads.getByText(/Testing until Nov 17/)).toBeInTheDocument();
+    expect(reads.getByRole('link', { name: 'See it in your weekly review' })).toHaveAttribute('href', '/analytics/review');
   });
 
   it('shows four and folds the rest', async () => {

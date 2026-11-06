@@ -69,6 +69,7 @@ const PAGES = [
   'growth.css',
   'subject.css',
   'subject-objective.css',
+  'weekly-review.css',
   'skilltree.css',
   'notes.css',
   'log.css',

@@ -52,6 +52,8 @@ JSON_COLUMNS = {
     ('skill_checks', 'answers'),
     ('skill_problems', 'checks'),
     ('users', 'streak_vacations'),
+    ('experiments', 'params'),
+    ('experiments', 'result'),
 }
 
 # The JSON columns that hold a *scalar* — a word, a number, a flag — rather
@@ -816,6 +818,39 @@ ADDED_TABLES = ('''
     )
 ''', '''
     CREATE INDEX IF NOT EXISTS review_marks_user_idx ON review_marks (user_id, item)
+''', '''
+    -- Tests a reader is running on their own work, and the weeks they've reviewed.
+    -- The DDL is data/sql/experiments.sql's; see the note on ADDED_TABLES.
+    CREATE TABLE IF NOT EXISTS experiments (
+        id          TEXT PRIMARY KEY,
+        user_id     TEXT NOT NULL REFERENCES users (username) ON DELETE CASCADE,
+        kind        TEXT NOT NULL,
+        params      TEXT NOT NULL DEFAULT '{}',
+        goal_id     TEXT NOT NULL DEFAULT '',
+        subject     TEXT NOT NULL DEFAULT '',
+        title       TEXT NOT NULL,
+        why         TEXT NOT NULL DEFAULT '',
+        status      TEXT NOT NULL DEFAULT 'running',
+        started_on  TEXT NOT NULL,
+        ends_on     TEXT NOT NULL,
+        verdict     TEXT,
+        result      TEXT,
+        kept        INTEGER,
+        decided_at  TEXT,
+        created_at  TEXT NOT NULL,
+        CHECK (status IN ('running', 'stopped', 'done'))
+    )
+''', '''
+    CREATE INDEX IF NOT EXISTS experiments_user_idx ON experiments (user_id, status)
+''', '''
+    CREATE TABLE IF NOT EXISTS weekly_reviews (
+        user_id     TEXT NOT NULL REFERENCES users (username) ON DELETE CASCADE,
+        week_start  TEXT NOT NULL,
+        note        TEXT NOT NULL DEFAULT '',
+        bet_id      TEXT,
+        done_at     TEXT NOT NULL,
+        PRIMARY KEY (user_id, week_start)
+    )
 ''')
 
 

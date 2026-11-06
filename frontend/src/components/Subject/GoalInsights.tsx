@@ -4,6 +4,8 @@
  * on the server (backend/tracking/subject_read.py); how sure each is shows as a chip.
  */
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import { startTest } from '@/services/experiments';
 import type { InsightChart, SubjectInsight } from '@/services/subjectGoal';
 
 /** How many show before "Show more". */
@@ -59,6 +61,45 @@ function Chart({ chart, tone }: { chart: InsightChart; tone: string }) {
   );
 }
 
+/**
+ * "Test it": turns the reading's suggestion into a two-week test, which the Weekly
+ * review then grades. See backend/tracking/experiments.py.
+ */
+function TestIt({ item }: { item: SubjectInsight }) {
+  const [state, setState] = useState<{ busy: boolean; ends: string; error: string }>({ busy: false, ends: '', error: '' });
+  if (!item.test) return null;
+  const test = item.test;
+  if (state.ends) {
+    return (
+      <p className="sgo-test is-on">
+        Testing until {state.ends}. <Link to="/analytics/review">See it in your weekly review</Link>
+      </p>
+    );
+  }
+  return (
+    <div className="sgo-test">
+      <button
+        type="button"
+        className="sgo-test-btn"
+        disabled={state.busy}
+        onClick={async () => {
+          setState({ busy: true, ends: '', error: '' });
+          const result = await startTest({ ...test, why: item.title, days: 14 });
+          if (result.success) {
+            const ends = new Date(`${result.ends_on}T12:00:00`);
+            setState({ busy: false, ends: ends.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), error: '' });
+          } else {
+            setState({ busy: false, ends: '', error: result.message || "Couldn't start that test." });
+          }
+        }}
+      >
+        {state.busy ? 'Starting…' : 'Test it for 2 weeks'}
+      </button>
+      {state.error && <span className="sgo-test-error">{state.error}</span>}
+    </div>
+  );
+}
+
 export function GoalInsights({ insights, goal, subject }: { insights: SubjectInsight[]; goal: string; subject: string }) {
   const [all, setAll] = useState(false);
   if (insights.length === 0) return null;
@@ -96,6 +137,7 @@ export function GoalInsights({ insights, goal, subject }: { insights: SubjectIns
                 </>
               )}
             </p>
+            <TestIt item={item} />
           </li>
         ))}
       </ul>

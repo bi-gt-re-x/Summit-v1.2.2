@@ -271,13 +271,11 @@ def _analytics_candidates(facts, day):
             'fingerprint': 'week-review:{}-W{:02d}'.format(year, week),
             'channel': 'analytics',
             'tone': 'info',
-            'title': 'Your last seven days',
-            'body': '{} finished, {}. {:,} XP and {} focused.'.format(
+            'title': 'Your weekly review is ready',
+            'body': '{} finished, {}. See what moved, what stalled and pick a bet for next week.'.format(
                 _count(facts['done_this_week'], 'task'),
-                _change(facts['done_this_week'], facts['done_last_week']),
-                int(facts['xp_this_week']),
-                _hours(facts['focus_this_week'])),
-            'link': '/analytics',
+                _change(facts['done_this_week'], facts['done_last_week'])),
+            'link': '/analytics/review',
         })
 
     # A gap, stated rather than scolded about.
@@ -307,6 +305,23 @@ def _analytics_candidates(facts, day):
                 int(facts['xp_today']), int(facts['xp_best_day'])),
             'link': '/analytics',
         })
+    return out
+
+
+def _experiment_candidates(username, today):
+    """A test that's run its course, once. The answer is on the Weekly review tab."""
+    out = []
+    for row in db.rows_for('experiments', username):
+        ends = _day(row.get('ends_on'))
+        if row.get('status') == 'running' and ends and ends < today:
+            out.append({
+                'fingerprint': 'experiment-done:{}'.format(row['id']),
+                'channel': 'analytics',
+                'tone': 'info',
+                'title': 'Your test is done',
+                'body': '"{}" ran its course. See whether it worked.'.format(row.get('title') or 'Your test'),
+                'link': '/analytics/review',
+            })
     return out
 
 
@@ -537,6 +552,7 @@ def sweep(user, day, at=None, channels=CHANNELS):
         candidates += _calendar_candidates(username, day, _minutes(at))
     if 'analytics' in wanted:
         candidates += _analytics_candidates(facts, day)
+        candidates += _experiment_candidates(username, today)
     if 'goals' in wanted:
         candidates += _goal_candidates(facts, day)
     if 'streak' in wanted:
