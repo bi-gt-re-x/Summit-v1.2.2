@@ -128242,7 +128242,32 @@
               "weight": "warmup",
               "prompt": "Name 3 things to say at the start of a recording.",
               "answer": "The date, the place and who's there.",
-              "answer_kind": "list"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "date",
+                    "day"
+                  ],
+                  [
+                    "place",
+                    "where",
+                    "location"
+                  ],
+                  [
+                    "who's",
+                    "whos",
+                    "there",
+                    "who",
+                    "name",
+                    "people",
+                    "present",
+                    "interviewer",
+                    "topic"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
