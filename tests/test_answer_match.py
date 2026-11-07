@@ -129,6 +129,14 @@ def test_a_list_of_numbers_goes_by_value():
     assert match.grade('list', '0°, 30°, 150°, 180°', '180, 0, 30, 150', None) is True
 
 
+def test_numbers_in_a_list_may_carry_the_labels_the_question_uses():
+    asked = 'A card is reviewed at a 2-day gap that doubles. Give the next 3 review days.'
+    grading = {'accept': ['3, 7, 15'], 'order': True}
+    assert match.grade('list', 'Day 3, day 7, then day 15.', 'day 3, day 7, day 15', grading, asked) is True
+    assert match.grade('list', 'Day 3, day 7, then day 15.', 'week 3, week 7, week 15', grading, asked) is False
+    assert match.grade('list', 'Day 3, day 7, then day 15.', 'day 3, day 5, day 7', grading, asked) is False
+
+
 def test_code_ignores_spacing_and_quote_marks():
     grading = {'accept': ["items[len(items) - 1]", 'items[-1]']}
     assert match.grade('code', 'items[-1].', 'items[ -1 ]', grading) is True

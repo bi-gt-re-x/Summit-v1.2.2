@@ -46,7 +46,7 @@ import cmath
 import math
 import random
 import re
-from typing import Any, Dict, Iterable, List, Optional, Sequence, Tuple
+from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Tuple
 
 from backend.tracking.mathtext import to_plain, typed_plain  # noqa: F401 (to_plain is used by the tests too)
 
@@ -1069,9 +1069,25 @@ def number_list(answer: str) -> Optional[List[complex]]:
     return found if len(found) >= 2 and all(one is not None for one in found) else None
 
 
-def same_numbers(answer: str, given: str, order: bool) -> bool:
+_LABEL_WORD = re.compile(r'\b[A-Za-z]{2,}\b')
+
+
+def _labeled_number(item: str, labels: Set[str]) -> Optional[complex]:
+    """A number said with a label the question or answer uses, like "day 3"
+    when the answer is "Day 3, day 7": the label words go, the number stays.
+    Only whole words of 2 letters or more, so a variable like x is never
+    taken for a label."""
+    found = _number_of(item)
+    if found is not None or not labels:
+        return found
+    bare = _LABEL_WORD.sub(lambda m: '' if m.group(0).lower() in labels else m.group(0), item).strip()
+    return _number_of(bare) if bare and bare != item.strip() else None
+
+
+def same_numbers(answer: str, given: str, order: bool, prompt: str = '') -> bool:
     want = number_list(answer) or []
-    got = [_number_of(one) for one in items_of(typed_plain(given))]
+    labels = {word.lower() for word in _LABEL_WORD.findall(_stored(answer) + ' ' + str(prompt or ''))}
+    got = [_labeled_number(one, labels) for one in items_of(typed_plain(given))]
     if len(got) != len(want) or any(one is None for one in got):
         return False
     if order:
@@ -1201,7 +1217,7 @@ def grade(kind: str, answer: str, given: str, grading: Optional[Dict[str, Any]],
             return same_items(keys, given, order, need)
         source = accept[0] if accept and number_list(accept[0]) else answer
         if number_list(source):
-            return same_numbers(source, given, order)
+            return same_numbers(source, given, order, ' '.join([answer, prompt]))
         if accept:
             return matches_one(given, accept, SLACK['phrase'], context)
         return None
