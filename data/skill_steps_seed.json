@@ -211368,22 +211368,59 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "You can do 3 sets of 12 on a kitchen counter easily. What's next?",
-              "answer": "Move to a lower surface, like a chair or the floor on knees.",
-              "answer_kind": "sentence"
+              "answer": "Move to a lower surface, like a chair, or the floor on your knees.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "lower",
+                    "chair",
+                    "floor",
+                    "knees",
+                    "bench",
+                    "step",
+                    "harder",
+                    "decline",
+                    "incline lower"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your elbows flare straight out to 90 degrees. What's the fix?",
               "answer": "Tuck them to about 45 degrees from the body.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "tuck",
+                    "45",
+                    "closer",
+                    "in toward",
+                    "arrow",
+                    "narrow",
+                    "in to the body"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your hips sag on rep 6. Keep going or stop the set?",
-              "answer": "Stop the set or switch to an easier level.",
-              "answer_kind": "sentence"
+              "answer": "Stop the set, or switch to an easier level.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Keep going",
+                  "Stop the set"
+                ],
+                "accept": [
+                  "Stop the set"
+                ]
+              }
             }
           ]
         },
@@ -211400,15 +211437,69 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Your heels lift on every rep. Name 1 fix.",
-              "answer": "Widen your stance a little or squat to a higher box.",
-              "answer_kind": "sentence"
+              "answer": "Widen your stance a little, or squat to a higher box.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "widen",
+                    "wider",
+                    "stance",
+                    "higher box",
+                    "higher",
+                    "box",
+                    "heel",
+                    "plate",
+                    "wedge",
+                    "ankle",
+                    "toes out"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "3 sets of 10 are easy. Name 2 ways to make it harder.",
-              "answer": "Use a lower box or pause 2 seconds at the bottom.",
-              "answer_kind": "sentence"
+              "answer": "Use a lower box, or pause 2 seconds at the bottom.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "lower box",
+                    "lower",
+                    "pause",
+                    "tempo",
+                    "slow",
+                    "weight",
+                    "dumbbell",
+                    "backpack",
+                    "single leg",
+                    "split",
+                    "jump",
+                    "more reps",
+                    "band",
+                    "vest"
+                  ],
+                  [
+                    "lower box",
+                    "lower",
+                    "pause",
+                    "tempo",
+                    "slow",
+                    "weight",
+                    "dumbbell",
+                    "backpack",
+                    "single leg",
+                    "split",
+                    "jump",
+                    "more reps",
+                    "band",
+                    "vest"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -211439,15 +211530,43 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Why add 3 sets of rows to a push-up plan?",
-              "answer": "To balance pushing with pulling and protect the shoulders.",
-              "answer_kind": "sentence"
+              "answer": "To balance pushing with pulling, and protect the shoulders.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "balance",
+                    "shoulder",
+                    "protect",
+                    "posture",
+                    "pull",
+                    "back",
+                    "even",
+                    "opposite",
+                    "imbalance"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your hips sag on rep 5. What do you change?",
-              "answer": "Bend the knees more or stop the set.",
-              "answer_kind": "phrase"
+              "answer": "Bend the knees more, or stop the set.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "bend",
+                    "knees",
+                    "stop",
+                    "easier",
+                    "higher",
+                    "incline",
+                    "end"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -211464,15 +211583,63 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Your low back aches at second 20. What does it mean?",
-              "answer": "You've lost position. Reset or end the hold.",
-              "answer_kind": "phrase"
+              "answer": "You've lost position. Reset, or end the hold.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "lost position",
+                    "position",
+                    "form",
+                    "sag",
+                    "arch",
+                    "reset",
+                    "end",
+                    "stop",
+                    "core"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 cues that keep a plank straight.",
-              "answer": "Tuck the ribs and squeeze the glutes.",
-              "answer_kind": "list"
+              "answer": "Tuck the ribs, and squeeze the glutes.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "rib",
+                    "glute",
+                    "brace",
+                    "squeeze",
+                    "tuck",
+                    "pelvis",
+                    "abs",
+                    "elbows",
+                    "push the floor",
+                    "straight line",
+                    "neck",
+                    "quads"
+                  ],
+                  [
+                    "rib",
+                    "glute",
+                    "brace",
+                    "squeeze",
+                    "tuck",
+                    "pelvis",
+                    "abs",
+                    "elbows",
+                    "push the floor",
+                    "straight line",
+                    "neck",
+                    "quads"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -211496,8 +211663,33 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Write 1 round of the circuit.",
-              "answer": "10 push-ups, 10 squats, 10 rows, then a 30 second plank.",
-              "answer_kind": "sentence"
+              "answer": "10 push-ups, 10 squats, 10 rows, then a 30-second plank.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "push",
+                    "squat",
+                    "row",
+                    "plank",
+                    "lunge",
+                    "bridge",
+                    "dip",
+                    "pull"
+                  ],
+                  [
+                    "push",
+                    "squat",
+                    "row",
+                    "plank",
+                    "lunge",
+                    "bridge",
+                    "dip",
+                    "pull"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
@@ -211511,7 +211703,21 @@
               "weight": "stretch",
               "prompt": "You hit 12 reps on every move for 2 sessions. What's next?",
               "answer": "Move to a harder level of each exercise.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "harder",
+                    "level",
+                    "progress",
+                    "next",
+                    "lower",
+                    "more",
+                    "add",
+                    "weight"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -211543,21 +211749,58 @@
               "weight": "warmup",
               "prompt": "Your shoulders rise on each breath. What's happening?",
               "answer": "You're breathing high in the chest.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "chest",
+                    "high",
+                    "shallow",
+                    "not belly",
+                    "upper"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "During the 10 breaths, where should your hands feel the push?",
-              "answer": "Out to the sides and belly.",
-              "answer_kind": "phrase"
+              "answer": "Out to the sides and the belly.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "belly",
+                    "sides",
+                    "out",
+                    "all around",
+                    "360",
+                    "waist",
+                    "lower ribs"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why practice the first 10 breaths lying down?",
               "answer": "It's easiest to feel there.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "easiest",
+                    "easy",
+                    "feel",
+                    "notice",
+                    "relaxed",
+                    "support",
+                    "floor"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -211574,22 +211817,67 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "For a 5 second brace, should you suck in or push out?",
-              "answer": "Push out against your own muscles.",
-              "answer_kind": "phrase"
+              "answer": "Push out, against your own muscles.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Suck in",
+                  "Push out"
+                ],
+                "accept": [
+                  "Push out"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name the 3 areas the brace covers.",
               "answer": "The front, sides and back of the trunk.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "front",
+                    "belly",
+                    "abs",
+                    "stomach"
+                  ],
+                  [
+                    "side",
+                    "oblique",
+                    "waist"
+                  ],
+                  [
+                    "back",
+                    "lower back",
+                    "spine"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 image that cues a 5 second brace.",
               "answer": "Someone about to poke your belly.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "poke",
+                    "punch",
+                    "cough",
+                    "sneeze",
+                    "tight",
+                    "belt",
+                    "hit",
+                    "kick",
+                    "laugh"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -211607,21 +211895,53 @@
               "weight": "warmup",
               "prompt": "In each of the 5 squats, when do you breathe and brace?",
               "answer": "At the top, before going down.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "At the top, before going down",
+                  "At the bottom"
+                ],
+                "accept": [
+                  "At the top, before going down"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "In each of the 5 squats, when do you breathe out?",
               "answer": "At the top, after the rep.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "At the top, after the rep",
+                  "At the bottom"
+                ],
+                "accept": [
+                  "At the top, after the rep"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why use a light 8 kg bell while learning the timing?",
-              "answer": "So you can focus on timing.",
-              "answer_kind": "phrase"
+              "answer": "So you can focus on the timing.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "focus",
+                    "timing",
+                    "learn",
+                    "light",
+                    "easy",
+                    "safe",
+                    "technique",
+                    "habit"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -211639,14 +211959,35 @@
               "weight": "warmup",
               "prompt": "Your back rounds on rep 7 of 8. What do you do?",
               "answer": "End the set there, or drop to a lighter weight.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "end",
+                    "stop",
+                    "lighter",
+                    "drop",
+                    "less",
+                    "reduce"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "For each of the 8 reps, which comes first: the brace or the hinge?",
               "answer": "The brace.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "The brace",
+                  "The hinge"
+                ],
+                "accept": [
+                  "The brace"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -211670,8 +212011,49 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 2 everyday lifts worth a brace.",
-              "answer": "A suitcase and a laundry basket.",
-              "answer_kind": "list"
+              "answer": "A suitcase, and a laundry basket.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "suitcase",
+                    "laundry",
+                    "basket",
+                    "box",
+                    "groceries",
+                    "bag",
+                    "child",
+                    "kid",
+                    "furniture",
+                    "bin",
+                    "trash",
+                    "pet food",
+                    "water",
+                    "couch",
+                    "luggage",
+                    "tire"
+                  ],
+                  [
+                    "suitcase",
+                    "laundry",
+                    "basket",
+                    "box",
+                    "groceries",
+                    "bag",
+                    "child",
+                    "kid",
+                    "furniture",
+                    "bin",
+                    "trash",
+                    "pet food",
+                    "water",
+                    "couch",
+                    "luggage",
+                    "tire"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
@@ -211684,8 +212066,25 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "You lift a 40 pound bag of dog food from the car. Name the 2 steps before you pull.",
-              "answer": "Take a belly breath and brace.",
-              "answer_kind": "phrase"
+              "answer": "Take a belly breath, then brace.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "breath",
+                    "breathe",
+                    "inhale",
+                    "air"
+                  ],
+                  [
+                    "brace",
+                    "tighten",
+                    "tight",
+                    "core"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         }
@@ -211715,23 +212114,74 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "You weigh 160 pounds. What's a fair starting total for a farmer carry?",
+              "prompt": "You weigh 160 pounds. A fair farmer carry starts at half bodyweight in total. How many pounds is that?",
               "answer": "About 80 pounds, so 40 in each hand.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "80"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your grip gives out at 25 yards of 40. What do you do?",
               "answer": "Set the weights down, rest and finish, or go lighter next set.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "set down",
+                    "rest",
+                    "finish",
+                    "lighter",
+                    "go lighter",
+                    "less",
+                    "break"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 posture cues for the carry.",
-              "answer": "Stand tall and keep the shoulders down.",
-              "answer_kind": "list"
+              "answer": "Stand tall, and keep the shoulders down.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "tall",
+                    "upright",
+                    "chest",
+                    "head",
+                    "shoulder",
+                    "down",
+                    "back",
+                    "brace",
+                    "core",
+                    "walk",
+                    "steps",
+                    "level"
+                  ],
+                  [
+                    "tall",
+                    "upright",
+                    "chest",
+                    "head",
+                    "shoulder",
+                    "down",
+                    "back",
+                    "brace",
+                    "core",
+                    "walk",
+                    "steps",
+                    "level"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -211749,21 +212199,58 @@
               "weight": "warmup",
               "prompt": "You lean 10 degrees away from the bell. What does it mean?",
               "answer": "The weight is too heavy, or you need to brace harder.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "heavy",
+                    "lighter",
+                    "brace",
+                    "harder",
+                    "too much"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your farmer carry uses 40 pounds per hand. What's a fair suitcase carry weight?",
               "answer": "About 20 to 25 pounds.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "20",
+                    "25",
+                    "20 to 25",
+                    "half",
+                    "less"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "What image helps keep you level on all 30 yards?",
               "answer": "A glass of water on each shoulder.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "glass",
+                    "water",
+                    "cup",
+                    "tray",
+                    "book",
+                    "level",
+                    "balance",
+                    "string",
+                    "ruler"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -211781,21 +212268,67 @@
               "weight": "warmup",
               "prompt": "The bell slides to your belly by yard 15 and you lean back. What do you fix?",
               "answer": "Hold it higher and closer, and brace.",
-              "answer_kind": "list"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "higher",
+                    "up",
+                    "chest"
+                  ],
+                  [
+                    "closer",
+                    "tight",
+                    "close",
+                    "hug",
+                    "brace"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 real-life task a front carry trains for.",
-              "answer": "Carrying boxes or a child.",
-              "answer_kind": "phrase"
+              "answer": "Carrying boxes, or a child.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "box",
+                    "child",
+                    "kid",
+                    "groceries",
+                    "laundry",
+                    "basket",
+                    "furniture",
+                    "bag",
+                    "toddler",
+                    "package"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "How do you breathe during a 30 yard front carry?",
               "answer": "Short breaths behind a light brace.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "short",
+                    "shallow",
+                    "small",
+                    "behind",
+                    "brace",
+                    "light",
+                    "sip"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -211812,22 +212345,56 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Your hips turn toward the anchor on rep 8. What do you do?",
-              "answer": "Step closer to the anchor or use a lighter band.",
-              "answer_kind": "sentence"
+              "answer": "Step closer to the anchor, or use a lighter band.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "closer",
+                    "lighter",
+                    "band",
+                    "less tension",
+                    "step in"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "How do you make the 10 reps harder?",
               "answer": "Step farther from the anchor.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "farther",
+                    "further",
+                    "step out",
+                    "heavier",
+                    "thicker",
+                    "away",
+                    "more tension"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "In 1 Pallof rep, what is the band trying to do to you?",
               "answer": "Twist you toward the anchor.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "twist",
+                    "rotate",
+                    "turn",
+                    "pull you"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -211845,21 +212412,58 @@
               "weight": "warmup",
               "prompt": "Week 1: 40 pounds per hand for 40 yards. What's a fair week 2?",
               "answer": "45 pounds for 40 yards, or 40 pounds for 50 yards.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "45",
+                    "50",
+                    "longer",
+                    "heavier"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why change only 1 thing a week?",
               "answer": "So posture stays solid.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "posture",
+                    "form",
+                    "solid",
+                    "safe",
+                    "know",
+                    "adapt",
+                    "control",
+                    "technique"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your shoulders creep up in week 3. What do you do?",
-              "answer": "Stay at that load until posture holds.",
-              "answer_kind": "phrase"
+              "answer": "Stay at that load until your posture holds.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "stay",
+                    "hold",
+                    "same load",
+                    "repeat",
+                    "don't add",
+                    "lighter",
+                    "keep"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -211884,7 +212488,18 @@
               "weight": "core",
               "prompt": "Why not do heavy carries right before 5 sets of deadlifts?",
               "answer": "Your grip will be tired for the deadlift.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "grip",
+                    "tired",
+                    "fatigue",
+                    "hands",
+                    "forearm"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -211923,21 +212538,54 @@
               "weight": "warmup",
               "prompt": "Your setup goes brace, then feet, then grip. Which of the 3 is in the wrong place?",
               "answer": "The brace. It comes last, right before the pull, after feet, grip, shins and chest.",
-              "answer_kind": "sentence"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "The brace",
+                  "The feet",
+                  "The grip"
+                ],
+                "accept": [
+                  "The brace"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "The bar starts 3 inches in front of your shins. What happens?",
               "answer": "It pulls you forward and strains the back.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "forward",
+                    "strain",
+                    "back",
+                    "lever",
+                    "away",
+                    "swing",
+                    "drift",
+                    "harder"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Should the bar sit over your toes or the middle of your foot, 1 inch from the shins?",
               "answer": "Over the middle of the foot.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Over the toes",
+                  "Over the middle of the foot"
+                ],
+                "accept": [
+                  "Over the middle of the foot"
+                ]
+              }
             }
           ]
         },
@@ -211955,7 +212603,20 @@
               "weight": "warmup",
               "prompt": "Your hips rise first and your chest drops on rep 3. What's happening?",
               "answer": "You're losing position and pulling with your back.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "position",
+                    "back",
+                    "hips shoot",
+                    "stripper",
+                    "good morning",
+                    "pull with your back",
+                    "lost"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -211969,7 +212630,16 @@
               "weight": "stretch",
               "prompt": "Lowering rep 3, what moves first: the hips or the knees?",
               "answer": "The hips.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "The hips",
+                  "The knees"
+                ],
+                "accept": [
+                  "The hips"
+                ]
+              }
             }
           ]
         },
@@ -211986,22 +212656,76 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "The bar rolls out of your hands at 185 pounds with double overhand. Name 2 options.",
-              "answer": "A mixed grip or a hook grip.",
-              "answer_kind": "phrase"
+              "answer": "A mixed grip, or a hook grip.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "mixed",
+                    "alternate",
+                    "over-under",
+                    "hook",
+                    "straps",
+                    "chalk"
+                  ],
+                  [
+                    "mixed",
+                    "alternate",
+                    "over-under",
+                    "hook",
+                    "straps",
+                    "chalk"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Of the 3 grips, why start with double overhand?",
               "answer": "It builds grip strength evenly.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "grip",
+                    "even",
+                    "balanced",
+                    "strength",
+                    "symmetr",
+                    "both",
+                    "bicep",
+                    "safe"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "In a mixed grip, which way do your 2 palms face?",
               "answer": "One faces you, one faces away.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "one",
+                    "1"
+                  ],
+                  [
+                    "toward",
+                    "away",
+                    "facing",
+                    "forward",
+                    "back",
+                    "opposite",
+                    "under",
+                    "over"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -212025,8 +212749,20 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Your back rounded on rep 5 of 5. What should change next time?",
-              "answer": "Use less weight or fewer reps.",
-              "answer_kind": "phrase"
+              "answer": "Use less weight, or fewer reps.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "less weight",
+                    "lighter",
+                    "fewer reps",
+                    "fewer",
+                    "reduce",
+                    "drop"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -212057,15 +212793,44 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Form slips 2 weeks in a row at 205. What do you do?",
-              "answer": "Back off about 10 percent and build again.",
-              "answer_kind": "phrase"
+              "answer": "Back off about 10% and build again.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "back off",
+                    "lower",
+                    "10",
+                    "reduce",
+                    "drop",
+                    "less",
+                    "lighter",
+                    "reset"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why not test a 1 rep max every week?",
-              "answer": "It's tiring and interrupts training.",
-              "answer_kind": "phrase"
+              "answer": "It's tiring, and it interrupts training.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "tiring",
+                    "fatigue",
+                    "interrupt",
+                    "recover",
+                    "risk",
+                    "injur",
+                    "training",
+                    "stress",
+                    "not needed"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -212111,7 +212876,20 @@
               "weight": "stretch",
               "prompt": "Name 1 thing that stays the same in a simple deload.",
               "answer": "The exercises, or roughly the weights.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "exercise",
+                    "movement",
+                    "lift",
+                    "weight",
+                    "load",
+                    "same",
+                    "routine"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -212129,21 +212907,49 @@
               "weight": "warmup",
               "prompt": "Do most people need a deload every 4 to 8 weeks, or every 6 months?",
               "answer": "About every 4 to 8 weeks.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "About every 4 to 8 weeks",
+                  "Every 6 months"
+                ],
+                "accept": [
+                  "About every 4 to 8 weeks"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your next 12 weeks start March 1. With a deload every 5th week, which weeks are easy?",
               "answer": "Weeks 5 and 10.",
-              "answer_kind": "phrase"
+              "answer_kind": "list",
+              "grading": {
+                "accept": [
+                  "5, 10"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why put the week 5 deload on the calendar before you feel tired?",
               "answer": "So fatigue clears before it causes injury.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "before",
+                    "injur",
+                    "fatigue",
+                    "plan",
+                    "prevent",
+                    "clears",
+                    "ahead",
+                    "too late"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -212167,15 +212973,80 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 3 warning signs of fatigue.",
-              "answer": "Worse sleep, joint aches and lower motivation.",
-              "answer_kind": "list"
+              "answer": "Worse sleep, joint aches, and lower motivation.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "sleep",
+                    "ache",
+                    "joint",
+                    "motivat",
+                    "mood",
+                    "irritab",
+                    "heart",
+                    "pulse",
+                    "appetite",
+                    "stall",
+                    "weaker",
+                    "sore",
+                    "tired",
+                    "energy",
+                    "bar speed"
+                  ],
+                  [
+                    "sleep",
+                    "ache",
+                    "joint",
+                    "motivat",
+                    "mood",
+                    "irritab",
+                    "heart",
+                    "pulse",
+                    "appetite",
+                    "stall",
+                    "weaker",
+                    "sore",
+                    "tired",
+                    "energy",
+                    "bar speed"
+                  ],
+                  [
+                    "sleep",
+                    "ache",
+                    "joint",
+                    "motivat",
+                    "mood",
+                    "irritab",
+                    "heart",
+                    "pulse",
+                    "appetite",
+                    "stall",
+                    "weaker",
+                    "sore",
+                    "tired",
+                    "energy",
+                    "bar speed"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Only 1 sign dips for 1 day. Do you deload?",
               "answer": "Probably not. Watch it.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Yes",
+                  "Probably not"
+                ],
+                "accept": [
+                  "Probably not"
+                ]
+              }
             }
           ]
         },
@@ -212237,9 +213108,18 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Should you note how the first 2 sessions feel, or skip notes?",
-              "answer": "2.",
-              "answer_kind": "integer"
+              "prompt": "After a deload, should you note how the first 2 sessions back feel, or skip notes?",
+              "answer": "Note how they feel, so you know whether the deload worked.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Note how they feel",
+                  "Skip notes"
+                ],
+                "accept": [
+                  "Note how they feel"
+                ]
+              }
             }
           ]
         },
@@ -212257,7 +213137,19 @@
               "weight": "warmup",
               "prompt": "You always feel beat by week 3. What change?",
               "answer": "Deload sooner, like every 4 weeks.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "sooner",
+                    "earlier",
+                    "every 4",
+                    "every 3",
+                    "more often",
+                    "shorter"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -212309,15 +213201,47 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 strength of dumbbells over a barbell.",
-              "answer": "Each side works on its own, so weak sides can't hide.",
-              "answer_kind": "sentence"
+              "answer": "Each side works on its own, so a weak side can't hide.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "each side",
+                    "weak side",
+                    "hide",
+                    "independ",
+                    "range",
+                    "imbalance",
+                    "stabil",
+                    "safer",
+                    "free"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why use a leg press when you have 1 sore lower back?",
               "answer": "It trains the legs without loading the spine.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "without loading",
+                    "not loading",
+                    "no load on",
+                    "unload",
+                    "spine",
+                    "back",
+                    "load",
+                    "support",
+                    "stable",
+                    "unload",
+                    "no bar"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -212334,15 +213258,56 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Your knee doesn't line up with the leg extension pivot. What do you adjust?",
-              "answer": "The seat or back pad.",
-              "answer_kind": "phrase"
+              "answer": "The seat or the back pad.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "seat",
+                    "pad",
+                    "back",
+                    "position",
+                    "setting",
+                    "adjust"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 times a machine is the better choice.",
               "answer": "When you're tired or sore, or learning a movement.",
-              "answer_kind": "list"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "tired",
+                    "sore",
+                    "injur",
+                    "learning",
+                    "beginner",
+                    "alone",
+                    "no spotter",
+                    "isolat",
+                    "safe",
+                    "fatigue"
+                  ],
+                  [
+                    "tired",
+                    "sore",
+                    "injur",
+                    "learning",
+                    "beginner",
+                    "alone",
+                    "no spotter",
+                    "isolat",
+                    "safe",
+                    "fatigue"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -212367,21 +213332,57 @@
               "weight": "warmup",
               "prompt": "Your squat bottom is 20 inches off the floor. Where do the safety pins go?",
               "answer": "Just below the lowest point of your squat.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "below",
+                    "under",
+                    "lowest",
+                    "just below",
+                    "bottom"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "You load 2 plates on the left before any on the right. What's the risk?",
               "answer": "The bar can tip.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "tip",
+                    "fall",
+                    "flip",
+                    "tilt",
+                    "seesaw",
+                    "drop"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 sign the rack is set too high.",
               "answer": "You have to go on tiptoe to unrack.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "tiptoe",
+                    "toes",
+                    "reach",
+                    "stretch",
+                    "stand on",
+                    "up high",
+                    "struggle"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -212398,22 +213399,59 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Your left arm gets 8 reps and your right gets 10. What do you do?",
-              "answer": "Start with the left and stop the right at 8.",
-              "answer_kind": "sentence"
+              "answer": "Start with the left, and stop the right at 8.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "left first",
+                    "start with the left",
+                    "weaker first",
+                    "stop the right",
+                    "match",
+                    "8"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why start each of the 3 sets with the weaker side?",
               "answer": "So the strong side matches it.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "match",
+                    "strong side",
+                    "even",
+                    "balance",
+                    "same reps",
+                    "catch up"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "After 4 weeks the gap is 1 rep. What does it show?",
               "answer": "The imbalance is closing.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "closing",
+                    "imbalance",
+                    "shrinking",
+                    "evening",
+                    "working",
+                    "improv",
+                    "balanc"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -212430,22 +213468,85 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 2 moves where a kettlebell beats a dumbbell.",
-              "answer": "Swings and carries.",
-              "answer_kind": "list"
+              "answer": "Swings, and carries.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "swing",
+                    "carry",
+                    "clean",
+                    "snatch",
+                    "get-up",
+                    "turkish",
+                    "goblet",
+                    "windmill",
+                    "halo"
+                  ],
+                  [
+                    "swing",
+                    "carry",
+                    "clean",
+                    "snatch",
+                    "get-up",
+                    "turkish",
+                    "goblet",
+                    "windmill",
+                    "halo"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your 15th swing is slow and your back rounds. What does it tell you?",
               "answer": "Stop sets sooner, around rep 10 or 12.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "sooner",
+                    "earlier",
+                    "fewer",
+                    "10",
+                    "12",
+                    "stop",
+                    "shorter",
+                    "fatigue"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 things swings train at once.",
-              "answer": "Power and conditioning.",
-              "answer_kind": "list"
+              "answer": "Power, and conditioning.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "power",
+                    "hip",
+                    "glute",
+                    "hinge",
+                    "explosive",
+                    "strength",
+                    "posterior"
+                  ],
+                  [
+                    "condition",
+                    "cardio",
+                    "heart",
+                    "endurance",
+                    "grip",
+                    "core"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -212463,14 +213564,37 @@
               "weight": "warmup",
               "prompt": "You have 150 dollars to start. What's a good first buy?",
               "answer": "A set of bands and 1 kettlebell, or used dumbbells.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "band",
+                    "kettlebell",
+                    "dumbbell",
+                    "used",
+                    "pull-up bar",
+                    "adjustable"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Of the 4 home items, which covers chin-ups?",
               "answer": "A doorway pull-up bar.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "pull-up bar",
+                    "pull up bar",
+                    "bar",
+                    "doorway",
+                    "chin-up bar"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -212509,7 +213633,18 @@
               "weight": "warmup",
               "prompt": "On rep 3 your knees bend far forward and the hips barely move back. What's happening?",
               "answer": "You're squatting instead of hinging.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "squat",
+                    "knees",
+                    "not hinging",
+                    "wrong",
+                    "squatting"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -212523,7 +213658,18 @@
               "weight": "stretch",
               "prompt": "3 sets of 10 wall touches are easy. How do you make it harder?",
               "answer": "Stand farther from the wall.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "farther",
+                    "further",
+                    "step back",
+                    "more distance",
+                    "away"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -212541,21 +213687,66 @@
               "weight": "warmup",
               "prompt": "Name the 3 contact points.",
               "answer": "Head, upper back and tailbone.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "head",
+                    "skull"
+                  ],
+                  [
+                    "upper back",
+                    "shoulder",
+                    "between the shoulder"
+                  ],
+                  [
+                    "tailbone",
+                    "butt",
+                    "sacrum",
+                    "low back",
+                    "hip"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your tailbone lifts off at the bottom. What does it mean?",
               "answer": "Your back is rounding.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "round",
+                    "flex",
+                    "lost neutral",
+                    "bend",
+                    "curve",
+                    "not neutral"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "What do the 3 points on the stick help you see?",
               "answer": "Whether your spine stays neutral.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "neutral",
+                    "straight",
+                    "spine",
+                    "back",
+                    "flat",
+                    "line"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -212572,8 +213763,21 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "At the top of rep 4 you lean back past straight. What's the fix?",
-              "answer": "Stop at tall standing with glutes squeezed.",
-              "answer_kind": "phrase"
+              "answer": "Stop at tall standing with your glutes squeezed.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "stop",
+                    "tall",
+                    "stand",
+                    "glute",
+                    "squeeze",
+                    "don't lean",
+                    "vertical"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -212587,7 +213791,18 @@
               "weight": "stretch",
               "prompt": "You can do 3 sets of 10 easily with 12 kg. What's next?",
               "answer": "Try a heavier bell, like 16 kg.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "heavier",
+                    "16",
+                    "more weight",
+                    "bigger",
+                    "add"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -212605,7 +213820,19 @@
               "weight": "warmup",
               "prompt": "The bell only reaches waist height and your arms burn. What's wrong?",
               "answer": "You're lifting with the arms. Snap the hips harder.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "arm",
+                    "hips",
+                    "snap",
+                    "lift",
+                    "drive",
+                    "hinge harder"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -212619,7 +213846,17 @@
               "weight": "stretch",
               "prompt": "Rep 9 of a set feels slow and sloppy. What do you do?",
               "answer": "End the set there.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "end",
+                    "stop",
+                    "rest",
+                    "done"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -212637,21 +213874,51 @@
               "weight": "warmup",
               "prompt": "Of the 6 exercises, is the kettlebell swing a hinge or a squat?",
               "answer": "A hinge.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "A hinge",
+                  "A squat"
+                ],
+                "accept": [
+                  "A hinge"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Of the 6 exercises, is the goblet squat a hinge or a squat?",
               "answer": "A squat.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "A hinge",
+                  "A squat"
+                ],
+                "accept": [
+                  "A squat"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You feel a Romanian deadlift mostly in your quads. What does that suggest?",
               "answer": "You're bending the knees too much and squatting it.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "knee",
+                    "squat",
+                    "bend",
+                    "too much",
+                    "not hinging",
+                    "hips"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -212689,15 +213956,37 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Should most growth sets stop 1 to 2 reps short of failure, or 8?",
-              "answer": "About 1 to 2.",
-              "answer_kind": "phrase"
+              "answer": "About 1 to 2 reps.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "About 1 to 2 reps",
+                  "About 8 reps"
+                ],
+                "accept": [
+                  "About 1 to 2 reps"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why not go to total failure on all 6 sets?",
               "answer": "It adds fatigue without much more growth.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "fatigue",
+                    "recover",
+                    "growth",
+                    "not much more",
+                    "little extra",
+                    "tired",
+                    "cost"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -212715,14 +214004,37 @@
               "weight": "warmup",
               "prompt": "Your chest gets 6 sets a week. What should you do?",
               "answer": "Add about 4 to 10 sets.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "add",
+                    "more",
+                    "4",
+                    "10",
+                    "increase"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your back gets 24 sets. What might happen?",
               "answer": "It may be too much to recover from.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "too much",
+                    "recover",
+                    "overtrain",
+                    "fatigue",
+                    "junk",
+                    "beat up"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -212747,21 +214059,55 @@
               "weight": "warmup",
               "prompt": "You weigh 160 pounds. What's a fair weekly gain target?",
               "answer": "About 0.4 to 0.8 pounds.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "0.4",
+                    "0.5",
+                    "0.6",
+                    "0.8",
+                    "0.4 to 0.8",
+                    "half a pound"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Is a 250 calorie surplus small or large?",
-              "answer": "About 250 calories a day.",
-              "answer_kind": "phrase"
+              "answer": "Small. It's about 250 calories a day over maintenance.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Small",
+                  "Large"
+                ],
+                "accept": [
+                  "Small"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your weight jumped 3 pounds in 1 week. What does it suggest?",
-              "answer": "The surplus may be too big.",
-              "answer_kind": "phrase"
+              "answer": "The surplus may be too big, or it's mostly water.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "water",
+                    "surplus",
+                    "too big",
+                    "too much",
+                    "fat",
+                    "salt",
+                    "food"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -212778,8 +214124,27 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 1 exercise with a big stretch.",
-              "answer": "Romanian deadlift or incline curl.",
-              "answer_kind": "phrase"
+              "answer": "Romanian deadlift, or incline curl.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "romanian",
+                    "rdl",
+                    "incline curl",
+                    "fly",
+                    "pullover",
+                    "split squat",
+                    "lunge",
+                    "sissy",
+                    "deficit",
+                    "overhead extension",
+                    "stretch",
+                    "pec",
+                    "calf"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -212811,21 +214176,53 @@
               "weight": "warmup",
               "prompt": "Can a beginner gain about 1 to 2 pounds of muscle a month, or 10?",
               "answer": "About 1 to 2 pounds.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "About 1 to 2 pounds",
+                  "About 10 pounds"
+                ],
+                "accept": [
+                  "About 1 to 2 pounds"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Should you measure every 3 months or every 3 days?",
-              "answer": "Every few months.",
-              "answer_kind": "word"
+              "answer": "Every 3 months.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Every 3 months",
+                  "Every 3 days"
+                ],
+                "accept": [
+                  "Every 3 months"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why not judge growth in the mirror every 7 days?",
-              "answer": "Changes are too small to see.",
-              "answer_kind": "phrase"
+              "answer": "The changes are too small to see.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "small",
+                    "slow",
+                    "can't see",
+                    "too little",
+                    "noise",
+                    "water",
+                    "light",
+                    "day to day"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -212842,8 +214239,21 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Your forearms tire before your back on rows. What might help?",
-              "answer": "Straps or a different grip.",
-              "answer_kind": "phrase"
+              "answer": "Straps, or a different grip.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "strap",
+                    "grip",
+                    "hook",
+                    "lighter",
+                    "thicker",
+                    "machine",
+                    "chest supported"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -212857,7 +214267,19 @@
               "weight": "stretch",
               "prompt": "What's a good sign?",
               "answer": "The target muscle tires first.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "target muscle",
+                    "target",
+                    "tires first",
+                    "feel it",
+                    "pump",
+                    "right muscle"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -212888,8 +214310,41 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 2 types of training that tend to last decades.",
-              "answer": "Moderate sets of 5 to 10 and carries, for example.",
-              "answer_kind": "list"
+              "answer": "Moderate sets of 5 to 10, and carries.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "moderate",
+                    "5 to 10",
+                    "reps",
+                    "carry",
+                    "walk",
+                    "bodyweight",
+                    "machine",
+                    "dumbbell",
+                    "kettlebell",
+                    "mobility",
+                    "swim",
+                    "yoga"
+                  ],
+                  [
+                    "moderate",
+                    "5 to 10",
+                    "reps",
+                    "carry",
+                    "walk",
+                    "bodyweight",
+                    "machine",
+                    "dumbbell",
+                    "kettlebell",
+                    "mobility",
+                    "swim",
+                    "yoga"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
@@ -212903,7 +214358,20 @@
               "weight": "stretch",
               "prompt": "Why pick training you'd enjoy for 20 years?",
               "answer": "You'll keep doing it.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "keep",
+                    "stick",
+                    "enjoy",
+                    "consisten",
+                    "habit",
+                    "last",
+                    "keep doing"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -212921,7 +214389,27 @@
               "weight": "warmup",
               "prompt": "Name the 4 lifts in a minimum plan.",
               "answer": "A squat, a hinge, a push and a pull.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "squat"
+                  ],
+                  [
+                    "hinge",
+                    "deadlift"
+                  ],
+                  [
+                    "push",
+                    "press"
+                  ],
+                  [
+                    "pull",
+                    "row"
+                  ]
+                ],
+                "need": 4
+              }
             },
             {
               "slot": 2,
@@ -212935,7 +214423,19 @@
               "weight": "stretch",
               "prompt": "You're moving house this month. What do you do with training?",
               "answer": "Switch to the minimum plan.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "minimum",
+                    "switch",
+                    "short",
+                    "less",
+                    "maintain",
+                    "keep it small"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -212952,15 +214452,37 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "For most long-term sets, how many reps in reserve: 0 or 2 to 3?",
-              "answer": "About 2 or 3.",
-              "answer_kind": "phrase"
+              "answer": "2 to 3.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "0",
+                  "2 to 3"
+                ],
+                "accept": [
+                  "2 to 3"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your knee aches after heavy singles. What change helps?",
               "answer": "Use sets with reps in reserve instead.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "reserve",
+                    "rir",
+                    "lighter",
+                    "reps",
+                    "sets of",
+                    "avoid singles",
+                    "higher reps"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -212991,15 +214513,49 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 parts of a good warm-up.",
-              "answer": "Light cardio and ramp-up sets.",
-              "answer_kind": "list"
+              "answer": "Light cardio, and ramp-up sets.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "cardio",
+                    "bike",
+                    "walk",
+                    "row",
+                    "jog",
+                    "light"
+                  ],
+                  [
+                    "ramp",
+                    "warm-up sets",
+                    "light sets",
+                    "mobility",
+                    "stretch",
+                    "activation"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why does a 50 year old need a longer warm-up than a 20 year old?",
               "answer": "Tissues take longer to get ready.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "tissue",
+                    "longer",
+                    "ready",
+                    "age",
+                    "joint",
+                    "stiff",
+                    "warm"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -213016,8 +214572,37 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Sore shoulder. Name 2 exercises you might still do.",
-              "answer": "Squats and deadlifts with care, or leg press.",
-              "answer_kind": "list"
+              "answer": "Squats and deadlifts with care, and leg press.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "squat",
+                    "deadlift",
+                    "leg press",
+                    "lunge",
+                    "hinge",
+                    "carry",
+                    "bike",
+                    "leg",
+                    "hip thrust",
+                    "calf"
+                  ],
+                  [
+                    "squat",
+                    "deadlift",
+                    "leg press",
+                    "lunge",
+                    "hinge",
+                    "carry",
+                    "bike",
+                    "leg",
+                    "hip thrust",
+                    "calf"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
@@ -213030,8 +214615,20 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your wrist is sore for 3 weeks. Why keep training other areas?",
-              "answer": "To stay strong and keep the habit.",
-              "answer_kind": "phrase"
+              "answer": "To stay strong, and keep the habit.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "strong",
+                    "habit",
+                    "keep",
+                    "momentum",
+                    "maintain",
+                    "routine"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -213048,22 +214645,66 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name the 3 lines for the review.",
-              "answer": "What went well, what hurt and 1 change.",
-              "answer_kind": "list"
+              "answer": "What went well, what hurt, and 1 change.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "well",
+                    "good",
+                    "worked"
+                  ],
+                  [
+                    "hurt",
+                    "pain",
+                    "injur",
+                    "ache",
+                    "bad"
+                  ],
+                  [
+                    "change",
+                    "next",
+                    "plan"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your back flares every winter. What could you change?",
-              "answer": "Lighter loads or more warm-up in winter.",
-              "answer_kind": "phrase"
+              "answer": "Lighter loads, or more warm-up in winter.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "lighter",
+                    "warm-up",
+                    "warm up",
+                    "longer warm",
+                    "less",
+                    "reduce",
+                    "winter"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Is the review every January, or every 5 years?",
-              "answer": "Once a year.",
-              "answer_kind": "word"
+              "answer": "Every January, once a year.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Every January",
+                  "Every 5 years"
+                ],
+                "accept": [
+                  "Every January"
+                ]
+              }
             }
           ]
         },
@@ -213087,15 +214728,79 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 other activities that help.",
-              "answer": "Cycling and hiking.",
-              "answer_kind": "list"
+              "answer": "Cycling, and hiking.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "cycling",
+                    "hiking",
+                    "walking",
+                    "swimming",
+                    "running",
+                    "dancing",
+                    "rowing",
+                    "climbing",
+                    "cycl",
+                    "bike",
+                    "hike",
+                    "walk",
+                    "swim",
+                    "yoga",
+                    "run",
+                    "sport",
+                    "dance",
+                    "row",
+                    "tennis",
+                    "garden",
+                    "climb"
+                  ],
+                  [
+                    "cycling",
+                    "hiking",
+                    "walking",
+                    "swimming",
+                    "running",
+                    "dancing",
+                    "rowing",
+                    "climbing",
+                    "cycl",
+                    "bike",
+                    "hike",
+                    "walk",
+                    "swim",
+                    "yoga",
+                    "run",
+                    "sport",
+                    "dance",
+                    "row",
+                    "tennis",
+                    "garden",
+                    "climb"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You lift 3 hours a week. Why move outside the gym too?",
               "answer": "For heart and joint health.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "heart",
+                    "joint",
+                    "health",
+                    "cardio",
+                    "balance",
+                    "mobility",
+                    "variety"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -213127,14 +214832,99 @@
               "weight": "warmup",
               "prompt": "Your toe touch stops 3 inches above the floor. How do you record it?",
               "answer": "\"Fingertips 3 inches above floor,\" with the date.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "inches",
+                    "inch",
+                    "fingertip",
+                    "3",
+                    "date",
+                    "above"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 4 positions worth testing.",
               "answer": "Deep squat, overhead reach, toe touch and hip rotation.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "squat",
+                    "overhead",
+                    "reach",
+                    "toe touch",
+                    "hip",
+                    "rotation",
+                    "ankle",
+                    "shoulder",
+                    "split",
+                    "bridge",
+                    "lunge",
+                    "hamstring",
+                    "thoracic",
+                    "wrist",
+                    "neck"
+                  ],
+                  [
+                    "squat",
+                    "overhead",
+                    "reach",
+                    "toe touch",
+                    "hip",
+                    "rotation",
+                    "ankle",
+                    "shoulder",
+                    "split",
+                    "bridge",
+                    "lunge",
+                    "hamstring",
+                    "thoracic",
+                    "wrist",
+                    "neck"
+                  ],
+                  [
+                    "squat",
+                    "overhead",
+                    "reach",
+                    "toe touch",
+                    "hip",
+                    "rotation",
+                    "ankle",
+                    "shoulder",
+                    "split",
+                    "bridge",
+                    "lunge",
+                    "hamstring",
+                    "thoracic",
+                    "wrist",
+                    "neck"
+                  ],
+                  [
+                    "squat",
+                    "overhead",
+                    "reach",
+                    "toe touch",
+                    "hip",
+                    "rotation",
+                    "ankle",
+                    "shoulder",
+                    "split",
+                    "bridge",
+                    "lunge",
+                    "hamstring",
+                    "thoracic",
+                    "wrist",
+                    "neck"
+                  ]
+                ],
+                "need": 4
+              }
             },
             {
               "slot": 3,
@@ -213159,7 +214949,21 @@
               "weight": "warmup",
               "prompt": "Why load a stretch with 3 sets of 8 instead of only holding a passive one?",
               "answer": "Strength at end range makes the new range last.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "strength",
+                    "end range",
+                    "last",
+                    "keep",
+                    "own",
+                    "control",
+                    "stick",
+                    "hold"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -213173,7 +214977,18 @@
               "weight": "stretch",
               "prompt": "You bounce out of the bottom of rep 5. What does it mean?",
               "answer": "The weight is too heavy to control there.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "too heavy",
+                    "heavy",
+                    "control",
+                    "lighter",
+                    "weight"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -213190,8 +215005,21 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Your leg drops after 8 seconds of a 20 second hold. What do you do?",
-              "answer": "Lower the target height slightly and build time.",
-              "answer_kind": "phrase"
+              "answer": "Lower the target height slightly, and build time.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "lower",
+                    "slightly",
+                    "build",
+                    "shorter",
+                    "easier",
+                    "bend",
+                    "less"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -213205,7 +215033,25 @@
               "weight": "stretch",
               "prompt": "Name 1 active hold for the hips.",
               "answer": "A raised straight leg held without hands.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "leg raise",
+                    "straight leg",
+                    "lift",
+                    "hold",
+                    "90/90",
+                    "knee",
+                    "cars",
+                    "hip",
+                    "pigeon",
+                    "lift-off",
+                    "airplane",
+                    "clamshell"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -213237,7 +215083,19 @@
               "weight": "stretch",
               "prompt": "You feel a sharp pull at the back of the knee. What do you do?",
               "answer": "Back off right away.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "back off",
+                    "stop",
+                    "ease",
+                    "release",
+                    "come out",
+                    "right away"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -213255,21 +215113,58 @@
               "weight": "warmup",
               "prompt": "You gained 2 inches of squat depth. How do you use it?",
               "answer": "Squat to the new depth with lighter weight.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "squat",
+                    "new depth",
+                    "lighter",
+                    "train",
+                    "use",
+                    "load"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "You stop training the new depth for 2 months. Why does it fade?",
               "answer": "The body keeps what it uses.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "use",
+                    "lose",
+                    "adapt",
+                    "keep",
+                    "don't use",
+                    "stop",
+                    "body"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your deeper squat looks shaky at your old weight. What's the fix?",
               "answer": "Drop the weight while you build strength there.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "drop",
+                    "lighter",
+                    "less weight",
+                    "build",
+                    "strength",
+                    "reduce"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -213285,23 +215180,52 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Day 1 overhead reach: 4 inches from the wall. Day 42: 1 inch. What does it show?",
-              "answer": "Range improved by 3 inches.",
-              "answer_kind": "phrase"
+              "prompt": "Day 1 overhead reach: 4 inches from the wall. Day 42: 1 inch. By how many inches did the range improve?",
+              "answer": "3 inches.",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "3"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Hip rotation didn't change in 6 weeks. What do you do?",
               "answer": "Change the plan for that position.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "change",
+                    "plan",
+                    "different",
+                    "new",
+                    "adjust",
+                    "more",
+                    "other drill"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You tested at 7 am on day 1. When should you retest?",
               "answer": "Around 7 am again.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "7 am",
+                    "7",
+                    "same time",
+                    "morning",
+                    "again"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -213333,21 +215257,49 @@
               "weight": "warmup",
               "prompt": "Your exams end May 20. Is May 22 a good test date?",
               "answer": "Probably not. Give yourself a calmer week first.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Yes",
+                  "Probably not"
+                ],
+                "accept": [
+                  "Probably not"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Your test is 10 weeks out. How might you split the weeks?",
+              "prompt": "A test is 10 weeks out. Split it into building, heavy and taper weeks. How many of each, in that order?",
               "answer": "About 5 building, 3 heavy and 2 tapering.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "accept": [
+                  "5, 3, 2"
+                ],
+                "order": true
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why plan backward from the test date, 10 weeks out?",
               "answer": "So each phase leads to being strongest on that day.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "strongest",
+                    "peak",
+                    "that day",
+                    "lead",
+                    "test day",
+                    "timing",
+                    "line up"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -213378,8 +215330,25 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name the 2 things the building phase grows.",
-              "answer": "Muscle and practice with the lift.",
-              "answer_kind": "list"
+              "answer": "Muscle, and practice with the lift.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "muscle",
+                    "size",
+                    "mass",
+                    "work capacity"
+                  ],
+                  [
+                    "practice",
+                    "skill",
+                    "technique",
+                    "groove"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -213411,7 +215380,18 @@
               "weight": "stretch",
               "prompt": "Why drop from 5 sets to 3 as weight goes up?",
               "answer": "So fatigue doesn't pile up before the test.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "fatigue",
+                    "pile",
+                    "recover",
+                    "fresh",
+                    "tired"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -213436,14 +215416,34 @@
               "weight": "core",
               "prompt": "When do the 1 or 2 heavy singles go: early or late in the taper week?",
               "answer": "Early.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Early",
+                  "Late"
+                ],
+                "accept": [
+                  "Early"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your test is Saturday. What do Thursday and Friday look like?",
-              "answer": "Rest or a short, easy session.",
-              "answer_kind": "phrase"
+              "answer": "Rest, or a short easy session.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "rest",
+                    "easy",
+                    "short",
+                    "light",
+                    "off"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -213461,7 +215461,18 @@
               "weight": "warmup",
               "prompt": "Your goal is 225. What's a fair opener?",
               "answer": "About 200 to 205.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "200",
+                    "205",
+                    "200 to 205",
+                    "90 percent",
+                    "90%"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -213475,7 +215486,21 @@
               "weight": "stretch",
               "prompt": "Why should the opener be a weight you'd hit on a bad day?",
               "answer": "So you get a good lift on the board.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "board",
+                    "total",
+                    "successful",
+                    "confiden",
+                    "safe",
+                    "guarantee",
+                    "good lift",
+                    "make it"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -213507,7 +215532,20 @@
               "weight": "stretch",
               "prompt": "Why drop back to 70 percent after the test?",
               "answer": "Repeated testing interrupts training.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "training",
+                    "interrupt",
+                    "recover",
+                    "fatigue",
+                    "build",
+                    "base",
+                    "back to work"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -213570,22 +215608,61 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Your squat depth on video is 2 inches higher than 2 months ago. What's the fix?",
-              "answer": "Lower the weight a bit and get depth back.",
-              "answer_kind": "sentence"
+              "answer": "Lower the weight a bit and get the depth back.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "lower",
+                    "lighter",
+                    "less weight",
+                    "depth",
+                    "back",
+                    "reduce"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "The bar drifts forward 3 inches on your deadlift now. What could it mean?",
-              "answer": "Setup or bar path has slipped.",
-              "answer_kind": "phrase"
+              "answer": "Your setup or bar path has slipped.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "setup",
+                    "bar path",
+                    "position",
+                    "form",
+                    "slipped",
+                    "technique",
+                    "start"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why compare to a video from 2 months ago instead of just watching the new one?",
               "answer": "You see what changed over time.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "change",
+                    "over time",
+                    "compare",
+                    "slow",
+                    "drift",
+                    "gradual",
+                    "notice",
+                    "see"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -213610,7 +215687,28 @@
               "weight": "core",
               "prompt": "Name 3 recovery factors to check.",
               "answer": "Sleep, stress and food.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "sleep"
+                  ],
+                  [
+                    "stress"
+                  ],
+                  [
+                    "food",
+                    "diet",
+                    "nutrition",
+                    "protein",
+                    "eat",
+                    "calorie",
+                    "hydrat",
+                    "water"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 3,
@@ -213635,7 +215733,20 @@
               "weight": "warmup",
               "prompt": "You weigh 170 pounds. What's a fair protein range?",
               "answer": "About 120 to 170 grams a day.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "120",
+                    "170",
+                    "120 to 170",
+                    "130",
+                    "140",
+                    "150",
+                    "160"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -213666,8 +215777,55 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 3 single changes you could try.",
-              "answer": "Add 2 sets, switch rep range, or use a variation.",
-              "answer_kind": "list"
+              "answer": "Add 2 sets, switch the rep range, and use a variation.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "set",
+                    "volume",
+                    "rep",
+                    "range",
+                    "variation",
+                    "exercise",
+                    "frequency",
+                    "rest",
+                    "tempo",
+                    "intensity",
+                    "deload",
+                    "load"
+                  ],
+                  [
+                    "set",
+                    "volume",
+                    "rep",
+                    "range",
+                    "variation",
+                    "exercise",
+                    "frequency",
+                    "rest",
+                    "tempo",
+                    "intensity",
+                    "deload",
+                    "load"
+                  ],
+                  [
+                    "set",
+                    "volume",
+                    "rep",
+                    "range",
+                    "variation",
+                    "exercise",
+                    "frequency",
+                    "rest",
+                    "tempo",
+                    "intensity",
+                    "deload",
+                    "load"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
@@ -213681,7 +215839,20 @@
               "weight": "stretch",
               "prompt": "You changed sets, reps and exercise at once and improved. What's the problem?",
               "answer": "You don't know which change helped.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "don't know",
+                    "which",
+                    "can't tell",
+                    "unclear",
+                    "cause",
+                    "which one",
+                    "confound"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -213705,8 +215876,21 @@
               "slot": 2,
               "weight": "core",
               "prompt": "After a deload, no change. What next?",
-              "answer": "Look at technique, recovery or 1 plan change.",
-              "answer_kind": "phrase"
+              "answer": "Look at technique, recovery, or 1 plan change.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "technique",
+                    "recovery",
+                    "plan",
+                    "form",
+                    "sleep",
+                    "change",
+                    "food"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -213745,14 +215929,33 @@
               "weight": "warmup",
               "prompt": "Your 3rd jump in a set is noticeably lower than the 1st. What do you do?",
               "answer": "End the set there.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "end",
+                    "stop",
+                    "rest",
+                    "done"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Should 4 sets of jumps go at the start or end of a session?",
               "answer": "At the start, while you're fresh.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "At the start",
+                  "At the end"
+                ],
+                "accept": [
+                  "At the start"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -213777,21 +215980,74 @@
               "weight": "warmup",
               "prompt": "A 20 pound ball barely leaves your hands. What do you change?",
               "answer": "Use a lighter ball, like 8 pounds.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "lighter",
+                    "8",
+                    "smaller",
+                    "less weight"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 types of medicine ball throws.",
-              "answer": "Chest passes and rotational throws.",
-              "answer_kind": "list"
+              "answer": "Chest passes, and rotational throws.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "chest",
+                    "pass",
+                    "rotational",
+                    "side",
+                    "slam",
+                    "overhead",
+                    "scoop",
+                    "underhand",
+                    "backward",
+                    "wall"
+                  ],
+                  [
+                    "chest",
+                    "pass",
+                    "rotational",
+                    "side",
+                    "slam",
+                    "overhead",
+                    "scoop",
+                    "underhand",
+                    "backward",
+                    "wall"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why are 5 rep sets of throws good for power?",
               "answer": "You can be fully explosive without slowing at the end.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "explosive",
+                    "fast",
+                    "speed",
+                    "no fatigue",
+                    "fresh",
+                    "quality",
+                    "every rep",
+                    "max effort"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -213809,7 +216065,19 @@
               "weight": "warmup",
               "prompt": "Your squat max is 200 pounds. What's the speed-work weight?",
               "answer": "About 100 to 120 pounds.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "100",
+                    "110",
+                    "120",
+                    "100 to 120",
+                    "50",
+                    "60 percent"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -213823,7 +216091,16 @@
               "weight": "stretch",
               "prompt": "Should speed sets be 2 or 3 reps, or 10?",
               "answer": "About 2 or 3.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "2 or 3",
+                  "10"
+                ],
+                "accept": [
+                  "2 or 3"
+                ]
+              }
             }
           ]
         },
@@ -213848,14 +216125,40 @@
               "weight": "core",
               "prompt": "Why stop a power set early instead of finishing all 5 reps?",
               "answer": "Slow reps train you to move slowly.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "slow",
+                    "train",
+                    "habit",
+                    "quality",
+                    "fatigue",
+                    "speed",
+                    "teach"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your jumps look the same height across all 3 reps. What does it tell you?",
               "answer": "The set length is right.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "right",
+                    "fine",
+                    "good",
+                    "correct",
+                    "length",
+                    "fresh",
+                    "keep"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -213873,14 +216176,35 @@
               "weight": "warmup",
               "prompt": "Where does the 10 minute power block go?",
               "answer": "After the warm-up, before heavy lifts.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "after the warm-up",
+                    "after warm",
+                    "before heavy",
+                    "start",
+                    "early",
+                    "first"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "You slept 4 hours and feel flat. Should you do the power block today?",
               "answer": "Skip it or keep it very light.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Do it as planned",
+                  "Skip it or keep it very light"
+                ],
+                "accept": [
+                  "Skip it or keep it very light"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -213912,14 +216236,28 @@
               "weight": "core",
               "prompt": "Your heels land at 70 inches but you fall back to 66. Which number counts?",
               "answer": "66, the mark closest to the start line.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "66"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "How many attempts should you take on test day: 1 or 3?",
               "answer": "3, and keep the best.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "1",
+                  "3"
+                ],
+                "accept": [
+                  "3"
+                ]
+              }
             }
           ]
         }
@@ -213951,21 +216289,60 @@
               "weight": "warmup",
               "prompt": "Before rep 1 on a bench, where should your shoulder blades be?",
               "answer": "Pulled together and down.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "together",
+                    "back",
+                    "down",
+                    "retract",
+                    "squeeze",
+                    "pinch",
+                    "tucked"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your forearms tilt forward 20 degrees at the bottom of a press. What's the fix?",
-              "answer": "Stack wrists over elbows so forearms are vertical.",
-              "answer_kind": "phrase"
+              "answer": "Stack the wrists over the elbows so the forearms are vertical.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "stack",
+                    "vertical",
+                    "wrist",
+                    "elbow",
+                    "under",
+                    "straight up"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Two lifters press 135 pounds. One sets the shoulders first. Why does that matter?",
               "answer": "It decides how much load the shoulder can safely take.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "safe",
+                    "load",
+                    "shoulder",
+                    "stable",
+                    "protect",
+                    "injur",
+                    "stronger",
+                    "position"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -213983,7 +216360,19 @@
               "weight": "warmup",
               "prompt": "Your left arm lags behind on rep 6. What does it show?",
               "answer": "The left side is weaker.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "weaker",
+                    "imbalance",
+                    "left is weak",
+                    "left side",
+                    "uneven",
+                    "difference"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -213996,8 +216385,23 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why start with dumbbells before a barbell for the first 4 weeks?",
-              "answer": "Each arm moves freely and weak sides can't hide.",
-              "answer_kind": "sentence"
+              "answer": "Each arm moves freely, and a weak side can't hide.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "each arm",
+                    "independ",
+                    "freely",
+                    "weak side",
+                    "hide",
+                    "balance",
+                    "range",
+                    "natural",
+                    "imbalance"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -214014,22 +216418,75 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Your lower back arches on rep 7. What do you do?",
-              "answer": "Squeeze glutes and tuck ribs, or lower the weight.",
-              "answer_kind": "sentence"
+              "answer": "Squeeze your glutes and tuck your ribs, or lower the weight.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "glute",
+                    "rib",
+                    "brace",
+                    "lighter",
+                    "lower the weight",
+                    "less",
+                    "tighten"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "At the top of each of the 8 reps, where does your head go?",
               "answer": "Through, under the bar.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "through",
+                    "forward",
+                    "under the bar",
+                    "window",
+                    "push through"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 cues for staying tight.",
-              "answer": "Squeeze glutes and tuck ribs.",
-              "answer_kind": "list"
+              "answer": "Squeeze the glutes, and tuck the ribs.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "glute",
+                    "rib",
+                    "brace",
+                    "squeeze",
+                    "tuck",
+                    "tight",
+                    "abs",
+                    "grip",
+                    "legs",
+                    "feet"
+                  ],
+                  [
+                    "glute",
+                    "rib",
+                    "brace",
+                    "squeeze",
+                    "tuck",
+                    "tight",
+                    "abs",
+                    "grip",
+                    "legs",
+                    "feet"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -214047,7 +216504,19 @@
               "weight": "warmup",
               "prompt": "You do 12 pressing sets and 6 pulling sets a week. What do you change?",
               "answer": "Add about 6 pulling sets.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "add",
+                    "more pull",
+                    "pulling",
+                    "6",
+                    "rows",
+                    "balance"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -214061,7 +216530,20 @@
               "weight": "stretch",
               "prompt": "What's the target ratio?",
               "answer": "At least 1 pull for every press.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "1 to 1",
+                    "1:1",
+                    "one to one",
+                    "equal",
+                    "at least",
+                    "more pull",
+                    "same"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -214079,21 +216561,50 @@
               "weight": "warmup",
               "prompt": "Your press is 65 pounds. In 2 weeks, what's a fair jump?",
               "answer": "To about 70 pounds.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "70"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "You stall at 75 pounds for 8 reps. What do you try?",
               "answer": "Add reps, like 9 or 10, before adding weight.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "reps",
+                    "9",
+                    "10",
+                    "more reps",
+                    "double progression"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your squat went up 20 pounds in 8 weeks and your press went up 5. Why?",
               "answer": "Smaller muscles are involved.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "smaller",
+                    "small",
+                    "fewer muscles",
+                    "less muscle",
+                    "shoulders",
+                    "arms",
+                    "smaller muscles"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -214125,7 +216636,17 @@
               "weight": "warmup",
               "prompt": "You can train Monday, Wednesday and Friday. Which split fits?",
               "answer": "Full body, 3 days.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Full body, 3 days",
+                  "Upper/lower, 4 days",
+                  "Body part split, 5 days"
+                ],
+                "accept": [
+                  "Full body, 3 days"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -214157,14 +216678,42 @@
               "weight": "warmup",
               "prompt": "Your session has 3 lifts: curls, squats and dumbbell rows. What order?",
               "answer": "Squats, dumbbell rows, curls.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "squat"
+                  ],
+                  [
+                    "row"
+                  ],
+                  [
+                    "curl"
+                  ]
+                ],
+                "order": true
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why do 5 heavy sets of squats before curls?",
               "answer": "Squats need the most energy and skill.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "energy",
+                    "skill",
+                    "fresh",
+                    "hardest",
+                    "most",
+                    "big",
+                    "technique",
+                    "fatigue"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -214196,14 +216745,34 @@
               "weight": "core",
               "prompt": "Your bench was 85 for all reps. What's next session?",
               "answer": "About 87.5 pounds.",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "87.5"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You miss reps 2 sessions in a row. What does that suggest?",
               "answer": "Session-to-session progress is ending.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "ending",
+                    "stall",
+                    "slowing",
+                    "plateau",
+                    "over",
+                    "done",
+                    "weekly",
+                    "change",
+                    "beginner gains"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -214221,7 +216790,20 @@
               "weight": "warmup",
               "prompt": "Your squat has stalled for 3 sessions after 5 months. What change helps?",
               "answer": "Move to weekly progress with heavy, light and medium days.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "weekly",
+                    "heavy, light",
+                    "light day",
+                    "medium",
+                    "undulat",
+                    "block",
+                    "week to week"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -214235,7 +216817,19 @@
               "weight": "stretch",
               "prompt": "Why add a light day between the 2 harder ones?",
               "answer": "To recover while still practicing the lift.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "recover",
+                    "practice",
+                    "skill",
+                    "fatigue",
+                    "technique",
+                    "still"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -214251,23 +216845,56 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "In a 4 week block, which week is lighter?",
-              "answer": "Week 4.",
-              "answer_kind": "integer"
+              "prompt": "A 4-week block builds for 3 weeks and has 1 light week. Is the light week week 1 or week 4?",
+              "answer": "Week 4, after the 3 building weeks.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Week 1",
+                  "Week 4"
+                ],
+                "accept": [
+                  "Week 4"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your week 1 squat was 185 for 5 sets of 5. What's a good start for the next block?",
               "answer": "A little higher, like 190.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "higher",
+                    "more",
+                    "190",
+                    "heavier",
+                    "a little",
+                    "small jump"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why ease off in week 4?",
               "answer": "To let fatigue clear.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "fatigue",
+                    "recover",
+                    "rest",
+                    "clear",
+                    "deload",
+                    "absorb"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -214284,22 +216911,74 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 4 things to log.",
-              "answer": "Weight, sets, reps and how it felt.",
-              "answer_kind": "list"
+              "answer": "Weight, sets, reps, and how it felt.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "weight",
+                    "load"
+                  ],
+                  [
+                    "set"
+                  ],
+                  [
+                    "rep"
+                  ],
+                  [
+                    "felt",
+                    "feel",
+                    "rpe",
+                    "rir",
+                    "notes",
+                    "effort",
+                    "rest",
+                    "date"
+                  ]
+                ],
+                "need": 4
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your squat went from 185 to 205 in 8 weeks. What does it show?",
               "answer": "The plan is working.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "working",
+                    "plan works",
+                    "progress",
+                    "stronger",
+                    "good",
+                    "effective"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your bench didn't move in 8 weeks. What do you do?",
               "answer": "Change something in the plan for bench.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "change",
+                    "adjust",
+                    "variation",
+                    "volume",
+                    "frequency",
+                    "something",
+                    "different",
+                    "reps",
+                    "sets"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -214337,8 +217016,20 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Your torso twists on rep 8. What do you do?",
-              "answer": "Lower the weight or stop the set.",
-              "answer_kind": "phrase"
+              "answer": "Lower the weight, or stop the set.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "lower",
+                    "lighter",
+                    "stop",
+                    "less",
+                    "reduce",
+                    "end"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -214363,14 +217054,52 @@
               "weight": "warmup",
               "prompt": "Your negatives last 2 seconds. What's the target?",
               "answer": "About 5 seconds of slow lowering.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "5"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 ways to build toward your first chin-up.",
-              "answer": "Band-assisted reps and slow negatives.",
-              "answer_kind": "list"
+              "answer": "Band-assisted reps, and slow negatives.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "band",
+                    "assist",
+                    "negative",
+                    "eccentric",
+                    "lowering",
+                    "hang",
+                    "row",
+                    "scap",
+                    "jump",
+                    "machine",
+                    "lat pulldown",
+                    "inverted"
+                  ],
+                  [
+                    "band",
+                    "assist",
+                    "negative",
+                    "eccentric",
+                    "lowering",
+                    "hang",
+                    "row",
+                    "scap",
+                    "jump",
+                    "machine",
+                    "lat pulldown",
+                    "inverted"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -214402,14 +217131,37 @@
               "weight": "core",
               "prompt": "You lean back 45 degrees to move the stack. What does it tell you?",
               "answer": "The weight is too heavy.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "too heavy",
+                    "heavy",
+                    "lighter",
+                    "weight"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 reason to avoid behind-the-neck pulldowns.",
               "answer": "They strain the shoulder.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "shoulder",
+                    "strain",
+                    "neck",
+                    "joint",
+                    "risk",
+                    "injur",
+                    "rotat"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -214426,8 +217178,37 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 2 exercises for the small upper-back muscles.",
-              "answer": "Face pulls and band pull-aparts.",
-              "answer_kind": "list"
+              "answer": "Face pulls, and band pull-aparts.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "face pull",
+                    "pull-apart",
+                    "pull apart",
+                    "reverse fly",
+                    "rear delt",
+                    "y raise",
+                    "t raise",
+                    "band",
+                    "row",
+                    "shrug"
+                  ],
+                  [
+                    "face pull",
+                    "pull-apart",
+                    "pull apart",
+                    "reverse fly",
+                    "rear delt",
+                    "y raise",
+                    "t raise",
+                    "band",
+                    "row",
+                    "shrug"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
@@ -214459,21 +217240,60 @@
               "weight": "warmup",
               "prompt": "Week 1: rows 30 pounds for 10. Week 6: 40 pounds for 10. What does it show?",
               "answer": "Pulling strength went up.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "stronger",
+                    "strength",
+                    "improv",
+                    "progress",
+                    "went up",
+                    "working"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your log shows 6 pulling sets and 12 pressing sets a week. What do you change?",
               "answer": "Add about 6 pulling sets.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "add",
+                    "more pull",
+                    "pulling",
+                    "6",
+                    "balance"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your row hasn't changed in 4 weeks. Name 1 thing to try.",
               "answer": "Add 1 or 2 reps before adding weight.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "reps",
+                    "add",
+                    "grip",
+                    "variation",
+                    "tempo",
+                    "rest",
+                    "sets",
+                    "deload",
+                    "form",
+                    "different"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -214505,21 +217325,60 @@
               "weight": "warmup",
               "prompt": "You thought you rested 2 minutes, but the timer says 55 seconds. What does that show?",
               "answer": "Guessed rest is often far off.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "guess",
+                    "off",
+                    "wrong",
+                    "short",
+                    "underestimat",
+                    "time it",
+                    "unreliable",
+                    "feels longer"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your log shows rests from 45 seconds to 6 minutes on the same exercise. What's the fix?",
-              "answer": "Set a target rest and time it.",
-              "answer_kind": "phrase"
+              "answer": "Set a target rest, and time it.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "target",
+                    "time",
+                    "timer",
+                    "set",
+                    "consisten",
+                    "fixed",
+                    "standard"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 easy way to time rest in the gym.",
-              "answer": "A phone timer or a watch.",
-              "answer_kind": "phrase"
+              "answer": "A phone timer, or a watch.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "timer",
+                    "watch",
+                    "clock",
+                    "phone",
+                    "stopwatch",
+                    "app"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -214536,15 +217395,36 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "With 60 second rests you got 5, 3, 2 reps. With 3 minutes you got 5, 5, 4. Which is better for strength?",
-              "answer": "The 3 minute rests, because each set stays strong.",
-              "answer_kind": "sentence"
+              "answer": "3-minute rests, because each set stays strong.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "60-second rests",
+                  "3-minute rests"
+                ],
+                "accept": [
+                  "3-minute rests"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "What's a normal rest range for heavy compound lifts?",
               "answer": "About 2 to 5 minutes.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "2 to 5",
+                    "3 to 5"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -214569,21 +217449,78 @@
               "weight": "warmup",
               "prompt": "How long should you rest between 3 sets of curls?",
               "answer": "About 60 to 90 seconds.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "60",
+                    "90",
+                    "60 to 90",
+                    "1 minute",
+                    "a minute",
+                    "45"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 small exercises that suit short rests.",
-              "answer": "Curls and lateral raises.",
-              "answer_kind": "list"
+              "answer": "Curls, and lateral raises.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "curl",
+                    "raise",
+                    "extension",
+                    "fly",
+                    "calf",
+                    "shrug",
+                    "pushdown",
+                    "face pull",
+                    "crunch",
+                    "lateral",
+                    "kickback"
+                  ],
+                  [
+                    "curl",
+                    "raise",
+                    "extension",
+                    "fly",
+                    "calf",
+                    "shrug",
+                    "pushdown",
+                    "face pull",
+                    "crunch",
+                    "lateral",
+                    "kickback"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why can curls get 60 seconds of rest when squats need 3 minutes?",
               "answer": "They tire 1 small muscle and recover faster.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "small",
+                    "tire",
+                    "recover",
+                    "one muscle",
+                    "less",
+                    "fatigue",
+                    "isolat",
+                    "smaller"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -214600,15 +217537,46 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 1 good drill between heavy bench sets.",
-              "answer": "An ankle mobility drill or a hip stretch.",
-              "answer_kind": "phrase"
+              "answer": "An ankle mobility drill, or a hip stretch.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "mobility",
+                    "ankle",
+                    "hip",
+                    "stretch",
+                    "band",
+                    "pull-apart",
+                    "face pull",
+                    "breathing",
+                    "walk",
+                    "t-spine",
+                    "thoracic"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why not do 60 second hard planks between heavy squat sets?",
               "answer": "They tire the trunk you need for the squat.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "trunk",
+                    "core",
+                    "tire",
+                    "fatigue",
+                    "brace",
+                    "need it",
+                    "squat",
+                    "weaker"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -214633,7 +217601,16 @@
               "weight": "warmup",
               "prompt": "60 second rests: 3 sets of 5 at 135. 3 minute rests: 3 sets of 5 at 155. Which built more strength?",
               "answer": "The 3 minute session.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "The 60-second session",
+                  "The 3-minute session"
+                ],
+                "accept": [
+                  "The 3-minute session"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -214665,21 +217642,53 @@
               "weight": "warmup",
               "prompt": "You squat 3 sets of 5 heavy. How much rest goes in the plan?",
               "answer": "2 to 4 minutes.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "2",
+                    "3",
+                    "4",
+                    "2 to 4",
+                    "3 minutes"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Dumbbell row, 3 sets of 10. How much rest?",
               "answer": "About 90 seconds to 2 minutes.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "90",
+                    "2 minutes",
+                    "1.5",
+                    "90 seconds to 2"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Lateral raise, 3 sets of 15. How much rest?",
               "answer": "About 60 to 90 seconds.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "60",
+                    "90",
+                    "60 to 90",
+                    "a minute",
+                    "1 minute"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -214718,14 +217727,41 @@
               "weight": "core",
               "prompt": "Your knees cave inward on rep 4. What cue helps?",
               "answer": "Push the knees out over the toes.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "knees out",
+                    "out",
+                    "toes",
+                    "spread",
+                    "push",
+                    "outward",
+                    "track"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why film the 5 squats from the side instead of using a mirror?",
               "answer": "You can see depth and back angle without craning your neck.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "depth",
+                    "angle",
+                    "neck",
+                    "side",
+                    "see",
+                    "position",
+                    "crane",
+                    "turn"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -214743,7 +217779,19 @@
               "weight": "warmup",
               "prompt": "Your lower back tucks under at the very bottom. What do you do?",
               "answer": "Stop a little higher, just above where it tucks.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "higher",
+                    "above",
+                    "stop",
+                    "shallower",
+                    "less deep",
+                    "box"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -214775,7 +217823,20 @@
               "weight": "warmup",
               "prompt": "You can touch the wall with your toes 4 inches away. After 3 weeks, 5 inches. What does it show?",
               "answer": "Your ankle range improved.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "ankle",
+                    "range",
+                    "mobility",
+                    "improv",
+                    "better",
+                    "flexib",
+                    "dorsiflex"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -214789,7 +217850,22 @@
               "weight": "stretch",
               "prompt": "Why hold a doorframe during the 30 second deep squat?",
               "answer": "It lets you sit low with good posture while the hips open.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "posture",
+                    "balance",
+                    "support",
+                    "hips",
+                    "open",
+                    "low",
+                    "upright",
+                    "stretch",
+                    "hold"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -214814,14 +217890,34 @@
               "weight": "core",
               "prompt": "At 85 pounds your knees cave on reps 7 and 8. What's next session's weight?",
               "answer": "Stay at 85 until all 8 reps are clean.",
-              "answer_kind": "sentence"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "85"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why add only 2 to 5 pounds at a time?",
               "answer": "Small jumps keep form steady and progress going longer.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "small",
+                    "form",
+                    "steady",
+                    "progress",
+                    "longer",
+                    "safe",
+                    "sustain",
+                    "stall",
+                    "technique"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -214839,21 +217935,67 @@
               "weight": "warmup",
               "prompt": "Name the 3 things to check on the video.",
               "answer": "Depth, back angle and heel contact.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "depth",
+                    "deep"
+                  ],
+                  [
+                    "back",
+                    "torso",
+                    "angle",
+                    "spine"
+                  ],
+                  [
+                    "heel",
+                    "feet",
+                    "foot",
+                    "knee",
+                    "bar path"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Week 3 shows less depth than week 1 at a heavier weight. What does it suggest?",
               "answer": "The weight went up too fast.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "too fast",
+                    "fast",
+                    "too heavy",
+                    "weight",
+                    "jump",
+                    "too soon"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Which rep of a set of 8 is most useful to watch?",
               "answer": "The last 2, where form breaks first.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "last 2",
+                    "last two",
+                    "last",
+                    "final",
+                    "7",
+                    "8"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -214885,7 +218027,18 @@
               "weight": "warmup",
               "prompt": "Count the lowering for 1 rep of a 3 second tempo.",
               "answer": "1, 2, 3, then press up.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "1, 2, 3",
+                    "1 2 3",
+                    "one two three",
+                    "3 seconds",
+                    "three seconds"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -214899,7 +218052,21 @@
               "weight": "stretch",
               "prompt": "Name 1 benefit of a slow lowering.",
               "answer": "It builds strength and control.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "strength",
+                    "control",
+                    "muscle",
+                    "technique",
+                    "tendon",
+                    "safer",
+                    "time under tension",
+                    "feel"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -214924,7 +218091,32 @@
               "weight": "core",
               "prompt": "What does 2-0-1-0 mean?",
               "answer": "2 seconds down, no pause, 1 second up, no pause.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "2 seconds",
+                    "2 down",
+                    "2 lower"
+                  ],
+                  [
+                    "no pause",
+                    "0",
+                    "zero"
+                  ],
+                  [
+                    "1 second",
+                    "1 up",
+                    "1 lift"
+                  ],
+                  [
+                    "no pause",
+                    "0",
+                    "zero"
+                  ]
+                ],
+                "order": true
+              }
             },
             {
               "slot": 3,
@@ -214949,7 +218141,20 @@
               "weight": "warmup",
               "prompt": "Why pause at the bottom for 2 seconds?",
               "answer": "It removes the bounce and builds strength there.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "bounce",
+                    "momentum",
+                    "stretch reflex",
+                    "strength",
+                    "bottom",
+                    "weak point",
+                    "control"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -214980,15 +218185,42 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Your elbow aches on fast presses at 100 pounds. What's a tempo-based option?",
-              "answer": "4 second lowering at about 60 pounds.",
-              "answer_kind": "phrase"
+              "answer": "A 4-second lowering at about 60 pounds.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "4 second",
+                    "slow",
+                    "lowering",
+                    "eccentric",
+                    "tempo",
+                    "lighter",
+                    "60",
+                    "less weight"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why does a 4 second lowering help sore joints?",
               "answer": "It works the muscle with less weight.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "less weight",
+                    "lighter",
+                    "muscle",
+                    "load",
+                    "gentle",
+                    "control",
+                    "stress"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -215013,14 +218245,38 @@
               "weight": "warmup",
               "prompt": "Lowering 2 seconds, lifting how fast?",
               "answer": "As fast as you can with control.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "fast",
+                    "quick",
+                    "explosive",
+                    "control",
+                    "as fast"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why push fast on the way up in all 5 reps?",
               "answer": "It recruits more muscle.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "recruit",
+                    "muscle",
+                    "fibers",
+                    "power",
+                    "force",
+                    "speed",
+                    "strength"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -215052,7 +218308,20 @@
               "weight": "core",
               "prompt": "Why switch back to normal speed for weeks 3 and 4?",
               "answer": "To use the strength you built.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "use",
+                    "built",
+                    "strength",
+                    "transfer",
+                    "test",
+                    "apply",
+                    "heavier"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -215097,15 +218366,33 @@
               "slot": 2,
               "weight": "core",
               "prompt": "What's a common weekly target per muscle: 2 to 4 hard sets or 10 to 20?",
-              "answer": "About 10 to 20.",
-              "answer_kind": "phrase"
+              "answer": "About 10 to 20 hard sets.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "2 to 4 hard sets",
+                  "10 to 20 hard sets"
+                ],
+                "accept": [
+                  "10 to 20 hard sets"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "A set stopped 6 reps short of failure. Does it count as hard?",
               "answer": "Not really. Hard sets end within about 3 reps of failure.",
-              "answer_kind": "sentence"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Yes",
+                  "Not really"
+                ],
+                "accept": [
+                  "Not really"
+                ]
+              }
             }
           ]
         },
@@ -215123,7 +218410,20 @@
               "weight": "warmup",
               "prompt": "Your goal is a stronger 1 rep squat. Which range should most squat sets use?",
               "answer": "About 3 to 6 reps.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "3 to 6",
+                    "low",
+                    "heavy"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -215137,7 +218437,28 @@
               "weight": "stretch",
               "prompt": "Name 1 way to mix ranges in a leg day.",
               "answer": "Heavy squats for 5 reps, then lunges for 12.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "heavy",
+                    "low",
+                    "5",
+                    "3",
+                    "strength"
+                  ],
+                  [
+                    "light",
+                    "12",
+                    "10",
+                    "15",
+                    "lunge",
+                    "high",
+                    "accessory"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -215162,14 +218483,41 @@
               "weight": "core",
               "prompt": "What does RIR 0 mean?",
               "answer": "You couldn't have done another good rep.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "couldn't",
+                    "no more",
+                    "zero",
+                    "0",
+                    "failure",
+                    "none left",
+                    "max",
+                    "nothing left"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Most of your sets are RIR 5. What does that suggest?",
               "answer": "The sets are too easy to drive much progress.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "too easy",
+                    "easy",
+                    "not hard",
+                    "more effort",
+                    "heavier",
+                    "progress",
+                    "push"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -215194,14 +218542,40 @@
               "weight": "core",
               "prompt": "In week 3 your elbows ache and your rows drop. What do you do?",
               "answer": "Stop adding, or drop back a few sets.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "stop adding",
+                    "drop",
+                    "cut",
+                    "fewer",
+                    "back off",
+                    "reduce",
+                    "hold"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why add only 2 sets at a time?",
               "answer": "So recovery keeps up.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "recover",
+                    "keep up",
+                    "adapt",
+                    "joint",
+                    "slow",
+                    "gradual",
+                    "injur"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -215219,21 +218593,66 @@
               "weight": "warmup",
               "prompt": "Monday is squats for 5 sets of 3. What might Thursday be?",
               "answer": "Lighter squats or leg press for 3 sets of 10.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "light",
+                    "lighter",
+                    "leg press",
+                    "lunge",
+                    "front squat",
+                    "pause",
+                    "10",
+                    "12",
+                    "15",
+                    "volume",
+                    "variation"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why not go heavy in all 4 sessions every week?",
               "answer": "Joints and recovery can't keep up.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "joint",
+                    "recover",
+                    "fatigue",
+                    "burnout",
+                    "injur",
+                    "can't keep up",
+                    "too much",
+                    "beat up"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 thing light days add.",
               "answer": "More volume with less wear.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "volume",
+                    "practice",
+                    "wear",
+                    "less",
+                    "recovery",
+                    "technique",
+                    "blood",
+                    "skill"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -215251,7 +218670,19 @@
               "weight": "warmup",
               "prompt": "Lifts went up and you feel good. What do you do next month?",
               "answer": "Keep the volume about the same.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "keep",
+                    "same",
+                    "stay",
+                    "don't change",
+                    "continue",
+                    "hold"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -215265,7 +218696,19 @@
               "weight": "stretch",
               "prompt": "Lifts stalled but you feel fresh. What might help?",
               "answer": "Add a couple of sets.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "add",
+                    "more sets",
+                    "couple",
+                    "volume",
+                    "harder",
+                    "intensity"
+                  ]
+                ]
+              }
             }
           ]
         }
