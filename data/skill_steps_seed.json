@@ -44589,14 +44589,79 @@
               "weight": "warmup",
               "prompt": "A rich stew tastes heavy. Name 1 thing to add.",
               "answer": "Lemon juice or vinegar.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "lemon",
+                    "lime",
+                    "vinegar",
+                    "acid",
+                    "wine",
+                    "yogurt",
+                    "pickle",
+                    "citrus",
+                    "tomato"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 3 sources of acid in a kitchen.",
               "answer": "Lemon, vinegar and tomatoes.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "lemon",
+                    "lime",
+                    "vinegar",
+                    "tomato",
+                    "wine",
+                    "yogurt",
+                    "buttermilk",
+                    "citrus",
+                    "orange",
+                    "pickle",
+                    "mustard",
+                    "sour cream",
+                    "tamarind"
+                  ],
+                  [
+                    "lemon",
+                    "lime",
+                    "vinegar",
+                    "tomato",
+                    "wine",
+                    "yogurt",
+                    "buttermilk",
+                    "citrus",
+                    "orange",
+                    "pickle",
+                    "mustard",
+                    "sour cream",
+                    "tamarind"
+                  ],
+                  [
+                    "lemon",
+                    "lime",
+                    "vinegar",
+                    "tomato",
+                    "wine",
+                    "yogurt",
+                    "buttermilk",
+                    "citrus",
+                    "orange",
+                    "pickle",
+                    "mustard",
+                    "sour cream",
+                    "tamarind"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 3,
@@ -44635,7 +44700,21 @@
               "weight": "stretch",
               "prompt": "What does 1 teaspoon of Dijon mustard do in a vinaigrette?",
               "answer": "It helps the oil and vinegar stay mixed.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "emulsif",
+                    "mix",
+                    "bind",
+                    "stay together",
+                    "hold",
+                    "combine",
+                    "stable",
+                    "separat"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -44660,14 +44739,52 @@
               "weight": "core",
               "prompt": "Why do vegetables cooked in 1 tablespoon of oil taste better than in 1 teaspoon?",
               "answer": "Many flavor compounds dissolve in fat.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "fat",
+                    "dissolve",
+                    "carry",
+                    "flavor",
+                    "compound",
+                    "aroma",
+                    "soluble"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 fats used for finishing a dish.",
               "answer": "Olive oil and butter.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "olive oil",
+                    "oil",
+                    "butter",
+                    "cream",
+                    "sesame",
+                    "ghee",
+                    "yogurt",
+                    "nut oil"
+                  ],
+                  [
+                    "olive oil",
+                    "oil",
+                    "butter",
+                    "cream",
+                    "sesame",
+                    "ghee",
+                    "yogurt",
+                    "nut oil"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -44685,21 +44802,65 @@
               "weight": "warmup",
               "prompt": "A tomato sauce is too sour. What could you add?",
               "answer": "A pinch of sugar.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "sugar",
+                    "honey",
+                    "sweet",
+                    "baking soda",
+                    "butter",
+                    "cream",
+                    "carrot"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name the 5 basic tastes.",
               "answer": "Sweet, salty, sour, bitter and umami.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "sweet"
+                  ],
+                  [
+                    "salty",
+                    "salt"
+                  ],
+                  [
+                    "sour"
+                  ],
+                  [
+                    "bitter"
+                  ],
+                  [
+                    "umami",
+                    "savory"
+                  ]
+                ],
+                "need": 5
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Which of the 5 basic tastes reduces bitterness most: salty or sour?",
               "answer": "Salty",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Salty",
+                  "Sour"
+                ],
+                "accept": [
+                  "Salty"
+                ]
+              }
             }
           ]
         },
@@ -44717,21 +44878,60 @@
               "weight": "warmup",
               "prompt": "Name 1 finishing touch for grilled fish.",
               "answer": "A squeeze of lemon.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "lemon",
+                    "lime",
+                    "herb",
+                    "parsley",
+                    "dill",
+                    "olive oil",
+                    "butter",
+                    "salt",
+                    "capers",
+                    "sauce",
+                    "zest"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why add lemon in the last 1 minute instead of at the start?",
               "answer": "Cooking dulls its fresh brightness.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "dull",
+                    "fresh",
+                    "bright",
+                    "fade",
+                    "cook off",
+                    "lose",
+                    "vibrant"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "When should your final taste happen: 1 minute before plating or 1 hour before?",
               "answer": "1 minute before plating.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "1 minute before plating",
+                  "1 hour before"
+                ],
+                "accept": [
+                  "1 minute before plating"
+                ]
+              }
             }
           ]
         }
@@ -44762,15 +44962,40 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "About how much does 1 cup of flour weigh?",
-              "answer": "About 120 to 130 g",
-              "answer_kind": "phrase"
+              "answer": "About 120 to 130 g.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "120",
+                    "125",
+                    "130",
+                    "120 to 130",
+                    "4 ounces",
+                    "4.25"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why weigh flour instead of using 1 cup?",
               "answer": "Cups vary a lot depending on scooping.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "vary",
+                    "scoop",
+                    "pack",
+                    "exact",
+                    "accurate",
+                    "consisten",
+                    "precise"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -44795,7 +45020,21 @@
               "weight": "warmup",
               "prompt": "What does 'baking soda' need to react?",
               "answer": "An acid, like buttermilk.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "acid",
+                    "buttermilk",
+                    "yogurt",
+                    "lemon",
+                    "vinegar",
+                    "sour cream",
+                    "brown sugar",
+                    "cocoa"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -44809,7 +45048,16 @@
               "weight": "stretch",
               "prompt": "Which leavener needs 1 to 2 hours to rise dough: yeast or baking powder?",
               "answer": "Yeast",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Yeast",
+                  "Baking powder"
+                ],
+                "accept": [
+                  "Yeast"
+                ]
+              }
             }
           ]
         },
@@ -44866,14 +45114,38 @@
               "weight": "core",
               "prompt": "Why stop mixing once the flour disappears in a 1-bowl cake?",
               "answer": "It makes the result tough.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "tough",
+                    "gluten",
+                    "dense",
+                    "chewy",
+                    "rubbery"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why use butter at about 65°F for creaming?",
               "answer": "Soft butter traps air better.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "air",
+                    "trap",
+                    "soft",
+                    "cream",
+                    "fluffy",
+                    "whip",
+                    "bubbles"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -44891,21 +45163,58 @@
               "weight": "warmup",
               "prompt": "Name 1 test that shows a 9-inch cake is done.",
               "answer": "A toothpick comes out clean.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "toothpick",
+                    "skewer",
+                    "clean",
+                    "springs back",
+                    "spring",
+                    "pulls away",
+                    "crumbs",
+                    "thermometer"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "What internal temperature in °F shows bread is done?",
               "answer": "About 190 to 210°F.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "190",
+                    "200",
+                    "205",
+                    "210",
+                    "190 to 210"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 sign of done bread besides temperature.",
               "answer": "It sounds hollow when tapped.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "hollow",
+                    "tap",
+                    "brown",
+                    "golden",
+                    "crust",
+                    "color"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -44937,14 +45246,62 @@
               "weight": "warmup",
               "prompt": "Which tastes better on day 3: chili or fried fish?",
               "answer": "Chili",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Chili",
+                  "Fried fish"
+                ],
+                "accept": [
+                  "Chili"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 batch-friendly dishes.",
               "answer": "Curry and soup.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "curry",
+                    "soup",
+                    "stew",
+                    "chili",
+                    "casserole",
+                    "lasagna",
+                    "rice",
+                    "beans",
+                    "sauce",
+                    "grain",
+                    "roast",
+                    "bake",
+                    "enchilada",
+                    "meatball",
+                    "dal"
+                  ],
+                  [
+                    "curry",
+                    "soup",
+                    "stew",
+                    "chili",
+                    "casserole",
+                    "lasagna",
+                    "rice",
+                    "beans",
+                    "sauce",
+                    "grain",
+                    "roast",
+                    "bake",
+                    "enchilada",
+                    "meatball",
+                    "dal"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -44969,7 +45326,57 @@
               "weight": "warmup",
               "prompt": "Name 3 meals from 1 batch of shredded chicken.",
               "answer": "Tacos, salad and soup.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "taco",
+                    "salad",
+                    "soup",
+                    "sandwich",
+                    "wrap",
+                    "quesadilla",
+                    "bowl",
+                    "pasta",
+                    "enchilada",
+                    "fried rice",
+                    "pizza",
+                    "burrito",
+                    "stir-fry"
+                  ],
+                  [
+                    "taco",
+                    "salad",
+                    "soup",
+                    "sandwich",
+                    "wrap",
+                    "quesadilla",
+                    "bowl",
+                    "pasta",
+                    "enchilada",
+                    "fried rice",
+                    "pizza",
+                    "burrito",
+                    "stir-fry"
+                  ],
+                  [
+                    "taco",
+                    "salad",
+                    "soup",
+                    "sandwich",
+                    "wrap",
+                    "quesadilla",
+                    "bowl",
+                    "pasta",
+                    "enchilada",
+                    "fried rice",
+                    "pizza",
+                    "burrito",
+                    "stir-fry"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
@@ -44983,7 +45390,22 @@
               "weight": "stretch",
               "prompt": "Why plan 3 different meals from 1 batch?",
               "answer": "So the batch doesn't get boring.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "doesn't get boring",
+                    "not boring",
+                    "isn't boring",
+                    "variety",
+                    "same",
+                    "tired",
+                    "bored",
+                    "eat it",
+                    "different"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -45033,21 +45455,57 @@
               "weight": "warmup",
               "prompt": "What 2 things should a freezer label show?",
               "answer": "The dish name and the date.",
-              "answer_kind": "phrase"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "name",
+                    "dish",
+                    "what",
+                    "contents"
+                  ],
+                  [
+                    "date",
+                    "when"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Do soups keep their best quality frozen for 2 to 3 months or 2 to 3 years?",
               "answer": "2 to 3 months",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "2 to 3 months",
+                  "2 to 3 years"
+                ],
+                "accept": [
+                  "2 to 3 months"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why leave 1/2 inch of space at the top of a freezer container?",
               "answer": "Liquid expands as it freezes.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "expand",
+                    "freeze",
+                    "grow",
+                    "swell",
+                    "crack",
+                    "burst"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -45064,15 +45522,32 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "To what temperature in °F should leftovers be reheated?",
-              "answer": "165°F (74°C)",
-              "answer_kind": "phrase"
+              "answer": "165°F (74°C).",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "165"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why stir a bowl of chili halfway through 3 minutes in the microwave?",
               "answer": "To even out cold spots.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "cold spot",
+                    "even",
+                    "uneven",
+                    "heat",
+                    "hot spot",
+                    "through"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -45118,7 +45593,19 @@
               "weight": "core",
               "prompt": "Why move eggs into ice water right at the 6-minute mark?",
               "answer": "To stop the cooking.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "stop",
+                    "cooking",
+                    "carryover",
+                    "overcook",
+                    "set",
+                    "cool"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -45143,14 +45630,36 @@
               "weight": "warmup",
               "prompt": "Should you take 2 scrambled eggs off the heat before or after they look done?",
               "answer": "Slightly before",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Slightly before",
+                  "After"
+                ],
+                "accept": [
+                  "Slightly before"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "What does 'high' heat do to scrambled eggs?",
-              "answer": "Makes them rubbery and dry.",
-              "answer_kind": "phrase"
+              "answer": "It makes them rubbery and dry.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "rubbery",
+                    "dry",
+                    "tough",
+                    "overcook",
+                    "weep",
+                    "brown",
+                    "hard"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -45175,21 +45684,54 @@
               "weight": "warmup",
               "prompt": "What does 'over easy' mean?",
               "answer": "Flipped briefly so the yolk stays runny.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "flip",
+                    "flipped",
+                    "turned",
+                    "runny",
+                    "both sides",
+                    "yolk"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 way to set the top of the white without flipping.",
-              "answer": "Cover the pan or baste with hot fat.",
-              "answer_kind": "phrase"
+              "answer": "Cover the pan, or baste with hot fat.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "cover",
+                    "lid",
+                    "baste",
+                    "spoon",
+                    "water",
+                    "steam"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Which style is flipped for about 10 seconds: sunny-side up or over easy?",
               "answer": "Over easy",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Sunny-side up",
+                  "Over easy"
+                ],
+                "accept": [
+                  "Over easy"
+                ]
+              }
             }
           ]
         },
@@ -45206,22 +45748,55 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "How many eggs make a typical omelet for 1 person?",
-              "answer": "2 or 3",
-              "answer_kind": "phrase"
+              "answer": "2 or 3.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "2",
+                    "3",
+                    "2 or 3",
+                    "two",
+                    "three"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "When you fold a 3-egg omelet, should the top be slightly wet or fully dry?",
               "answer": "Slightly wet",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Slightly wet",
+                  "Fully dry"
+                ],
+                "accept": [
+                  "Slightly wet"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why warm cold ham and 1/4 cup of spinach before adding them?",
               "answer": "So they heat through without overcooking the egg.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "overcook",
+                    "heat through",
+                    "warm",
+                    "cold",
+                    "middle",
+                    "cook evenly",
+                    "set"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -45239,14 +45814,36 @@
               "weight": "warmup",
               "prompt": "Why strain an egg through a sieve for 30 seconds before poaching?",
               "answer": "It removes the thin white that makes wisps.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "wisp",
+                    "thin white",
+                    "watery",
+                    "stringy",
+                    "loose",
+                    "feather",
+                    "spread"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "For poaching, should water boil hard at 212°F or barely simmer?",
               "answer": "Barely simmer",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Boil hard",
+                  "Barely simmer"
+                ],
+                "accept": [
+                  "Barely simmer"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -45284,22 +45881,51 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Dinner is at 7:00 and a roast takes 2 hours plus 20 minutes rest. When does it go in?",
-              "answer": "4:40",
-              "answer_kind": "phrase"
+              "answer": "4:40.",
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "4:40",
+                  "4:40 pm",
+                  "16:40"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Rice takes 30 minutes. When should it start for 7:00?",
-              "answer": "6:30",
-              "answer_kind": "phrase"
+              "answer": "6:30.",
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "6:30",
+                  "6:30 pm",
+                  "18:30"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why choose 1 dish that can wait?",
               "answer": "It gives slack if something runs late.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "slack",
+                    "late",
+                    "buffer",
+                    "flex",
+                    "wait",
+                    "hold",
+                    "room",
+                    "timing",
+                    "relax"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -45349,21 +45975,85 @@
               "weight": "warmup",
               "prompt": "Name 2 dishes that can be made ahead.",
               "answer": "Stew and dessert.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "stew",
+                    "soup",
+                    "dessert",
+                    "lasagna",
+                    "casserole",
+                    "salad",
+                    "dip",
+                    "curry",
+                    "cake",
+                    "pie",
+                    "chili",
+                    "braise",
+                    "sauce",
+                    "bread",
+                    "tart",
+                    "mousse"
+                  ],
+                  [
+                    "stew",
+                    "soup",
+                    "dessert",
+                    "lasagna",
+                    "casserole",
+                    "salad",
+                    "dip",
+                    "curry",
+                    "cake",
+                    "pie",
+                    "chili",
+                    "braise",
+                    "sauce",
+                    "bread",
+                    "tart",
+                    "mousse"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A salad with tender lettuce: dress it 1 day ahead or right before serving?",
               "answer": "Right before serving.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "1 day ahead",
+                  "Right before serving"
+                ],
+                "accept": [
+                  "Right before serving"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why make 2 dishes the day before a dinner for 6?",
               "answer": "It frees you on the day.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "free",
+                    "time",
+                    "less stress",
+                    "relax",
+                    "guests",
+                    "focus",
+                    "calm",
+                    "day"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -45381,7 +46071,54 @@
               "weight": "warmup",
               "prompt": "Name 3 common food allergens.",
               "answer": "Peanuts, milk and shellfish.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "peanut",
+                    "milk",
+                    "dairy",
+                    "shellfish",
+                    "egg",
+                    "tree nut",
+                    "nut",
+                    "wheat",
+                    "gluten",
+                    "soy",
+                    "fish",
+                    "sesame"
+                  ],
+                  [
+                    "peanut",
+                    "milk",
+                    "dairy",
+                    "shellfish",
+                    "egg",
+                    "tree nut",
+                    "nut",
+                    "wheat",
+                    "gluten",
+                    "soy",
+                    "fish",
+                    "sesame"
+                  ],
+                  [
+                    "peanut",
+                    "milk",
+                    "dairy",
+                    "shellfish",
+                    "egg",
+                    "tree nut",
+                    "nut",
+                    "wheat",
+                    "gluten",
+                    "soy",
+                    "fish",
+                    "sesame"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
@@ -45395,7 +46132,21 @@
               "weight": "stretch",
               "prompt": "Why plan 1 main everyone can eat?",
               "answer": "Nobody feels left out.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "left out",
+                    "everyone",
+                    "include",
+                    "welcome",
+                    "nobody",
+                    "share",
+                    "same",
+                    "together"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -45413,14 +46164,41 @@
               "weight": "warmup",
               "prompt": "Name 1 kind of dish that frees you to sit with guests for 30 minutes.",
               "answer": "A stew that holds on low heat.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "stew",
+                    "braise",
+                    "soup",
+                    "casserole",
+                    "chili",
+                    "slow",
+                    "oven",
+                    "roast",
+                    "curry",
+                    "lasagna",
+                    "holds",
+                    "bake"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Which is better for hosting: 1 simple dish done well or 5 complex ones?",
               "answer": "1 simple dish done well",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "1 simple dish done well",
+                  "5 complex ones"
+                ],
+                "accept": [
+                  "1 simple dish done well"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -45466,14 +46244,38 @@
               "weight": "core",
               "prompt": "What does 1 drop of water do in a properly hot pan?",
               "answer": "It beads and skitters across the surface.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "bead",
+                    "skitter",
+                    "dance",
+                    "ball",
+                    "roll",
+                    "sizzle",
+                    "evaporat",
+                    "glide",
+                    "mercury"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Should you add oil before or after preheating a stainless pan for 3 minutes?",
               "answer": "After",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Before",
+                  "After"
+                ],
+                "accept": [
+                  "After"
+                ]
+              }
             }
           ]
         },
@@ -45490,8 +46292,21 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Why do 2 pounds of mushrooms crowded in 1 pan turn gray?",
-              "answer": "Their water cannot evaporate, so they steam.",
-              "answer_kind": "phrase"
+              "answer": "Their water can't evaporate, so they steam.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "steam",
+                    "water",
+                    "moisture",
+                    "evaporat",
+                    "crowd",
+                    "wet",
+                    "can't brown"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -45505,7 +46320,24 @@
               "weight": "stretch",
               "prompt": "Name 1 sign a pan is too crowded.",
               "answer": "Liquid pools in the pan.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "liquid",
+                    "pool",
+                    "water",
+                    "steam",
+                    "no sizzle",
+                    "gray",
+                    "grey",
+                    "soggy",
+                    "touching",
+                    "no space",
+                    "overlap"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -45523,21 +46355,48 @@
               "weight": "warmup",
               "prompt": "Which burner setting suits searing a steak: 'high' or 'low'?",
               "answer": "High",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "High",
+                  "Low"
+                ],
+                "accept": [
+                  "High"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Chocolate scorches easily above about 120°F. Melt it over high or low heat?",
               "answer": "Low",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "High",
+                  "Low"
+                ],
+                "accept": [
+                  "Low"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "A sauce is bubbling hard at 212°F. To simmer it, turn the heat up or down?",
               "answer": "Down",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Up",
+                  "Down"
+                ],
+                "accept": [
+                  "Down"
+                ]
+              }
             }
           ]
         },
@@ -45555,7 +46414,16 @@
               "weight": "warmup",
               "prompt": "Which handles higher heat: 'butter' or 'canola oil'?",
               "answer": "Canola oil",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Butter",
+                  "Canola oil"
+                ],
+                "accept": [
+                  "Canola oil"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -45594,7 +46462,20 @@
               "weight": "core",
               "prompt": "Why rotate trays halfway through a 40-minute roast?",
               "answer": "To even out hot spots.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "hot spot",
+                    "even",
+                    "uneven",
+                    "oven",
+                    "consisten",
+                    "one side",
+                    "back"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -45633,21 +46514,71 @@
               "weight": "warmup",
               "prompt": "Name the 4 parts of a simple meal.",
               "answer": "A protein, a vegetable, a starch and a sauce.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "protein"
+                  ],
+                  [
+                    "vegetable",
+                    "veggie",
+                    "veg",
+                    "greens"
+                  ],
+                  [
+                    "starch",
+                    "carb",
+                    "grain"
+                  ],
+                  [
+                    "sauce",
+                    "dressing",
+                    "fat",
+                    "flavor"
+                  ]
+                ],
+                "need": 4
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "You have pasta, canned tomatoes, garlic and 1 onion. Name 1 meal.",
               "answer": "Pasta with tomato sauce.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "pasta",
+                    "spaghetti",
+                    "marinara",
+                    "tomato"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You have eggs, spinach, rice and soy sauce. Name 1 meal.",
               "answer": "Fried rice with spinach and egg.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "fried rice",
+                    "rice bowl",
+                    "bowl",
+                    "omelet",
+                    "frittata",
+                    "congee",
+                    "bibimbap",
+                    "stir-fry",
+                    "egg"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -45665,21 +46596,133 @@
               "weight": "warmup",
               "prompt": "Name 3 template meals.",
               "answer": "Stir-fry, grain bowl and frittata.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "stir-fry",
+                    "stir fry",
+                    "bowl",
+                    "frittata",
+                    "omelet",
+                    "soup",
+                    "salad",
+                    "pasta",
+                    "taco",
+                    "curry",
+                    "sheet pan",
+                    "wrap",
+                    "risotto",
+                    "fried rice",
+                    "stew"
+                  ],
+                  [
+                    "stir-fry",
+                    "stir fry",
+                    "bowl",
+                    "frittata",
+                    "omelet",
+                    "soup",
+                    "salad",
+                    "pasta",
+                    "taco",
+                    "curry",
+                    "sheet pan",
+                    "wrap",
+                    "risotto",
+                    "fried rice",
+                    "stew"
+                  ],
+                  [
+                    "stir-fry",
+                    "stir fry",
+                    "bowl",
+                    "frittata",
+                    "omelet",
+                    "soup",
+                    "salad",
+                    "pasta",
+                    "taco",
+                    "curry",
+                    "sheet pan",
+                    "wrap",
+                    "risotto",
+                    "fried rice",
+                    "stew"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 3 proteins that work in the same stir-fry template.",
               "answer": "Chicken, tofu and shrimp.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "chicken",
+                    "tofu",
+                    "shrimp",
+                    "beef",
+                    "pork",
+                    "tempeh",
+                    "egg",
+                    "fish",
+                    "steak",
+                    "turkey",
+                    "edamame",
+                    "seitan"
+                  ],
+                  [
+                    "chicken",
+                    "tofu",
+                    "shrimp",
+                    "beef",
+                    "pork",
+                    "tempeh",
+                    "egg",
+                    "fish",
+                    "steak",
+                    "turkey",
+                    "edamame",
+                    "seitan"
+                  ],
+                  [
+                    "chicken",
+                    "tofu",
+                    "shrimp",
+                    "beef",
+                    "pork",
+                    "tempeh",
+                    "egg",
+                    "fish",
+                    "steak",
+                    "turkey",
+                    "edamame",
+                    "seitan"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "In a 'template' meal, what stays the same: the method or the ingredients?",
               "answer": "The method",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "The method",
+                  "The ingredients"
+                ],
+                "accept": [
+                  "The method"
+                ]
+              }
             }
           ]
         },
@@ -45703,15 +46746,37 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 substitute for 2 tablespoons of lemon juice.",
-              "answer": "Lime juice (or vinegar).",
-              "answer_kind": "phrase"
+              "answer": "Lime juice, or vinegar.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "lime",
+                    "vinegar",
+                    "wine",
+                    "orange",
+                    "citric",
+                    "sumac",
+                    "tamarind"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Is it safer to substitute 1 ingredient in a soup or in a cake?",
-              "answer": "Soup",
-              "answer_kind": "word"
+              "answer": "In a soup.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "In a soup",
+                  "In a cake"
+                ],
+                "accept": [
+                  "In a soup"
+                ]
+              }
             }
           ]
         },
@@ -45768,7 +46833,16 @@
               "weight": "core",
               "prompt": "What lets you cook without a recipe: 1 more recipe or solid technique?",
               "answer": "Solid technique.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "1 more recipe",
+                  "Solid technique"
+                ],
+                "accept": [
+                  "Solid technique"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -45807,21 +46881,110 @@
               "weight": "warmup",
               "prompt": "Name 3 of the 6 core kitchen tools.",
               "answer": "A chef's knife, a cutting board and a heavy pan.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "knife",
+                    "board",
+                    "pan",
+                    "skillet",
+                    "pot",
+                    "scale",
+                    "spatula",
+                    "tongs",
+                    "whisk",
+                    "thermometer",
+                    "peeler",
+                    "sheet",
+                    "tray",
+                    "bowl",
+                    "grater",
+                    "colander",
+                    "spoon",
+                    "cup"
+                  ],
+                  [
+                    "knife",
+                    "board",
+                    "pan",
+                    "skillet",
+                    "pot",
+                    "scale",
+                    "spatula",
+                    "tongs",
+                    "whisk",
+                    "thermometer",
+                    "peeler",
+                    "sheet",
+                    "tray",
+                    "bowl",
+                    "grater",
+                    "colander",
+                    "spoon",
+                    "cup"
+                  ],
+                  [
+                    "knife",
+                    "board",
+                    "pan",
+                    "skillet",
+                    "pot",
+                    "scale",
+                    "spatula",
+                    "tongs",
+                    "whisk",
+                    "thermometer",
+                    "peeler",
+                    "sheet",
+                    "tray",
+                    "bowl",
+                    "grater",
+                    "colander",
+                    "spoon",
+                    "cup"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Which is more useful daily: an 8-inch chef's knife or an avocado slicer?",
               "answer": "The 8-inch chef's knife.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "An 8-inch chef's knife",
+                  "An avocado slicer"
+                ],
+                "accept": [
+                  "An 8-inch chef's knife"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why weigh 250 g of flour on a scale instead of using 2 cups?",
-              "answer": "Cups vary with scooping; weight is exact.",
-              "answer_kind": "phrase"
+              "answer": "Cups vary with scooping, and weight is exact.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "vary",
+                    "exact",
+                    "accurate",
+                    "precise",
+                    "scoop",
+                    "pack",
+                    "consisten",
+                    "density",
+                    "differ"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -45839,21 +47002,48 @@
               "weight": "warmup",
               "prompt": "Which is safer for cutting a tomato: a 'sharp' knife or a 'blunt' knife?",
               "answer": "A sharp knife",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "A sharp knife",
+                  "A blunt knife"
+                ],
+                "accept": [
+                  "A sharp knife"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Do 5 strokes on a honing steel remove metal or realign the edge?",
               "answer": "It realigns the edge.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Remove metal",
+                  "Realign the edge"
+                ],
+                "accept": [
+                  "Realign the edge"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Does a home knife need real sharpening every 1 day or every 3 to 6 months?",
               "answer": "Every 3 to 6 months.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Every day",
+                  "Every 3 to 6 months"
+                ],
+                "accept": [
+                  "Every 3 to 6 months"
+                ]
+              }
             }
           ]
         },
@@ -45871,14 +47061,43 @@
               "weight": "warmup",
               "prompt": "Name 1 thing to put under a cutting board so it doesn't slide.",
               "answer": "A damp towel underneath.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "towel",
+                    "cloth",
+                    "paper towel",
+                    "mat",
+                    "rubber",
+                    "grip",
+                    "shelf liner",
+                    "damp"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why keep 1 scrap bowl beside the board?",
-              "answer": "It keeps the board clear so you work faster.",
-              "answer_kind": "sentence"
+              "answer": "It keeps the board clear, so you work faster.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "clear",
+                    "space",
+                    "clean",
+                    "faster",
+                    "tidy",
+                    "clutter",
+                    "trips",
+                    "bin",
+                    "organiz"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -45903,21 +47122,53 @@
               "weight": "warmup",
               "prompt": "For a beginner frying 2 eggs, which pan is easiest: 'nonstick' or 'cast iron'?",
               "answer": "Nonstick",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Nonstick",
+                  "Cast iron"
+                ],
+                "accept": [
+                  "Nonstick"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Which pan sears a 1-inch steak better: cast iron or nonstick?",
               "answer": "Cast iron",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Cast iron",
+                  "Nonstick"
+                ],
+                "accept": [
+                  "Cast iron"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why does a heavy pan brown 1 pound of chicken better than a thin one?",
-              "answer": "It holds more heat, so the temperature does not crash.",
-              "answer_kind": "sentence"
+              "answer": "It holds more heat, so the temperature doesn't crash.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "heat",
+                    "hold",
+                    "retain",
+                    "crash",
+                    "drop",
+                    "even",
+                    "mass",
+                    "temperature"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -45941,8 +47192,17 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Which needs gram-exact measuring: a 500 g loaf of bread or a pot of soup?",
-              "answer": "The bread.",
-              "answer_kind": "word"
+              "answer": "A 500 g loaf of bread.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "A 500 g loaf of bread",
+                  "A pot of soup"
+                ],
+                "accept": [
+                  "A 500 g loaf of bread"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -45987,15 +47247,35 @@
               "slot": 2,
               "weight": "core",
               "prompt": "In a 'pinch grip', where do your thumb and index finger hold the knife?",
-              "answer": "On the blade just in front of the handle.",
-              "answer_kind": "sentence"
+              "answer": "On the blade, just in front of the handle.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "blade",
+                    "bolster",
+                    "in front of the handle",
+                    "spine",
+                    "above the handle"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "In the claw, do your 4 fingertips point toward or away from the blade?",
               "answer": "Away, curled under.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Toward the blade",
+                  "Away, curled under"
+                ],
+                "accept": [
+                  "Away, curled under"
+                ]
+              }
             }
           ]
         },
@@ -46013,7 +47293,19 @@
               "weight": "warmup",
               "prompt": "Why leave the 'root end' on while dicing an onion?",
               "answer": "It holds the layers together.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "layers",
+                    "together",
+                    "hold",
+                    "intact",
+                    "fall apart",
+                    "in place"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -46027,7 +47319,16 @@
               "weight": "stretch",
               "prompt": "To dice an onion, do you halve it through the 'root' or across the middle?",
               "answer": "Through the root.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Through the root",
+                  "Across the middle"
+                ],
+                "accept": [
+                  "Through the root"
+                ]
+              }
             }
           ]
         },
@@ -46045,14 +47346,40 @@
               "weight": "warmup",
               "prompt": "A recipe roasts 1-inch cubes for 30 minutes. What happens to 1/2-inch pieces?",
               "answer": "They overcook or burn.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "overcook",
+                    "burn",
+                    "dry",
+                    "char",
+                    "faster",
+                    "too done",
+                    "mushy"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why cut every potato piece to 1 inch instead of mixed sizes?",
               "answer": "So they cook at the same rate.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "same rate",
+                    "evenly",
+                    "same time",
+                    "even",
+                    "together",
+                    "consisten",
+                    "uniform"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -46091,7 +47418,17 @@
               "weight": "stretch",
               "prompt": "Dice for a recipe calls for 1/2-inch cubes. Is that small, medium or large dice?",
               "answer": "Medium dice",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Small dice",
+                  "Medium dice",
+                  "Large dice"
+                ],
+                "accept": [
+                  "Medium dice"
+                ]
+              }
             }
           ]
         },
@@ -46107,9 +47444,14 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Day 1: 3 minutes. Day 7: 90 seconds. How much faster?",
-              "answer": "Twice as fast, 90 seconds quicker.",
-              "answer_kind": "phrase"
+              "prompt": "Day 1: 3 minutes. Day 7: 90 seconds. How many times faster is day 7?",
+              "answer": "2, twice as fast.",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "2"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -46123,7 +47465,16 @@
               "weight": "stretch",
               "prompt": "Which matters more in week 1: an even dice or a fast dice?",
               "answer": "An even dice",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "An even dice",
+                  "A fast dice"
+                ],
+                "accept": [
+                  "An even dice"
+                ]
+              }
             }
           ]
         }
@@ -46154,8 +47505,21 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Why use rice cooked 1 day earlier for fried rice?",
-              "answer": "It is drier and fries better.",
-              "answer_kind": "phrase"
+              "answer": "It's drier, and fries better.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "dry",
+                    "drier",
+                    "fries",
+                    "crisp",
+                    "clump",
+                    "sticky",
+                    "less moisture"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -46169,7 +47533,16 @@
               "weight": "stretch",
               "prompt": "What heat suits fried rice in a wok: 'high' or 'low'?",
               "answer": "High",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "High",
+                  "Low"
+                ],
+                "accept": [
+                  "High"
+                ]
+              }
             }
           ]
         },
@@ -46201,7 +47574,21 @@
               "weight": "stretch",
               "prompt": "Why drain 2 cups of watery leftover vegetables before the frittata?",
               "answer": "So the frittata doesn't turn soggy.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "doesn't turn soggy",
+                    "not soggy",
+                    "isn't soggy",
+                    "watery",
+                    "wet",
+                    "set",
+                    "runny",
+                    "weep"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -46219,14 +47606,58 @@
               "weight": "warmup",
               "prompt": "Name 2 scraps that make good stock.",
               "answer": "Onion ends and carrot peels.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "onion",
+                    "carrot",
+                    "celery",
+                    "peel",
+                    "end",
+                    "bone",
+                    "herb stem",
+                    "parsley",
+                    "leek",
+                    "mushroom",
+                    "garlic",
+                    "skin",
+                    "tops"
+                  ],
+                  [
+                    "onion",
+                    "carrot",
+                    "celery",
+                    "peel",
+                    "end",
+                    "bone",
+                    "herb stem",
+                    "parsley",
+                    "leek",
+                    "mushroom",
+                    "garlic",
+                    "skin",
+                    "tops"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Where should you keep stock scraps until you have about 4 cups?",
               "answer": "In a bag in the freezer.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "freezer",
+                    "frozen",
+                    "freeze"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -46250,22 +47681,79 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Turn leftover roast chicken into 1 new dish.",
-              "answer": "Quesadillas (or chicken salad).",
-              "answer_kind": "phrase"
+              "answer": "Quesadillas, or chicken salad.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "quesadilla",
+                    "salad",
+                    "soup",
+                    "sandwich",
+                    "taco",
+                    "wrap",
+                    "pasta",
+                    "pie",
+                    "fried rice",
+                    "curry",
+                    "enchilada",
+                    "stock",
+                    "hash",
+                    "pizza",
+                    "burrito"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 way to change the texture of leftovers.",
               "answer": "Crisp them in a hot pan.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "crisp",
+                    "pan",
+                    "fry",
+                    "toast",
+                    "grill",
+                    "blend",
+                    "mash",
+                    "bake",
+                    "top",
+                    "crunch",
+                    "broil"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "What could 3 cups of leftover chili become besides more chili?",
-              "answer": "Chili nachos (or chili over baked potatoes).",
-              "answer_kind": "phrase"
+              "answer": "Chili nachos, or chili over baked potatoes.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "nacho",
+                    "potato",
+                    "pasta",
+                    "taco",
+                    "burrito",
+                    "quesadilla",
+                    "dog",
+                    "fries",
+                    "mac",
+                    "enchilada",
+                    "pie",
+                    "rice",
+                    "omelet"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -46282,22 +47770,67 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name the 2 things to write in a waste log for each item.",
-              "answer": "What it was and why it was thrown out.",
-              "answer_kind": "list"
+              "answer": "What it was, and why it was thrown out.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "what",
+                    "item",
+                    "food",
+                    "name"
+                  ],
+                  [
+                    "why",
+                    "reason",
+                    "cause"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "You toss half a bag of spinach every week. Name 1 fix.",
-              "answer": "Buy a smaller bag or plan 2 meals for it.",
-              "answer_kind": "sentence"
+              "answer": "Buy a smaller bag, or plan 2 meals for it.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "smaller",
+                    "less",
+                    "plan",
+                    "freeze",
+                    "meal",
+                    "smoothie",
+                    "use",
+                    "cook",
+                    "early",
+                    "wilt"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why log food waste for 2 weeks instead of guessing?",
               "answer": "To find patterns you can fix.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "pattern",
+                    "data",
+                    "real",
+                    "fix",
+                    "cause",
+                    "know",
+                    "evidence"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -46329,14 +47862,36 @@
               "weight": "warmup",
               "prompt": "A recipe says marinate 2 hours and you have 1 hour. When should you have noticed?",
               "answer": "When reading it before starting.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "reading",
+                    "before starting",
+                    "before you start",
+                    "first",
+                    "planning",
+                    "start",
+                    "read"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your recipe needs the oven at 400°F. Turn it on at step 1 or when the food is ready?",
               "answer": "At step 1, so it preheats.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "At step 1",
+                  "When the food is ready"
+                ],
+                "accept": [
+                  "At step 1"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -46361,21 +47916,85 @@
               "weight": "warmup",
               "prompt": "What does 'mise en place' mean?",
               "answer": "Everything in its place.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "everything in its place",
+                    "in its place",
+                    "everything ready",
+                    "set up",
+                    "prepared"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why prep everything before a 5-minute stir-fry?",
-              "answer": "It cooks in minutes, so there is no time to chop.",
-              "answer_kind": "sentence"
+              "answer": "It cooks in minutes, so there's no time to chop.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "fast",
+                    "no time",
+                    "quick",
+                    "minutes",
+                    "burn",
+                    "can't stop",
+                    "chop",
+                    "ready"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 things to measure into bowls before cooking a curry.",
-              "answer": "The spices and the coconut milk.",
-              "answer_kind": "list"
+              "answer": "The spices, and the coconut milk.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "spice",
+                    "curry",
+                    "coconut",
+                    "milk",
+                    "stock",
+                    "broth",
+                    "onion",
+                    "garlic",
+                    "ginger",
+                    "tomato",
+                    "paste",
+                    "rice",
+                    "oil",
+                    "salt",
+                    "sugar"
+                  ],
+                  [
+                    "spice",
+                    "curry",
+                    "coconut",
+                    "milk",
+                    "stock",
+                    "broth",
+                    "onion",
+                    "garlic",
+                    "ginger",
+                    "tomato",
+                    "paste",
+                    "rice",
+                    "oil",
+                    "salt",
+                    "sugar"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -46400,14 +48019,43 @@
               "weight": "core",
               "prompt": "Why line up 6 prepped bowls left to right in the order they go in?",
               "answer": "You can cook without rereading the recipe.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "reread",
+                    "recipe",
+                    "order",
+                    "flow",
+                    "without",
+                    "look",
+                    "smooth",
+                    "forget"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 thing usually added last to a stir-fry.",
-              "answer": "The sauce or fresh herbs.",
-              "answer_kind": "phrase"
+              "answer": "The sauce, or fresh herbs.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "sauce",
+                    "herb",
+                    "scallion",
+                    "green onion",
+                    "sesame",
+                    "lime",
+                    "nuts",
+                    "cilantro",
+                    "basil"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -46425,21 +48073,68 @@
               "weight": "warmup",
               "prompt": "Name 1 waiting moment to clean during.",
               "answer": "While water comes to a boil.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "boil",
+                    "simmer",
+                    "roast",
+                    "bake",
+                    "oven",
+                    "rest",
+                    "marinat",
+                    "wait",
+                    "preheat",
+                    "soak"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why is a clear 2-foot work area safer than a cluttered one?",
               "answer": "Less clutter means fewer spills and knife accidents.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "spill",
+                    "accident",
+                    "cut",
+                    "knock",
+                    "space",
+                    "safe",
+                    "clutter",
+                    "room"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your pasta water takes 10 minutes to boil. Name 1 job for that time.",
               "answer": "Wash the cutting board.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "wash",
+                    "clean",
+                    "wipe",
+                    "dishes",
+                    "chop",
+                    "prep",
+                    "sauce",
+                    "grate",
+                    "set",
+                    "board",
+                    "tidy"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -46471,7 +48166,20 @@
               "weight": "stretch",
               "prompt": "Why write down that your prep for a curry took 35 minutes?",
               "answer": "So you know when to start next time.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "start",
+                    "plan",
+                    "time",
+                    "next time",
+                    "know",
+                    "when",
+                    "estimate"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -46503,14 +48211,42 @@
               "weight": "warmup",
               "prompt": "Name 1 thing a 5-dinner plan saves besides money.",
               "answer": "Time spent deciding what to eat each day.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "time",
+                    "decid",
+                    "stress",
+                    "thinking",
+                    "waste",
+                    "trips",
+                    "effort",
+                    "decision"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why leave 1 or 2 nights flexible?",
-              "answer": "For leftovers or plans changing.",
-              "answer_kind": "phrase"
+              "answer": "For leftovers, or plans changing.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "leftover",
+                    "plans change",
+                    "change",
+                    "flex",
+                    "eat out",
+                    "invite",
+                    "tired",
+                    "spontan"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -46535,7 +48271,44 @@
               "weight": "warmup",
               "prompt": "Name 2 dinners that could share 1 bunch of cilantro.",
               "answer": "Tacos and a rice bowl.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "taco",
+                    "rice bowl",
+                    "bowl",
+                    "salsa",
+                    "curry",
+                    "soup",
+                    "salad",
+                    "burrito",
+                    "noodle",
+                    "stir-fry",
+                    "guacamole",
+                    "chutney",
+                    "fried rice",
+                    "pho"
+                  ],
+                  [
+                    "taco",
+                    "rice bowl",
+                    "bowl",
+                    "salsa",
+                    "curry",
+                    "soup",
+                    "salad",
+                    "burrito",
+                    "noodle",
+                    "stir-fry",
+                    "guacamole",
+                    "chutney",
+                    "fried rice",
+                    "pho"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
@@ -46549,7 +48322,19 @@
               "weight": "stretch",
               "prompt": "Why plan 3 meals around 1 bag of spinach?",
               "answer": "Less waste and lower cost.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "waste",
+                    "cost",
+                    "money",
+                    "use it up",
+                    "cheaper",
+                    "spoil"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -46567,21 +48352,79 @@
               "weight": "warmup",
               "prompt": "Name 4 sections to group a list by.",
               "answer": "Produce, dairy, meat and pantry.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "produce",
+                    "fruit",
+                    "vegetable"
+                  ],
+                  [
+                    "dairy",
+                    "milk",
+                    "cheese",
+                    "fridge"
+                  ],
+                  [
+                    "meat",
+                    "protein",
+                    "fish",
+                    "deli"
+                  ],
+                  [
+                    "pantry",
+                    "dry",
+                    "canned",
+                    "frozen",
+                    "bakery",
+                    "bread",
+                    "spices",
+                    "household"
+                  ]
+                ],
+                "need": 4
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why check the fridge before writing a 20-item list?",
               "answer": "To avoid buying what you have.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "avoid",
+                    "already have",
+                    "have",
+                    "duplicate",
+                    "waste",
+                    "double",
+                    "what you have"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your list sent you back to the store 2 times. Name 1 likely cause.",
-              "answer": "You didn't check the recipes or fridge first.",
-              "answer_kind": "phrase"
+              "answer": "You didn't check the recipes or the fridge first.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "check",
+                    "recipe",
+                    "fridge",
+                    "pantry",
+                    "forgot",
+                    "missed",
+                    "ingredients"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -46606,7 +48449,46 @@
               "weight": "core",
               "prompt": "Name 2 budget-friendly proteins.",
               "answer": "Beans and eggs.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "bean",
+                    "egg",
+                    "lentil",
+                    "chickpea",
+                    "tofu",
+                    "chicken thigh",
+                    "thigh",
+                    "canned tuna",
+                    "tuna",
+                    "peanut",
+                    "ground",
+                    "sardine",
+                    "cottage",
+                    "yogurt",
+                    "pork"
+                  ],
+                  [
+                    "bean",
+                    "egg",
+                    "lentil",
+                    "chickpea",
+                    "tofu",
+                    "chicken thigh",
+                    "thigh",
+                    "canned tuna",
+                    "tuna",
+                    "peanut",
+                    "ground",
+                    "sardine",
+                    "cottage",
+                    "yogurt",
+                    "pork"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -46637,15 +48519,44 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Why keep a rotation of about 10 favorite meals?",
-              "answer": "They are easy to plan and you know you'll cook them.",
-              "answer_kind": "sentence"
+              "answer": "They're easy to plan, and you know you'll cook them.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "easy",
+                    "know",
+                    "reliable",
+                    "cook them",
+                    "familiar",
+                    "habit",
+                    "quick",
+                    "default"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You've skipped Thursday's dinner 3 weeks running. What should change?",
               "answer": "Plan leftovers or a simpler meal for Thursdays.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "leftover",
+                    "simple",
+                    "easier",
+                    "quick",
+                    "change",
+                    "move",
+                    "skip",
+                    "takeout",
+                    "freezer"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -46677,7 +48588,20 @@
               "weight": "warmup",
               "prompt": "Why pat 2 chicken thighs dry before searing?",
               "answer": "A wet surface steams instead of browning.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "wet",
+                    "steam",
+                    "moisture",
+                    "brown",
+                    "sear",
+                    "crisp",
+                    "water"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -46707,23 +48631,38 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "What is the USDA safe minimum temperature for chicken?",
-              "answer": "165°F (74°C)",
-              "answer_kind": "phrase"
+              "prompt": "What is the USDA safe minimum temperature for chicken, in °F?",
+              "answer": "165°F (74°C).",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "165"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "What is the USDA safe minimum for ground beef?",
-              "answer": "160°F (71°C)",
-              "answer_kind": "phrase"
+              "prompt": "What is the USDA safe minimum for ground beef, in °F?",
+              "answer": "160°F (71°C).",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "160"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "What is the USDA safe minimum for a pork chop?",
-              "answer": "145°F (63°C) with a 3-minute rest.",
-              "answer_kind": "phrase"
+              "prompt": "What is the USDA safe minimum for a pork chop, in °F, before its 3-minute rest?",
+              "answer": "145°F (63°C), with a 3-minute rest.",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "145"
+                ]
+              }
             }
           ]
         },
@@ -46748,14 +48687,38 @@
               "weight": "core",
               "prompt": "What happens to a roast's internal temperature while resting?",
               "answer": "It rises a few degrees.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "rise",
+                    "goes up",
+                    "climb",
+                    "carryover",
+                    "increase",
+                    "higher"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why rest a roast for 15 minutes before slicing?",
-              "answer": "Juices settle so less runs out.",
-              "answer_kind": "phrase"
+              "answer": "The juices settle, so less runs out.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "juice",
+                    "settle",
+                    "redistribut",
+                    "moist",
+                    "run out",
+                    "reabsorb"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -46779,8 +48742,26 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 signs a fish fillet is done.",
-              "answer": "Opaque and flaking easily.",
-              "answer_kind": "list"
+              "answer": "Opaque, and flaking easily.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "opaque",
+                    "white",
+                    "not translucent"
+                  ],
+                  [
+                    "flake",
+                    "fork",
+                    "firm",
+                    "145",
+                    "temperature",
+                    "separate"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -46805,7 +48786,20 @@
               "weight": "warmup",
               "prompt": "Why press tofu for 15 minutes before frying?",
               "answer": "Removing water lets it brown.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "water",
+                    "moisture",
+                    "brown",
+                    "crisp",
+                    "firm",
+                    "absorb",
+                    "sear"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -46849,23 +48843,39 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "What is the danger zone in Fahrenheit?",
-              "answer": "40°F to 140°F",
-              "answer_kind": "phrase"
+              "prompt": "What is the danger zone in Fahrenheit? Give the low end, then the high end.",
+              "answer": "40°F to 140°F.",
+              "answer_kind": "list",
+              "grading": {
+                "accept": [
+                  "40, 140"
+                ],
+                "order": true
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "What is the maximum safe fridge temperature in °F?",
-              "answer": "40°F (4°C)",
-              "answer_kind": "phrase"
+              "answer": "40°F (4°C).",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "40"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "By USDA advice, how many hours can perishable food stay out at room temperature?",
-              "answer": "2 hours (1 hour above 90°F).",
-              "answer_kind": "phrase"
+              "answer": "2 hours, or 1 hour above 90°F.",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "2"
+                ]
+              }
             }
           ]
         },
@@ -46883,7 +48893,19 @@
               "weight": "warmup",
               "prompt": "Why use 2 boards, 1 for raw meat and 1 for produce?",
               "answer": "So bacteria from raw meat don't reach food that won't be cooked.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "bacteria",
+                    "cross-contam",
+                    "germs",
+                    "salmonella",
+                    "spread",
+                    "raw"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -46921,8 +48943,47 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 times to wash hands while cooking.",
-              "answer": "After raw meat and after touching the trash.",
-              "answer_kind": "list"
+              "answer": "After raw meat, and after touching the trash.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "raw",
+                    "meat",
+                    "chicken",
+                    "egg",
+                    "fish",
+                    "trash",
+                    "bin",
+                    "phone",
+                    "bathroom",
+                    "start",
+                    "before",
+                    "face",
+                    "nose",
+                    "pet",
+                    "garbage"
+                  ],
+                  [
+                    "raw",
+                    "meat",
+                    "chicken",
+                    "egg",
+                    "fish",
+                    "trash",
+                    "bin",
+                    "phone",
+                    "bathroom",
+                    "start",
+                    "before",
+                    "face",
+                    "nose",
+                    "pet",
+                    "garbage"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -46946,8 +49007,23 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 3 safe ways to thaw food.",
-              "answer": "In the fridge, in cold water or in the microwave.",
-              "answer_kind": "list"
+              "answer": "In the fridge, in cold water, or in the microwave.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "fridge",
+                    "refrigerator"
+                  ],
+                  [
+                    "cold water"
+                  ],
+                  [
+                    "microwave"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
@@ -46978,15 +49054,36 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "By USDA advice, how many days do cooked leftovers keep in the fridge?",
-              "answer": "3 to 4 days",
-              "answer_kind": "phrase"
+              "answer": "3 to 4 days.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "3",
+                    "4",
+                    "3 to 4",
+                    "3-4"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "How many days does 1 pound of raw ground beef keep in the fridge?",
-              "answer": "1 to 2 days",
-              "answer_kind": "phrase"
+              "answer": "1 to 2 days.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "1",
+                    "2",
+                    "1 to 2",
+                    "1-2",
+                    "a day or two"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -47025,7 +49122,16 @@
               "weight": "warmup",
               "prompt": "2 soups each get 1 teaspoon of salt, 1 early and 1 at the end. Which tastes more evenly seasoned?",
               "answer": "The one salted early.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "The one salted early",
+                  "The one salted at the end"
+                ],
+                "accept": [
+                  "The one salted early"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -47039,7 +49145,21 @@
               "weight": "stretch",
               "prompt": "Why does salt added early taste 'rounder' than salt added at the end?",
               "answer": "It has time to spread through the food.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "spread",
+                    "time",
+                    "absorb",
+                    "through",
+                    "penetrat",
+                    "distribut",
+                    "dissolve",
+                    "soak"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -47057,21 +49177,63 @@
               "weight": "warmup",
               "prompt": "A recipe says to taste at 3 stages. Name them.",
               "answer": "The start, the middle and the end.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "start",
+                    "beginning",
+                    "early"
+                  ],
+                  [
+                    "middle",
+                    "halfway",
+                    "during"
+                  ],
+                  [
+                    "end",
+                    "finish",
+                    "before serving",
+                    "plating"
+                  ]
+                ],
+                "order": true
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A dish tastes flat. What should you try first?",
               "answer": "A pinch of salt.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "salt",
+                    "pinch"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why taste at minute 5 and minute 20, not only when plating?",
               "answer": "Problems are easier to fix early.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "fix",
+                    "early",
+                    "easier",
+                    "time",
+                    "correct",
+                    "adjust",
+                    "before it's too late"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -47089,7 +49251,16 @@
               "weight": "warmup",
               "prompt": "Which is saltier per 1 teaspoon: table salt or kosher salt?",
               "answer": "Table salt",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Table salt",
+                  "Kosher salt"
+                ],
+                "accept": [
+                  "Table salt"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -47134,8 +49305,21 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why put 40 g of salt in pasta water instead of only salting the sauce?",
-              "answer": "Pasta absorbs it, so it is seasoned all the way through.",
-              "answer_kind": "sentence"
+              "answer": "Pasta absorbs it, so it's seasoned all the way through.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "absorb",
+                    "through",
+                    "inside",
+                    "season",
+                    "whole",
+                    "within",
+                    "soak"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -47153,14 +49337,39 @@
               "weight": "warmup",
               "prompt": "What is the most reliable fix for 1 pot of over-salted soup?",
               "answer": "Add more unsalted liquid or ingredients.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "dilute",
+                    "more liquid",
+                    "water",
+                    "stock",
+                    "unsalted",
+                    "ingredients",
+                    "double",
+                    "bigger batch",
+                    "potato",
+                    "rice"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Does a raw potato pull salt out of soup? Answer yes or no.",
-              "answer": "Not meaningfully; dilution works better.",
-              "answer_kind": "phrase"
+              "answer": "Not meaningfully. Dilution works better.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Yes",
+                  "Not meaningfully"
+                ],
+                "accept": [
+                  "Not meaningfully"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -47198,8 +49407,26 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "What does 'deglaze' mean?",
-              "answer": "Add liquid to a hot pan to loosen browned bits.",
-              "answer_kind": "sentence"
+              "answer": "Add liquid to a hot pan to loosen the browned bits.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "liquid",
+                    "wine",
+                    "stock",
+                    "water"
+                  ],
+                  [
+                    "loosen",
+                    "scrape",
+                    "browned bits",
+                    "fond",
+                    "lift"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
@@ -47213,7 +49440,15 @@
               "weight": "stretch",
               "prompt": "What makes a pan sauce glossy in the last 1 minute?",
               "answer": "A knob of cold butter.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "butter",
+                    "cold butter"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -47230,8 +49465,28 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "What 2 ingredients make a roux, and in what ratio?",
-              "answer": "Fat and flour in equal parts.",
-              "answer_kind": "phrase"
+              "answer": "Fat and flour, in equal parts.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "fat",
+                    "butter",
+                    "oil"
+                  ],
+                  [
+                    "flour"
+                  ],
+                  [
+                    "equal",
+                    "same",
+                    "1 to 1",
+                    "1:1",
+                    "half"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
@@ -47245,7 +49500,19 @@
               "weight": "stretch",
               "prompt": "Why cook a roux for 2 minutes?",
               "answer": "To cook out the raw flour taste.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "raw",
+                    "flour",
+                    "taste",
+                    "starch",
+                    "pasty",
+                    "cook out"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -47270,14 +49537,42 @@
               "weight": "core",
               "prompt": "Your mayonnaise split. Name 1 fix.",
               "answer": "Whisk it slowly into a fresh yolk.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "yolk",
+                    "egg",
+                    "water",
+                    "slowly",
+                    "whisk",
+                    "new",
+                    "fresh",
+                    "mustard"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why add oil 1 drop at a time at first?",
               "answer": "So it breaks into tiny droplets.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "droplet",
+                    "tiny",
+                    "emulsif",
+                    "break",
+                    "bind",
+                    "disperse",
+                    "stable",
+                    "split"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -47301,8 +49596,16 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Which French mother sauce is built on tomatoes?",
-              "answer": "Tomato sauce (sauce tomate).",
-              "answer_kind": "phrase"
+              "answer": "Tomato sauce, sauce tomate.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "tomato",
+                    "tomate"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -47327,7 +49630,23 @@
               "weight": "warmup",
               "prompt": "What is a 'slurry'?",
               "answer": "Cornstarch mixed with cold water.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "cornstarch",
+                    "starch",
+                    "flour",
+                    "arrowroot"
+                  ],
+                  [
+                    "water",
+                    "cold",
+                    "liquid"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
@@ -47340,8 +49659,31 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "A sauce is lumpy. Name 2 fixes.",
-              "answer": "Whisk hard or strain it.",
-              "answer_kind": "phrase"
+              "answer": "Whisk hard, or strain it.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "whisk",
+                    "blend",
+                    "strain",
+                    "sieve",
+                    "blender",
+                    "immersion",
+                    "beat"
+                  ],
+                  [
+                    "whisk",
+                    "blend",
+                    "strain",
+                    "sieve",
+                    "blender",
+                    "immersion",
+                    "beat"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         }
@@ -47373,14 +49715,37 @@
               "weight": "warmup",
               "prompt": "Why brown 2 pounds of beef before stewing?",
               "answer": "Browning creates deep flavor.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "flavor",
+                    "browning",
+                    "maillard",
+                    "depth",
+                    "deep",
+                    "color",
+                    "caramel"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "What color should onions be after 15 minutes of 'browning'?",
               "answer": "Golden to deep brown.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "golden",
+                    "brown",
+                    "amber",
+                    "caramel"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -47405,7 +49770,19 @@
               "weight": "warmup",
               "prompt": "What does a 'simmer' look like?",
               "answer": "Small bubbles breaking gently.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "small bubbles",
+                    "bubbles",
+                    "gentle",
+                    "lazy",
+                    "occasional",
+                    "barely"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -47437,7 +49814,16 @@
               "weight": "warmup",
               "prompt": "Should stock start in 'cold' or 'hot' water?",
               "answer": "Cold water",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Cold water",
+                  "Hot water"
+                ],
+                "accept": [
+                  "Cold water"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -47450,8 +49836,20 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why not salt 2 quarts of stock heavily at the start?",
-              "answer": "It may be reduced later and become too salty.",
-              "answer_kind": "sentence"
+              "answer": "It may be reduced later and turn too salty.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "reduce",
+                    "concentrat",
+                    "too salty",
+                    "salty",
+                    "later",
+                    "boil down"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -47468,15 +49866,33 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "In a braise, should the liquid cover the meat fully or come about 1/2 way up?",
-              "answer": "About halfway",
-              "answer_kind": "word"
+              "answer": "About halfway up.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Cover it fully",
+                  "About halfway up"
+                ],
+                "accept": [
+                  "About halfway up"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Which cut braises better for 3 hours: 'chuck' or 'tenderloin'?",
               "answer": "Chuck",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Chuck",
+                  "Tenderloin"
+                ],
+                "accept": [
+                  "Chuck"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -47501,14 +49917,43 @@
               "weight": "warmup",
               "prompt": "How full should a blender be with hot soup: 1/2 or all the way?",
               "answer": "No more than half.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "No more than half",
+                  "All the way"
+                ],
+                "accept": [
+                  "No more than half"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 finishing touch for a blended soup.",
-              "answer": "A squeeze of lemon (or a swirl of cream).",
-              "answer_kind": "sentence"
+              "answer": "A squeeze of lemon, or a swirl of cream.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "lemon",
+                    "cream",
+                    "herb",
+                    "oil",
+                    "yogurt",
+                    "croutons",
+                    "pepper",
+                    "seeds",
+                    "chives",
+                    "parmesan",
+                    "crème",
+                    "sour cream",
+                    "swirl",
+                    "bacon"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -47553,15 +49998,39 @@
               "slot": 2,
               "weight": "core",
               "prompt": "What happens to cumin left 5 minutes in very hot oil?",
-              "answer": "They burn and turn bitter.",
-              "answer_kind": "phrase"
+              "answer": "It burns and turns bitter.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "burn",
+                    "bitter",
+                    "scorch",
+                    "black",
+                    "acrid"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why bloom 1 teaspoon of paprika in oil instead of stirring it in at the end?",
-              "answer": "Their flavors dissolve in fat.",
-              "answer_kind": "phrase"
+              "answer": "Its flavors dissolve in fat.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "fat",
+                    "dissolve",
+                    "oil",
+                    "bloom",
+                    "release",
+                    "deeper",
+                    "carry"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -47579,7 +50048,16 @@
               "weight": "warmup",
               "prompt": "Add 'basil' to a 1-hour sauce early or late?",
               "answer": "Late",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Early",
+                  "Late"
+                ],
+                "accept": [
+                  "Late"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -47593,7 +50071,32 @@
               "weight": "stretch",
               "prompt": "Name 2 delicate herbs.",
               "answer": "Basil and cilantro.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "basil",
+                    "cilantro",
+                    "parsley",
+                    "mint",
+                    "dill",
+                    "chives",
+                    "tarragon",
+                    "chervil"
+                  ],
+                  [
+                    "basil",
+                    "cilantro",
+                    "parsley",
+                    "mint",
+                    "dill",
+                    "chives",
+                    "tarragon",
+                    "chervil"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -47610,22 +50113,54 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Which lasts 2 years or more: whole or ground spices?",
-              "answer": "Whole",
-              "answer_kind": "word"
+              "answer": "Whole spices.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Whole spices",
+                  "Ground spices"
+                ],
+                "accept": [
+                  "Whole spices"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "About how long do ground spices stay fresh: 6 to 12 months or 10 years?",
               "answer": "6 to 12 months",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "6 to 12 months",
+                  "10 years"
+                ],
+                "accept": [
+                  "6 to 12 months"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 tool for grinding spices.",
-              "answer": "A mortar and pestle (or a spice grinder).",
-              "answer_kind": "phrase"
+              "answer": "A mortar and pestle, or a spice grinder.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "mortar",
+                    "pestle",
+                    "grinder",
+                    "coffee grinder",
+                    "mill",
+                    "rolling pin",
+                    "microplane",
+                    "grater"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -47641,23 +50176,46 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "A recipe needs 1 tablespoon of fresh thyme. How much dried?",
-              "answer": "1 teaspoon",
-              "answer_kind": "integer"
+              "prompt": "Dried herbs are about 3 times as strong as fresh. A recipe needs 6 teaspoons of fresh thyme. How many teaspoons of dried?",
+              "answer": "2 teaspoons.",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "2"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Which is stronger per 1 teaspoon: dried or fresh herbs?",
               "answer": "Dried",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Dried",
+                  "Fresh"
+                ],
+                "accept": [
+                  "Dried"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Add dried oregano early or in the last 1 minute?",
-              "answer": "Early, so they rehydrate.",
-              "answer_kind": "phrase"
+              "answer": "Early, so it rehydrates.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Early",
+                  "In the last minute"
+                ],
+                "accept": [
+                  "Early"
+                ]
+              }
             }
           ]
         },
@@ -47675,7 +50233,36 @@
               "weight": "warmup",
               "prompt": "Name 2 spices in taco seasoning.",
               "answer": "Cumin and chili powder.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "cumin",
+                    "chili",
+                    "paprika",
+                    "garlic",
+                    "onion",
+                    "oregano",
+                    "cayenne",
+                    "pepper",
+                    "salt",
+                    "coriander"
+                  ],
+                  [
+                    "cumin",
+                    "chili",
+                    "paprika",
+                    "garlic",
+                    "onion",
+                    "oregano",
+                    "cayenne",
+                    "pepper",
+                    "salt",
+                    "coriander"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
@@ -47727,8 +50314,20 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Why rinse rice 2 or 3 times before cooking?",
-              "answer": "To remove surface starch so it is less sticky.",
-              "answer_kind": "sentence"
+              "answer": "To remove surface starch, so it's less sticky.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "starch",
+                    "sticky",
+                    "gummy",
+                    "clump",
+                    "fluffy",
+                    "separate"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -47753,7 +50352,18 @@
               "weight": "warmup",
               "prompt": "What does 'al dente' mean?",
               "answer": "To the tooth, with a slight bite.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "to the tooth",
+                    "bite",
+                    "firm",
+                    "chew",
+                    "not mushy"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -47766,8 +50376,21 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why save 1 cup of pasta water before draining?",
-              "answer": "Its starch helps sauce cling.",
-              "answer_kind": "phrase"
+              "answer": "Its starch helps the sauce cling.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "starch",
+                    "cling",
+                    "thicken",
+                    "emulsif",
+                    "bind",
+                    "silky",
+                    "loosen"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -47785,21 +50408,57 @@
               "weight": "warmup",
               "prompt": "Should 2 pounds of potatoes start in 'cold' or 'boiling' water?",
               "answer": "Cold water",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Cold water",
+                  "Boiling water"
+                ],
+                "accept": [
+                  "Cold water"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why do potatoes dropped into 212°F water cook unevenly?",
               "answer": "The outside cooks before the middle.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "outside",
+                    "middle",
+                    "center",
+                    "uneven",
+                    "before",
+                    "mushy",
+                    "exterior"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 test that shows a boiled potato is done.",
               "answer": "A knife slides in with no resistance.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "knife",
+                    "fork",
+                    "skewer",
+                    "slides",
+                    "resistance",
+                    "tender",
+                    "soft",
+                    "pierce"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -47824,14 +50483,35 @@
               "weight": "core",
               "prompt": "Why shake par-boiled potatoes in the pot to 'rough them up'?",
               "answer": "The rough edges crisp in the oven.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "crisp",
+                    "crunch",
+                    "rough",
+                    "surface",
+                    "edges",
+                    "texture"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Should potatoes be wet or dry before you add 2 tablespoons of oil?",
               "answer": "Dry",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Wet",
+                  "Dry"
+                ],
+                "accept": [
+                  "Dry"
+                ]
+              }
             }
           ]
         },
@@ -47856,7 +50536,17 @@
               "weight": "core",
               "prompt": "Why rinse 1 cup of quinoa before cooking?",
               "answer": "To remove its bitter coating.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "bitter",
+                    "coating",
+                    "saponin",
+                    "soapy"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -47893,23 +50583,50 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "What oven temperature in °F works well for roasting vegetables?",
+              "prompt": "About what oven temperature in °F works well for roasting vegetables? Give a whole number.",
               "answer": "About 425°F (220°C).",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "425"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why spread vegetables in 1 single layer on the tray?",
               "answer": "So they brown instead of steaming.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "brown",
+                    "steam",
+                    "crisp",
+                    "space",
+                    "air",
+                    "caramel",
+                    "roast"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Are deep brown edges after 35 minutes a sign of burning or flavor?",
               "answer": "Flavor",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Burning",
+                  "Flavor"
+                ],
+                "accept": [
+                  "Flavor"
+                ]
+              }
             }
           ]
         },
@@ -47941,7 +50658,16 @@
               "weight": "stretch",
               "prompt": "Should you salt 1 pound of steamed vegetables before or after steaming?",
               "answer": "After, or toss with salt once cooked.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Before",
+                  "After"
+                ],
+                "accept": [
+                  "After"
+                ]
+              }
             }
           ]
         },
@@ -47959,21 +50685,52 @@
               "weight": "warmup",
               "prompt": "Which goes into the pan first: 'carrots' or 'spinach'?",
               "answer": "Carrots",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Carrots",
+                  "Spinach"
+                ],
+                "accept": [
+                  "Carrots"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "What heat suits sautéing 2 cups of zucchini: medium-high or low?",
               "answer": "Medium-high",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Medium-high",
+                  "Low"
+                ],
+                "accept": [
+                  "Medium-high"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why add carrots 5 minutes before the peppers?",
               "answer": "So everything finishes at the same time.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "same time",
+                    "together",
+                    "finish",
+                    "longer",
+                    "harder",
+                    "denser",
+                    "evenly"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -47991,7 +50748,20 @@
               "weight": "warmup",
               "prompt": "Why plunge beans into ice water after 2 minutes of boiling?",
               "answer": "To stop the cooking.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "stop",
+                    "cooking",
+                    "color",
+                    "crisp",
+                    "bright",
+                    "overcook",
+                    "set"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -48004,8 +50774,25 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 use for blanched vegetables.",
-              "answer": "Salads or quick reheating later.",
-              "answer_kind": "phrase"
+              "answer": "Salads, or quick reheating later.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "salad",
+                    "reheat",
+                    "stir-fry",
+                    "freeze",
+                    "platter",
+                    "snack",
+                    "side",
+                    "pasta",
+                    "crudite",
+                    "dip",
+                    "later"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -48023,21 +50810,68 @@
               "weight": "warmup",
               "prompt": "Name 1 way to soften raw cabbage.",
               "answer": "Salt it and let it sit.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "salt",
+                    "massage",
+                    "vinegar",
+                    "lemon",
+                    "blanch",
+                    "steam",
+                    "thin",
+                    "shred",
+                    "acid",
+                    "sit",
+                    "dressing"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "For a 30-minute quick pickle, what do you soak vegetables in?",
               "answer": "Vinegar, salt and a little sugar.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "vinegar",
+                    "acid"
+                  ],
+                  [
+                    "salt"
+                  ],
+                  [
+                    "sugar",
+                    "honey",
+                    "sweet"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why slice raw onions 1/8 inch thin for a salad?",
               "answer": "Thin slices are milder and easier to eat.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "mild",
+                    "milder",
+                    "gentle",
+                    "less sharp",
+                    "easier",
+                    "less harsh",
+                    "bite"
+                  ]
+                ]
+              }
             }
           ]
         }
