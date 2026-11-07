@@ -51,7 +51,10 @@ export type BlockType =
   | 'shape'
   | 'live'
   | 'container'
-  | 'panel';
+  | 'panel'
+  | 'table'
+  | 'countdown'
+  | 'toc';
 
 export type ShapeKind = 'rectangle' | 'rounded' | 'circle' | 'triangle' | 'diamond' | 'star' | 'hexagon' | 'arrow';
 
@@ -81,6 +84,12 @@ export interface Block {
   indent?: number;
   /** To-dos only. */
   checked?: boolean;
+  /** To-dos only: the real task it's linked to (services/tasks), when it is one. */
+  task?: string;
+  /** Tables only: rows of plain-text cells, and whether the first row is a header. */
+  table?: TableData;
+  /** Countdowns only: the day it counts to, ISO. Its words are what's on that day. */
+  date?: string;
   /** Toggles only: shut, so the blocks under it are hidden. */
   collapsed?: boolean;
   /**
@@ -105,6 +114,11 @@ export interface Block {
   shape?: ShapeKind;
   /** Sticky notes and shapes: how tall, in grid rows (./canvas). */
   rows?: number;
+}
+
+export interface TableData {
+  rows: string[][];
+  head: boolean;
 }
 
 export type CoverAlign = 'left' | 'center' | 'right';
@@ -183,6 +197,9 @@ export const BLOCK_KINDS: BlockKind[] = [
   { type: 'live', label: 'Live data', hint: 'Your goals, skills or stats, kept up to date.', keys: ['live', 'data', 'dashboard', 'widget'], glyph: '◉' },
   { type: 'panel', label: 'Panel', hint: 'A panel from Analytics, the Timer or Achievements.', keys: ['panel', 'analytics', 'widget'], glyph: '▦' },
   { type: 'container', label: 'Container', hint: 'A box to drag anywhere. Drop blocks in it.', keys: ['container', 'box', 'group', 'section', 'frame', 'panel', 'card'], glyph: '▣', group: 'layout' },
+  { type: 'table', label: 'Table', hint: 'Rows and columns to fill in.', keys: ['table', 'grid', 'spreadsheet', 'rows', 'columns'], glyph: '⊞', group: 'layout' },
+  { type: 'countdown', label: 'Countdown', hint: 'Days left until an exam or a deadline.', keys: ['countdown', 'deadline', 'exam', 'date', 'days'], glyph: '⏳', group: 'layout' },
+  { type: 'toc', label: 'Contents', hint: "A list of this page's headings. Click one to jump there.", keys: ['contents', 'toc', 'outline', 'index'], glyph: '☰', group: 'layout' },
 ];
 
 /** The chart kinds the server keeps, in the order the chart's switcher shows them. */
@@ -261,7 +278,10 @@ export const SLASH_KINDS: BlockKind[] = [
 ];
 
 /** Kinds that are drawn rather than written: no Turn into, to or from. */
-export const DRAWN: ReadonlySet<BlockType> = new Set(['chart', 'sticky', 'shape', 'live', 'container', 'panel']);
+export const DRAWN: ReadonlySet<BlockType> = new Set(['chart', 'sticky', 'shape', 'live', 'container', 'panel', 'table', 'countdown', 'toc']);
+
+/** Drawn blocks that run the page's width and are stepped onto, not typed into, like a chart. */
+export const WHOLE: ReadonlySet<BlockType> = new Set(['chart', 'live', 'panel', 'table', 'countdown', 'toc']);
 
 /** What "Turn into" offers: the kinds made of words. */
 export const TURN_KINDS: BlockKind[] = BLOCK_KINDS.filter((kind) => !DRAWN.has(kind.type));
@@ -374,6 +394,46 @@ export function containerBlock(extra: Partial<Block> = {}): Block {
 /** A new live block, looking at `source` with its default settings. */
 export function liveBlock(source: LiveSource = 'goal', extra: Partial<Block> = {}): Block {
   return block('live', '', { live: defaultLive(source), ...extra });
+}
+
+const TABLE = RULES.spaces.table;
+
+/** A new table: three columns, a header and two rows to fill in. */
+export function tableBlock(extra: Partial<Block> = {}): Block {
+  return block('table', '', { table: { rows: [['', '', ''], ['', '', ''], ['', '', '']], head: true }, ...extra });
+}
+
+/** A new countdown, to a week from today until the reader picks the day. */
+export function countdownBlock(extra: Partial<Block> = {}): Block {
+  const day = new Date(Date.now() + 7 * 86_400_000);
+  const iso = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;
+  return block('countdown', '', { date: iso, ...extra });
+}
+
+/** A new contents block: it reads the page's headings, so it holds nothing. */
+export function tocBlock(extra: Partial<Block> = {}): Block {
+  return block('toc', '', extra);
+}
+
+/** A table as stored, made safe to edit: every row as wide as the widest, within bounds. */
+export function cleanTable(raw: unknown): TableData {
+  const data = (raw && typeof raw === 'object' ? raw : {}) as Partial<TableData>;
+  const rows = (Array.isArray(data.rows) ? data.rows : []).filter(Array.isArray).slice(0, TABLE.rows_max);
+  const width = Math.min(TABLE.cols_max, Math.max(1, ...rows.map((row) => row.length)));
+  const clean = rows.map((row) =>
+    Array.from({ length: width }, (_, at) => {
+      const cell = row[at];
+      return (typeof cell === 'string' || typeof cell === 'number' ? String(cell) : '').slice(0, TABLE.cell_max);
+    }),
+  );
+  return { rows: clean.length ? clean : tableBlock().table!.rows, head: data.head !== false };
+}
+
+/** An ISO day, or '' when it isn't a real one. */
+export function cleanDay(value: unknown): string {
+  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return '';
+  const day = new Date(`${value}T12:00:00`);
+  return Number.isNaN(day.getTime()) || day.toISOString().slice(0, 10) !== value ? '' : value;
 }
 
 /** A new panel block, showing `kind` with its default settings. */
@@ -555,6 +615,9 @@ export function normalise(doc: Partial<SpaceDoc> | null | undefined, body = ''):
           const indent = Math.max(0, Math.min(INDENT_MAX, Math.floor(Number(one.indent) || 0)));
           if (indent) next.indent = indent;
           if (type === 'todo' && one.checked) next.checked = true;
+          if (type === 'todo' && typeof one.task === 'string' && one.task) next.task = one.task.slice(0, 40);
+          if (type === 'table') next.table = cleanTable(one.table);
+          if (type === 'countdown') next.date = cleanDay(one.date);
           if (type === 'toggle' && one.collapsed) next.collapsed = true;
           if (type === 'chart') next.chart = cleanChart(one.chart);
           if (type === 'live') next.live = cleanLive(one.live);
@@ -639,7 +702,10 @@ export const visibleText = (one: Block): string =>
   one.type === 'code' || DRAWN.has(one.type) ? one.text : plainOf(one.text);
 
 export function wordCount(blocks: Block[]): number {
-  return blocks.reduce((sum, one) => sum + (visibleText(one).match(/\S+/g)?.length ?? 0), 0);
+  return blocks.reduce((sum, one) => {
+    const cells = one.table ? one.table.rows.flat().join(' ') : '';
+    return sum + (`${visibleText(one)} ${cells}`.match(/\S+/g)?.length ?? 0);
+  }, 0);
 }
 
 // --------------------------------------------------------------------------

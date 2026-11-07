@@ -45,6 +45,14 @@ vi.mock('@/services/spaces', async (importOriginal) => {
       success: true as const,
       space: { ...TEAM[id - 1]!, invites: [] },
     })),
+    history: vi.fn(async () => ({
+      success: true as const,
+      versions: [{ at: '2026-11-07T09:10:00', words: 12, blocks: 6, reason: 'cut' as const, preview: ['Before the wipe'] }],
+    })),
+    restore: vi.fn(async (id: number) => ({
+      success: true as const,
+      space: { ...STORED[id - 1]!, doc: { icon: '', cover: '', blocks: [{ id: 'r1', type: 'text', text: 'Before the wipe' }] } },
+    })),
   };
 });
 
@@ -262,5 +270,71 @@ describe('a team space', () => {
   it('sends a team space that does not exist to the first one', async () => {
     open(7, '/team/7');
     expect((await nameField()).value).toBe('Study group');
+  });
+});
+
+describe('the page tools', () => {
+  it('offers templates on a blank page, and one fills the page', async () => {
+    open(1);
+    await nameField();
+    const strip = screen.getByRole('region', { name: 'Start from a template' });
+    fireEvent.click(within(strip).getByRole('button', { name: /Exam prep/ }));
+    expect(screen.queryByRole('region', { name: 'Start from a template' })).not.toBeInTheDocument();
+    expect(screen.getByRole('group', { name: /Countdown/ })).toBeInTheDocument();
+    expect(screen.getByRole('group', { name: 'Table' })).toBeInTheDocument();
+  });
+
+  it('has no template strip on a page with writing on it', async () => {
+    open(2);
+    await nameField();
+    expect(screen.queryByRole('region', { name: 'Start from a template' })).not.toBeInTheDocument();
+  });
+
+  it('undoes and redoes with the buttons and with ⌘Z', async () => {
+    open(1);
+    await nameField();
+    const undo = screen.getByRole('button', { name: 'Undo' });
+    expect(undo).toBeDisabled();
+    fireEvent.click(within(screen.getByRole('region', { name: 'Start from a template' })).getByRole('button', { name: /Weekly plan/ }));
+    expect(screen.getByRole('group', { name: 'Table' })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole('button', { name: 'Undo' }));
+    expect(screen.queryByRole('group', { name: 'Table' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Redo' })).not.toBeDisabled();
+
+    fireEvent.keyDown(firstBlock(), { key: 'z', metaKey: true, shiftKey: true });
+    expect(screen.getByRole('group', { name: 'Table' })).toBeInTheDocument();
+    fireEvent.keyDown(firstBlock(), { key: 'z', metaKey: true });
+    expect(screen.queryByRole('group', { name: 'Table' })).not.toBeInTheDocument();
+  });
+
+  it('lists earlier versions and puts one back', async () => {
+    open(1);
+    await nameField();
+    fireEvent.click(screen.getByRole('button', { name: 'History' }));
+    const pop = await screen.findByRole('dialog', { name: 'Version history' });
+    expect(await within(pop).findByText('Before a big delete')).toBeInTheDocument();
+    expect(within(pop).getByText('Before the wipe')).toBeInTheDocument();
+    fireEvent.click(within(pop).getByRole('button', { name: 'Restore this version' }));
+    await act(async () => {
+      fireEvent.click(within(pop).getByRole('button', { name: 'Yes, restore' }));
+    });
+    expect(service.restore).toHaveBeenCalledWith(1, 0, 'personal');
+    await waitFor(() => expect(textOf(firstBlock())).toBe('Before the wipe'));
+  });
+
+  it('downloads the page as Markdown', async () => {
+    const made = vi.fn(() => 'blob:page');
+    const original = URL.createObjectURL;
+    URL.createObjectURL = made;
+    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+    open(2);
+    await nameField();
+    fireEvent.click(screen.getByRole('button', { name: 'Export' }));
+    fireEvent.click(screen.getByRole('menuitem', { name: /Download as Markdown/ }));
+    expect(made).toHaveBeenCalled();
+    expect(click).toHaveBeenCalled();
+    URL.createObjectURL = original;
+    click.mockRestore();
   });
 });

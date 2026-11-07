@@ -45,8 +45,9 @@ MAX_TOKENS = 8000
 SPACES = RULES['spaces']
 LIVE = SPACES['live']
 
-#: Every kind the editor has.
-KINDS = tuple(SPACES['block_types'])
+#: Every kind the editor has, less the ones the model has no fields for yet: a
+#: table needs its cells, a countdown its date, and contents builds itself.
+KINDS = tuple(kind for kind in SPACES['block_types'] if kind not in ('table', 'countdown', 'toc'))
 SHAPES = tuple(SPACES['shapes'])
 COVERS = tuple(SPACES['covers'])
 SOURCES = tuple(LIVE['sources'])

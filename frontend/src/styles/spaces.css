@@ -1783,3 +1783,184 @@ html[data-theme="dark"] .sp-item.is-lifted { box-shadow: 0 0 0 2px var(--pref-ac
 .sp-panel-body .ax-tiles { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
 .sp-panel-body .ax-grid { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
 .sp-timer .focus-panel h2 { display: flex; align-items: center; gap: var(--space-2); }
+
+/* ==========================================================================
+   The page's tools: undo, redo, history, templates, export
+   (components/Spaces/PageTools.tsx)
+   ========================================================================== */
+/* With the tools in it the row is long: the name keeps its room, and the tools
+   wrap under it when the page is narrow (the chat open, a small window). */
+.sp-head { flex-wrap: wrap; row-gap: var(--space-1); }
+.sp-head .sp-name { min-width: min(100%, 14em); }
+.sp-page-tools { position: relative; flex: none; display: flex; align-items: center; gap: 2px; opacity: .55; transition: opacity .12s ease; }
+.sp-head:hover .sp-page-tools,
+.sp-page-tools:focus-within { opacity: 1; }
+.sp-tool { min-width: 28px; font-size: 1.1rem; line-height: 1; }
+.sp-tools-wrap { position: relative; }
+.sp-tools-pop { left: auto; right: 0; width: min(360px, 86vw); max-height: 440px; }
+.sp-tools-note { margin: 2px 8px 8px; font-size: var(--text-xs); color: var(--color-ink-faint); }
+.sp-pop-error { margin: 4px 8px; font-size: var(--text-xs); color: var(--color-danger, #c0392b); }
+.sp-ghost.is-strong { color: var(--color-ink); font-weight: 600; }
+.sp-versions { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.sp-version { display: grid; gap: 2px; padding: 8px; border-radius: 8px; }
+.sp-version:hover { background: var(--color-surface-2); }
+.sp-version-head { display: flex; justify-content: space-between; gap: 8px; font-size: var(--text-sm); color: var(--color-ink); }
+.sp-version-why { font-size: var(--text-xs); color: var(--color-ink-faint); }
+.sp-version-why.is-cut, .sp-version-why.is-ai { color: var(--color-accent); }
+.sp-version-meta { margin: 0; font-size: var(--text-xs); color: var(--color-ink-faint); }
+.sp-version-preview {
+    margin: 2px 0 4px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    font-size: var(--text-xs);
+    color: var(--color-ink-muted);
+}
+.sp-version > .sp-ghost { justify-self: start; padding-left: 0; }
+.sp-version-ask { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; font-size: var(--text-xs); color: var(--color-ink-muted); }
+.sp-template-item { align-items: flex-start; text-align: left; }
+.sp-template-hint { display: block; font-size: var(--text-xs); color: var(--color-ink-faint); }
+
+/* --- A blank page's templates ---------------------------------------------- */
+.sp-template-strip { margin: var(--space-4) 0 var(--space-2); }
+.sp-template-title { margin: 0 0 var(--space-2); font-size: var(--text-sm); color: var(--color-ink-faint); }
+.sp-template-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: var(--space-2); }
+.sp-template-card {
+    display: grid;
+    gap: 4px;
+    align-content: start;
+    padding: var(--space-3);
+    border: 1px solid var(--color-line);
+    border-radius: 12px;
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color .12s ease, transform .12s ease;
+}
+.sp-template-card:hover { border-color: var(--color-accent); transform: translateY(-1px); }
+.sp-template-card b { font-size: var(--text-sm); }
+.sp-template-card span { font-size: var(--text-xs); color: var(--color-ink-faint); }
+.sp-template-card .sp-template-icon { font-size: 22px; }
+
+/* ==========================================================================
+   Tables, countdowns and contents (components/Spaces/Extras.tsx)
+   ========================================================================== */
+.sp-table-block, .sp-countdown, .sp-toc { flex: 1 1 0; min-width: 0; border-radius: 10px; outline: none; }
+.sp-table-block:focus-visible, .sp-countdown:focus-visible, .sp-toc:focus-visible { box-shadow: 0 0 0 2px var(--color-accent); }
+.sp-table-scroll { overflow-x: auto; }
+.sp-table { border-collapse: collapse; min-width: 100%; font-size: var(--text-sm); }
+.sp-table th, .sp-table td { padding: 0; border: 1px solid var(--color-line); }
+.sp-table th { background: var(--color-surface-2); }
+.sp-cell {
+    width: 100%;
+    min-width: 90px;
+    box-sizing: border-box;
+    padding: 6px 8px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+}
+.sp-table th .sp-cell { font-weight: 600; }
+.sp-cell:focus { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+.sp-table .sp-table-x, .sp-table-colx td { border: 0; text-align: center; }
+.sp-table-x button, .sp-table-colx button {
+    padding: 0 6px;
+    border: 0;
+    background: none;
+    color: var(--color-ink-faint);
+    font: inherit;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity .12s ease;
+}
+.sp-table-block:hover .sp-table-x button,
+.sp-table-block:hover .sp-table-colx button,
+.sp-table-x button:focus-visible,
+.sp-table-colx button:focus-visible { opacity: 1; }
+.sp-table-tools { display: flex; align-items: center; gap: var(--space-2); margin-top: 4px; opacity: .6; }
+.sp-table-block:hover .sp-table-tools, .sp-table-tools:focus-within { opacity: 1; }
+.sp-table-head { display: inline-flex; align-items: center; gap: 4px; font-size: var(--text-xs); color: var(--color-ink-faint); }
+
+.sp-countdown {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-line);
+    background: var(--color-surface-2);
+}
+.sp-countdown-num { display: grid; justify-items: center; min-width: 88px; }
+.sp-countdown-num b { font-size: 2.6rem; line-height: 1; color: var(--color-ink); font-variant-numeric: tabular-nums; }
+.sp-countdown-num span { font-size: var(--text-xs); color: var(--color-ink-faint); }
+.sp-countdown.is-soon .sp-countdown-num b { color: #d97706; }
+.sp-countdown.is-now .sp-countdown-num b { color: var(--color-accent); }
+.sp-countdown.is-past .sp-countdown-num b { color: var(--color-ink-faint); }
+.sp-countdown-say { display: grid; gap: 4px; flex: 1 1 auto; min-width: 0; }
+.sp-countdown-label {
+    padding: 2px 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-ink);
+    font: inherit;
+    font-size: var(--text-lg, 1.1rem);
+    font-weight: 600;
+}
+.sp-countdown-label:focus { outline: none; box-shadow: 0 1px 0 var(--color-accent); }
+.sp-countdown-meta { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-xs); color: var(--color-ink-faint); }
+.sp-countdown-date {
+    padding: 2px 6px;
+    border: 1px solid var(--color-line);
+    border-radius: 6px;
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font: inherit;
+    font-size: var(--text-xs);
+}
+
+.sp-toc { padding: var(--space-2) var(--space-3); border-left: 3px solid var(--color-line); }
+.sp-toc-title { margin: 0 0 4px; font-size: var(--text-xs); font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--color-ink-faint); }
+.sp-toc-empty { margin: 0; font-size: var(--text-sm); color: var(--color-ink-faint); }
+.sp-toc ol { margin: 0; padding: 0; list-style: none; }
+.sp-toc button {
+    padding: 2px 0;
+    border: 0;
+    background: none;
+    color: var(--color-ink-muted);
+    font: inherit;
+    font-size: var(--text-sm);
+    text-align: left;
+    cursor: pointer;
+}
+.sp-toc button:hover { color: var(--color-ink); text-decoration: underline; }
+
+/* --- A to-do that's a real task ---------------------------------------------- */
+.sp-task-check { display: inline-flex; align-items: center; gap: 4px; flex: none; }
+.sp-task-chip {
+    padding: 0 5px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .03em;
+    color: var(--color-accent);
+    background: color-mix(in srgb, var(--color-accent) 14%, transparent);
+    cursor: help;
+}
+
+@media (max-width: 640px) {
+    .sp-page-tools { flex: 1 1 100%; flex-wrap: wrap; }
+    .sp-countdown { flex-wrap: wrap; gap: var(--space-2); }
+}
+
+/* --- Printing a page ("Export", then "Print or save as PDF") ------------------ */
+@media print {
+    /* The rail and the top bar by attribute: their classes belong to their own sheets. */
+    [class~="rail"], [class~="topbar"],
+    .sp-chat, .sp-gutter, .sp-page-tools, .sp-dress-tools, .sp-foot,
+    .sp-status, .sp-table-tools, .sp-table-x, .sp-table-colx, .sp-template-strip { display: none !important; }
+    .sp-page { padding: 0 !important; }
+    .sp-cell { min-width: 0; }
+}

@@ -26,6 +26,10 @@
  *
  * Down the right is the AI chat (components/Spaces/SpaceChat): ask it for a
  * page, or a change to this one, and it builds it. It folds to a tab.
+ *
+ * Beside the name are the page's tools (components/Spaces/PageTools): undo and
+ * redo (⌘Z, ⇧⌘Z), earlier versions kept by the server, templates (a blank page
+ * offers them up front), and export to Markdown or print.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
@@ -35,12 +39,16 @@ import { SpaceChat } from '@/components/Spaces/SpaceChat';
 import { BlockEditor } from '@/components/Spaces/BlockEditor';
 import { SpaceData } from '@/components/Spaces/SpaceData';
 import { Cover, DressTools, PageIcon } from '@/components/Spaces/Dress';
+import { PageTools, TemplateStrip } from '@/components/Spaces/PageTools';
+import { applyTemplate, isBlank, type Template } from '@/components/Spaces/templates';
+import { downloadMarkdown } from '@/components/Spaces/exportDoc';
 import { normalise, wordCount, type SpaceDoc } from '@/components/Spaces/blocks';
 import { fillProps, isDark } from '@/components/Spaces/fill';
 import {
   SPACE_COUNT,
   SPACE_PATH,
   defaultName as nameFor,
+  restore as restoreVersion,
   save as saveSpace,
   type SpaceKind,
 } from '@/services/spaces';
@@ -48,6 +56,14 @@ import '@/styles/spaces.css';
 
 /** How long editing has to stop before the page is saved. */
 export const SAVE_AFTER_MS = 700;
+
+/**
+ * Typing within this long of the last change is the same step for undo, so ⌘Z takes
+ * back a word or a burst of typing rather than one letter.
+ */
+export const UNDO_GROUP_MS = 900;
+/** How many steps undo remembers. */
+export const UNDO_KEEP = 100;
 
 type Status = 'idle' | 'saving' | 'saved' | 'failed';
 
@@ -80,6 +96,16 @@ export default function Space({ kind = 'personal' }: SpaceProps) {
   const pending = useRef<SpaceDoc | null>(null);
   const timer = useRef<number | undefined>(undefined);
 
+  /* Undo and redo: whole pages, newest last. `current` mirrors `doc` so the
+     keyboard handler always sees the page as it is. */
+  const current = useRef<SpaceDoc>(doc);
+  current.current = doc;
+  const past = useRef<SpaceDoc[]>([]);
+  const future = useRef<SpaceDoc[]>([]);
+  const lastStep = useRef(0);
+  const [, setSteps] = useState(0);
+  const bump = () => setSteps((n) => n + 1);
+
   useDocumentTitle(space?.name ?? defaultName(id));
 
   /* Seeded once the account's copy lands, and again when the reader moves to
@@ -92,6 +118,9 @@ export default function Space({ kind = 'personal' }: SpaceProps) {
     setDoc(normalise(space.doc, space.body));
     setStatus('idle');
     setSeeded(here);
+    past.current = [];
+    future.current = [];
+    bump();
   }, [here, ready, seeded, space]);
   /* Editable only once filled in: a field enabled a render early could be
      blurred empty and save the default name over the reader's. */
@@ -110,7 +139,8 @@ export default function Space({ kind = 'personal' }: SpaceProps) {
   // Whatever is unsaved goes on the way out, to this space and not the next.
   useEffect(() => () => void flush(), [flush]);
 
-  const write = (next: SpaceDoc) => {
+  /** Show a page and save it soon, without touching undo. */
+  const put = (next: SpaceDoc) => {
     setDoc(next);
     pending.current = next;
     setStatus('idle');
@@ -118,15 +148,86 @@ export default function Space({ kind = 'personal' }: SpaceProps) {
     timer.current = window.setTimeout(() => void flush(), SAVE_AFTER_MS);
   };
 
+  /** Remember the page as it is, as one step undo can go back to. */
+  const remember = (force = false) => {
+    const now = Date.now();
+    const before = current.current;
+    if (force || now - lastStep.current > UNDO_GROUP_MS) {
+      past.current = [...past.current, before].slice(-UNDO_KEEP);
+      future.current = [];
+      bump();
+    }
+    lastStep.current = now;
+  };
+
+  const write = (next: SpaceDoc) => {
+    // A block added or taken out is always a step of its own.
+    remember(next.blocks.length !== current.current.blocks.length);
+    put(next);
+  };
+
+  const undo = useCallback(() => {
+    const back = past.current[past.current.length - 1];
+    if (!back) return;
+    past.current = past.current.slice(0, -1);
+    future.current = [...future.current, current.current];
+    lastStep.current = 0;
+    bump();
+    put(back);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const redo = useCallback(() => {
+    const ahead = future.current[future.current.length - 1];
+    if (!ahead) return;
+    future.current = future.current.slice(0, -1);
+    past.current = [...past.current, current.current];
+    lastStep.current = 0;
+    bump();
+    put(ahead);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /* ⌘Z and ⇧⌘Z (Ctrl on other systems) anywhere on the page but the chat and the
+     name. Caught before the browser's own undo, which only knows one field and
+     would leave the page and its saved copy disagreeing. */
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (!(event.metaKey || event.ctrlKey) || event.altKey) return;
+      const key = event.key.toLowerCase();
+      if (key !== 'z' && key !== 'y') return;
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('.sp-chat, .sp-name, .sp-pop')) return;
+      if (!target?.closest('.sp-page') && target !== document.body) return;
+      event.preventDefault();
+      if (key === 'y' || event.shiftKey) redo();
+      else undo();
+    };
+    window.addEventListener('keydown', onKey, true);
+    return () => window.removeEventListener('keydown', onKey, true);
+  }, [redo, undo]);
+
   /* The AI chat's page (a build or an Undo) lands already saved on the
      server, so any autosave still waiting would only write the older page
      back over it. */
   const fromChat = (next: SpaceDoc) => {
     window.clearTimeout(timer.current);
     pending.current = null;
+    remember(true);
     setDoc(normalise(next));
     setStatus('saved');
   };
+
+  /** Put a saved version back: what's unsaved is saved first, so it's in the history too. */
+  const restoreAt = async (at: number): Promise<string> => {
+    await flush();
+    const result = await restoreVersion(id, at, kind).catch(() => ({ success: false as const, message: '' }));
+    if (!result.success) return result.message || "Couldn't restore that version.";
+    fromChat(result.space.doc ?? normalise(null));
+    return '';
+  };
+
+  const pickTemplate = (template: Template) => write(applyTemplate(doc, template));
   const [chatOpen, setChatOpen] = useState(false);
 
   const rename = async () => {
@@ -182,6 +283,19 @@ export default function Space({ kind = 'personal' }: SpaceProps) {
           <p className="sp-status" role="status" aria-live="polite">
             {STATUS_WORDS[status]}
           </p>
+          <PageTools
+            id={id}
+            kind={kind}
+            disabled={!loaded}
+            canUndo={past.current.length > 0}
+            canRedo={future.current.length > 0}
+            onUndo={undo}
+            onRedo={redo}
+            onRestore={restoreAt}
+            onTemplate={pickTemplate}
+            onMarkdown={() => downloadMarkdown(doc, name || defaultName(id))}
+            onPrint={() => window.print()}
+          />
           <DressTools
             icon={doc.icon}
             cover={doc.cover}
@@ -192,6 +306,9 @@ export default function Space({ kind = 'personal' }: SpaceProps) {
             onBackground={(background) => write({ ...doc, background })}
           />
         </header>
+
+        {/* A blank page offers a start. Typing anything makes it go away. */}
+        {loaded && isBlank(doc) && <TemplateStrip onPick={pickTemplate} />}
 
         {/* No box around the page: the blocks are written straight on it. */}
         <div className="sp-body">
@@ -206,7 +323,7 @@ export default function Space({ kind = 'personal' }: SpaceProps) {
           </SpaceData>
         </div>
         <p className="sp-foot">
-          {words} {words === 1 ? 'word' : 'words'} · Type "/" for blocks · Drag ⋮⋮ to move
+          {words} {words === 1 ? 'word' : 'words'} · Type "/" for blocks · Drag ⋮⋮ to move · ⌘Z to undo
         </p>
 
         {kind === 'team' && loaded && space && (

@@ -165,3 +165,25 @@ export async function undoTurn(
 export function clearChat(id: number, kind: SpaceKind = 'personal'): Promise<ApiResult<{ chat: ChatTurn[] }>> {
   return post<{ chat: ChatTurn[] }>(`${CHAT_BASE[kind]}/${id}/chat/clear`);
 }
+
+/** One earlier version of a page (backend/api/spaces.py, "Version history"). */
+export interface SpaceVersion {
+  /** When it was put aside, ISO. */
+  at: string;
+  words: number;
+  blocks: number;
+  /** Why it was kept: a while of editing, a big cut, an AI change, or a restore. */
+  reason: 'edit' | 'cut' | 'ai' | 'restore';
+  /** Its first few lines, as plain text. */
+  preview: string[];
+}
+
+/** Earlier versions of one page, newest first. */
+export function history(id: number, kind: SpaceKind = 'personal'): Promise<ApiResult<{ versions: SpaceVersion[] }>> {
+  return get<{ versions: SpaceVersion[] }>(`${CHAT_BASE[kind]}/${id}/history`);
+}
+
+/** Put one back. What's on the page now goes into the history first. */
+export async function restore(id: number, at: number, kind: SpaceKind = 'personal'): Promise<ApiResult<{ space: Space }>> {
+  return announce(kind, await post<{ space: Space }>(`${CHAT_BASE[kind]}/${id}/history/restore`, { at }));
+}

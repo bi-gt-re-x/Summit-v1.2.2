@@ -60,7 +60,7 @@ describe('typing shortcuts', () => {
 describe('the slash menu', () => {
   it('offers every kind before anything is typed, one entry per chart, shape, live source and panel', () => {
     const all = matchKinds('');
-    expect(all.filter((kind) => !['chart', 'shape', 'live', 'container', 'panel'].includes(kind.type))).toHaveLength(13);
+    expect(all.filter((kind) => !['chart', 'shape', 'live', 'container', 'panel'].includes(kind.type))).toHaveLength(16);
     expect(all.filter((kind) => kind.type === 'panel').map((kind) => kind.panel)).toEqual([...PANEL_KINDS]);
     expect(all.filter((kind) => kind.type === 'container')).toHaveLength(1);
     expect(all.filter((kind) => kind.type === 'live').map((kind) => kind.live)).toEqual([

@@ -2,6 +2,28 @@
 
 Notable changes, newest first. Dates are the day the work landed on the branch.
 
+## 2026-11-07 — Spaces: undo, history, templates, tables and real tasks
+
+Spaces had a strong editor and no safety net: it saves as you type, so select-all and
+Backspace was saved too, and gone. Now:
+
+- **Undo and redo** (⌘Z, ⇧⌘Z, and buttons beside the name). A burst of typing is one
+  step; adding or removing a block is always its own.
+- **Version history** (backend/api/spaces.py, "Version history"). The server keeps the
+  page every 10 minutes of editing, before any big delete, before the AI changes it and
+  before a restore, 25 deep. History lists them with a preview and puts one back, keeping
+  the current page first so a restore can be undone too.
+- **Templates**: weekly plan, exam prep, goal tracker, class notes, reading list, habit
+  tracker, project plan. A blank page opens on them; the Templates button adds one to the
+  end of a written page.
+- **Three new blocks**: a table (rows and columns, a header row, Enter adds a row), a
+  countdown (days to an exam or a deadline, amber in the last week) and contents (the
+  page's headings, click to jump).
+- **To-dos that are real tasks**: "Add to my tasks" in a to-do's menu puts it on the
+  Tasks page. Ticking it on the page completes the task (XP and all), unticking reopens
+  it, and a task finished elsewhere shows ticked when the page opens.
+- **Export** as Markdown, or print and save as PDF.
+
 ## 2026-11-05 — Weekly review and experiments
 
 Analytics read like a recital: it said what happened and stopped. Two things turn it

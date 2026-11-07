@@ -53,6 +53,10 @@ import {
 import {
   BLOCK_KINDS,
   DRAWN,
+  WHOLE,
+  countdownBlock,
+  tableBlock,
+  tocBlock,
   TURN_KINDS,
   shapeBlock,
   stickyBlock,
@@ -104,6 +108,8 @@ import {
   type Item,
   type Place,
 } from './canvas';
+import { CountdownBlock, TableBlock, TocBlock } from './Extras';
+import { TaskCheck, makeTask } from './TaskLink';
 import { ChartBlock } from './ChartBlock';
 import { LiveBlock } from './LiveBlock';
 import { PanelBlock } from './PanelBlock';
@@ -145,6 +151,9 @@ const PLACEHOLDER: Record<BlockType, string> = {
   container: '',
   sticky: '',
   shape: '',
+  table: '',
+  countdown: '',
+  toc: '',
 };
 
 const BULLETS = ['•', '◦', '▪'];
@@ -485,6 +494,12 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
       }
       const fresh = type === 'chart'
         ? chartBlock(kind.chart ?? 'bar', indent)
+        : type === 'table'
+          ? tableBlock(indent)
+          : type === 'countdown'
+          ? countdownBlock(indent)
+          : type === 'toc'
+          ? tocBlock(indent)
         : type === 'live'
           ? liveBlock(kind.live ?? 'goal', indent)
           : type === 'panel'
@@ -494,7 +509,7 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
           : shapeBlock(kind.shape ?? 'rectangle', indent);
       const made = { ...fresh, ...(empty ? { id: host.id, ...cleanPlace(host) } : {}) };
       // A note or a shape is narrower than the page; the line after it is not.
-      const wide = !host.indent && type !== 'chart' && type !== 'live' && type !== 'panel' ? { w: itemOf.get(host.id)?.w ?? COLS } : {};
+      const wide = !host.indent && !WHOLE.has(type) ? { w: itemOf.get(host.id)?.w ?? COLS } : {};
       const after = block('text', '', { ...indent, ...wide });
       onChange(
         empty
@@ -739,7 +754,7 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
       }
       // A chart or a live block is not joined into: Backspace steps onto it,
       // and a second Backspace there takes it out.
-      if (above.type === 'chart' || above.type === 'live' || above.type === 'panel') {
+      if (WHOLE.has(above.type)) {
         setFocus({ id: above.id, at: 'start' });
         return;
       }
@@ -834,7 +849,9 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
         let marker: ReactNode = null;
         if (one.type === 'bullet') marker = <span className="sp-marker">{BULLETS[indent % BULLETS.length]}</span>;
         if (one.type === 'numbered') marker = <span className="sp-marker sp-number">{numberOf(blocks, index)}.</span>;
-        if (one.type === 'todo') {
+        if (one.type === 'todo' && one.task) {
+          marker = <TaskCheck one={one} disabled={disabled} onPatch={(change) => patch(one.id, change)} />;
+        } else if (one.type === 'todo') {
           marker = (
             <input
               type="checkbox"
@@ -967,6 +984,26 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
                 onChange={(change) => patch(one.id, change)}
                 onKey={(event) => dividerKey(event, one)}
               />
+            ) : one.type === 'table' || one.type === 'countdown' || one.type === 'toc' ? (
+              (() => {
+                const drawn = {
+                  one,
+                  disabled,
+                  register: (node: HTMLElement | null) => {
+                    if (node) nodes.current.set(one.id, node as HTMLDivElement);
+                    else nodes.current.delete(one.id);
+                  },
+                  onChange: (change: Partial<Block>) => patch(one.id, change),
+                  onKey: (event: KeyboardEvent<HTMLElement>) => dividerKey(event as KeyboardEvent<HTMLDivElement>, one),
+                };
+                return one.type === 'table' ? (
+                  <TableBlock {...drawn} />
+                ) : one.type === 'countdown' ? (
+                  <CountdownBlock {...drawn} />
+                ) : (
+                  <TocBlock {...drawn} blocks={blocks} />
+                );
+              })()
             ) : one.type === 'divider' ? (
               <div
                 className="sp-divider"
@@ -1020,6 +1057,14 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
                   onChange(resizeTo(blocks, items, one.id, w));
                 }}
                 onColor={(color) => patch(one.id, { color })}
+                onTask={one.type === 'todo' && !one.task ? async () => {
+                  const made = await makeTask(one);
+                  if (made.id) {
+                    setMenu(null);
+                    patch(one.id, { task: made.id });
+                  }
+                  return made.error ?? '';
+                } : undefined}
                 onClose={() => setMenu(null)}
                 onTurn={(type) => {
                   setMenu(null);
@@ -1351,6 +1396,7 @@ function BlockMenu({
   width,
   onWidth,
   onColor,
+  onTask,
   onClose,
   onTurn,
   onDuplicate,
@@ -1364,6 +1410,8 @@ function BlockMenu({
   onWidth: (cols: number) => void;
   /** The words' colour, or undefined for the page's own. */
   onColor: (color: string | undefined) => void;
+  /** To-dos not yet a task: make it one. Resolves to an error to show, or ''. */
+  onTask?: () => Promise<string>;
   onClose: () => void;
   onTurn: (type: BlockType) => void;
   onDuplicate: () => void;
@@ -1373,8 +1421,24 @@ function BlockMenu({
 }) {
   const ref = useDismiss(true, onClose);
   const [inking, setInking] = useState(false);
+  const [tasking, setTasking] = useState<'' | 'busy' | string>('');
   return (
     <div className="sp-pop sp-block-menu" role="menu" aria-label="Block options" ref={ref}>
+      {onTask && (
+        <button
+          type="button"
+          role="menuitem"
+          className="sp-pop-item"
+          disabled={tasking === 'busy'}
+          onClick={async () => {
+            setTasking('busy');
+            setTasking(await onTask());
+          }}
+        >
+          <span className="sp-pop-label">{tasking === 'busy' ? 'Adding…' : 'Add to my tasks'}</span>
+        </button>
+      )}
+      {tasking && tasking !== 'busy' && <p className="sp-pop-error" role="alert">{tasking}</p>}
       <button type="button" role="menuitem" className="sp-pop-item" onClick={onDuplicate}>
         <span className="sp-pop-label">Duplicate</span><kbd>⌘D</kbd>
       </button>

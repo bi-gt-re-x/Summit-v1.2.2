@@ -59,7 +59,9 @@ records do not earn a table — the same choice the analytics baseline made.
     GET  /api/spaces/<n>/chat            this account's chat on this space
     POST /api/spaces/<n>/chat/undo       put the page back from before one AI turn
     POST /api/spaces/<n>/chat/clear      start the chat over
-    (and the same three under /api/team-spaces/<n>/chat)
+    GET  /api/spaces/<n>/history         earlier versions of the page, newest first
+    POST /api/spaces/<n>/history/restore put one back (the current page is kept first)
+    (and the same under /api/team-spaces/<n>/chat and /history)
 """
 import re
 from datetime import date, datetime, timedelta
@@ -118,6 +120,9 @@ CHART = RULES['spaces']['chart']
 FILL_STYLES = tuple(RULES['spaces']['fill_styles'])
 SHAPES = tuple(RULES['spaces']['shapes'])
 TALL = RULES['spaces']['tall_rows']
+TABLE = RULES['spaces']['table']
+HISTORY = RULES['spaces']['history']
+ISO_DAY = re.compile(r'^\d{4}-\d{2}-\d{2}$')
 COVER_TEXT_MAX = RULES['spaces']['cover_text_max']
 COVER_ALIGNS = tuple(RULES['spaces']['cover_aligns'])
 HEX = re.compile(r'^#[0-9a-fA-F]{6}$')
@@ -232,6 +237,32 @@ def _clean_chart(raw) -> dict:
     return {'kind': kind, 'max': top, 'points': points}
 
 
+def _clean_table(raw) -> dict:
+    """A table as the editor may store it: rows of plain-text cells, all as wide as the
+    widest, and whether the first row is a header."""
+    raw = raw if isinstance(raw, dict) else {}
+    rows = [row for row in (raw.get('rows') if isinstance(raw.get('rows'), list) else []) if isinstance(row, list)]
+    rows = rows[:TABLE['rows_max']]
+    width = max([len(row) for row in rows] + [1])
+    width = min(width, TABLE['cols_max'])
+    clean = [[str(cell if isinstance(cell, (str, int, float)) else '')[:TABLE['cell_max']]
+              for cell in (row + [''] * width)[:width]] for row in rows]
+    if not clean:
+        clean = [['', '', ''], ['', '', ''], ['', '', '']]
+    return {'rows': clean, 'head': raw.get('head') is not False}
+
+
+def _clean_day(value) -> str:
+    """An ISO day, or '' when it isn't a real one."""
+    if not isinstance(value, str) or not ISO_DAY.match(value):
+        return ''
+    try:
+        date.fromisoformat(value)
+    except ValueError:
+        return ''
+    return value
+
+
 def _clean_doc(raw) -> Optional[dict]:
     """A page as the editor may store it, or None for anything that is not one.
 
@@ -261,6 +292,12 @@ def _clean_doc(raw) -> Optional[dict]:
             block['indent'] = indent
         if kind == 'todo' and item.get('checked') is True:
             block['checked'] = True
+        if kind == 'todo' and isinstance(item.get('task'), (str, int)) and str(item['task']).strip():
+            block['task'] = str(item['task'])[:40]
+        if kind == 'table':
+            block['table'] = _clean_table(item.get('table'))
+        if kind == 'countdown':
+            block['date'] = _clean_day(item.get('date'))
         if kind == 'toggle' and item.get('collapsed') is True:
             block['collapsed'] = True
         if kind == 'chart':
@@ -337,6 +374,16 @@ def _doc_text(doc: dict) -> str:
         elif kind == 'panel':
             name = panels.NAMES[block['panel']['kind']]
             lines.append(pad + '[Panel: {}{}]'.format(name, ', ' + text if text else ''))
+        elif kind == 'table':
+            rows = block['table']['rows']
+            lines += [pad + '| ' + ' | '.join(cell.replace('|', '/') for cell in row) + ' |' for row in rows[:1]]
+            if block['table']['head'] and rows:
+                lines.append(pad + '|' + '---|' * len(rows[0]))
+            lines += [pad + '| ' + ' | '.join(cell.replace('|', '/') for cell in row) + ' |' for row in rows[1:]]
+        elif kind == 'countdown':
+            lines.append(pad + '⏳ {}{}'.format(text or 'Countdown', ': ' + block['date'] if block.get('date') else ''))
+        elif kind == 'toc':
+            lines.append(pad + '[Contents]')
         elif kind == 'chart':
             chart = block['chart']
             name = '{} chart'.format(chart['kind'].capitalize())
@@ -380,6 +427,92 @@ def _store(username: str, kind: str, spaces: List[dict]) -> None:
                          for space in spaces])
 
 
+# ---- Version history -----------------------------------------------------------
+# The page saves itself as the reader types, so a slip (select all, Backspace) is
+# saved too. History keeps the page as it was: every HISTORY['every_minutes'] of
+# editing, before any big cut, before the AI changes it, and before a restore.
+# The newest first, HISTORY['keep'] of them, in the account's own settings rows.
+def _history_key(kind: str, space_id: int) -> str:
+    return 'space_history:{}:{}'.format(kind, space_id)
+
+
+def _history(username: str, kind: str, space_id: int) -> List[dict]:
+    stored = db.user_setting(username, _history_key(kind, space_id))
+    return [row for row in stored if isinstance(row, dict) and isinstance(row.get('doc'), dict)] \
+        if isinstance(stored, list) else []
+
+
+def _words(doc: dict) -> int:
+    return len(_doc_text(doc).split())
+
+
+def _big_cut(before: dict, after: dict) -> bool:
+    """Whether a save took out a lot: three blocks or more, or a third of the words."""
+    return (len(after['blocks']) <= len(before['blocks']) - 3
+            or (_words(before) >= 20 and _words(after) < _words(before) * 2 / 3))
+
+
+def _remember(username: str, kind: str, space_id: int, before: Optional[dict], reason: str,
+              after: Optional[dict] = None) -> None:
+    """Keep `before` in the history when it's due, or when the change is big."""
+    if not before or not before.get('blocks') or not _doc_text(before).strip():
+        return
+    rows = _history(username, kind, space_id)
+    if rows and rows[0]['doc'] == before:
+        return
+    now = datetime.now()
+    try:
+        last = datetime.fromisoformat(rows[0]['at']) if rows else None
+    except (TypeError, ValueError):
+        last = None
+    due = last is None or now - last >= timedelta(minutes=HISTORY['every_minutes'])
+    cut = after is not None and _big_cut(before, after)
+    if reason == 'edit' and not (due or cut):
+        return
+    rows.insert(0, {'at': now.isoformat(timespec='seconds'), 'doc': before, 'words': _words(before),
+                    'blocks': len(before['blocks']), 'reason': 'cut' if reason == 'edit' and cut else reason})
+    db.set_user_setting(username, _history_key(kind, space_id), rows[:HISTORY['keep']])
+
+
+def _preview(doc: dict) -> List[str]:
+    """The first few lines of a version, so the list says what's in it."""
+    lines = [line.strip() for line in _doc_text(doc).splitlines() if line.strip()]
+    return [line[:80] for line in lines[:4]]
+
+
+def _history_reply(username: str, kind: str, space_id: int):
+    if not 1 <= space_id <= COUNT:
+        return fail("There's no space {}.".format(space_id))
+    rows = _history(username, kind, space_id)
+    return ok(versions=[{'at': row['at'], 'words': row.get('words', 0), 'blocks': row.get('blocks', 0),
+                         'reason': row.get('reason', 'edit'), 'preview': _preview(row['doc'])}
+                        for row in rows])
+
+
+class Restore(BaseModel):
+    #: Which version, by its place in the list (0 is the newest).
+    at: int = 0
+
+
+def _restore(username: str, kind: str, space_id: int, body: Restore):
+    """Put an older version back. What's on the page now is kept first, so it's undoable."""
+    if not 1 <= space_id <= COUNT:
+        return fail("There's no space {}.".format(space_id))
+    rows = _history(username, kind, space_id)
+    if not 0 <= body.at < len(rows):
+        return fail("That version isn't there any more.")
+    doc = _clean_doc(rows[body.at]['doc'])
+    if not doc:
+        return fail("That version can't be opened.")
+    spaces = _spaces(username, kind)
+    space = spaces[space_id - 1]
+    _remember(username, kind, space_id, space.get('doc'), 'restore')
+    space['doc'] = doc
+    space['body'] = _doc_text(doc)[:BODY_MAX]
+    _store(username, kind, spaces)
+    return ok(space=space)
+
+
 def _save(username: str, kind: str, space_id: int, body: SaveSpace):
     """Rename a space, write in it, or both. A blank name goes back to the
     default rather than leaving a row with no label in the rail."""
@@ -391,6 +524,7 @@ def _save(username: str, kind: str, space_id: int, body: SaveSpace):
         space['name'] = body.name.strip()[:NAME_MAX] or _default_name(kind, space_id)
     doc = _clean_doc(body.doc) if body.doc is not None else None
     if doc:
+        _remember(username, kind, space_id, space.get('doc'), 'edit', doc)
         space['doc'] = doc
         space['body'] = _doc_text(doc)[:BODY_MAX]
     elif body.body is not None:
@@ -583,6 +717,7 @@ def _ask(username: str, kind: str, space_id: int, body: AskSpace):
 
     changed = made['mode'] != 'reply'
     if changed:
+        _remember(username, kind, space_id, before, 'ai')
         space['doc'] = doc
         space['body'] = _doc_text(doc)[:BODY_MAX]
         _store(username, kind, spaces)
@@ -688,7 +823,27 @@ def space_chat_clear(space_id: int, username: str = Depends(current_username)):
     return _clear_chat(username, 'personal', space_id)
 
 
+@router.get('/api/spaces/{space_id}/history')
+def space_history(space_id: int, username: str = Depends(current_username)):
+    return _history_reply(username, 'personal', space_id)
+
+
+@router.post('/api/spaces/{space_id}/history/restore')
+def space_restore(space_id: int, body: Restore, username: str = Depends(current_username)):
+    return _restore(username, 'personal', space_id, body)
+
+
 # ---- Team ------------------------------------------------------------------
+@router.get('/api/team-spaces/{space_id}/history')
+def team_space_history(space_id: int, username: str = Depends(current_username)):
+    return _history_reply(username, 'team', space_id)
+
+
+@router.post('/api/team-spaces/{space_id}/history/restore')
+def team_space_restore(space_id: int, body: Restore, username: str = Depends(current_username)):
+    return _restore(username, 'team', space_id, body)
+
+
 @router.get('/api/team-spaces')
 def list_team_spaces(username: str = Depends(current_username)):
     return ok(spaces=_spaces(username, 'team'))
