@@ -87449,7 +87449,16 @@
               "weight": "stretch",
               "prompt": "Which plan builds the habit better: 5 sessions in week 1 then none, or 3 a week for 4 weeks? Count the totals too.",
               "answer": "3 a week for 4 weeks: 12 sessions against 5, and a habit.",
-              "answer_kind": "sentence"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "5 in week 1, then none",
+                  "3 a week for 4 weeks"
+                ],
+                "accept": [
+                  "3 a week for 4 weeks"
+                ]
+              }
             }
           ]
         },
@@ -87473,8 +87482,47 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Write a 3-exercise minimum session with reps.",
-              "answer": "For example 10 squats, 10 push-ups and 20 jumping jacks, 3 rounds.",
-              "answer_kind": "sentence"
+              "answer": "10 squats, 10 push-ups and 20 jumping jacks, 3 rounds.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "squat",
+                    "push-up",
+                    "pushup",
+                    "lunge",
+                    "jack",
+                    "plank",
+                    "burpee",
+                    "crunch",
+                    "sit-up",
+                    "bridge",
+                    "row",
+                    "step",
+                    "mountain",
+                    "dip",
+                    "jump"
+                  ],
+                  [
+                    "squat",
+                    "push-up",
+                    "pushup",
+                    "lunge",
+                    "jack",
+                    "plank",
+                    "burpee",
+                    "crunch",
+                    "sit-up",
+                    "bridge",
+                    "row",
+                    "step",
+                    "mountain",
+                    "dip",
+                    "jump"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -87498,8 +87546,13 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Weekly totals were 3, 3, 2, 3. What is the average?",
-              "answer": "2.75 sessions a week",
-              "answer_kind": "phrase"
+              "answer": "2.75 sessions a week.",
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "2.75"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -87513,7 +87566,22 @@
               "weight": "stretch",
               "prompt": "Why judge consistency over 4 weeks rather than 1 day?",
               "answer": "Single days are noise. The 4-week count shows whether the habit is holding.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "noise",
+                    "one day",
+                    "single",
+                    "pattern",
+                    "trend",
+                    "habit",
+                    "average",
+                    "bad day",
+                    "fluke"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -87530,22 +87598,102 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Finish this plan: \"If I get home after 8 pm, then...\"",
-              "answer": "For example: then I do the 10-minute minimum session before dinner.",
-              "answer_kind": "sentence"
+              "answer": "Then I do the 10-minute minimum session before dinner.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "i",
+                    "then",
+                    "do",
+                    "will",
+                    "short",
+                    "minimum",
+                    "10",
+                    "minute",
+                    "quick",
+                    "walk",
+                    "stretch",
+                    "workout",
+                    "session",
+                    "tomorrow",
+                    "morning"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 common obstacles to a 7 am workout.",
-              "answer": "Oversleeping and bad weather (also a late night or no clean kit).",
-              "answer_kind": "list"
+              "answer": "Oversleeping, and bad weather.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "sleep",
+                    "oversleep",
+                    "alarm",
+                    "weather",
+                    "rain",
+                    "cold",
+                    "dark",
+                    "late",
+                    "tired",
+                    "kit",
+                    "clothes",
+                    "breakfast",
+                    "motivat",
+                    "commute",
+                    "kids",
+                    "work",
+                    "sore",
+                    "snooze"
+                  ],
+                  [
+                    "sleep",
+                    "oversleep",
+                    "alarm",
+                    "weather",
+                    "rain",
+                    "cold",
+                    "dark",
+                    "late",
+                    "tired",
+                    "kit",
+                    "clothes",
+                    "breakfast",
+                    "motivat",
+                    "commute",
+                    "kids",
+                    "work",
+                    "sore",
+                    "snooze"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You missed 3 Monday sessions in a row. What should you change first?",
-              "answer": "The Monday plan, such as moving it to a different time or day.",
-              "answer_kind": "sentence"
+              "answer": "The Monday plan, like moving it to a different time or day.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "monday",
+                    "time",
+                    "day",
+                    "move",
+                    "plan",
+                    "different",
+                    "change",
+                    "schedule"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -87562,15 +87710,38 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "You hit 100% of sessions for 4 weeks. What is a sensible next step?",
-              "answer": "Add a little, such as 1 more session or 10 minutes per session.",
-              "answer_kind": "sentence"
+              "answer": "Add a little, like 1 more session, or 10 minutes per session.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "add",
+                    "a little",
+                    "more",
+                    "1 more",
+                    "10 minutes",
+                    "small",
+                    "increase",
+                    "progress"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "You hit 50% for 4 weeks. Should you add more or reduce the plan?",
-              "answer": "Reduce it to something you will actually complete.",
-              "answer_kind": "phrase"
+              "answer": "Reduce the plan to something you'll actually complete.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Add more",
+                  "Reduce the plan"
+                ],
+                "accept": [
+                  "Reduce the plan"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -87622,8 +87793,20 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your planned RPE was 7 but you rated the set 9. What should the next set do?",
-              "answer": "Use a lighter load or fewer reps.",
-              "answer_kind": "phrase"
+              "answer": "Use a lighter load, or fewer reps.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "lighter",
+                    "less",
+                    "fewer",
+                    "reduce",
+                    "drop",
+                    "easier"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -87646,16 +87829,34 @@
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "At RIR 0, how many more reps could you do?",
-              "answer": "0",
-              "answer_kind": "integer"
+              "prompt": "At this weight your limit is 10 reps, and you stop at 7. What is your RIR?",
+              "answer": "3, since you had 3 reps left.",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "3"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your RIR guess was 2 but you then did 5 more reps. What does that tell you?",
               "answer": "You underestimate how much you have left, so push the sets harder.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "underestimat",
+                    "more left",
+                    "harder",
+                    "push",
+                    "heavier",
+                    "too easy",
+                    "wrong"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -87673,7 +87874,17 @@
               "weight": "warmup",
               "prompt": "On the 'talk test', you can only say 2 or 3 words at a time. How hard is the effort?",
               "answer": "Hard",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Easy",
+                  "Moderate",
+                  "Hard"
+                ],
+                "accept": [
+                  "Hard"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -87685,9 +87896,14 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Your easy run's heart rate is 175 on a max of 190. About what percent of max is that?",
+              "prompt": "Your easy run's heart rate is 175 on a max of 190. About what percent of max is that? Round to the nearest whole number.",
               "answer": "About 92%, which is too hard for easy.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "92"
+                ]
+              }
             }
           ]
         },
@@ -87718,8 +87934,23 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why does running every one of 6 weekly runs at medium effort stall progress?",
-              "answer": "It is too hard to recover from fully but not hard enough to drive big adaptation.",
-              "answer_kind": "sentence"
+              "answer": "It's too hard to recover from fully, but not hard enough to drive big adaptation.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "recover",
+                    "adapt",
+                    "neither",
+                    "middle",
+                    "grey",
+                    "gray",
+                    "too hard",
+                    "not hard enough",
+                    "fatigue"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -87750,8 +87981,17 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "One week had 2 hard sessions and another had 5. Which is more likely to lead to fatigue?",
-              "answer": "Week 2, with 5 hard sessions.",
-              "answer_kind": "phrase"
+              "answer": "The week with 5 hard sessions.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "The week with 2 hard sessions",
+                  "The week with 5 hard sessions"
+                ],
+                "accept": [
+                  "The week with 5 hard sessions"
+                ]
+              }
             }
           ]
         }
@@ -87783,7 +88023,17 @@
               "weight": "warmup",
               "prompt": "For a 5-rep squat video, which angle shows depth best: front, side or above?",
               "answer": "Side",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Front",
+                  "Side",
+                  "Above"
+                ],
+                "accept": [
+                  "Side"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -87796,8 +88046,29 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 things to check in a squat video.",
-              "answer": "Depth and back angle (also bar path or knee travel).",
-              "answer_kind": "list"
+              "answer": "Depth, and back angle.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "depth",
+                    "deep"
+                  ],
+                  [
+                    "back",
+                    "spine",
+                    "angle",
+                    "bar path",
+                    "knee",
+                    "heel",
+                    "feet",
+                    "torso",
+                    "hips",
+                    "speed"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -87814,22 +88085,45 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "During a heavy 3-rep squat set, do you take each breath at the top or the bottom?",
-              "answer": "At the top, before descending.",
-              "answer_kind": "phrase"
+              "answer": "At the top, before going down.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "At the top",
+                  "At the bottom"
+                ],
+                "accept": [
+                  "At the top"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Should a 'brace' push the belly out or pull it in?",
-              "answer": "Push out against the belt or hands.",
-              "answer_kind": "phrase"
+              "answer": "Push it out, against the belt or your hands.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Push it out",
+                  "Pull it in"
+                ],
+                "accept": [
+                  "Push it out"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "How many reps in a row should you try to hold one brace for on a heavy set of 5?",
               "answer": "Usually 1, re-bracing each rep.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "1"
+                ]
+              }
             }
           ]
         },
@@ -87879,21 +88173,48 @@
               "weight": "warmup",
               "prompt": "Which builds strength through more of the movement: 3 sets of full squats or 3 sets of half squats?",
               "answer": "Full squats.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Full squats",
+                  "Half squats"
+                ],
+                "accept": [
+                  "Full squats"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "You squat 100 kg to half depth and 80 kg to full depth. Which load should you train with?",
               "answer": "80 kg at full depth.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "80"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 sign you have lost neutral back position at the bottom of a squat.",
-              "answer": "The lower back rounds (butt wink).",
-              "answer_kind": "phrase"
+              "answer": "The lower back rounds, a butt wink.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "round",
+                    "tuck",
+                    "butt wink",
+                    "flex",
+                    "curve",
+                    "tilt",
+                    "pelvis"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -87917,15 +88238,41 @@
               "slot": 2,
               "weight": "core",
               "prompt": "What is RIR 2?",
-              "answer": "Two reps in reserve: stopping with 2 reps you could still have done.",
-              "answer_kind": "sentence"
+              "answer": "Two reps in reserve: you stop with 2 reps you could still have done.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "2 reps",
+                    "two reps",
+                    "reserve",
+                    "left",
+                    "could still",
+                    "in the tank"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why stop 1 to 2 reps short of failure most of the time?",
-              "answer": "Quality stays high and recovery is faster.",
-              "answer_kind": "phrase"
+              "answer": "Quality stays high, and recovery is faster.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "quality",
+                    "recover",
+                    "form",
+                    "fatigue",
+                    "injur",
+                    "technique",
+                    "consisten",
+                    "more sets"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -87989,21 +88336,67 @@
               "weight": "warmup",
               "prompt": "A 5 pm session with a meal 2 to 3 hours before means eating when?",
               "answer": "Between 2 pm and 3 pm.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "2",
+                    "3",
+                    "2 pm",
+                    "3 pm",
+                    "2 to 3",
+                    "between"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name a good snack 30 to 60 minutes before training.",
-              "answer": "A banana (or toast with jam).",
-              "answer_kind": "phrase"
+              "answer": "A banana, or toast with jam.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "banana",
+                    "toast",
+                    "fruit",
+                    "bar",
+                    "crackers",
+                    "rice cake",
+                    "yogurt",
+                    "oats",
+                    "bagel",
+                    "dates",
+                    "apple",
+                    "pretzel",
+                    "juice",
+                    "honey"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why avoid a large, fatty meal 30 minutes before a run?",
-              "answer": "It digests slowly and can cause stomach upset.",
-              "answer_kind": "phrase"
+              "answer": "It digests slowly and can upset your stomach.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "digest",
+                    "slow",
+                    "stomach",
+                    "upset",
+                    "cramp",
+                    "heavy",
+                    "sluggish",
+                    "nausea"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88020,15 +88413,63 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Is a sensible post-training protein target 5 g, 25 g or 100 g?",
-              "answer": "About 20 to 40 g.",
-              "answer_kind": "phrase"
+              "answer": "25 g, in the 20 to 40 g range.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "5 g",
+                  "25 g",
+                  "100 g"
+                ],
+                "accept": [
+                  "25 g"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 meal with both protein and carbohydrate.",
-              "answer": "Chicken and rice (or yogurt with fruit and oats).",
-              "answer_kind": "sentence"
+              "answer": "Chicken and rice, or yogurt with fruit and oats.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "chicken",
+                    "egg",
+                    "fish",
+                    "tuna",
+                    "salmon",
+                    "beef",
+                    "turkey",
+                    "tofu",
+                    "bean",
+                    "yogurt",
+                    "milk",
+                    "cheese",
+                    "lentil",
+                    "pork",
+                    "protein"
+                  ],
+                  [
+                    "rice",
+                    "pasta",
+                    "bread",
+                    "potato",
+                    "oat",
+                    "fruit",
+                    "toast",
+                    "tortilla",
+                    "quinoa",
+                    "noodle",
+                    "wrap",
+                    "bagel",
+                    "cereal",
+                    "carb"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -88066,8 +88507,51 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 signs of under-eating while training.",
-              "answer": "Constant fatigue and poor recovery (also frequent illness or stalled progress).",
-              "answer_kind": "list"
+              "answer": "Constant fatigue, and poor recovery.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "fatigue",
+                    "tired",
+                    "recover",
+                    "ill",
+                    "sick",
+                    "stall",
+                    "progress",
+                    "weight loss",
+                    "mood",
+                    "sleep",
+                    "dizzy",
+                    "cold",
+                    "injur",
+                    "hunger",
+                    "period",
+                    "cramps",
+                    "weak"
+                  ],
+                  [
+                    "fatigue",
+                    "tired",
+                    "recover",
+                    "ill",
+                    "sick",
+                    "stall",
+                    "progress",
+                    "weight loss",
+                    "mood",
+                    "sleep",
+                    "dizzy",
+                    "cold",
+                    "injur",
+                    "hunger",
+                    "period",
+                    "cramps",
+                    "weak"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -88084,8 +88568,56 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 1 protein, 1 carbohydrate and 1 vegetable for one dinner.",
-              "answer": "For example salmon, potatoes and broccoli.",
-              "answer_kind": "list"
+              "answer": "Salmon, potatoes and broccoli.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "salmon",
+                    "chicken",
+                    "beef",
+                    "tofu",
+                    "egg",
+                    "fish",
+                    "turkey",
+                    "bean",
+                    "lentil",
+                    "pork",
+                    "tuna",
+                    "shrimp",
+                    "tempeh"
+                  ],
+                  [
+                    "potato",
+                    "rice",
+                    "pasta",
+                    "bread",
+                    "quinoa",
+                    "oat",
+                    "noodle",
+                    "tortilla",
+                    "couscous",
+                    "corn"
+                  ],
+                  [
+                    "broccoli",
+                    "spinach",
+                    "carrot",
+                    "pepper",
+                    "salad",
+                    "kale",
+                    "green",
+                    "bean",
+                    "pea",
+                    "zucchini",
+                    "cauliflower",
+                    "tomato",
+                    "asparagus",
+                    "cabbage"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
@@ -88098,8 +88630,22 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why cook 3 dinners in one batch for a training week?",
-              "answer": "It saves time and means a good meal is ready when you are tired.",
-              "answer_kind": "sentence"
+              "answer": "It saves time, and means a good meal is ready when you're tired.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "time",
+                    "ready",
+                    "tired",
+                    "easy",
+                    "save",
+                    "plan",
+                    "always a meal",
+                    "no decision"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -88130,22 +88676,51 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Can you prioritize a heavy squat and a marathon equally in 8 weeks? Answer yes or no.",
-              "answer": "Not well, they compete for recovery.",
-              "answer_kind": "phrase"
+              "answer": "No, not well. They compete for recovery.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Yes",
+                  "No, not well"
+                ],
+                "accept": [
+                  "No, not well"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A 5 km in under 25 minutes is about what pace per km?",
               "answer": "Under 5:00 per km.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "5:00",
+                  "5 minutes",
+                  "under 5:00"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "What does 'maintaining' a goal mean during an 8-week block?",
-              "answer": "Doing just enough to keep that fitness while focusing elsewhere.",
-              "answer_kind": "sentence"
+              "answer": "Doing just enough to keep that fitness while you focus elsewhere.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "keep",
+                    "enough",
+                    "maintain",
+                    "hold",
+                    "minimum",
+                    "not lose",
+                    "while focusing"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88162,8 +88737,34 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Rewrite \"run more\" as a measurable goal.",
-              "answer": "For example: run 20 km a week for 6 weeks in a row by May 1.",
-              "answer_kind": "sentence"
+              "answer": "Run 20 km a week for 6 weeks in a row by May 1.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "0",
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9"
+                  ],
+                  [
+                    "km",
+                    "mile",
+                    "run",
+                    "times",
+                    "minutes",
+                    "week",
+                    "day"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
@@ -88202,14 +88803,36 @@
               "weight": "core",
               "prompt": "Over 16 weeks, should a runner build speed then base, or base then speed?",
               "answer": "Base then speed.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Speed then base",
+                  "Base then speed"
+                ],
+                "accept": [
+                  "Base then speed"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why keep 1 focus per 8-week phase?",
               "answer": "Progress is faster when recovery goes to one main goal.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "recover",
+                    "focus",
+                    "faster",
+                    "one goal",
+                    "compete",
+                    "spread",
+                    "split"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88241,7 +88864,16 @@
               "weight": "stretch",
               "prompt": "At the week 4 check you are behind. Change the goal or the plan first?",
               "answer": "The plan.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "The goal",
+                  "The plan"
+                ],
+                "accept": [
+                  "The plan"
+                ]
+              }
             }
           ]
         },
@@ -88258,22 +88890,55 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "You hit 76 kg for 5 against a goal of 80 kg. What percent of the gain from 60 kg did you reach?",
-              "answer": "80% (16 of 20 kg).",
-              "answer_kind": "phrase"
+              "answer": "80%, 16 of the 20 kg.",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "80"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 thing worth recording at the end of a block.",
               "answer": "Which week or habit made the most difference.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "difference",
+                    "habit",
+                    "worked",
+                    "week",
+                    "best",
+                    "what helped",
+                    "lesson",
+                    "result",
+                    "sleep"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why write 2 keeps and 1 change at the end of a block?",
               "answer": "So the next block starts from what you learned.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "learn",
+                    "lesson",
+                    "build",
+                    "start",
+                    "keep",
+                    "improve",
+                    "next block"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -88312,14 +88977,39 @@
               "weight": "core",
               "prompt": "Why does a fixed 7 am slot help?",
               "answer": "It removes the daily decision about when to train.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "decision",
+                    "decide",
+                    "automatic",
+                    "routine",
+                    "no debate",
+                    "daily choice"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your 7 am slot keeps failing. What should you try?",
               "answer": "Move it to a time that fits your actual day, like after school.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "move",
+                    "different time",
+                    "fit",
+                    "another",
+                    "later",
+                    "change",
+                    "realistic"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88337,7 +89027,34 @@
               "weight": "warmup",
               "prompt": "Name 3 items to lay out the night before a run.",
               "answer": "Shoes, clothes and a water bottle.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "shoe",
+                    "sneaker"
+                  ],
+                  [
+                    "clothes",
+                    "shorts",
+                    "shirt",
+                    "outfit",
+                    "socks",
+                    "kit"
+                  ],
+                  [
+                    "water",
+                    "bottle",
+                    "watch",
+                    "phone",
+                    "headphones",
+                    "key",
+                    "hat",
+                    "jacket"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
@@ -88351,7 +89068,20 @@
               "weight": "stretch",
               "prompt": "Why does packing your bag the night before a 7 am session increase follow-through?",
               "answer": "It removes small barriers that lead to skipping.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "barrier",
+                    "friction",
+                    "easy",
+                    "excuse",
+                    "ready",
+                    "decision",
+                    "skip"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88382,8 +89112,28 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 home option that needs no equipment.",
-              "answer": "A bodyweight circuit (push-ups, squats, lunges).",
-              "answer_kind": "phrase"
+              "answer": "A bodyweight circuit of push-ups, squats and lunges.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "bodyweight",
+                    "push-up",
+                    "squat",
+                    "lunge",
+                    "circuit",
+                    "plank",
+                    "burpee",
+                    "yoga",
+                    "video",
+                    "stairs",
+                    "walk",
+                    "run",
+                    "jump",
+                    "dance"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88400,8 +89150,26 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Finish the stack: \"After I brush my teeth in the morning, I...\"",
-              "answer": "For example: do 10 minutes of mobility.",
-              "answer_kind": "phrase"
+              "answer": "Do 10 minutes of mobility.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "stretch",
+                    "mobility",
+                    "push-up",
+                    "squat",
+                    "plank",
+                    "walk",
+                    "minute",
+                    "yoga",
+                    "jumping",
+                    "sit-up",
+                    "exercise",
+                    "workout"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -88415,7 +89183,23 @@
               "weight": "stretch",
               "prompt": "Name 1 stable daily trigger for an evening session.",
               "answer": "Getting home from school or work.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "home",
+                    "school",
+                    "work",
+                    "dinner",
+                    "change",
+                    "after",
+                    "shoes",
+                    "bag",
+                    "kids",
+                    "commute"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88432,22 +89216,83 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 2 ways to train with others.",
-              "answer": "A training partner and a running club (also a team or class).",
-              "answer_kind": "list"
+              "answer": "A training partner, and a running club.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "partner",
+                    "friend",
+                    "buddy",
+                    "club",
+                    "team",
+                    "class",
+                    "group",
+                    "coach",
+                    "gym",
+                    "league",
+                    "family"
+                  ],
+                  [
+                    "partner",
+                    "friend",
+                    "buddy",
+                    "club",
+                    "team",
+                    "class",
+                    "group",
+                    "coach",
+                    "gym",
+                    "league",
+                    "family"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why does agreeing to meet 1 friend make you more likely to train?",
-              "answer": "You do not want to let them down.",
-              "answer_kind": "phrase"
+              "answer": "You don't want to let them down.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "don't want to let",
+                    "not let them down",
+                    "let them down",
+                    "let down",
+                    "accountab",
+                    "commit",
+                    "promise",
+                    "waiting",
+                    "guilt",
+                    "social"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your partner cancels 3 times. What is a good backup?",
               "answer": "Keep the slot and train alone, or find a group.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "alone",
+                    "keep the slot",
+                    "anyway",
+                    "group",
+                    "another partner",
+                    "class",
+                    "solo",
+                    "still train"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -88479,7 +89324,16 @@
               "weight": "warmup",
               "prompt": "Which urine color on a morning check suggests good hydration: 'dark amber' or 'pale yellow'?",
               "answer": "Pale yellow",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Dark amber",
+                  "Pale yellow"
+                ],
+                "accept": [
+                  "Pale yellow"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -88493,7 +89347,17 @@
               "weight": "stretch",
               "prompt": "Roughly how much fluid do most adults need daily: 0.5, 2 to 3, or 8 liters?",
               "answer": "2 to 3 liters",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "0.5 liters",
+                  "2 to 3 liters",
+                  "8 liters"
+                ],
+                "accept": [
+                  "2 to 3 liters"
+                ]
+              }
             }
           ]
         },
@@ -88510,15 +89374,25 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "You weighed 70.0 kg before and 69.2 kg after, drinking nothing. How much sweat?",
-              "answer": "About 0.8 liters",
-              "answer_kind": "phrase"
+              "answer": "About 0.8 liters.",
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "0.8"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Same, but you drank 0.5 liters during. What was total sweat loss?",
-              "answer": "About 1.3 liters",
-              "answer_kind": "phrase"
+              "answer": "About 1.3 liters.",
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "1.3"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -88543,7 +89417,17 @@
               "weight": "warmup",
               "prompt": "Which electrolyte is lost most in sweat: sodium, iron or vitamin C? Pick 1.",
               "answer": "Sodium",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Sodium",
+                  "Iron",
+                  "Vitamin C"
+                ],
+                "accept": [
+                  "Sodium"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -88556,8 +89440,19 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why can drinking only plain water in a 6-hour event be risky?",
-              "answer": "It can dilute blood sodium too much (hyponatremia).",
-              "answer_kind": "phrase"
+              "answer": "It can dilute blood sodium too much, hyponatremia.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "sodium",
+                    "dilute",
+                    "hyponatremia",
+                    "salt",
+                    "electrolyte"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88588,8 +89483,22 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why are 200 ml sips every 20 minutes better than 1 liter at the start?",
-              "answer": "They are easier on the stomach and keep fluid steady.",
-              "answer_kind": "sentence"
+              "answer": "They're easier on the stomach, and keep fluid steady.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "stomach",
+                    "steady",
+                    "absorb",
+                    "gut",
+                    "slosh",
+                    "even",
+                    "consistent",
+                    "bloat"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88606,8 +89515,13 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "You lost 0.8 kg. About how much should you drink to recover at 1.5 times?",
-              "answer": "About 1.2 liters",
-              "answer_kind": "phrase"
+              "answer": "About 1.2 liters.",
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "1.2"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -88621,7 +89535,19 @@
               "weight": "stretch",
               "prompt": "Why does a salty meal after a 2-hour session help rehydration?",
               "answer": "Sodium helps the body hold on to the fluid.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "sodium",
+                    "salt",
+                    "hold",
+                    "retain",
+                    "keep",
+                    "absorb"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -88652,8 +89578,18 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Delayed-onset soreness usually peaks after 2 hours, 1 to 2 days, or 2 weeks?",
-              "answer": "About 1 to 2 days.",
-              "answer_kind": "phrase"
+              "answer": "After 1 to 2 days.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "After 2 hours",
+                  "After 1 to 2 days",
+                  "After 2 weeks"
+                ],
+                "accept": [
+                  "After 1 to 2 days"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -88667,7 +89603,21 @@
               "weight": "stretch",
               "prompt": "Name 1 sign soreness is normal.",
               "answer": "It eases as you warm up and move.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "eases",
+                    "warm",
+                    "better",
+                    "both sides",
+                    "fades",
+                    "dull",
+                    "goes away",
+                    "movement"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88685,21 +89635,59 @@
               "weight": "warmup",
               "prompt": "On a 0 to 10 pain scale, what level is usually acceptable during modified training?",
               "answer": "About 3 or lower.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "3"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your knee hurts when squatting deep. Name 1 modification.",
-              "answer": "Squat to a box at a shallower depth (or use a lighter load).",
-              "answer_kind": "sentence"
+              "answer": "Squat to a box at a shallower depth, or use a lighter load.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "box",
+                    "shallow",
+                    "higher",
+                    "lighter",
+                    "less weight",
+                    "partial",
+                    "reduce",
+                    "leg press",
+                    "split",
+                    "different",
+                    "range",
+                    "wider",
+                    "tempo"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why keep training other body parts during a 3-week shoulder injury?",
               "answer": "It keeps the habit and fitness going.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "habit",
+                    "fitness",
+                    "strong",
+                    "routine",
+                    "maintain",
+                    "keep",
+                    "momentum",
+                    "mood"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88723,8 +89711,22 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Pain was 2 during but 6 the next morning. What should change?",
-              "answer": "Reduce the load or change the exercise.",
-              "answer_kind": "phrase"
+              "answer": "Reduce the load, or change the exercise.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "reduce",
+                    "less",
+                    "lighter",
+                    "change",
+                    "swap",
+                    "different",
+                    "drop",
+                    "back off"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -88755,8 +89757,47 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 warning signs that need a doctor or physio.",
-              "answer": "Numbness and major swelling (also a joint giving way or night pain).",
-              "answer_kind": "list"
+              "answer": "Numbness, and major swelling.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "numbness",
+                    "tingl",
+                    "swelling",
+                    "swell",
+                    "give way",
+                    "giving way",
+                    "night",
+                    "sharp",
+                    "can't bear",
+                    "weight",
+                    "deform",
+                    "fever",
+                    "bruis",
+                    "pop",
+                    "locked"
+                  ],
+                  [
+                    "numbness",
+                    "tingl",
+                    "swelling",
+                    "swell",
+                    "give way",
+                    "giving way",
+                    "night",
+                    "sharp",
+                    "can't bear",
+                    "weight",
+                    "deform",
+                    "fever",
+                    "bruis",
+                    "pop",
+                    "locked"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -88795,7 +89836,19 @@
               "weight": "stretch",
               "prompt": "Pain jumps to 5 out of 10 in week 3. What should you do?",
               "answer": "Drop back to the week 2 level.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "drop back",
+                    "week 2",
+                    "back off",
+                    "reduce",
+                    "lower",
+                    "easier"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -88834,7 +89887,27 @@
               "weight": "core",
               "prompt": "Name 4 movements for a full-body session.",
               "answer": "Squat, hinge, push and pull.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "squat"
+                  ],
+                  [
+                    "hinge",
+                    "deadlift"
+                  ],
+                  [
+                    "push",
+                    "press"
+                  ],
+                  [
+                    "pull",
+                    "row"
+                  ]
+                ],
+                "need": 4
+              }
             },
             {
               "slot": 3,
@@ -88897,15 +89970,43 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name a harder balance drill than standing on 1 leg.",
-              "answer": "Standing on 1 leg with eyes closed.",
-              "answer_kind": "phrase"
+              "answer": "Standing on 1 leg with your eyes closed.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "eyes closed",
+                    "closed",
+                    "unstable",
+                    "pillow",
+                    "foam",
+                    "reach",
+                    "head turn",
+                    "catch",
+                    "move",
+                    "cushion"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why does balance matter more after age 60?",
               "answer": "Poor balance raises the risk of falls.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "fall",
+                    "falls",
+                    "fracture",
+                    "injur",
+                    "hip",
+                    "independ"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88922,8 +90023,25 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 1 lower-impact swap for running 5 km on hard roads.",
-              "answer": "Cycling or running on grass or trails.",
-              "answer_kind": "phrase"
+              "answer": "Cycling, or running on grass or trails.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "cycl",
+                    "bike",
+                    "grass",
+                    "trail",
+                    "swim",
+                    "elliptical",
+                    "row",
+                    "walk",
+                    "pool",
+                    "track",
+                    "treadmill"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -88937,7 +90055,21 @@
               "weight": "stretch",
               "prompt": "Why choose exercises you could still do in 20 years?",
               "answer": "You can keep doing them for decades without injury.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "decades",
+                    "keep",
+                    "last",
+                    "sustain",
+                    "safe",
+                    "injur",
+                    "long term",
+                    "age"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88969,7 +90101,21 @@
               "weight": "stretch",
               "prompt": "Name 1 thing that makes a plan last 10 years.",
               "answer": "A small minimum you can keep even in busy weeks.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "minimum",
+                    "small",
+                    "busy",
+                    "flexible",
+                    "enjoy",
+                    "habit",
+                    "simple",
+                    "fun"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -89001,7 +90147,33 @@
               "weight": "warmup",
               "prompt": "Name 4 things to record for a lifting set.",
               "answer": "Exercise, reps, weight and RPE.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "exercise",
+                    "lift",
+                    "name"
+                  ],
+                  [
+                    "rep"
+                  ],
+                  [
+                    "weight",
+                    "load"
+                  ],
+                  [
+                    "rpe",
+                    "rir",
+                    "effort",
+                    "feel",
+                    "rest",
+                    "set",
+                    "notes"
+                  ]
+                ],
+                "need": 4
+              }
             },
             {
               "slot": 2,
@@ -89015,7 +90187,22 @@
               "weight": "stretch",
               "prompt": "Why log the 2 bad sessions of a month too?",
               "answer": "They show patterns, like poor sleep or stress, that explain stalls.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "pattern",
+                    "explain",
+                    "cause",
+                    "stall",
+                    "sleep",
+                    "stress",
+                    "why",
+                    "complete",
+                    "honest"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -89032,22 +90219,62 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Your 5 km time went from 30:00 to 28:30. How much faster?",
-              "answer": "1 minute 30 seconds",
-              "answer_kind": "phrase"
+              "answer": "1 minute 30 seconds.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "1:30",
+                    "1 minute 30",
+                    "90 seconds",
+                    "1.5 minutes",
+                    "one and a half"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 good measure for strength progress.",
               "answer": "A 5-rep max on a main lift.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "max",
+                    "rep max",
+                    "1rm",
+                    "5rm",
+                    "top set",
+                    "load",
+                    "weight",
+                    "e1rm",
+                    "estimated",
+                    "pr"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why run a 5 km test the same way each time?",
-              "answer": "So differences come from fitness, not from the test.",
-              "answer_kind": "sentence"
+              "answer": "So differences come from fitness, not the test.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "fair",
+                    "compare",
+                    "same",
+                    "fitness",
+                    "differences",
+                    "consisten",
+                    "control"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -89065,7 +90292,17 @@
               "weight": "warmup",
               "prompt": "Weekly top sets of 60, 62.5, 62.5, 65, 65 and 67.5 kg. What is the trend?",
               "answer": "Rising, about 7.5 kg in 6 weeks.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Rising",
+                  "Flat",
+                  "Falling"
+                ],
+                "accept": [
+                  "Rising"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -89079,7 +90316,21 @@
               "weight": "stretch",
               "prompt": "Why is 1 bad session not a trend?",
               "answer": "Sleep, food and stress vary day to day.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "noise",
+                    "vary",
+                    "sleep",
+                    "food",
+                    "stress",
+                    "day to day",
+                    "one-off",
+                    "fluke"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -89110,8 +90361,30 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 conditions to keep the same between tests.",
-              "answer": "Time of day and warm-up (also rest and footwear).",
-              "answer_kind": "list"
+              "answer": "Time of day, and warm-up.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "time",
+                    "day"
+                  ],
+                  [
+                    "warm-up",
+                    "warm up",
+                    "rest",
+                    "shoes",
+                    "footwear",
+                    "food",
+                    "sleep",
+                    "surface",
+                    "weather",
+                    "route",
+                    "course"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -89135,15 +90408,38 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Daily weight can swing by about how much from water: 0.1 kg or 1 to 2 kg?",
-              "answer": "1 to 2 kg",
-              "answer_kind": "phrase"
+              "answer": "About 1 to 2 kg.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "About 0.1 kg",
+                  "About 1 to 2 kg"
+                ],
+                "accept": [
+                  "About 1 to 2 kg"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why weigh in at 7 am under the same conditions each day?",
               "answer": "It reduces noise from food and drink.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "noise",
+                    "consisten",
+                    "same",
+                    "compare",
+                    "food",
+                    "drink",
+                    "water",
+                    "fair"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -89175,21 +90471,67 @@
               "weight": "warmup",
               "prompt": "How often should you retest mobility: daily, every 4 weeks, or yearly?",
               "answer": "About every 4 weeks.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Daily",
+                  "Every 4 weeks",
+                  "Yearly"
+                ],
+                "accept": [
+                  "Every 4 weeks"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 squat positions to test for ankle mobility.",
-              "answer": "A deep squat and a knee-to-wall test.",
-              "answer_kind": "list"
+              "answer": "A deep squat, and a knee-to-wall test.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "deep squat",
+                    "squat",
+                    "knee-to-wall",
+                    "knee to wall",
+                    "lunge",
+                    "heel",
+                    "ankle",
+                    "wall"
+                  ],
+                  [
+                    "deep squat",
+                    "squat",
+                    "knee-to-wall",
+                    "knee to wall",
+                    "lunge",
+                    "heel",
+                    "ankle",
+                    "wall"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You can touch a wall with your thumbs overhead but not with your elbows straight. Which joint is limited?",
-              "answer": "The shoulders (overhead range).",
-              "answer_kind": "phrase"
+              "answer": "The shoulders, their overhead range.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "shoulder",
+                    "overhead",
+                    "lat",
+                    "thoracic",
+                    "upper back"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -89221,7 +90563,20 @@
               "weight": "stretch",
               "prompt": "Why hold a 10 kg goblet squat at the bottom instead of only stretching the hips?",
               "answer": "It builds the strength to control and use that range.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "strength",
+                    "control",
+                    "use",
+                    "load",
+                    "own",
+                    "active",
+                    "hold"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -89246,14 +90601,100 @@
               "weight": "core",
               "prompt": "Which works better for mobility: 1 long session or several short ones?",
               "answer": "Several short ones.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "1 long session",
+                  "Several short ones"
+                ],
+                "accept": [
+                  "Several short ones"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 4 drills you could do in 5 minutes without equipment.",
-              "answer": "For example hip circles, cat-cow, deep squat hold and arm swings.",
-              "answer_kind": "list"
+              "answer": "Hip circles, cat-cow, a deep squat hold and arm swings.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "hip",
+                    "cat",
+                    "cow",
+                    "squat",
+                    "arm",
+                    "swing",
+                    "lunge",
+                    "circle",
+                    "stretch",
+                    "twist",
+                    "pigeon",
+                    "world",
+                    "leg",
+                    "neck",
+                    "ankle",
+                    "child"
+                  ],
+                  [
+                    "hip",
+                    "cat",
+                    "cow",
+                    "squat",
+                    "arm",
+                    "swing",
+                    "lunge",
+                    "circle",
+                    "stretch",
+                    "twist",
+                    "pigeon",
+                    "world",
+                    "leg",
+                    "neck",
+                    "ankle",
+                    "child"
+                  ],
+                  [
+                    "hip",
+                    "cat",
+                    "cow",
+                    "squat",
+                    "arm",
+                    "swing",
+                    "lunge",
+                    "circle",
+                    "stretch",
+                    "twist",
+                    "pigeon",
+                    "world",
+                    "leg",
+                    "neck",
+                    "ankle",
+                    "child"
+                  ],
+                  [
+                    "hip",
+                    "cat",
+                    "cow",
+                    "squat",
+                    "arm",
+                    "swing",
+                    "lunge",
+                    "circle",
+                    "stretch",
+                    "twist",
+                    "pigeon",
+                    "world",
+                    "leg",
+                    "neck",
+                    "ankle",
+                    "child"
+                  ]
+                ],
+                "need": 4
+              }
             }
           ]
         },
@@ -89309,15 +90750,42 @@
               "slot": 2,
               "weight": "core",
               "prompt": "A test did not change in 4 weeks. What should you do?",
-              "answer": "Change the drill or how often you do it.",
-              "answer_kind": "sentence"
+              "answer": "Change the drill, or how often you do it.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "change",
+                    "drill",
+                    "more often",
+                    "frequency",
+                    "different",
+                    "new",
+                    "adjust"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why compare against your own first test rather than someone else's range?",
               "answer": "Your own baseline shows whether your work is helping you.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "own",
+                    "baseline",
+                    "you",
+                    "progress",
+                    "compare",
+                    "helping",
+                    "differ",
+                    "body"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -89363,7 +90831,16 @@
               "weight": "stretch",
               "prompt": "Where does a rest day fit best in a 5-day week: before or after the hardest session?",
               "answer": "After it.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Before it",
+                  "After it"
+                ],
+                "accept": [
+                  "After it"
+                ]
+              }
             }
           ]
         },
@@ -89381,21 +90858,59 @@
               "weight": "warmup",
               "prompt": "Name the 4 basic movement patterns.",
               "answer": "Squat, hinge, push and pull.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "squat"
+                  ],
+                  [
+                    "hinge",
+                    "deadlift"
+                  ],
+                  [
+                    "push",
+                    "press"
+                  ],
+                  [
+                    "pull",
+                    "row"
+                  ]
+                ],
+                "need": 4
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Is a Romanian deadlift a squat or a hinge?",
               "answer": "A hinge",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "A squat",
+                  "A hinge"
+                ],
+                "accept": [
+                  "A hinge"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "A dumbbell row for 3 sets of 10 trains which pattern: push or pull?",
               "answer": "Pull",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Push",
+                  "Pull"
+                ],
+                "accept": [
+                  "Pull"
+                ]
+              }
             }
           ]
         },
@@ -89420,7 +90935,17 @@
               "weight": "core",
               "prompt": "Which rep range fits strength best: 3 to 6, 8 to 12, or 15 to 25?",
               "answer": "3 to 6",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "3 to 6",
+                  "8 to 12",
+                  "15 to 25"
+                ],
+                "accept": [
+                  "3 to 6"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -89459,7 +90984,19 @@
               "weight": "stretch",
               "prompt": "Why put the lighter week at the end of a 4-week block?",
               "answer": "So fatigue clears before the next block or a test.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "fatigue",
+                    "clear",
+                    "recover",
+                    "fresh",
+                    "test",
+                    "next block"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -89490,8 +91027,22 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why write the plan on Sunday before the week starts?",
-              "answer": "So decisions are made calmly, not on the day.",
-              "answer_kind": "sentence"
+              "answer": "So the decisions are made calmly, not on the day.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "decision",
+                    "calm",
+                    "plan ahead",
+                    "less stress",
+                    "don't decide",
+                    "in advance",
+                    "ready",
+                    "on the day"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -89522,8 +91073,25 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "You did 3 sets of 12 at 40 kg in a range of 8 to 12. What happens next session?",
-              "answer": "Add weight and aim for about 8 reps.",
-              "answer_kind": "phrase"
+              "answer": "Add weight, and aim for about 8 reps.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "add weight",
+                    "more weight",
+                    "heavier",
+                    "increase",
+                    "add load"
+                  ],
+                  [
+                    "8",
+                    "fewer reps",
+                    "bottom"
+                  ]
+                ],
+                "need": 1
+              }
             },
             {
               "slot": 2,
@@ -89537,7 +91105,19 @@
               "weight": "stretch",
               "prompt": "In double progression, what are the 2 things that progress?",
               "answer": "Reps first, then weight.",
-              "answer_kind": "phrase"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "rep"
+                  ],
+                  [
+                    "weight",
+                    "load"
+                  ]
+                ],
+                "order": true
+              }
             }
           ]
         },
@@ -89569,7 +91149,20 @@
               "weight": "stretch",
               "prompt": "Why are smaller jumps (1 to 2.5 kg) usually used for the bench press than the deadlift?",
               "answer": "Upper-body lifts use smaller muscles and gain strength more slowly.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "smaller",
+                    "upper",
+                    "slower",
+                    "less muscle",
+                    "small muscles",
+                    "arms",
+                    "chest"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -89592,16 +91185,33 @@
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Starting at 15 km with 10% increases, about what is week 3?",
-              "answer": "About 18.2 km",
-              "answer_kind": "phrase"
+              "prompt": "Starting at 15 km with 10% increases each week, about how many km is week 3? Give 2 decimal places.",
+              "answer": "About 18.15 km: 15, 16.5, then 18.15.",
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "18.15"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why plan an easier week every 3 or 4 weeks?",
-              "answer": "To recover and let the body adapt before adding more.",
-              "answer_kind": "sentence"
+              "answer": "To recover, and let the body adapt before adding more.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "recover",
+                    "adapt",
+                    "fatigue",
+                    "rest",
+                    "absorb",
+                    "deload"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -89619,14 +91229,39 @@
               "weight": "warmup",
               "prompt": "Target 3 sets of 8, you did 8, 8 and 5. By the rule, what next time?",
               "answer": "Repeat the same weight.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "repeat",
+                    "same",
+                    "stay",
+                    "keep",
+                    "hold"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "You stalled at the same weight for 3 sessions. What could you change?",
               "answer": "Drop the weight about 10% and build back, or change the rep range.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "drop",
+                    "10",
+                    "rep range",
+                    "change",
+                    "variation",
+                    "deload",
+                    "reset",
+                    "different"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -89650,8 +91285,46 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 3 levers other than weight for progressing a lift.",
-              "answer": "Reps, sets and tempo (also range or rest).",
-              "answer_kind": "list"
+              "answer": "Reps, sets and tempo.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "rep",
+                    "set",
+                    "tempo",
+                    "range",
+                    "rest",
+                    "frequency",
+                    "pause",
+                    "depth",
+                    "variation"
+                  ],
+                  [
+                    "rep",
+                    "set",
+                    "tempo",
+                    "range",
+                    "rest",
+                    "frequency",
+                    "pause",
+                    "depth",
+                    "variation"
+                  ],
+                  [
+                    "rep",
+                    "set",
+                    "tempo",
+                    "range",
+                    "rest",
+                    "frequency",
+                    "pause",
+                    "depth",
+                    "variation"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
@@ -89665,7 +91338,29 @@
               "weight": "stretch",
               "prompt": "You did 3 sets of 10 push-ups last week. Name a harder version that keeps the reps.",
               "answer": "Feet-elevated push-ups, or a slower 3-second lowering.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "feet-elevated",
+                    "elevated",
+                    "decline",
+                    "slow",
+                    "tempo",
+                    "pause",
+                    "3-second",
+                    "diamond",
+                    "close-grip",
+                    "archer",
+                    "clap",
+                    "weighted",
+                    "vest",
+                    "band",
+                    "one arm",
+                    "deficit"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -89697,7 +91392,16 @@
               "weight": "warmup",
               "prompt": "How long should you rest between heavy sets of 5: 30 seconds or 2 to 3 minutes?",
               "answer": "2 to 3 minutes",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "30 seconds",
+                  "2 to 3 minutes"
+                ],
+                "accept": [
+                  "2 to 3 minutes"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -89710,8 +91414,23 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "You cut rest to 30 s on a 100 kg triple. Why does the next triple suffer?",
-              "answer": "The muscles have not recovered enough to lift as much.",
-              "answer_kind": "sentence"
+              "answer": "The muscles haven't recovered enough to lift as much.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "haven't recovered",
+                    "hasn't recovered",
+                    "not recovered",
+                    "not enough rest",
+                    "tired",
+                    "fatigue",
+                    "atp",
+                    "energy",
+                    "weaker"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -89743,7 +91462,16 @@
               "weight": "stretch",
               "prompt": "After a 60-minute session, does the body adapt during the session or during recovery?",
               "answer": "During recovery.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "During the session",
+                  "During recovery"
+                ],
+                "accept": [
+                  "During recovery"
+                ]
+              }
             }
           ]
         },
@@ -89760,22 +91488,79 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Resting heart rate is usually 58 and today it is 66. How much higher is it?",
-              "answer": "8 beats per minute",
-              "answer_kind": "phrase"
+              "answer": "8 beats per minute.",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "8"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 signs of under-recovery.",
-              "answer": "Poor sleep and persistent soreness (also low mood or a high resting heart rate).",
-              "answer_kind": "list"
+              "answer": "Poor sleep, and lasting soreness.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "sleep",
+                    "soreness",
+                    "sore",
+                    "mood",
+                    "heart",
+                    "pulse",
+                    "tired",
+                    "fatigue",
+                    "motivat",
+                    "appetite",
+                    "ill",
+                    "sick",
+                    "weaker",
+                    "stall",
+                    "irritab",
+                    "ache"
+                  ],
+                  [
+                    "sleep",
+                    "soreness",
+                    "sore",
+                    "mood",
+                    "heart",
+                    "pulse",
+                    "tired",
+                    "fatigue",
+                    "motivat",
+                    "appetite",
+                    "ill",
+                    "sick",
+                    "weaker",
+                    "stall",
+                    "irritab",
+                    "ache"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Three of 4 morning scores are 1 or 2. What should today's session be?",
-              "answer": "An easy or rest day.",
-              "answer_kind": "phrase"
+              "answer": "An easy day, or a rest day.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "easy",
+                    "rest",
+                    "light",
+                    "off",
+                    "recovery"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -89800,7 +91585,17 @@
               "weight": "core",
               "prompt": "How often is a deload typically planned: every week, every 4 to 8 weeks, or every year?",
               "answer": "Every 4 to 8 weeks.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Every week",
+                  "Every 4 to 8 weeks",
+                  "Every year"
+                ],
+                "accept": [
+                  "Every 4 to 8 weeks"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -89825,21 +91620,73 @@
               "weight": "warmup",
               "prompt": "What effort level suits active recovery: RPE 2 to 3 or RPE 7 to 8?",
               "answer": "RPE 2 to 3",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "RPE 2 to 3",
+                  "RPE 7 to 8"
+                ],
+                "accept": [
+                  "RPE 2 to 3"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 active recovery activities.",
-              "answer": "Easy walking and easy cycling (also swimming or yoga).",
-              "answer_kind": "list"
+              "answer": "Easy walking, and easy cycling.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "walk",
+                    "cycl",
+                    "bike",
+                    "swim",
+                    "yoga",
+                    "stretch",
+                    "mobility",
+                    "row",
+                    "hike",
+                    "foam",
+                    "elliptical"
+                  ],
+                  [
+                    "walk",
+                    "cycl",
+                    "bike",
+                    "swim",
+                    "yoga",
+                    "stretch",
+                    "mobility",
+                    "row",
+                    "hike",
+                    "foam",
+                    "elliptical"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your active recovery made you more tired. What should change?",
               "answer": "Make it easier or shorter.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "easier",
+                    "shorter",
+                    "less",
+                    "lighter",
+                    "rest",
+                    "reduce"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -89884,8 +91731,18 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "How many hours do most teens need: 6, 8 to 10, or 12?",
-              "answer": "8 to 10",
-              "answer_kind": "phrase"
+              "answer": "8 to 10 hours.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "6",
+                  "8 to 10",
+                  "12"
+                ],
+                "accept": [
+                  "8 to 10"
+                ]
+              }
             }
           ]
         },
@@ -89909,15 +91766,33 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Should wake times stay within 30 minutes or 3 hours of each other?",
-              "answer": "About 30 to 60 minutes.",
-              "answer_kind": "phrase"
+              "answer": "Within 30 minutes, an hour at most.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Within 30 minutes",
+                  "Within 3 hours"
+                ],
+                "accept": [
+                  "Within 30 minutes"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Which is the stronger anchor for your body clock: a fixed 11 pm bedtime or a fixed 7 am wake time?",
-              "answer": "Wake time.",
-              "answer_kind": "word"
+              "answer": "A fixed 7 am wake time.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "A fixed 11 pm bedtime",
+                  "A fixed 7 am wake time"
+                ],
+                "accept": [
+                  "A fixed 7 am wake time"
+                ]
+              }
             }
           ]
         },
@@ -89934,22 +91809,86 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "A 30-minute wind-down before an 11 pm bedtime starts when?",
-              "answer": "10:30 pm",
-              "answer_kind": "phrase"
+              "answer": "10:30 pm.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "10:30",
+                    "1030",
+                    "22:30"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 changes that make a bedroom better for sleep.",
-              "answer": "Cooler and darker (also quieter).",
-              "answer_kind": "list"
+              "answer": "Cooler, and darker.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "cooler",
+                    "darker",
+                    "quieter",
+                    "cool",
+                    "dark",
+                    "quiet",
+                    "blackout",
+                    "mask",
+                    "fan",
+                    "earplug",
+                    "no phone",
+                    "no screen",
+                    "tidy",
+                    "curtain",
+                    "white noise",
+                    "comfortable"
+                  ],
+                  [
+                    "cooler",
+                    "darker",
+                    "quieter",
+                    "cool",
+                    "dark",
+                    "quiet",
+                    "blackout",
+                    "mask",
+                    "fan",
+                    "earplug",
+                    "no phone",
+                    "no screen",
+                    "tidy",
+                    "curtain",
+                    "white noise",
+                    "comfortable"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why is 60 minutes of bright screens a problem before bed?",
               "answer": "Light and stimulation keep the brain alert and delay sleep.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "light",
+                    "alert",
+                    "stimulat",
+                    "melatonin",
+                    "delay",
+                    "awake",
+                    "blue",
+                    "brain"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -89997,23 +91936,46 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Your 3 worst sessions followed nights of 5, 6 and 5 hours. What is the average?",
-              "answer": "About 5.3 hours",
-              "answer_kind": "phrase"
+              "prompt": "Your 3 worst sessions followed nights of 5, 6 and 5 hours. What is the average, to 2 decimal places?",
+              "answer": "About 5.33 hours.",
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "5.33"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Your 3 best followed nights of 8, 9 and 8 hours. What is the average?",
-              "answer": "About 8.3 hours",
-              "answer_kind": "phrase"
+              "prompt": "Your 3 best followed nights of 8, 9 and 8 hours. What is the average, to 2 decimal places?",
+              "answer": "About 8.33 hours.",
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "8.33"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Bad sessions averaged 5.3 hours of sleep and good ones 8.3. What does that suggest?",
               "answer": "Short sleep is hurting your training.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "sleep",
+                    "short",
+                    "more sleep",
+                    "hurt",
+                    "affect",
+                    "link",
+                    "matters"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -90052,14 +92014,41 @@
               "weight": "core",
               "prompt": "On a 1 to 10 effort scale, how hard should a general warm-up feel?",
               "answer": "About 3 or 4.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "3",
+                    "4",
+                    "3 or 4",
+                    "3-4",
+                    "easy",
+                    "low"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why is static stretching for 60 seconds a poor first warm-up for a sprint?",
-              "answer": "It does not raise temperature and long holds can briefly reduce power.",
-              "answer_kind": "sentence"
+              "answer": "It doesn't raise temperature, and long holds can briefly reduce power.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "temperature",
+                    "warm",
+                    "power",
+                    "reduce",
+                    "weaker",
+                    "slower",
+                    "not dynamic",
+                    "cold",
+                    "explosive"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -90077,21 +92066,85 @@
               "weight": "warmup",
               "prompt": "Which 3 joints matter most in a warm-up before squats?",
               "answer": "Hips, knees and ankles.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "hip"
+                  ],
+                  [
+                    "knee"
+                  ],
+                  [
+                    "ankle"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 dynamic drills before a pressing session.",
-              "answer": "For example arm circles and band pull-aparts.",
-              "answer_kind": "list"
+              "answer": "Arm circles, and band pull-aparts.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "arm circle",
+                    "circle",
+                    "pull-apart",
+                    "band",
+                    "push-up",
+                    "scap",
+                    "wall slide",
+                    "swing",
+                    "dislocat",
+                    "y raise",
+                    "t raise",
+                    "rotation",
+                    "light press",
+                    "face pull"
+                  ],
+                  [
+                    "arm circle",
+                    "circle",
+                    "pull-apart",
+                    "band",
+                    "push-up",
+                    "scap",
+                    "wall slide",
+                    "swing",
+                    "dislocat",
+                    "y raise",
+                    "t raise",
+                    "rotation",
+                    "light press",
+                    "face pull"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "How should the range change across 10 leg swings?",
               "answer": "Start small and get gradually bigger.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "small",
+                    "bigger",
+                    "gradual",
+                    "grow",
+                    "increase",
+                    "start small",
+                    "build"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -90109,21 +92162,66 @@
               "weight": "warmup",
               "prompt": "Your working weight is 100 kg. Give 3 ramp-up weights.",
               "answer": "For example 40, 60 and 80 kg.",
-              "answer_kind": "phrase"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "20",
+                    "30",
+                    "40",
+                    "50"
+                  ],
+                  [
+                    "50",
+                    "60",
+                    "70"
+                  ],
+                  [
+                    "70",
+                    "80",
+                    "85",
+                    "90"
+                  ]
+                ],
+                "order": true
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Ramp-up sets go 10 reps at 20 kg, then 40 kg, then 50 kg. Should the reps rise or fall?",
               "answer": "Fall.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Rise",
+                  "Fall"
+                ],
+                "accept": [
+                  "Fall"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your working sets are 5 reps. How many reps for the last ramp-up set close to that weight?",
               "answer": "About 1 to 3.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "1 to 3",
+                    "few",
+                    "single",
+                    "double",
+                    "triple"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -90155,7 +92253,17 @@
               "weight": "stretch",
               "prompt": "How many strides are usually enough: 1, 3 to 4, or 15?",
               "answer": "3 to 4.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "1",
+                  "3 to 4",
+                  "15"
+                ],
+                "accept": [
+                  "3 to 4"
+                ]
+              }
             }
           ]
         },
@@ -90180,14 +92288,45 @@
               "weight": "core",
               "prompt": "What is a sensible total warm-up time for a 60-minute session?",
               "answer": "About 10 to 15 minutes.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "10",
+                    "15",
+                    "10 to 15",
+                    "12"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 parts every warm-up should keep.",
-              "answer": "A general temperature raise and movement-specific ramp-up sets.",
-              "answer_kind": "list"
+              "answer": "A general temperature raise, and movement-specific ramp-up sets.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "general",
+                    "raise",
+                    "temperature",
+                    "cardio",
+                    "heart",
+                    "warm"
+                  ],
+                  [
+                    "ramp",
+                    "specific",
+                    "lighter sets",
+                    "movement",
+                    "practice",
+                    "warm-up sets"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         }
