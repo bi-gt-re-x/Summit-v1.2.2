@@ -73290,7 +73290,25 @@
               "weight": "stretch",
               "prompt": "Write a 10 word test sentence you could say while running.",
               "answer": "\"I am running slowly so that I can keep talking.\"",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "i",
+                    "i'm",
+                    "we",
+                    "this",
+                    "run",
+                    "running",
+                    "today",
+                    "talk",
+                    "slow",
+                    "easy",
+                    "breath",
+                    "keep"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -73315,7 +73333,22 @@
               "weight": "core",
               "prompt": "Week 3 felt hard and your legs ache. What do you do?",
               "answer": "Repeat week 3 before adding more.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "repeat",
+                    "hold",
+                    "same",
+                    "stay",
+                    "don't add",
+                    "do not add",
+                    "rest",
+                    "back off",
+                    "easier"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -73346,15 +73379,42 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Should all 3 sessions be back to back on Monday, Tuesday and Wednesday?",
-              "answer": "Better to spread them out with rest days.",
-              "answer_kind": "phrase"
+              "answer": "Spread out with rest days.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Back to back",
+                  "Spread out with rest days"
+                ],
+                "accept": [
+                  "Spread out with rest days"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 thing easy work builds.",
               "answer": "A stronger heart, or muscles that use oxygen better.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "heart",
+                    "oxygen",
+                    "aerobic",
+                    "capillar",
+                    "mitochondria",
+                    "endurance",
+                    "fat burn",
+                    "stamina",
+                    "lung",
+                    "blood",
+                    "recovery",
+                    "base"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -73417,8 +73477,21 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why compare pace at the same 135 bpm heart rate?",
-              "answer": "So effort is the same.",
-              "answer_kind": "phrase"
+              "answer": "So the effort is the same.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "effort",
+                    "same",
+                    "fair",
+                    "compare",
+                    "equal",
+                    "constant",
+                    "control"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -73450,7 +73523,20 @@
               "weight": "warmup",
               "prompt": "Easy run: 3 steps in and 3 out. As you speed up, what might the pattern become?",
               "answer": "2 steps in and 2 out.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "2 steps",
+                    "2 step",
+                    "2 and 2",
+                    "2 in",
+                    "2:2",
+                    "2-2",
+                    "two in"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -73464,7 +73550,20 @@
               "weight": "stretch",
               "prompt": "Your breathing goes ragged at minute 4 of a 3 and 3 rhythm. What does it tell you?",
               "answer": "The pace is harder than easy.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "too hard",
+                    "harder",
+                    "too fast",
+                    "pace",
+                    "slow down",
+                    "not easy",
+                    "above easy"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -73482,7 +73581,19 @@
               "weight": "warmup",
               "prompt": "Your shoulders lift on every breath at minute 3. What does it suggest?",
               "answer": "You're breathing high in the chest.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "chest",
+                    "high",
+                    "shallow",
+                    "not belly",
+                    "upper",
+                    "shoulder breathing"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -73527,8 +73638,21 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your watch battery dies at mile 2. Why is the talk test still useful?",
-              "answer": "Breath shows effort before any device.",
-              "answer_kind": "phrase"
+              "answer": "Breath shows effort without any device.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "breath",
+                    "effort",
+                    "feel",
+                    "no device",
+                    "always",
+                    "without a watch",
+                    "body"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -73553,7 +73677,21 @@
               "weight": "core",
               "prompt": "Why breathe out for 4 counts after a hard rep instead of panting?",
               "answer": "It calms the body and speeds recovery.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "calm",
+                    "recover",
+                    "slow",
+                    "heart rate",
+                    "settle",
+                    "relax",
+                    "faster recovery",
+                    "control"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -73623,22 +73761,72 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Your shins are sore from running. Name 2 backup options that are easy on them.",
-              "answer": "Cycling and pool running.",
-              "answer_kind": "phrase"
+              "answer": "Cycling, and pool running.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "cycl",
+                    "bike",
+                    "pool",
+                    "aqua",
+                    "swim",
+                    "elliptical",
+                    "row",
+                    "deep water"
+                  ],
+                  [
+                    "cycl",
+                    "bike",
+                    "pool",
+                    "aqua",
+                    "swim",
+                    "elliptical",
+                    "row",
+                    "deep water"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why learn the backup while you're healthy?",
               "answer": "So it isn't brand new during an injury.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "isn't brand new",
+                    "not brand new",
+                    "isn't new",
+                    "not new",
+                    "familiar",
+                    "ready",
+                    "learn",
+                    "skill",
+                    "technique",
+                    "already"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your gym has bikes and rowers, but the pool is 40 minutes away. Which backup makes more sense?",
               "answer": "A bike or rower.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "A bike or rower",
+                  "The pool"
+                ],
+                "accept": [
+                  "A bike or rower"
+                ]
+              }
             }
           ]
         },
@@ -73656,7 +73844,18 @@
               "weight": "warmup",
               "prompt": "Your plan has a 45 minute easy run. What's a fair bike swap?",
               "answer": "About 45 to 60 minutes of easy riding.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "45",
+                    "60",
+                    "45 to 60",
+                    "50",
+                    "longer"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -73668,9 +73867,18 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Your easy run heart rate is 135. What should the ride be near?",
-              "answer": "About 135.",
-              "answer_kind": "integer"
+              "prompt": "Your easy run heart rate is 135. For an easy bike swap, should the ride sit around 135 or around 165?",
+              "answer": "Around 135, the same easy effort.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Around 135, the same easy effort",
+                  "Around 165"
+                ],
+                "accept": [
+                  "Around 135, the same easy effort"
+                ]
+              }
             }
           ]
         },
@@ -73702,7 +73910,22 @@
               "weight": "stretch",
               "prompt": "Name 1 form mistake in pool running.",
               "answer": "Leaning forward and paddling.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "lean",
+                    "forward",
+                    "paddl",
+                    "bicycl",
+                    "shuffle",
+                    "short",
+                    "hands",
+                    "crawl",
+                    "swim"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -73719,22 +73942,65 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Your usual session is 6 x 3 minutes hard with 2 minutes easy. What's the bike version?",
-              "answer": "6 x 3 minutes hard with 2 minutes easy on the bike.",
-              "answer_kind": "sentence"
+              "answer": "6 x 3 minutes hard with 2 minutes easy, on the bike.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "6 x 3",
+                    "6 reps",
+                    "3 minutes",
+                    "same"
+                  ],
+                  [
+                    "bike",
+                    "ride",
+                    "cycl",
+                    "spin"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why keep 1 hard session a week while injured?",
               "answer": "Fitness fades fastest without hard work.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "fitness",
+                    "fades",
+                    "lose",
+                    "maintain",
+                    "keep",
+                    "intensity",
+                    "top end",
+                    "sharp"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Pool running makes your heart rate about 10 beats lower. How do you judge hard reps there?",
-              "answer": "By feel and breathing as well as heart rate.",
-              "answer_kind": "sentence"
+              "answer": "By feel and breathing, as well as heart rate.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "feel",
+                    "breath",
+                    "effort",
+                    "rpe",
+                    "perceived",
+                    "talk"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -73758,15 +74024,40 @@
               "slot": 2,
               "weight": "core",
               "prompt": "In week 2 the old pain returns at 3 out of 10. What do you do?",
-              "answer": "Hold or drop back to week 1.",
-              "answer_kind": "phrase"
+              "answer": "Hold, or drop back to week 1.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "hold",
+                    "drop back",
+                    "week 1",
+                    "repeat",
+                    "back off",
+                    "reduce"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "After 3 weeks on the bike, why can 30 miles of running feel easy on your lungs but still be risky?",
               "answer": "Bones and tendons lag behind your fitness.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "bone",
+                    "tendon",
+                    "lag",
+                    "impact",
+                    "tissue",
+                    "adapt",
+                    "slower"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -73784,21 +74075,77 @@
               "weight": "warmup",
               "prompt": "You run 4 days a week. Where might 1 cross-training session fit?",
               "answer": "On an easy day, replacing or adding to it.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "easy day",
+                    "easy",
+                    "replace",
+                    "add",
+                    "recovery",
+                    "rest day"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 benefits of cross-training in healthy weeks.",
               "answer": "More aerobic work with less impact, and a familiar backup sport.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "aerobic",
+                    "fitness",
+                    "cardio",
+                    "less impact",
+                    "low impact",
+                    "injury",
+                    "variety",
+                    "fun",
+                    "strength",
+                    "mental",
+                    "backup",
+                    "familiar",
+                    "muscle"
+                  ],
+                  [
+                    "aerobic",
+                    "fitness",
+                    "cardio",
+                    "less impact",
+                    "low impact",
+                    "injury",
+                    "variety",
+                    "fun",
+                    "strength",
+                    "mental",
+                    "backup",
+                    "familiar",
+                    "muscle"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Should the 1 weekly session usually be hard or easy?",
               "answer": "Easy or moderate.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Hard",
+                  "Easy or moderate"
+                ],
+                "accept": [
+                  "Easy or moderate"
+                ]
+              }
             }
           ]
         }
@@ -73830,21 +74177,65 @@
               "weight": "warmup",
               "prompt": "Your long run starts at 9 am. When should the main meal be?",
               "answer": "Around 6 to 7 am.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "6",
+                    "7",
+                    "6 to 7",
+                    "2 to 3 hours before",
+                    "3 hours"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "You train at 6 am and can't eat a full meal. Name 1 option.",
-              "answer": "A banana or toast 30 to 60 minutes before.",
-              "answer_kind": "sentence"
+              "answer": "A banana or toast, 30 to 60 minutes before.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "banana",
+                    "toast",
+                    "gel",
+                    "bar",
+                    "chew",
+                    "honey",
+                    "juice",
+                    "applesauce",
+                    "crackers",
+                    "dates",
+                    "rice cake",
+                    "bagel",
+                    "sports drink"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why keep the meal 2 hours before a run low in fat and fiber?",
               "answer": "They digest slowly and can upset the stomach.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "slow",
+                    "digest",
+                    "stomach",
+                    "upset",
+                    "cramp",
+                    "gi",
+                    "heavy",
+                    "sit"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -73869,7 +74260,17 @@
               "weight": "core",
               "prompt": "Your session is 2 hours. Roughly how many grams of carbs should you take?",
               "answer": "About 60 to 120 grams.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "60",
+                    "90",
+                    "120",
+                    "60 to 120"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -73894,7 +74295,22 @@
               "weight": "warmup",
               "prompt": "Your stomach rates 4 out of 10 on 60 grams an hour. What do you do?",
               "answer": "Drop to 40 grams and build up slowly.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "less",
+                    "drop",
+                    "lower",
+                    "reduce",
+                    "40",
+                    "build",
+                    "train the gut",
+                    "slowly",
+                    "different"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -73924,9 +74340,14 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "You weigh 150 before and 148 after an hour, and drank nothing. About how much fluid did you lose?",
+              "prompt": "You weigh 150 pounds before and 148 after an hour, and drank nothing. About how many pounds of fluid did you lose?",
               "answer": "About 2 pounds, or 32 ounces.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "2"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -73940,7 +74361,19 @@
               "weight": "stretch",
               "prompt": "You sweat 16 ounces an hour but drink 50. Why is that a risk?",
               "answer": "It can dilute blood sodium.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "sodium",
+                    "dilute",
+                    "hyponatremia",
+                    "salt",
+                    "electrolyte",
+                    "water intoxication"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -73957,22 +74390,87 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 2 easy recovery snacks.",
-              "answer": "Chocolate milk and a turkey sandwich, for example.",
-              "answer_kind": "list"
+              "answer": "Chocolate milk, and a turkey sandwich.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "chocolate milk",
+                    "milk",
+                    "sandwich",
+                    "yogurt",
+                    "banana",
+                    "bagel",
+                    "smoothie",
+                    "eggs",
+                    "toast",
+                    "peanut butter",
+                    "cereal",
+                    "rice",
+                    "bar",
+                    "cheese",
+                    "fruit",
+                    "trail mix",
+                    "shake"
+                  ],
+                  [
+                    "chocolate milk",
+                    "milk",
+                    "sandwich",
+                    "yogurt",
+                    "banana",
+                    "bagel",
+                    "smoothie",
+                    "eggs",
+                    "toast",
+                    "peanut butter",
+                    "cereal",
+                    "rice",
+                    "bar",
+                    "cheese",
+                    "fruit",
+                    "trail mix",
+                    "shake"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Is a typical recovery target about 20 to 30 grams of protein, or 100?",
               "answer": "About 20 to 30 grams.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "About 20 to 30 grams",
+                  "About 100 grams"
+                ],
+                "accept": [
+                  "About 20 to 30 grams"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You have a hard session tomorrow at 7 am. Why does tonight's recovery meal matter?",
               "answer": "It refills fuel and starts repair for tomorrow.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "refill",
+                    "refuel",
+                    "glycogen",
+                    "repair",
+                    "recover",
+                    "ready",
+                    "energy"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -73990,21 +74488,73 @@
               "weight": "warmup",
               "prompt": "Name the 3 parts of a fuel plan.",
               "answer": "What, when and how much.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "what",
+                    "type",
+                    "which"
+                  ],
+                  [
+                    "when",
+                    "timing",
+                    "time"
+                  ],
+                  [
+                    "how much",
+                    "amount",
+                    "quantity",
+                    "grams"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your race has aid stations every 3 miles. How does that change the plan?",
-              "answer": "Time fuel near the stations or carry your own.",
-              "answer_kind": "sentence"
+              "answer": "Time fuel near the stations, or carry your own.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "station",
+                    "near",
+                    "carry",
+                    "own",
+                    "time",
+                    "around",
+                    "match"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 places to keep the plan during a 13 mile race.",
-              "answer": "Taped to a bottle or written on your wrist.",
-              "answer_kind": "sentence"
+              "answer": "Taped to a bottle, or written on your wrist.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "bottle",
+                    "wrist",
+                    "arm",
+                    "hand",
+                    "bib",
+                    "watch",
+                    "tape",
+                    "pace band",
+                    "band",
+                    "pocket",
+                    "belt",
+                    "sleeve"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -74036,7 +74586,12 @@
               "weight": "warmup",
               "prompt": "You count 80 steps in 30 seconds. What's your cadence?",
               "answer": "160 steps per minute.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "160"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -74050,7 +74605,22 @@
               "weight": "stretch",
               "prompt": "Why might going from 155 to 165 steps per minute help?",
               "answer": "Shorter steps mean less braking and impact.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "shorter",
+                    "less braking",
+                    "braking",
+                    "impact",
+                    "overstrid",
+                    "softer",
+                    "load",
+                    "injur",
+                    "efficien"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -74082,7 +74652,21 @@
               "weight": "stretch",
               "prompt": "Why is landing 12 inches in front of your hips a problem?",
               "answer": "It acts like a brake.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "brake",
+                    "braking",
+                    "overstrid",
+                    "impact",
+                    "slow",
+                    "stress",
+                    "joint",
+                    "heel"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -74106,8 +74690,45 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 posture cues.",
-              "answer": "Tall spine and relaxed shoulders.",
-              "answer_kind": "list"
+              "answer": "A tall spine, and relaxed shoulders.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "tall",
+                    "upright",
+                    "spine",
+                    "head",
+                    "chin",
+                    "chest",
+                    "hips",
+                    "shoulder",
+                    "relax",
+                    "lean",
+                    "core",
+                    "arms",
+                    "eyes",
+                    "gaze"
+                  ],
+                  [
+                    "tall",
+                    "upright",
+                    "spine",
+                    "head",
+                    "chin",
+                    "chest",
+                    "hips",
+                    "shoulder",
+                    "relax",
+                    "lean",
+                    "core",
+                    "arms",
+                    "eyes",
+                    "gaze"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -74132,7 +74753,23 @@
               "weight": "warmup",
               "prompt": "Name 1 image that relaxes the hands during 5 strides.",
               "answer": "Holding a chip without breaking it.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "chip",
+                    "egg",
+                    "potato chip",
+                    "butterfly",
+                    "bird",
+                    "paper",
+                    "cracker",
+                    "tissue",
+                    "loose",
+                    "soft"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -74164,14 +74801,79 @@
               "weight": "warmup",
               "prompt": "Name 3 running drills.",
               "answer": "High knees, butt kicks and skips.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "high knee",
+                    "butt kick",
+                    "skip",
+                    "a-skip",
+                    "b-skip",
+                    "carioca",
+                    "grapevine",
+                    "bound",
+                    "stride",
+                    "lunge",
+                    "leg swing",
+                    "ankling",
+                    "strides",
+                    "hops"
+                  ],
+                  [
+                    "high knee",
+                    "butt kick",
+                    "skip",
+                    "a-skip",
+                    "b-skip",
+                    "carioca",
+                    "grapevine",
+                    "bound",
+                    "stride",
+                    "lunge",
+                    "leg swing",
+                    "ankling",
+                    "strides",
+                    "hops"
+                  ],
+                  [
+                    "high knee",
+                    "butt kick",
+                    "skip",
+                    "a-skip",
+                    "b-skip",
+                    "carioca",
+                    "grapevine",
+                    "bound",
+                    "stride",
+                    "lunge",
+                    "leg swing",
+                    "ankling",
+                    "strides",
+                    "hops"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "You have a 10 minute warm-up and a 30 minute run. When do the drills go?",
               "answer": "After warming up, before the main run.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "after warming up",
+                    "after the warm-up",
+                    "after warm up",
+                    "before the main",
+                    "before the run",
+                    "between"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -74217,14 +74919,37 @@
               "weight": "core",
               "prompt": "Why does the same pace feel harder at 85 F?",
               "answer": "More blood goes to the skin to cool you, so less goes to the muscles.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "skin",
+                    "cool",
+                    "blood",
+                    "muscle",
+                    "less blood",
+                    "sweat",
+                    "heart",
+                    "harder"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Humidity is 90 percent. Should you slow down more or less than on a dry hot day?",
               "answer": "More, since sweat can't cool you as well.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "More",
+                  "Less"
+                ],
+                "accept": [
+                  "More"
+                ]
+              }
             }
           ]
         },
@@ -74241,22 +74966,63 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "You weigh 160 and lose 4 pounds in a hot 90 minute run. What percent is that?",
-              "answer": "2.5 percent, a bit too much.",
-              "answer_kind": "phrase"
+              "answer": "2.5%, a bit too much.",
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "2.5"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 ways to replace salt on a long hot run.",
-              "answer": "Sports drink and electrolyte tabs.",
-              "answer_kind": "list"
+              "answer": "Sports drink, and electrolyte tabs.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "sports drink",
+                    "drink",
+                    "electrolyte",
+                    "tab",
+                    "salt",
+                    "capsule",
+                    "chew",
+                    "gel",
+                    "pretzels",
+                    "broth",
+                    "pickle"
+                  ],
+                  [
+                    "sports drink",
+                    "drink",
+                    "electrolyte",
+                    "tab",
+                    "salt",
+                    "capsule",
+                    "chew",
+                    "gel",
+                    "pretzels",
+                    "broth",
+                    "pickle"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "What's the target for weight lost in a session?",
-              "answer": "Less than 2 percent of body weight.",
-              "answer_kind": "phrase"
+              "prompt": "Weight lost in a 90-minute session should stay under what percent of body weight?",
+              "answer": "Under 2% of body weight.",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "2"
+                ]
+              }
             }
           ]
         },
@@ -74273,8 +75039,17 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Does heat adaptation take about 10 to 14 days, or 2?",
-              "answer": "About 10 to 14.",
-              "answer_kind": "phrase"
+              "answer": "About 10 to 14 days.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "About 10 to 14 days",
+                  "About 2 days"
+                ],
+                "accept": [
+                  "About 10 to 14 days"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -74288,7 +75063,16 @@
               "weight": "stretch",
               "prompt": "On day 3 of adapting, should the 45 minute session be hard or easy?",
               "answer": "Easy.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Hard",
+                  "Easy"
+                ],
+                "accept": [
+                  "Easy"
+                ]
+              }
             }
           ]
         },
@@ -74306,21 +75090,71 @@
               "weight": "warmup",
               "prompt": "It's 30 F. Dress as if it's what temperature?",
               "answer": "About 45 to 50 F.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "45",
+                    "50",
+                    "45 to 50",
+                    "15 to 20 warmer",
+                    "20 degrees warmer"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why avoid a cotton T-shirt as the base layer at 30 F?",
               "answer": "It holds sweat and gets cold.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "sweat",
+                    "wet",
+                    "cold",
+                    "hold",
+                    "absorb",
+                    "damp",
+                    "chill",
+                    "heavy"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name the 3 layers.",
-              "answer": "Wicking base, insulating middle and wind shell.",
-              "answer_kind": "list"
+              "answer": "A wicking base, an insulating middle and a wind shell.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "base",
+                    "wicking",
+                    "thin",
+                    "first"
+                  ],
+                  [
+                    "insulat",
+                    "middle",
+                    "mid",
+                    "fleece",
+                    "warm"
+                  ],
+                  [
+                    "shell",
+                    "wind",
+                    "outer",
+                    "jacket",
+                    "waterproof"
+                  ]
+                ],
+                "order": true
+              }
             }
           ]
         },
@@ -74338,7 +75172,22 @@
               "weight": "warmup",
               "prompt": "Your sea level easy pace is 9:00 per mile. What's a fair pace at 7,000 feet?",
               "answer": "About 9:30 to 9:55.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "9:30",
+                    "9:35",
+                    "9:40",
+                    "9:45",
+                    "9:50",
+                    "9:55",
+                    "slower",
+                    "30 seconds",
+                    "45 seconds"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -74351,8 +75200,27 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 habits to increase in your first 3 days at altitude.",
-              "answer": "Drink fluids and sleep.",
-              "answer_kind": "list"
+              "answer": "Drinking fluids, and sleep.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "drink",
+                    "fluid",
+                    "water",
+                    "hydrat"
+                  ],
+                  [
+                    "sleep",
+                    "rest",
+                    "iron",
+                    "carb",
+                    "eat",
+                    "food"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -74377,14 +75245,56 @@
               "weight": "core",
               "prompt": "A storm is forecast for Saturday, your long run day. Name 2 options.",
               "answer": "Move it to Sunday or Friday, or use a treadmill.",
-              "answer_kind": "sentence"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "sunday",
+                    "friday",
+                    "another day",
+                    "other day",
+                    "move",
+                    "swap",
+                    "treadmill",
+                    "indoor",
+                    "bike",
+                    "trainer",
+                    "gym",
+                    "split"
+                  ],
+                  [
+                    "sunday",
+                    "friday",
+                    "another day",
+                    "other day",
+                    "move",
+                    "swap",
+                    "treadmill",
+                    "indoor",
+                    "bike",
+                    "trainer",
+                    "gym",
+                    "split"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Of your 5 sessions, which can take the worst weather: easy or hard?",
               "answer": "Easy ones.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Easy ones",
+                  "Hard ones"
+                ],
+                "accept": [
+                  "Easy ones"
+                ]
+              }
             }
           ]
         }
@@ -74416,14 +75326,42 @@
               "weight": "warmup",
               "prompt": "Why are 10 second hill sprints easier on the legs than flat sprints?",
               "answer": "The slope shortens your stride and softens the landing.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "slope",
+                    "shorter stride",
+                    "stride",
+                    "landing",
+                    "impact",
+                    "softer",
+                    "gentle",
+                    "less pounding"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "After sprint 4, you're still breathing hard at the bottom. What do you do?",
-              "answer": "Wait until breathing settles before the next one.",
-              "answer_kind": "phrase"
+              "answer": "Wait until your breathing settles before the next one.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "wait",
+                    "rest",
+                    "settle",
+                    "recover",
+                    "breath",
+                    "longer",
+                    "walk",
+                    "slow"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -74448,21 +75386,63 @@
               "weight": "warmup",
               "prompt": "On 5 hill repeats, should you hold even pace or even effort?",
               "answer": "Even effort.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Even pace",
+                  "Even effort"
+                ],
+                "accept": [
+                  "Even effort"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "How do you recover between 90 second repeats?",
               "answer": "Jog back down easily.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "jog",
+                    "walk",
+                    "easy",
+                    "down",
+                    "back down"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 form cues for uphill running.",
-              "answer": "Lean from the ankles and drive the arms.",
-              "answer_kind": "list"
+              "answer": "Lean from the ankles, and drive the arms.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "lean",
+                    "ankle",
+                    "forward",
+                    "tall"
+                  ],
+                  [
+                    "arm",
+                    "drive",
+                    "knee",
+                    "short step",
+                    "quick step",
+                    "eyes",
+                    "look",
+                    "push",
+                    "relax"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -74479,22 +75459,53 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Why do 4 downhill strides leave quads sorer than 4 uphill ones?",
-              "answer": "Muscles brake while lengthening.",
-              "answer_kind": "phrase"
+              "answer": "Muscles brake while they lengthen.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "brake",
+                    "braking",
+                    "lengthen",
+                    "eccentric",
+                    "stretch",
+                    "impact",
+                    "pound"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "On a 3 percent downhill, should you lean back or slightly forward?",
               "answer": "Slightly forward, with the hill.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Lean back",
+                  "Slightly forward"
+                ],
+                "accept": [
+                  "Slightly forward"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Should your first 4 downhill strides be on a steep or gentle slope?",
               "answer": "Gentle slopes.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Steep",
+                  "Gentle"
+                ],
+                "accept": [
+                  "Gentle"
+                ]
+              }
             }
           ]
         },
@@ -74512,7 +75523,18 @@
               "weight": "warmup",
               "prompt": "Your heart rate jumps from 135 to 165 on a climb during an easy run. What do you do?",
               "answer": "Slow down or walk until you can talk again.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "slow",
+                    "walk",
+                    "ease",
+                    "back off",
+                    "talk"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -74543,22 +75565,70 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 3 hill substitutes in a flat city.",
-              "answer": "A treadmill incline, stairs and a parking garage ramp.",
-              "answer_kind": "list"
+              "answer": "A treadmill incline, stairs, and a parking garage ramp.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "treadmill",
+                    "incline"
+                  ],
+                  [
+                    "stair",
+                    "steps",
+                    "staircase",
+                    "stadium",
+                    "bleacher"
+                  ],
+                  [
+                    "garage",
+                    "ramp",
+                    "bridge",
+                    "overpass",
+                    "parking",
+                    "hill",
+                    "resistance",
+                    "bike",
+                    "weighted",
+                    "sled",
+                    "sand"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Does a 1 percent treadmill incline work for hill reps, or more like 4 to 8?",
-              "answer": "About 4 to 8 percent.",
-              "answer_kind": "phrase"
+              "answer": "About 4 to 8%.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "About 1%",
+                  "About 4 to 8%"
+                ],
+                "accept": [
+                  "About 4 to 8%"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You do 6 stair climbs of 1 minute. How do you recover between them?",
               "answer": "Walk or jog easily back down.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "walk",
+                    "jog",
+                    "easy",
+                    "down"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -74576,21 +75646,76 @@
               "weight": "warmup",
               "prompt": "Why do 4 weeks of hills before track intervals?",
               "answer": "Hills build strength that makes speed work safer.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "strength",
+                    "safer",
+                    "injur",
+                    "prepare",
+                    "base",
+                    "tendon",
+                    "muscle",
+                    "foundation"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your race is 12 weeks away. Where might the hill block go?",
               "answer": "In the first 4 weeks.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "first",
+                    "early",
+                    "start",
+                    "weeks 1",
+                    "beginning",
+                    "first 4"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 areas hills strengthen.",
               "answer": "Calves and hips.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "calf",
+                    "calves",
+                    "hip",
+                    "glute",
+                    "quad",
+                    "hamstring",
+                    "ankle",
+                    "achilles",
+                    "core",
+                    "foot"
+                  ],
+                  [
+                    "calf",
+                    "calves",
+                    "hip",
+                    "glute",
+                    "quad",
+                    "hamstring",
+                    "ankle",
+                    "achilles",
+                    "core",
+                    "foot"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         }
@@ -74654,7 +75779,20 @@
               "weight": "warmup",
               "prompt": "Your shin ache goes 1, 2, 2, 3, 4 over 5 runs. What does it tell you?",
               "answer": "It's building. Cut back now.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "building",
+                    "getting worse",
+                    "rising",
+                    "cut back",
+                    "worse",
+                    "increasing",
+                    "trend"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -74686,7 +75824,20 @@
               "weight": "warmup",
               "prompt": "Your knee is 4 out of 10 at mile 2. Using the 3 tier rule, what do you do?",
               "answer": "Cut the run short and make it easier.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "cut",
+                    "short",
+                    "easier",
+                    "stop",
+                    "end",
+                    "reduce",
+                    "walk"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -74718,21 +75869,74 @@
               "weight": "warmup",
               "prompt": "Your shins started aching 2 weeks after you went from 15 to 25 miles a week. Likely cause?",
               "answer": "The jump in volume.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "volume",
+                    "jump",
+                    "mileage",
+                    "too much",
+                    "10 miles",
+                    "66",
+                    "increase"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your knee hurt after starting hill repeats 3 times a week. What change might help?",
               "answer": "Cut hill sessions to 1 a week.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "cut",
+                    "fewer",
+                    "1 a week",
+                    "once a week",
+                    "reduce",
+                    "less",
+                    "drop"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 3 common changes that come before injuries.",
               "answer": "More miles, faster sessions and new shoes.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "miles",
+                    "volume",
+                    "mileage",
+                    "more"
+                  ],
+                  [
+                    "faster",
+                    "speed",
+                    "intensity",
+                    "intervals",
+                    "harder"
+                  ],
+                  [
+                    "shoes",
+                    "surface",
+                    "terrain",
+                    "hills",
+                    "new",
+                    "sleep",
+                    "stress"
+                  ]
+                ],
+                "need": 3
+              }
             }
           ]
         },
@@ -74749,22 +75953,73 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Your shin hurts on runs but not on the bike. What can you do instead of a 40 minute easy run?",
-              "answer": "A 40 minute easy ride.",
-              "answer_kind": "phrase"
+              "answer": "A 40-minute easy ride.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "ride",
+                    "bike",
+                    "cycl",
+                    "spin"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 low-impact options for runners.",
-              "answer": "Cycling and pool running.",
-              "answer_kind": "list"
+              "answer": "Cycling, and pool running.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "cycl",
+                    "bike",
+                    "pool",
+                    "aqua",
+                    "swim",
+                    "elliptical",
+                    "row",
+                    "walk",
+                    "deep water"
+                  ],
+                  [
+                    "cycl",
+                    "bike",
+                    "pool",
+                    "aqua",
+                    "swim",
+                    "elliptical",
+                    "row",
+                    "walk",
+                    "deep water"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Pool running hurts your injury too. What do you do?",
-              "answer": "Try another option or rest that area fully.",
-              "answer_kind": "phrase"
+              "answer": "Try another option, or rest that area fully.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "another",
+                    "other",
+                    "different",
+                    "rest",
+                    "fully",
+                    "stop",
+                    "upper body",
+                    "swim"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -74782,7 +76037,21 @@
               "weight": "warmup",
               "prompt": "Your shin has 1 pinpoint sore spot on the bone that hurts to press. What do you do?",
               "answer": "See a doctor. It could be a bone stress injury.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "doctor",
+                    "see a",
+                    "physician",
+                    "professional",
+                    "stress",
+                    "x-ray",
+                    "mri",
+                    "stop running"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -74795,8 +76064,45 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 signs that mean see a professional.",
-              "answer": "Pain at rest and a limp, for example.",
-              "answer_kind": "list"
+              "answer": "Pain at rest, and a limp.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "rest",
+                    "night",
+                    "limp",
+                    "swelling",
+                    "sharp",
+                    "worse",
+                    "days",
+                    "week",
+                    "numb",
+                    "can't bear",
+                    "weight",
+                    "pinpoint",
+                    "bruise",
+                    "fever"
+                  ],
+                  [
+                    "rest",
+                    "night",
+                    "limp",
+                    "swelling",
+                    "sharp",
+                    "worse",
+                    "days",
+                    "week",
+                    "numb",
+                    "can't bear",
+                    "weight",
+                    "pinpoint",
+                    "bruise",
+                    "fever"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         }
@@ -74860,7 +76166,20 @@
               "weight": "warmup",
               "prompt": "Rep 1 covered 500 meters and rep 6 covered 420. What went wrong?",
               "answer": "Rep 1 was too fast.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "too fast",
+                    "fast",
+                    "start",
+                    "went out",
+                    "rep 1",
+                    "first rep",
+                    "pacing"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -74906,7 +76225,20 @@
               "weight": "stretch",
               "prompt": "Why leave 2 easy days between hard sessions?",
               "answer": "So you show up fresh.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "fresh",
+                    "recover",
+                    "rest",
+                    "ready",
+                    "quality",
+                    "energy",
+                    "legs"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -74923,22 +76255,70 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Write a session with medium reps of 2 to 4 minutes.",
-              "answer": "5 reps of 3 minutes with 2 minutes easy.",
-              "answer_kind": "sentence"
+              "answer": "5 reps of 3 minutes, with 2 minutes easy between.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "x",
+                    "reps",
+                    "times",
+                    "sets",
+                    "by"
+                  ],
+                  [
+                    "2 min",
+                    "3 min",
+                    "4 min",
+                    "2 minutes",
+                    "3 minutes",
+                    "4 minutes",
+                    "2-minute",
+                    "3-minute",
+                    "4-minute"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Of the 3 rep lengths, which trains turnover and speed?",
               "answer": "Short reps of 30 to 60 seconds.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "short",
+                    "30",
+                    "60",
+                    "sprint",
+                    "seconds"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You're training for a half marathon. Which rep length matters most later in the plan?",
               "answer": "Long reps near threshold, about 6 to 10 minutes.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "long",
+                    "threshold",
+                    "6 to 10",
+                    "tempo",
+                    "longer",
+                    "6",
+                    "8",
+                    "10 minute"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -74956,21 +76336,57 @@
               "weight": "warmup",
               "prompt": "Reps are 3 minutes. What's a typical recovery?",
               "answer": "About 2 to 3 minutes.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "2",
+                    "3",
+                    "2 to 3",
+                    "2-3",
+                    "same",
+                    "equal"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your breathing hasn't settled after 90 seconds of a 2 minute recovery. What do you do?",
               "answer": "Keep the full 2 minutes, or extend it a little.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "keep",
+                    "full",
+                    "extend",
+                    "longer",
+                    "more",
+                    "wait",
+                    "add",
+                    "finish"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "For a 2 minute recovery, should you walk, jog or stand still?",
-              "answer": "An easy jog or spin is best.",
-              "answer_kind": "phrase"
+              "answer": "An easy jog, or an easy spin on a bike.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Walk",
+                  "Jog",
+                  "Stand still"
+                ],
+                "accept": [
+                  "Jog"
+                ]
+              }
             }
           ]
         },
@@ -74988,21 +76404,71 @@
               "weight": "warmup",
               "prompt": "Weeks 1 and 2: 6 x 2 minutes. What's a fair weeks 3 and 4?",
               "answer": "7 x 2 minutes, or 6 x 2:30.",
-              "answer_kind": "sentence"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "7 x 2",
+                    "7 x 2 minutes",
+                    "7 reps",
+                    "6 x 2:30",
+                    "2:30",
+                    "2.5",
+                    "7"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 3 ways intervals can progress.",
-              "answer": "More reps, longer reps or faster reps.",
-              "answer_kind": "list"
+              "answer": "More reps, longer reps, and faster reps.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "more reps",
+                    "reps",
+                    "number"
+                  ],
+                  [
+                    "longer",
+                    "length",
+                    "duration"
+                  ],
+                  [
+                    "faster",
+                    "pace",
+                    "speed",
+                    "shorter rest",
+                    "less rest",
+                    "recovery"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why change only 1 thing at a time?",
               "answer": "So you know what's working.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "know",
+                    "what's working",
+                    "cause",
+                    "which",
+                    "tell",
+                    "isolate",
+                    "measure",
+                    "safe"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -75041,7 +76507,18 @@
               "weight": "core",
               "prompt": "Name 1 good day for a long session if you work weekdays.",
               "answer": "Saturday or Sunday morning.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "saturday",
+                    "sunday",
+                    "weekend",
+                    "friday",
+                    "morning"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -75073,14 +76550,38 @@
               "weight": "core",
               "prompt": "After 65 minutes your knee aches for 2 days. What do you do?",
               "answer": "Hold at 65 or drop back, and don't add more yet.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "hold",
+                    "drop back",
+                    "don't add",
+                    "do not add",
+                    "repeat",
+                    "same",
+                    "shorter",
+                    "rest",
+                    "check"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Should the 65 minute long session be at easy pace or race pace?",
-              "answer": "Easy, at talking pace.",
-              "answer_kind": "phrase"
+              "answer": "Easy pace, the talking pace.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Easy pace",
+                  "Race pace"
+                ],
+                "accept": [
+                  "Easy pace"
+                ]
+              }
             }
           ]
         },
@@ -75098,21 +76599,52 @@
               "weight": "warmup",
               "prompt": "Your long run is 90 minutes. How many grams of carbs might you take?",
               "answer": "About 45 to 90 grams.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "45",
+                    "60",
+                    "90",
+                    "45 to 90",
+                    "30",
+                    "50",
+                    "75"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "In a 90 minute session, should fueling start at minute 30 or minute 80?",
-              "answer": "Around 30 minutes in.",
-              "answer_kind": "phrase"
+              "answer": "Around minute 30.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Minute 30",
+                  "Minute 80"
+                ],
+                "accept": [
+                  "Minute 30"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Should you sip water about every 15 minutes or once an hour?",
               "answer": "About every 15 minutes.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "About every 15 minutes",
+                  "Once an hour"
+                ],
+                "accept": [
+                  "About every 15 minutes"
+                ]
+              }
             }
           ]
         },
@@ -75129,15 +76661,51 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 1 thing that might change late in a long run.",
-              "answer": "Form slips or thoughts turn negative.",
-              "answer_kind": "phrase"
+              "answer": "Form slips, or thoughts turn negative.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "form",
+                    "posture",
+                    "stride",
+                    "slip",
+                    "thoughts",
+                    "negative",
+                    "mood",
+                    "pace",
+                    "slow",
+                    "heavy",
+                    "fatigue",
+                    "tired",
+                    "motivat",
+                    "focus",
+                    "cramp",
+                    "blister"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why note how the last 20 minutes feel?",
               "answer": "It prepares you for race day.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "race",
+                    "prepare",
+                    "practice",
+                    "late",
+                    "fatigue",
+                    "plan",
+                    "learn",
+                    "what to expect"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -75162,7 +76730,18 @@
               "weight": "warmup",
               "prompt": "Name 2 things the recovery meal needs.",
               "answer": "Carbs and protein.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "carb"
+                  ],
+                  [
+                    "protein"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
@@ -75176,7 +76755,16 @@
               "weight": "stretch",
               "prompt": "Should the recovery meal come within 60 minutes or 6 hours?",
               "answer": "Within about 60 minutes.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Within about 60 minutes",
+                  "Within 6 hours"
+                ],
+                "accept": [
+                  "Within about 60 minutes"
+                ]
+              }
             }
           ]
         }
@@ -75208,21 +76796,48 @@
               "weight": "warmup",
               "prompt": "Your goal for a 10K is 50 minutes. What's your pace per kilometer?",
               "answer": "5:00 per kilometer.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "5:00",
+                  "5 minutes",
+                  "5 min",
+                  "5:00 per kilometer",
+                  "5:00/km"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your goal for a 5 mile race is 45 minutes. What's your pace per mile?",
               "answer": "9:00 per mile.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "9:00",
+                  "9 minutes",
+                  "9 min",
+                  "9:00 per mile",
+                  "9:00/mi"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your recent 5K was 27 minutes. Is a 22 minute 5K goal next month realistic?",
               "answer": "Probably not. Aim closer to 26.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Yes",
+                  "Probably not"
+                ],
+                "accept": [
+                  "Probably not"
+                ]
+              }
             }
           ]
         },
@@ -75240,21 +76855,61 @@
               "weight": "warmup",
               "prompt": "Your goal pace is 9:00 per mile. What should the first mile of a 10K be?",
               "answer": "About 9:00 to 9:05.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "9:00",
+                    "9:05",
+                    "9:00 to 9:05",
+                    "goal pace",
+                    "on pace",
+                    "slightly slow",
+                    "9"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "You ran mile 1 in 8:20 on a 9:00 goal. What usually happens later?",
               "answer": "You slow down a lot near the end.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "slow",
+                    "fade",
+                    "crash",
+                    "die",
+                    "wall",
+                    "hurt",
+                    "struggle",
+                    "pay"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why does mile 1 of a race feel so easy?",
               "answer": "Adrenaline and fresh legs.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "adrenaline",
+                    "fresh",
+                    "excite",
+                    "crowd",
+                    "rested",
+                    "taper",
+                    "nerves"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -75279,14 +76934,39 @@
               "weight": "core",
               "prompt": "First half 14:30, second half 16:00. What went wrong?",
               "answer": "The start was too fast.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "too fast",
+                    "fast",
+                    "start",
+                    "went out",
+                    "first half"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why practice negative splits in a 30 minute tempo before race day?",
               "answer": "So they feel normal on race day.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "normal",
+                    "familiar",
+                    "practice",
+                    "feel",
+                    "natural",
+                    "habit",
+                    "confiden",
+                    "learn"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -75311,7 +76991,16 @@
               "weight": "core",
               "prompt": "On a 5 mile hilly course, should you hold even pace or even effort?",
               "answer": "Even effort.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Even pace",
+                  "Even effort"
+                ],
+                "accept": [
+                  "Even effort"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -75336,14 +77025,37 @@
               "weight": "warmup",
               "prompt": "Your mile 3 split is 9:12 on a 9:00 goal. What do you do?",
               "answer": "Pick it up a little over the next half mile.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "pick it up",
+                    "speed up",
+                    "a little",
+                    "gradual",
+                    "slightly",
+                    "next half",
+                    "don't panic",
+                    "small"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "In a 10K, should you check your watch about every kilometer or every 30 seconds?",
-              "answer": "About once per mile or kilometer.",
-              "answer_kind": "phrase"
+              "answer": "About once per kilometer or mile.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "About once per kilometer",
+                  "Every 30 seconds"
+                ],
+                "accept": [
+                  "About once per kilometer"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -75367,22 +77079,58 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name the 3 parts of the race plan.",
-              "answer": "First 25 percent, middle 50 percent and last 25 percent.",
-              "answer_kind": "list"
+              "answer": "The first 25%, the middle 50% and the last 25%.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "first",
+                    "start",
+                    "opening",
+                    "early"
+                  ],
+                  [
+                    "middle",
+                    "50"
+                  ],
+                  [
+                    "last",
+                    "finish",
+                    "end",
+                    "final"
+                  ]
+                ],
+                "order": true
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Of the 3 parts, when should you push hardest?",
-              "answer": "In the last 25 percent.",
-              "answer_kind": "phrase"
+              "answer": "In the last 25%.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "last",
+                    "end",
+                    "final",
+                    "finish"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "In a 10K, roughly when does the last quarter start?",
               "answer": "Around 7.5 kilometers.",
-              "answer_kind": "phrase"
+              "answer_kind": "decimal",
+              "grading": {
+                "accept": [
+                  "7.5"
+                ]
+              }
             }
           ]
         }
@@ -75421,14 +77169,39 @@
               "weight": "core",
               "prompt": "Your recent 10K was 55 minutes. Is a 1:45 half marathon a realistic first goal?",
               "answer": "Probably too fast. Something near 2:00 is more realistic.",
-              "answer_kind": "sentence"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Realistic",
+                  "Probably too fast"
+                ],
+                "accept": [
+                  "Probably too fast"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 use for a smaller race 6 weeks before the main one.",
               "answer": "Practice for pacing and fueling.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "practice",
+                    "pacing",
+                    "fuel",
+                    "rehearsal",
+                    "test",
+                    "check",
+                    "fitness",
+                    "gauge",
+                    "nerves",
+                    "routine"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -75444,9 +77217,15 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "In a 12 week plan, roughly how many weeks might be taper?",
+              "prompt": "In a 12-week plan, about how many weeks might the taper take? Give the low end, then the high end.",
               "answer": "About 1 to 2.",
-              "answer_kind": "phrase"
+              "answer_kind": "list",
+              "grading": {
+                "accept": [
+                  "1, 2"
+                ],
+                "order": true
+              }
             },
             {
               "slot": 2,
@@ -75460,7 +77239,20 @@
               "weight": "stretch",
               "prompt": "Why count back from race day instead of forward from week 1?",
               "answer": "So the taper lands right before the race.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "taper",
+                    "race day",
+                    "lands",
+                    "right before",
+                    "timing",
+                    "peak",
+                    "end"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -75485,14 +77277,42 @@
               "weight": "core",
               "prompt": "Your plan has 150 easy and 150 hard minutes. What's wrong?",
               "answer": "Too much hard work.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "too much hard",
+                    "too hard",
+                    "50/50",
+                    "half",
+                    "hard work",
+                    "not enough easy",
+                    "balance",
+                    "80"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why avoid making 3 of your easy days moderate?",
               "answer": "It leaves you tired without building as much.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "tired",
+                    "fatigue",
+                    "grey",
+                    "gray",
+                    "neither",
+                    "less benefit",
+                    "without building",
+                    "recover"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -75517,14 +77337,33 @@
               "weight": "core",
               "prompt": "In a 16 week plan with every 4th week light, which weeks are recovery weeks?",
               "answer": "Weeks 4, 8 and 12.",
-              "answer_kind": "phrase"
+              "answer_kind": "list",
+              "grading": {
+                "accept": [
+                  "4, 8, 12"
+                ],
+                "order": true
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You train hard for 3 weeks. When does most of the fitness actually get built?",
               "answer": "During the recovery after it.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "recover",
+                    "rest",
+                    "after",
+                    "between",
+                    "adapt",
+                    "easy weeks",
+                    "light week"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -75542,7 +77381,19 @@
               "weight": "warmup",
               "prompt": "Your week has a Tuesday interval session and a Saturday long run. Where do easy days go?",
               "answer": "Between them, like Wednesday, Thursday and Friday.",
-              "answer_kind": "list"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "between",
+                    "wednesday",
+                    "thursday",
+                    "friday",
+                    "middle",
+                    "in between"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -75555,8 +77406,35 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 common key sessions.",
-              "answer": "The long run and an interval session.",
-              "answer_kind": "list"
+              "answer": "The long run, and an interval session.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "long run",
+                    "long",
+                    "interval",
+                    "tempo",
+                    "threshold",
+                    "hill",
+                    "race pace",
+                    "speed",
+                    "track"
+                  ],
+                  [
+                    "long run",
+                    "long",
+                    "interval",
+                    "tempo",
+                    "threshold",
+                    "hill",
+                    "race pace",
+                    "speed",
+                    "track"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -75574,14 +77452,39 @@
               "weight": "warmup",
               "prompt": "You miss 1 easy day on Wednesday. What do you do?",
               "answer": "Skip it and carry on.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "skip",
+                    "carry on",
+                    "move on",
+                    "let it go",
+                    "don't make up",
+                    "continue"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "You're sick for 6 days in week 9. What does your rule say?",
               "answer": "Ease back in and repeat the week.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "ease back",
+                    "repeat",
+                    "easier",
+                    "back in",
+                    "gradual",
+                    "don't jump",
+                    "redo"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -75627,14 +77530,48 @@
               "weight": "core",
               "prompt": "Name the 4 parts of the race plan.",
               "answer": "Morning routine, warm-up, pacing and fuel.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "morning",
+                    "routine",
+                    "breakfast",
+                    "wake"
+                  ],
+                  [
+                    "warm-up",
+                    "warm up",
+                    "warmup"
+                  ],
+                  [
+                    "pacing",
+                    "pace",
+                    "splits"
+                  ],
+                  [
+                    "fuel",
+                    "fueling",
+                    "nutrition",
+                    "gel",
+                    "drink",
+                    "water"
+                  ]
+                ],
+                "need": 4
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Your plan says gel at minutes 30, 60 and 90. How many gels do you carry for a 2 hour race?",
-              "answer": "At least 3, plus 1 spare.",
-              "answer_kind": "phrase"
+              "prompt": "Your plan says a gel at minutes 30, 60 and 90, plus 1 spare. How many gels do you carry for a 2-hour race?",
+              "answer": "4: 3 planned and 1 spare.",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "4"
+                ]
+              }
             }
           ]
         },
@@ -75652,14 +77589,34 @@
               "weight": "warmup",
               "prompt": "Your race starts at 9:00. When should you arrive?",
               "answer": "About 8:00.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "8",
+                    "8:00",
+                    "an hour",
+                    "1 hour",
+                    "60 minutes"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Which needs a longer warm-up: a 5K or a marathon?",
-              "answer": "A 5K.",
-              "answer_kind": "integer"
+              "answer": "A 5K. It starts fast, so you need to be warm.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "A 5K",
+                  "A marathon"
+                ],
+                "accept": [
+                  "A 5K"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -75684,21 +77641,57 @@
               "weight": "warmup",
               "prompt": "Your goal pace is 8:00 per mile in a 6 mile race. What should miles 1 and 2 be?",
               "answer": "About 8:00 to 8:05.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "8:00",
+                    "8:05",
+                    "goal pace",
+                    "on pace",
+                    "8"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Mile 1 felt easy at 7:30 on an 8:00 goal. What usually happens?",
               "answer": "You fade badly later.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "fade",
+                    "slow",
+                    "crash",
+                    "wall",
+                    "die",
+                    "struggle",
+                    "pay"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why does holding 8:00 pace in mile 1 feel wrong?",
               "answer": "Adrenaline makes fast feel easy.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "adrenaline",
+                    "fast feels easy",
+                    "excite",
+                    "nerves",
+                    "fresh",
+                    "crowd"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -75723,7 +77716,16 @@
               "weight": "core",
               "prompt": "An aid station at mile 10 hands out a drink you've never tried. Do you take it?",
               "answer": "Better not. Stick to what you practiced.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Take it",
+                  "Better not"
+                ],
+                "accept": [
+                  "Better not"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -75748,21 +77750,74 @@
               "weight": "warmup",
               "prompt": "Mile 9 of 13 feels terrible. What do you focus on?",
               "answer": "Just reaching mile 10.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "next mile",
+                    "mile 10",
+                    "10",
+                    "small",
+                    "just",
+                    "chunk",
+                    "one mile",
+                    "next marker"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 3 points in a quick form check.",
-              "answer": "Relax shoulders, quick steps and drive arms.",
-              "answer_kind": "list"
+              "answer": "Relax the shoulders, quick steps, and drive the arms.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "shoulder",
+                    "relax",
+                    "jaw",
+                    "hands",
+                    "face"
+                  ],
+                  [
+                    "quick",
+                    "step",
+                    "cadence",
+                    "feet",
+                    "stride"
+                  ],
+                  [
+                    "arm",
+                    "drive",
+                    "posture",
+                    "tall",
+                    "hips",
+                    "breath"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You feel awful at 70 minutes and your gel is due. What might help?",
               "answer": "Take the gel, since low energy may be part of it.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "take the gel",
+                    "gel",
+                    "fuel",
+                    "eat",
+                    "energy",
+                    "carb"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -75779,22 +77834,74 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Your splits slowed by 40 seconds per mile after mile 8. What might the 1 change be?",
-              "answer": "Start slower or fuel earlier.",
-              "answer_kind": "phrase"
+              "answer": "Start slower, or fuel earlier.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "start slower",
+                    "slower start",
+                    "fuel earlier",
+                    "fuel",
+                    "eat earlier",
+                    "pacing",
+                    "slow start",
+                    "more gels",
+                    "train",
+                    "long runs"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name the 3 parts of the review.",
               "answer": "What went well, what didn't, and 1 change.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "went well",
+                    "good",
+                    "worked",
+                    "positive"
+                  ],
+                  [
+                    "didn't",
+                    "wrong",
+                    "bad",
+                    "struggle",
+                    "not work"
+                  ],
+                  [
+                    "change",
+                    "next time",
+                    "fix",
+                    "improve"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why write it within 3 days?",
               "answer": "The details are still fresh.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "fresh",
+                    "details",
+                    "remember",
+                    "forget",
+                    "memory",
+                    "accurate"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -75826,21 +77933,46 @@
               "weight": "warmup",
               "prompt": "Your sessions after 6 hours of sleep average 4 out of 10, and after 8 hours average 7. What's the lesson?",
               "answer": "Sleep strongly affects how training goes.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "sleep"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "You can either sleep 1 more hour or add a 30 minute run. Which helps more during a hard block?",
-              "answer": "Usually the extra sleep.",
-              "answer_kind": "phrase"
+              "answer": "The extra hour of sleep, usually.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "The extra hour of sleep",
+                  "The 30 minute run"
+                ],
+                "accept": [
+                  "The extra hour of sleep"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Do many athletes in hard training need about 6 hours of sleep, or 8 or more?",
               "answer": "About 8 or more.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "About 6 hours",
+                  "8 or more"
+                ],
+                "accept": [
+                  "8 or more"
+                ]
+              }
             }
           ]
         },
@@ -75858,7 +77990,16 @@
               "weight": "warmup",
               "prompt": "You train 2 hours on Saturday. Should Saturday's carbs be higher or lower than a rest day?",
               "answer": "Higher.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Higher",
+                  "Lower"
+                ],
+                "accept": [
+                  "Higher"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -75872,7 +78013,16 @@
               "weight": "stretch",
               "prompt": "Is a common protein target about 20 to 30 grams per meal, or 5?",
               "answer": "About 20 to 30 grams.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "About 20 to 30 grams",
+                  "About 5 grams"
+                ],
+                "accept": [
+                  "About 20 to 30 grams"
+                ]
+              }
             }
           ]
         },
@@ -75896,15 +78046,38 @@
               "slot": 2,
               "weight": "core",
               "prompt": "You hit 145 on a hill during an easy run with a 133 cap. What do you do?",
-              "answer": "Slow down or walk until you're back under.",
-              "answer_kind": "phrase"
+              "answer": "Slow down or walk until you're back under the cap.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "slow",
+                    "walk",
+                    "back under",
+                    "ease",
+                    "cap"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "After 8 weeks, your pace at 133 drops from 11:00 to 10:20 per mile. What does it show?",
               "answer": "Your aerobic fitness improved.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "aerobic",
+                    "fitness",
+                    "improv",
+                    "better",
+                    "base",
+                    "efficien"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -75922,14 +78095,36 @@
               "weight": "warmup",
               "prompt": "Your normal is 52. Today it's 60 and you slept poorly. What do you do with today's hard session?",
               "answer": "Swap it for an easy day.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "swap",
+                    "easy",
+                    "rest",
+                    "skip",
+                    "move",
+                    "postpone",
+                    "lighter"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your pulse is 4 beats high but you feel great and slept 8 hours. Change the plan?",
               "answer": "Probably not. It's only 1 small signal.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Yes",
+                  "Probably not"
+                ],
+                "accept": [
+                  "Probably not"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -75968,7 +78163,18 @@
               "weight": "stretch",
               "prompt": "You haven't taken a rest day in 6 weeks and your shins ache. What do you change?",
               "answer": "Add 1 rest day a week.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "rest day",
+                    "add",
+                    "day off",
+                    "1 rest",
+                    "recovery day"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -75992,8 +78198,41 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 good active recovery options.",
-              "answer": "Easy cycling and walking.",
-              "answer_kind": "list"
+              "answer": "Easy cycling, and walking.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "cycl",
+                    "bike",
+                    "walk",
+                    "swim",
+                    "yoga",
+                    "easy",
+                    "stretch",
+                    "mobility",
+                    "pool",
+                    "row",
+                    "hike",
+                    "elliptical"
+                  ],
+                  [
+                    "cycl",
+                    "bike",
+                    "walk",
+                    "swim",
+                    "yoga",
+                    "easy",
+                    "stretch",
+                    "mobility",
+                    "pool",
+                    "row",
+                    "hike",
+                    "elliptical"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -76032,21 +78271,56 @@
               "weight": "warmup",
               "prompt": "Your main race is in October. When might the off-season go?",
               "answer": "November, after the race.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "november",
+                    "after the race",
+                    "right after",
+                    "post-race",
+                    "late fall",
+                    "winter"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Is it common to have 1 or 2 main goal races a year, or 10?",
               "answer": "About 1 or 2.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "About 1 or 2",
+                  "About 10"
+                ],
+                "accept": [
+                  "About 1 or 2"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "A 10K falls in the middle of your marathon build. How could you use it?",
-              "answer": "As a practice race or hard workout.",
-              "answer_kind": "phrase"
+              "answer": "As a practice race, or a hard workout.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "practice",
+                    "workout",
+                    "tune-up",
+                    "tune up",
+                    "test",
+                    "rehearsal",
+                    "training",
+                    "hard session"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -76063,8 +78337,61 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 2 off-season activities.",
-              "answer": "Hiking and swimming for fun, for example.",
-              "answer_kind": "list"
+              "answer": "Hiking, and swimming for fun.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "hiking",
+                    "swimming",
+                    "biking",
+                    "skiing",
+                    "climbing",
+                    "dancing",
+                    "hike",
+                    "swim",
+                    "bike",
+                    "yoga",
+                    "ski",
+                    "climb",
+                    "dance",
+                    "play",
+                    "sport",
+                    "walk",
+                    "paddle",
+                    "tennis",
+                    "soccer",
+                    "basketball",
+                    "lift",
+                    "skate"
+                  ],
+                  [
+                    "hiking",
+                    "swimming",
+                    "biking",
+                    "skiing",
+                    "climbing",
+                    "dancing",
+                    "hike",
+                    "swim",
+                    "bike",
+                    "yoga",
+                    "ski",
+                    "climb",
+                    "dance",
+                    "play",
+                    "sport",
+                    "walk",
+                    "paddle",
+                    "tennis",
+                    "soccer",
+                    "basketball",
+                    "lift",
+                    "skate"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
@@ -76078,7 +78405,22 @@
               "weight": "stretch",
               "prompt": "Why take 3 weeks fully off after a 6 month season?",
               "answer": "To heal aches and refresh motivation.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "heal",
+                    "ache",
+                    "rest",
+                    "refresh",
+                    "motivat",
+                    "recover",
+                    "mental",
+                    "body",
+                    "reset"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -76096,21 +78438,58 @@
               "weight": "warmup",
               "prompt": "Should the new season's base block be about 6 to 8 weeks, or 1?",
               "answer": "About 6 to 8 weeks.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "About 6 to 8 weeks",
+                  "About 1 week"
+                ],
+                "accept": [
+                  "About 6 to 8 weeks"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "In week 2 of the base block, should you run hard intervals?",
               "answer": "Mostly no. Strides and strength are enough.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Yes",
+                  "Mostly no"
+                ],
+                "accept": [
+                  "Mostly no"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 things to add to easy volume.",
-              "answer": "Strides and strength work.",
-              "answer_kind": "list"
+              "answer": "Strides, and strength work.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "stride",
+                    "hill sprint",
+                    "drill",
+                    "short sprint"
+                  ],
+                  [
+                    "strength",
+                    "lift",
+                    "gym",
+                    "plyo",
+                    "mobility",
+                    "core"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -76135,14 +78514,42 @@
               "weight": "core",
               "prompt": "Last year ended with a stress fracture. Should you add 10 percent?",
               "answer": "Probably not. Hold steady and fix the cause first.",
-              "answer_kind": "sentence"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Yes",
+                  "Probably not"
+                ],
+                "accept": [
+                  "Probably not"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 change besides more hours that can bring progress.",
-              "answer": "More strength work or better sleep.",
-              "answer_kind": "phrase"
+              "answer": "More strength work, or better sleep.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "strength",
+                    "sleep",
+                    "nutrition",
+                    "fuel",
+                    "recovery",
+                    "technique",
+                    "form",
+                    "consisten",
+                    "easy",
+                    "intensity",
+                    "stress",
+                    "coach",
+                    "mobility"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -76160,21 +78567,65 @@
               "weight": "warmup",
               "prompt": "You have a new baby and 4 free hours a week. What might change?",
               "answer": "Fewer, shorter sessions focused on what matters most.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "fewer",
+                    "shorter",
+                    "focus",
+                    "key",
+                    "quality",
+                    "what matters",
+                    "less",
+                    "efficient"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "You're 52 and recover slower. Name 1 change.",
               "answer": "More easy days between hard sessions.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "easy days",
+                    "more easy",
+                    "rest",
+                    "recovery",
+                    "spread",
+                    "fewer hard",
+                    "longer between",
+                    "strength"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You can't race a marathon this year. Name a new goal that fits 3 hours a week.",
-              "answer": "A 10K or a fast 5K.",
-              "answer_kind": "phrase"
+              "answer": "A 10K, or a fast 5K.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "10k",
+                    "5k",
+                    "half",
+                    "mile",
+                    "parkrun",
+                    "trail",
+                    "time",
+                    "pb",
+                    "pr",
+                    "race"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -76191,15 +78642,70 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 2 ways to make training more fun.",
-              "answer": "Group runs and new trails.",
-              "answer_kind": "list"
+              "answer": "Group runs, and new trails.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "group",
+                    "club",
+                    "friend",
+                    "partner",
+                    "trail",
+                    "new route",
+                    "race",
+                    "music",
+                    "podcast",
+                    "explore",
+                    "travel",
+                    "game",
+                    "team",
+                    "event",
+                    "scenery"
+                  ],
+                  [
+                    "group",
+                    "club",
+                    "friend",
+                    "partner",
+                    "trail",
+                    "new route",
+                    "race",
+                    "music",
+                    "podcast",
+                    "explore",
+                    "travel",
+                    "game",
+                    "team",
+                    "event",
+                    "scenery"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "You dread every session for 3 weeks. What might help?",
               "answer": "Add something you enjoy, or take a short break.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "enjoy",
+                    "fun",
+                    "break",
+                    "rest",
+                    "change",
+                    "new",
+                    "variety",
+                    "friend",
+                    "less",
+                    "pause"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -76223,15 +78729,58 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Your shins hurt every March for 3 years. What might the review suggest?",
-              "answer": "Look at what changes in February and build more slowly then.",
-              "answer_kind": "sentence"
+              "answer": "Look at what changes in February, and build more slowly then.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "february",
+                    "before",
+                    "build",
+                    "slow",
+                    "spring",
+                    "changes",
+                    "ramp",
+                    "look at"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 4 things the season review covers.",
               "answer": "Total hours, best result, injuries and changes for next year.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "hours",
+                    "volume",
+                    "total",
+                    "miles"
+                  ],
+                  [
+                    "result",
+                    "race",
+                    "best",
+                    "pb",
+                    "pr"
+                  ],
+                  [
+                    "injur",
+                    "pain",
+                    "setback"
+                  ],
+                  [
+                    "change",
+                    "next year",
+                    "plan",
+                    "lesson"
+                  ]
+                ],
+                "need": 4
+              }
             },
             {
               "slot": 3,
@@ -76269,22 +78818,69 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Your menu has squats, leg press and lunges. What's missing?",
-              "answer": "A hinge and an upper-body pull.",
-              "answer_kind": "phrase"
+              "answer": "A hinge, and an upper-body pull.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "hinge",
+                    "deadlift",
+                    "rdl",
+                    "hip thrust",
+                    "good morning",
+                    "swing",
+                    "bridge"
+                  ],
+                  [
+                    "pull",
+                    "row",
+                    "pull-up",
+                    "chin-up",
+                    "lat",
+                    "upper"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why include 1 single-leg lift like a split squat?",
               "answer": "Running and cycling load 1 leg at a time.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "one leg",
+                    "1 leg",
+                    "single",
+                    "each leg",
+                    "balance",
+                    "imbalance",
+                    "stride",
+                    "side",
+                    "asymmetr"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "A 12 exercise session takes 90 minutes. What's a better target for 4 lifts?",
               "answer": "About 30 to 45 minutes.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "30",
+                    "45",
+                    "30 to 45",
+                    "40"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -76316,7 +78912,16 @@
               "weight": "stretch",
               "prompt": "Should rest between heavy sets of 5 be about 2 to 3 minutes or 20 seconds?",
               "answer": "About 2 to 3 minutes.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "About 2 to 3 minutes",
+                  "About 20 seconds"
+                ],
+                "accept": [
+                  "About 2 to 3 minutes"
+                ]
+              }
             }
           ]
         },
@@ -76334,7 +78939,19 @@
               "weight": "warmup",
               "prompt": "Your hard run is Tuesday and your long run is Saturday. When could you lift?",
               "answer": "Tuesday after the run, plus Wednesday or Thursday. Avoid Friday.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "tuesday",
+                    "wednesday",
+                    "thursday",
+                    "after the run",
+                    "same day",
+                    "hard day"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -76348,7 +78965,19 @@
               "weight": "stretch",
               "prompt": "Why avoid heavy squats the day before a 20 mile long run?",
               "answer": "Your legs will be tired.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "tired",
+                    "fatigue",
+                    "sore",
+                    "heavy",
+                    "recover",
+                    "fresh"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -76366,21 +78995,55 @@
               "weight": "warmup",
               "prompt": "Your pogo hops get loud and heavy on rep 8 of 10. What do you do?",
               "answer": "Stop the set there.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "stop",
+                    "end",
+                    "rest",
+                    "done",
+                    "quit",
+                    "cut"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "3 sets of 10 hops plus 3 sets of 5 bounds. How many foot contacts per leg, roughly, if bounds alternate?",
-              "answer": "About 30 hops and 7 or 8 bounds per leg.",
-              "answer_kind": "sentence"
+              "prompt": "3 sets of 10 hops on both legs, plus 3 sets of 5 bounds that alternate legs. Give the hop contacts per leg, then the bound contacts per leg.",
+              "answer": "30 hops and 7.5 bounds per leg, so about 7 or 8.",
+              "answer_kind": "list",
+              "grading": {
+                "accept": [
+                  "30, 7.5"
+                ],
+                "order": true
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name the 2 tissues these jumps mostly train.",
-              "answer": "The Achilles tendon and the calves.",
-              "answer_kind": "list"
+              "answer": "The Achilles tendon, and the calves.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "achilles",
+                    "tendon"
+                  ],
+                  [
+                    "calf",
+                    "calves",
+                    "foot",
+                    "ankle",
+                    "shin"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -76398,21 +79061,53 @@
               "weight": "warmup",
               "prompt": "Your race is Sunday the 20th. When is the last heavy leg session?",
               "answer": "Around Thursday the 10th.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "thursday",
+                    "10th",
+                    "10",
+                    "10 days",
+                    "week and a half"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "In the 7 days before a race, should you skip all strength work?",
-              "answer": "Not all. Keep light upper body or activation work.",
-              "answer_kind": "sentence"
+              "answer": "Keep light work. Light upper body or activation work is fine.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Skip it all",
+                  "Keep light work"
+                ],
+                "accept": [
+                  "Keep light work"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your normal session is 3 sets of each lift. What's the pre-race version?",
               "answer": "About 2 sets at moderate weight.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "2 sets",
+                    "fewer sets",
+                    "lighter",
+                    "moderate",
+                    "less",
+                    "reduce"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -76430,21 +79125,57 @@
               "weight": "warmup",
               "prompt": "Lifts are up 20 percent and easy pace is 10 seconds per mile faster at the same heart rate. What does it show?",
               "answer": "The strength work is helping.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "help",
+                    "working",
+                    "strength",
+                    "transfer",
+                    "efficien",
+                    "improv"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Lifts went up but easy runs feel heavy and slow for 3 weeks. What might be wrong?",
               "answer": "Lifting may be cutting into recovery.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "recover",
+                    "fatigue",
+                    "too much",
+                    "cutting",
+                    "interfer",
+                    "overload",
+                    "tired",
+                    "sleep"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "A cyclist checks progress every 4 weeks. What do they compare instead of pace?",
               "answer": "Power at the same heart rate.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "power",
+                    "watts",
+                    "speed",
+                    "output"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -76476,7 +79207,19 @@
               "weight": "warmup",
               "prompt": "Your race is a half marathon. How long might the taper be?",
               "answer": "About 10 to 14 days.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "10",
+                    "14",
+                    "10 to 14",
+                    "2 weeks",
+                    "two weeks",
+                    "week and a half"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -76490,7 +79233,19 @@
               "weight": "stretch",
               "prompt": "Your marathon is November 10. When might the taper start?",
               "answer": "Around October 20 to 27.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "october 20",
+                    "october 27",
+                    "late october",
+                    "3 weeks",
+                    "2 weeks",
+                    "oct"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -76522,7 +79277,17 @@
               "weight": "stretch",
               "prompt": "Your race-pace session usually has 5 reps of 1 mile. What's a taper version?",
               "answer": "About 3 reps of 1 mile.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "3",
+                    "fewer",
+                    "2",
+                    "less"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -76547,7 +79312,21 @@
               "weight": "core",
               "prompt": "You feel restless and want to add a long run. What do you do?",
               "answer": "Stick to the plan.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "stick",
+                    "plan",
+                    "don't",
+                    "no",
+                    "rest",
+                    "resist",
+                    "trust",
+                    "keep"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -76603,22 +79382,72 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Should the rehearsal be 7 to 10 days out, or the day before?",
-              "answer": "About 7 to 10.",
-              "answer_kind": "phrase"
+              "answer": "7 to 10 days out.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "7 to 10 days out",
+                  "The day before"
+                ],
+                "accept": [
+                  "7 to 10 days out"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 3 things to rehearse.",
               "answer": "Breakfast, clothes and warm-up.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "breakfast",
+                    "meal",
+                    "food",
+                    "fuel"
+                  ],
+                  [
+                    "clothes",
+                    "kit",
+                    "shoes",
+                    "outfit",
+                    "socks",
+                    "gear"
+                  ],
+                  [
+                    "warm-up",
+                    "warm up",
+                    "warmup",
+                    "routine",
+                    "timing",
+                    "travel",
+                    "pace"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your socks rubbed in the rehearsal. What do you do?",
               "answer": "Switch to a pair you know works.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "switch",
+                    "change",
+                    "different",
+                    "pair",
+                    "known",
+                    "tested",
+                    "swap"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -76635,8 +79464,21 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Your race is Sunday. What might Friday and Saturday look like?",
-              "answer": "Friday rest, Saturday 20 minutes easy with 4 strides, or the other way round.",
-              "answer_kind": "sentence"
+              "answer": "Friday rest, Saturday 20 minutes easy with 4 strides, or the other way around.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "rest",
+                    "easy",
+                    "strides",
+                    "short",
+                    "20 minutes",
+                    "shakeout",
+                    "light"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -76650,7 +79492,21 @@
               "weight": "stretch",
               "prompt": "Why lay out gear the night before a 7 am race?",
               "answer": "So race morning is simple and nothing is forgotten.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "simple",
+                    "forget",
+                    "nothing forgotten",
+                    "calm",
+                    "stress",
+                    "rush",
+                    "ready",
+                    "easy"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -76689,7 +79545,16 @@
               "weight": "core",
               "prompt": "Your test pace was 8:00 per mile. Is threshold a bit faster or a bit slower?",
               "answer": "A bit slower, around 8:20 per mile.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "A bit faster",
+                  "A bit slower"
+                ],
+                "accept": [
+                  "A bit slower"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -76728,7 +79593,20 @@
               "weight": "stretch",
               "prompt": "Your watch dies on a 3 mile tempo run. How do you hold threshold?",
               "answer": "Use breathing and short phrases as your guide.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "breath",
+                    "feel",
+                    "phrase",
+                    "talk",
+                    "effort",
+                    "perceived",
+                    "rpe"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -76760,7 +79638,18 @@
               "weight": "stretch",
               "prompt": "Rep 4 is 20 seconds per mile slower than rep 1. What does it suggest?",
               "answer": "The pace was too fast.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "too fast",
+                    "fast",
+                    "pace",
+                    "start",
+                    "went out"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -76778,21 +79667,55 @@
               "weight": "warmup",
               "prompt": "Week 1 is 2 x 10 minutes. What might week 4 be?",
               "answer": "2 x 12 minutes with a short break.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "2 x 12",
+                    "12 minutes",
+                    "2 x 15",
+                    "longer",
+                    "3 x 10",
+                    "15"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "What's the 6 week goal?",
               "answer": "A continuous 20 to 25 minute tempo.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "continuous",
+                    "20",
+                    "25",
+                    "unbroken",
+                    "one piece",
+                    "straight",
+                    "tempo"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "For a 20 minute tempo, should the pace be aggressive or slightly conservative?",
               "answer": "Slightly conservative.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Aggressive",
+                  "Slightly conservative"
+                ],
+                "accept": [
+                  "Slightly conservative"
+                ]
+              }
             }
           ]
         },
@@ -76809,8 +79732,17 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Do most people need 1 threshold session a week, or 5?",
-              "answer": "1, sometimes 2.",
-              "answer_kind": "phrase"
+              "answer": "1 a week, sometimes 2.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "1 a week",
+                  "5 a week"
+                ],
+                "accept": [
+                  "1 a week"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -76824,7 +79756,21 @@
               "weight": "stretch",
               "prompt": "Why not do threshold work all 7 days?",
               "answer": "It's too hard to recover from.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "recover",
+                    "hard",
+                    "fatigue",
+                    "tired",
+                    "burnout",
+                    "injur",
+                    "too much",
+                    "stress"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -76856,7 +79802,21 @@
               "weight": "stretch",
               "prompt": "Your threshold rose 10 watts. Why update your zones?",
               "answer": "So training stays on target.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "target",
+                    "zones",
+                    "accurate",
+                    "stay",
+                    "right",
+                    "fitness",
+                    "correct",
+                    "keep"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -76888,21 +79848,58 @@
               "weight": "warmup",
               "prompt": "Week 1: 90 minutes. Week 2: 100. Week 3: 160. What stands out?",
               "answer": "Week 3 is a big jump.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "jump",
+                    "big",
+                    "spike",
+                    "too much",
+                    "60",
+                    "60%",
+                    "sudden",
+                    "large"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name the most common cause of overuse injuries, given 4 weeks of logs.",
               "answer": "A sudden jump in volume.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "sudden",
+                    "jump",
+                    "too much",
+                    "too fast",
+                    "spike",
+                    "increase",
+                    "ramp"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Should your 4 weekly totals be in minutes or miles?",
-              "answer": "Either. Pick one and stay with it.",
-              "answer_kind": "phrase"
+              "answer": "Either, if you stay consistent. Pick one and stick with it.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Minutes",
+                  "Miles",
+                  "Either, if you stay consistent"
+                ],
+                "accept": [
+                  "Either, if you stay consistent"
+                ]
+              }
             }
           ]
         },
@@ -76927,14 +79924,36 @@
               "weight": "core",
               "prompt": "Your lungs feel great after a 50 percent jump, but your shins ache. Why?",
               "answer": "Bones and tendons adapt more slowly than the heart.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "bone",
+                    "tendon",
+                    "slower",
+                    "adapt",
+                    "tissue",
+                    "lag",
+                    "connective"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You're coming back after 6 weeks off. Should you add 10 percent right away?",
-              "answer": "Better to hold steady for a few weeks first.",
-              "answer_kind": "sentence"
+              "answer": "Hold steady first. Better to stay level for a few weeks.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Yes",
+                  "Hold steady first"
+                ],
+                "accept": [
+                  "Hold steady first"
+                ]
+              }
             }
           ]
         },
@@ -76966,7 +79985,20 @@
               "weight": "stretch",
               "prompt": "Why do many people feel strong in week 5?",
               "answer": "Fatigue cleared in the lighter week.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "fatigue",
+                    "lighter",
+                    "rest",
+                    "recover",
+                    "fresh",
+                    "absorb",
+                    "adapt"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -76983,22 +80015,75 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Sleep drops from 8 to 5 and your shin aches for 4 days. What do you do?",
-              "answer": "Hold or cut volume about 20 percent.",
-              "answer_kind": "phrase"
+              "answer": "Hold or cut volume by about 20%.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "hold",
+                    "cut",
+                    "reduce",
+                    "less",
+                    "back off",
+                    "drop",
+                    "rest",
+                    "20"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 3 things to rate each morning.",
               "answer": "Soreness, sleep and mood.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "soreness",
+                    "sore",
+                    "ache",
+                    "pain",
+                    "legs"
+                  ],
+                  [
+                    "sleep"
+                  ],
+                  [
+                    "mood",
+                    "energy",
+                    "motivation",
+                    "stress",
+                    "heart rate",
+                    "pulse",
+                    "appetite",
+                    "fatigue"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You start limping on runs. What do you do?",
               "answer": "Stop and get it checked.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "stop",
+                    "checked",
+                    "doctor",
+                    "physio",
+                    "see someone",
+                    "professional",
+                    "rest",
+                    "don't run"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -77029,8 +80114,22 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why are 4 sessions of 40 minutes easier than 2 of 80?",
-              "answer": "Stress on the same tissues is spread out.",
-              "answer_kind": "phrase"
+              "answer": "The stress on the same tissues is spread out.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "spread",
+                    "tissue",
+                    "load",
+                    "recover",
+                    "less stress",
+                    "shorter",
+                    "fatigue",
+                    "impact"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -77076,7 +80175,22 @@
               "weight": "stretch",
               "prompt": "Your hard sessions feel easy at 170. What might be wrong?",
               "answer": "Your real max may be higher than the formula says.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "max",
+                    "higher",
+                    "formula",
+                    "wrong",
+                    "estimate",
+                    "real",
+                    "test",
+                    "individual",
+                    "underestimat"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -77094,7 +80208,17 @@
               "weight": "warmup",
               "prompt": "Easy zone feels like what on a 1 to 10 scale?",
               "answer": "About 3 to 4.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "3",
+                    "4",
+                    "3 to 4",
+                    "3-4"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -77108,7 +80232,16 @@
               "weight": "stretch",
               "prompt": "Your watch says easy but you can't talk. Which do you trust?",
               "answer": "Your breathing. Slow down.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "The watch",
+                  "Your breathing"
+                ],
+                "accept": [
+                  "Your breathing"
+                ]
+              }
             }
           ]
         },
@@ -77126,21 +80259,66 @@
               "weight": "warmup",
               "prompt": "3 of 5 easy runs drifted into moderate. What do you change?",
               "answer": "Slow down on easy days.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "slow",
+                    "slower",
+                    "ease",
+                    "cap",
+                    "easier",
+                    "hold back",
+                    "check"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why does drifting into moderate on 3 easy days hurt?",
-              "answer": "It leaves you tired for hard days.",
-              "answer_kind": "phrase"
+              "answer": "It leaves you tired for the hard days.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "tired",
+                    "fatigue",
+                    "hard days",
+                    "recover",
+                    "grey zone",
+                    "gray zone",
+                    "neither",
+                    "worse",
+                    "can't push"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 tool to keep easy days easy.",
-              "answer": "A heart rate cap or the talk test.",
-              "answer_kind": "phrase"
+              "answer": "A heart rate cap, or the talk test.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "heart rate",
+                    "cap",
+                    "talk test",
+                    "breath",
+                    "watch",
+                    "monitor",
+                    "pace",
+                    "perceived",
+                    "rpe",
+                    "group",
+                    "nose"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -77158,21 +80336,69 @@
               "weight": "warmup",
               "prompt": "Your reps only reach moderate. What do you do?",
               "answer": "Push harder, or rest more before the session.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "push",
+                    "harder",
+                    "faster",
+                    "rest more",
+                    "more rest",
+                    "fresher",
+                    "recover"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why can you push hard on Thursday after 2 truly easy days?",
               "answer": "Easy days leave fresh legs.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "fresh",
+                    "rested",
+                    "recover",
+                    "energy",
+                    "legs",
+                    "ready"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 ways to check each of the 6 reps.",
-              "answer": "Heart rate or feel.",
-              "answer_kind": "phrase"
+              "answer": "Heart rate, or feel.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "heart",
+                    "hr",
+                    "bpm",
+                    "monitor",
+                    "watch"
+                  ],
+                  [
+                    "feel",
+                    "rpe",
+                    "perceived",
+                    "effort",
+                    "breath",
+                    "talk",
+                    "pace",
+                    "split",
+                    "power"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -77203,8 +80429,21 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your easy share is 50 percent. What do you change?",
-              "answer": "Add easy time or cut moderate time.",
-              "answer_kind": "phrase"
+              "answer": "Add easy time, or cut moderate time.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "add easy",
+                    "more easy",
+                    "cut moderate",
+                    "less moderate",
+                    "slow",
+                    "fewer moderate",
+                    "reduce"
+                  ]
+                ]
+              }
             }
           ]
         }
