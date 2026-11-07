@@ -153786,7 +153786,20 @@
               "weight": "stretch",
               "prompt": "Rewrite 'He thought he'd never see home' in free indirect style, in 1 line.",
               "answer": "He'd never see home again.",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "never see home",
+                    "never see his home",
+                    "never get home",
+                    "never going home",
+                    "never go home",
+                    "home again",
+                    "never again"
+                  ]
+                ]
+              }
             }
           ]
         },
