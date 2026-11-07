@@ -32447,21 +32447,76 @@
               "weight": "warmup",
               "prompt": "Name the 3 parts of a 3-line status update.",
               "answer": "Done, next and blocked.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "done",
+                    "finished",
+                    "completed"
+                  ],
+                  [
+                    "next",
+                    "plan",
+                    "doing"
+                  ],
+                  [
+                    "blocked",
+                    "blocker",
+                    "stuck",
+                    "need",
+                    "waiting"
+                  ]
+                ],
+                "order": true
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Write a 3-line status update for a project that's on track but waiting on Legal.",
               "answer": "Done: draft finished. Next: final edits. Blocked: waiting on Legal review.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "done",
+                    "finished",
+                    "completed"
+                  ],
+                  [
+                    "next",
+                    "plan"
+                  ],
+                  [
+                    "blocked",
+                    "waiting",
+                    "legal"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your teammate in Berlin can't see your desk. Why does a Friday update matter more for them?",
               "answer": "They can't overhear your progress.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "can't overhear",
+                    "can't see",
+                    "don't see",
+                    "invisible",
+                    "no other way",
+                    "remote",
+                    "only way",
+                    "visible"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -32479,21 +32534,58 @@
               "weight": "warmup",
               "prompt": "You need Ana to approve something in a 50-person channel. What should you add?",
               "answer": "An @-mention of Ana.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "mention",
+                    "tag",
+                    "ping",
+                    "name",
+                    "dm"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 way to confirm a message was seen.",
               "answer": "Ask for a reply or a thumbs-up.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "reply",
+                    "react",
+                    "thumbs",
+                    "emoji",
+                    "ack",
+                    "confirm",
+                    "read receipt",
+                    "ask"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You posted a key change once on a 200-message day. Name 1 risk.",
               "answer": "People miss it entirely.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "miss",
+                    "buried",
+                    "lost",
+                    "not seen",
+                    "overlook",
+                    "scroll"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -32518,14 +32610,34 @@
               "weight": "core",
               "prompt": "You have 3 overlap hours with London. Use them for a status report or a live debate?",
               "answer": "A live debate.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "A status report",
+                  "A live debate"
+                ],
+                "accept": [
+                  "A live debate"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "A colleague in Tokyo asks something at your 6 pm. When might they expect a reply?",
               "answer": "Their next morning, after your day starts.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "morning",
+                    "next day",
+                    "tomorrow",
+                    "after",
+                    "their day"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -32543,21 +32655,65 @@
               "weight": "warmup",
               "prompt": "Name 3 things to record for a decision.",
               "answer": "The options, the choice and the reason.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "option",
+                    "alternative"
+                  ],
+                  [
+                    "choice",
+                    "decision",
+                    "chosen"
+                  ],
+                  [
+                    "reason",
+                    "why",
+                    "rationale",
+                    "tradeoff",
+                    "who",
+                    "date"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A debate from 2 months ago starts again. What would have prevented it?",
               "answer": "A written decision record.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "written",
+                    "record",
+                    "doc",
+                    "log",
+                    "decision",
+                    "write down",
+                    "notes"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Where should decisions live: a shared doc or 1 person's DMs?",
               "answer": "A shared doc.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "A shared doc",
+                  "1 person's DMs"
+                ],
+                "accept": [
+                  "A shared doc"
+                ]
+              }
             }
           ]
         },
@@ -32574,22 +32730,58 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "You promise replies within 1 working day. A message arrives Friday at 4 pm. Reply by when?",
-              "answer": "Monday at 4 pm",
-              "answer_kind": "phrase"
+              "answer": "Monday at 4 pm.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "monday",
+                    "next working day",
+                    "4 pm"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Jo replies in 5 minutes some days and 3 days on others. Why is that harder than a steady 1 day?",
               "answer": "Nobody can plan around it.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "plan",
+                    "predict",
+                    "unpredictable",
+                    "expect",
+                    "can't rely",
+                    "uncertain",
+                    "wait"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You promise replies within 1 day but leave for 5 days of vacation. What should you set up?",
               "answer": "An out-of-office saying who to contact instead.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "out-of-office",
+                    "out of office",
+                    "ooo",
+                    "auto",
+                    "away message",
+                    "status",
+                    "contact",
+                    "backup"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -32619,23 +32811,71 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Improve 'Responsible for customer emails.'",
+              "prompt": "Improve this résumé line: \"Responsible for customer emails.\"",
               "answer": "Answered 50 customer emails a day with a 95% satisfaction score.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "0",
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "percent",
+                    "%"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name the 3 parts of a strong bullet.",
-              "answer": "What you did, at what scale and with what result.",
-              "answer_kind": "list"
+              "answer": "What you did, at what scale, and with what result.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "did",
+                    "action",
+                    "what"
+                  ],
+                  [
+                    "scale",
+                    "how much",
+                    "size",
+                    "how many"
+                  ],
+                  [
+                    "result",
+                    "impact",
+                    "outcome"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Is 'Managed 2 social accounts' a duty or an outcome?",
               "answer": "A duty, because it shows no result.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "A duty",
+                  "An outcome"
+                ],
+                "accept": [
+                  "A duty"
+                ]
+              }
             }
           ]
         },
@@ -32653,14 +32893,61 @@
               "weight": "warmup",
               "prompt": "Add a number to 'Improved the onboarding process.'",
               "answer": "Cut onboarding time from 10 days to 5.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "0",
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "percent",
+                    "%"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 3 kinds of numbers for a CV.",
               "answer": "Money, time and people.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "money",
+                    "dollar",
+                    "revenue",
+                    "cost",
+                    "saving",
+                    "budget"
+                  ],
+                  [
+                    "time",
+                    "hours",
+                    "days",
+                    "speed"
+                  ],
+                  [
+                    "people",
+                    "users",
+                    "customers",
+                    "team",
+                    "students",
+                    "clients",
+                    "percent",
+                    "%"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 3,
@@ -32683,23 +32970,61 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "A posting lists Python, SQL and Tableau. What should your top 3 bullets show?",
+              "prompt": "A posting lists Python, SQL and Tableau. What should your top 3 résumé bullets show?",
               "answer": "Work using Python, SQL and Tableau.",
-              "answer_kind": "list"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "python"
+                  ],
+                  [
+                    "sql"
+                  ],
+                  [
+                    "tableau"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Where do you find what to tailor a CV toward for a role at Spotify?",
+              "prompt": "Where do you find what to tailor a résumé toward for a role at Spotify?",
               "answer": "The job posting's requirements.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "posting",
+                    "job description",
+                    "requirements",
+                    "listing",
+                    "ad"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "A recruiter spends about 10 seconds on a first look. Why tailor?",
               "answer": "So they see the fit in seconds.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "fit",
+                    "seconds",
+                    "quick",
+                    "see",
+                    "match",
+                    "skim",
+                    "fast"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -32729,9 +33054,18 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Bullets or paragraphs for a CV?",
+              "prompt": "On a 1-page résumé, bullets or paragraphs?",
               "answer": "Bullets",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Bullets",
+                  "Paragraphs"
+                ],
+                "accept": [
+                  "Bullets"
+                ]
+              }
             }
           ]
         },
@@ -32756,7 +33090,28 @@
               "weight": "core",
               "prompt": "Name 3 things to write for each sample.",
               "answer": "Your role, the problem and the result.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "role",
+                    "what you did",
+                    "your part"
+                  ],
+                  [
+                    "problem",
+                    "challenge",
+                    "goal",
+                    "context"
+                  ],
+                  [
+                    "result",
+                    "outcome",
+                    "impact"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 3,
@@ -32795,14 +33150,40 @@
               "weight": "warmup",
               "prompt": "Over 2 weeks you rate every client call +2. What does that suggest?",
               "answer": "Client work gives you energy.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "energy",
+                    "enjoy",
+                    "people",
+                    "clients",
+                    "energiz",
+                    "like",
+                    "good at"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why rate tasks for 2 weeks instead of 1 day?",
               "answer": "Patterns over time are more reliable.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "pattern",
+                    "reliable",
+                    "average",
+                    "fluke",
+                    "one day",
+                    "trend",
+                    "accurate"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -32827,21 +33208,105 @@
               "weight": "warmup",
               "prompt": "Name 3 work conditions.",
               "answer": "Autonomy, pay and team size.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "autonomy",
+                    "pay",
+                    "salary",
+                    "team",
+                    "hours",
+                    "remote",
+                    "location",
+                    "commute",
+                    "manager",
+                    "culture",
+                    "growth",
+                    "flexib",
+                    "security",
+                    "travel",
+                    "size"
+                  ],
+                  [
+                    "autonomy",
+                    "pay",
+                    "salary",
+                    "team",
+                    "hours",
+                    "remote",
+                    "location",
+                    "commute",
+                    "manager",
+                    "culture",
+                    "growth",
+                    "flexib",
+                    "security",
+                    "travel",
+                    "size"
+                  ],
+                  [
+                    "autonomy",
+                    "pay",
+                    "salary",
+                    "team",
+                    "hours",
+                    "remote",
+                    "location",
+                    "commute",
+                    "manager",
+                    "culture",
+                    "growth",
+                    "flexib",
+                    "security",
+                    "travel",
+                    "size"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Rank 'pay' and 'autonomy' for someone who quit 2 jobs over micromanagement.",
-              "answer": "Autonomy likely ranks first.",
-              "answer_kind": "phrase"
+              "answer": "Autonomy first, most likely.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Pay first",
+                  "Autonomy first"
+                ],
+                "accept": [
+                  "Autonomy first"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "2 jobs both called 'Product Manager' can differ how?",
               "answer": "In hours, independence and the people you work with.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "hours",
+                    "independ",
+                    "autonomy",
+                    "people",
+                    "team",
+                    "manager",
+                    "culture",
+                    "pay",
+                    "scope",
+                    "company",
+                    "work",
+                    "size",
+                    "stage"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -32865,15 +33330,68 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 common work values.",
-              "answer": "Security and creativity.",
-              "answer_kind": "list"
+              "answer": "Security, and creativity.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "security",
+                    "creativ",
+                    "autonomy",
+                    "impact",
+                    "growth",
+                    "balance",
+                    "money",
+                    "status",
+                    "learning",
+                    "helping",
+                    "stability",
+                    "freedom",
+                    "purpose",
+                    "recognition",
+                    "challenge"
+                  ],
+                  [
+                    "security",
+                    "creativ",
+                    "autonomy",
+                    "impact",
+                    "growth",
+                    "balance",
+                    "money",
+                    "status",
+                    "learning",
+                    "helping",
+                    "stability",
+                    "freedom",
+                    "purpose",
+                    "recognition",
+                    "challenge"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You value 'security' but join a risky startup. Name 1 likely result.",
               "answer": "Stress that wears you down.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "stress",
+                    "anxi",
+                    "burnout",
+                    "unhappy",
+                    "worry",
+                    "wear",
+                    "leave",
+                    "quit"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -32891,21 +33409,65 @@
               "weight": "warmup",
               "prompt": "Name 1 cheap 3-hour test of teaching as a career.",
               "answer": "Tutoring a student for 3 hours.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "tutor",
+                    "volunteer",
+                    "teach",
+                    "class",
+                    "shadow",
+                    "workshop",
+                    "lesson",
+                    "coach",
+                    "mentor"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why try 2 directions for 3 hours each instead of thinking for a month?",
               "answer": "Trying gives real data.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "data",
+                    "real",
+                    "experience",
+                    "evidence",
+                    "learn",
+                    "feel",
+                    "test",
+                    "try"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "After 3 hours of coding you loved it. Name a sensible next step.",
               "answer": "Try a bigger coding project.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "bigger",
+                    "project",
+                    "more",
+                    "course",
+                    "next",
+                    "longer",
+                    "build",
+                    "app",
+                    "deeper"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -32923,21 +33485,62 @@
               "weight": "warmup",
               "prompt": "When should your yearly 1-hour review happen?",
               "answer": "At a fixed time, like each January.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "fixed",
+                    "january",
+                    "same time",
+                    "birthday",
+                    "year",
+                    "new year",
+                    "calendar"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your wants changed after 3 years. Why does a yearly review help?",
               "answer": "It catches the change before you drift.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "catch",
+                    "drift",
+                    "change",
+                    "notice",
+                    "update",
+                    "adjust",
+                    "before"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 question for the review.",
               "answer": "What gave me energy this year?",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "what",
+                    "which",
+                    "where",
+                    "how",
+                    "did",
+                    "am",
+                    "do",
+                    "who",
+                    "why"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -32969,21 +33572,65 @@
               "weight": "warmup",
               "prompt": "Rewrite the opening 'Hope you're well! I wanted to give some background...' to lead with the ask.",
               "answer": "Could you approve the budget by Thursday? Background below.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "could you",
+                    "can you",
+                    "please",
+                    "would you",
+                    "need",
+                    "by"
+                  ],
+                  [
+                    "approve",
+                    "review",
+                    "send",
+                    "decide",
+                    "confirm",
+                    "sign",
+                    "check",
+                    "reply"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Where should the deadline go: line 1 or the last line?",
               "answer": "Line 1, with the ask.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Line 1",
+                  "The last line"
+                ],
+                "accept": [
+                  "Line 1"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your email has 4 paragraphs and the ask is in the 4th. What should change?",
               "answer": "Move the ask to the top.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "top",
+                    "move",
+                    "first",
+                    "up front",
+                    "beginning",
+                    "lead"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -33000,15 +33647,55 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Improve the subject 'Question'.",
-              "answer": "For example: Decision needed: venue by Friday",
-              "answer_kind": "phrase"
+              "answer": "Decision needed: venue by Friday.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "decision",
+                    "needed",
+                    "need",
+                    "by",
+                    "deadline",
+                    "approve",
+                    "review",
+                    "request",
+                    "action",
+                    "monday",
+                    "tuesday",
+                    "wednesday",
+                    "thursday",
+                    "friday",
+                    "today",
+                    "tomorrow"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 things a strong subject line includes.",
-              "answer": "The topic and the action or deadline.",
-              "answer_kind": "list"
+              "answer": "The topic, and the action or deadline.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "topic",
+                    "subject",
+                    "what"
+                  ],
+                  [
+                    "action",
+                    "deadline",
+                    "ask",
+                    "date",
+                    "due",
+                    "need"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -33039,8 +33726,22 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Your email covers 3 unrelated topics. What should you do?",
-              "answer": "Split it into 3 emails or lead with the most urgent.",
-              "answer_kind": "sentence"
+              "answer": "Split it into 3 emails, or lead with the most urgent.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "split",
+                    "separate",
+                    "three emails",
+                    "3 emails",
+                    "urgent",
+                    "first",
+                    "lead",
+                    "one topic"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -33065,21 +33766,49 @@
               "weight": "warmup",
               "prompt": "Rewrite 'What do you think about the dates?' as an easy choice.",
               "answer": "Does March 3 or March 10 work better?",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "or",
+                    "which",
+                    "either"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why add 'I'd pick A' to an A or B question for a busy VP?",
               "answer": "They can just agree, which is faster.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "agree",
+                    "faster",
+                    "easy",
+                    "quick",
+                    "yes",
+                    "less work",
+                    "default",
+                    "decide"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You need 1 decision from a busy VP. How many options should you give?",
               "answer": "2, with your pick.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "2"
+                ]
+              }
             }
           ]
         },
@@ -33097,14 +33826,50 @@
               "weight": "warmup",
               "prompt": "Name 3 things to check before sending.",
               "answer": "Recipients, attachments and tone.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "recipient",
+                    "to",
+                    "cc",
+                    "name"
+                  ],
+                  [
+                    "attach",
+                    "file",
+                    "link"
+                  ],
+                  [
+                    "tone",
+                    "typo",
+                    "subject",
+                    "spelling",
+                    "date",
+                    "ask"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "You wrote 'see attached' but nothing is attached. When should you catch it?",
               "answer": "In the 10-second check before sending.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "before sending",
+                    "check",
+                    "10-second",
+                    "review",
+                    "reread",
+                    "before you send"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -33142,22 +33907,58 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 1 sentence to start summarizing feedback.",
-              "answer": "So what I'm hearing is...",
-              "answer_kind": "sentence"
+              "answer": "\"So what I'm hearing is...\"",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "hearing",
+                    "hear",
+                    "understand",
+                    "sounds like",
+                    "you're saying",
+                    "so",
+                    "if i"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your manager says 'The demo felt rushed' and you reply 'But the reason was'. What did that cost?",
-              "answer": "You stopped them and missed the real point.",
-              "answer_kind": "phrase"
+              "answer": "You stopped them, and missed the real point.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "missed",
+                    "stopped",
+                    "cut off",
+                    "defensive",
+                    "point",
+                    "lost",
+                    "didn't hear",
+                    "real"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "After 5 minutes of feedback, should your first words be a defense or a summary?",
               "answer": "A summary.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "A defense",
+                  "A summary"
+                ],
+                "accept": [
+                  "A summary"
+                ]
+              }
             }
           ]
         },
@@ -33175,21 +33976,56 @@
               "weight": "warmup",
               "prompt": "Turn 'be more proactive' into a question for specifics.",
               "answer": "Can you give me 1 example where I could have been more proactive?",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "example",
+                    "specific",
+                    "when",
+                    "instance",
+                    "time",
+                    "what would",
+                    "show"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Which is easier to act on: 'be more proactive' or 'raise the risk in Tuesday's meeting'?",
               "answer": "Raise the risk in Tuesday's meeting.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Be more proactive",
+                  "Raise the risk in Tuesday's meeting"
+                ],
+                "accept": [
+                  "Raise the risk in Tuesday's meeting"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You asked for 1 example and got none. Name 1 next step.",
               "answer": "Ask them to point it out next time it happens.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "next time",
+                    "point it out",
+                    "when it happens",
+                    "ask",
+                    "watch",
+                    "observe",
+                    "later"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -33207,7 +34043,32 @@
               "weight": "warmup",
               "prompt": "Rewrite 'You're sloppy' as feedback on work.",
               "answer": "This report had 5 typos.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "0",
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "typo",
+                    "error",
+                    "mistake",
+                    "missing",
+                    "late",
+                    "wrong",
+                    "report",
+                    "email",
+                    "slide"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -33221,7 +34082,20 @@
               "weight": "stretch",
               "prompt": "You argue for 10 minutes against feedback. What do you lose?",
               "answer": "The information in the feedback.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "information",
+                    "learn",
+                    "insight",
+                    "point",
+                    "lesson",
+                    "trust",
+                    "chance"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -33239,21 +34113,61 @@
               "weight": "warmup",
               "prompt": "Name 1 easy question to ask for feedback.",
               "answer": "What's 1 thing I could do better?",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "what's",
+                    "what",
+                    "which",
+                    "how",
+                    "one thing",
+                    "1 thing"
+                  ],
+                  [
+                    "better",
+                    "improve",
+                    "change",
+                    "differently"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why ask for 1 thing instead of 'any feedback'?",
               "answer": "It's easier to answer.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "easier",
+                    "specific",
+                    "quick",
+                    "focus",
+                    "less pressure",
+                    "answer"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "When is a better time to ask a colleague for feedback: right after a project or at the 12-month review?",
               "answer": "Right after a project.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Right after a project",
+                  "At the 12-month review"
+                ],
+                "accept": [
+                  "Right after a project"
+                ]
+              }
             }
           ]
         },
@@ -33271,21 +34185,62 @@
               "weight": "warmup",
               "prompt": "You were told your emails run too long. Name 1 change to try for 2 weeks.",
               "answer": "Cap emails at 5 lines.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "cap",
+                    "limit",
+                    "lines",
+                    "shorter",
+                    "bullet",
+                    "summary",
+                    "first line",
+                    "sentences",
+                    "words"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why tell Sam, 2 weeks later, what you changed after the feedback?",
               "answer": "Sam will be more willing to give feedback again.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "willing",
+                    "again",
+                    "more",
+                    "trust",
+                    "worth",
+                    "valued",
+                    "keep",
+                    "show"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 sign feedback was heard.",
-              "answer": "Visible change in your work.",
-              "answer_kind": "phrase"
+              "answer": "A visible change in your work.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "change",
+                    "visible",
+                    "different",
+                    "improv",
+                    "acted",
+                    "apply"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -33317,14 +34272,45 @@
               "weight": "warmup",
               "prompt": "What does STAR stand for?",
               "answer": "Situation, task, action and result.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "situation"
+                  ],
+                  [
+                    "task"
+                  ],
+                  [
+                    "action"
+                  ],
+                  [
+                    "result"
+                  ]
+                ],
+                "order": true
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your STAR story spends 2 minutes on the situation and 10 seconds on the action. What's wrong?",
               "answer": "The action should be the longest part.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "action",
+                    "too long",
+                    "longest",
+                    "balance",
+                    "situation",
+                    "cut",
+                    "more on",
+                    "focus"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -33349,14 +34335,65 @@
               "weight": "warmup",
               "prompt": "Name 1 fact worth knowing before interviewing at Patagonia.",
               "answer": "Its focus on environmental causes.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "environment",
+                    "climate",
+                    "sustainab",
+                    "outdoor",
+                    "planet",
+                    "activism",
+                    "repair",
+                    "b corp",
+                    "nature",
+                    "ecolog"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 things to research.",
-              "answer": "The product and recent news.",
-              "answer_kind": "list"
+              "answer": "The product, and recent news.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "product",
+                    "service",
+                    "news",
+                    "mission",
+                    "values",
+                    "competitor",
+                    "team",
+                    "culture",
+                    "interviewer",
+                    "role",
+                    "customer",
+                    "revenue",
+                    "history"
+                  ],
+                  [
+                    "product",
+                    "service",
+                    "news",
+                    "mission",
+                    "values",
+                    "competitor",
+                    "team",
+                    "culture",
+                    "interviewer",
+                    "role",
+                    "customer",
+                    "revenue",
+                    "history"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -33381,14 +34418,60 @@
               "weight": "warmup",
               "prompt": "Name 1 strong question for an interviewer.",
               "answer": "What does success look like in 6 months?",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "what",
+                    "how",
+                    "which",
+                    "why",
+                    "who"
+                  ],
+                  [
+                    "success",
+                    "challenge",
+                    "team",
+                    "first",
+                    "day",
+                    "week",
+                    "month",
+                    "look like",
+                    "grow",
+                    "hard",
+                    "best"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 question about the team to ask an interviewer.",
               "answer": "How does the team decide priorities?",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "how",
+                    "what",
+                    "who",
+                    "which"
+                  ],
+                  [
+                    "team",
+                    "priorit",
+                    "decide",
+                    "work",
+                    "together",
+                    "meet",
+                    "collaborat",
+                    "conflict"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -33419,15 +34502,47 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 thing a recording shows.",
-              "answer": "Filler words like 'um'.",
-              "answer_kind": "phrase"
+              "answer": "Filler words like \"um.\"",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "filler",
+                    "um",
+                    "uh",
+                    "pace",
+                    "speed",
+                    "eye contact",
+                    "ramble",
+                    "length",
+                    "posture",
+                    "tone",
+                    "like",
+                    "pauses"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why practice STAR answers aloud instead of just writing them?",
               "answer": "Saying answers is different from knowing them.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "different",
+                    "saying",
+                    "aloud",
+                    "delivery",
+                    "smooth",
+                    "fluent",
+                    "practice",
+                    "knowing"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -33445,14 +34560,37 @@
               "weight": "warmup",
               "prompt": "Your interview was Tuesday at 2 pm. Send the thank-you by when?",
               "answer": "Wednesday at 2 pm.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "wednesday",
+                    "24 hours",
+                    "next day",
+                    "1 day"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 thing to mention in it.",
               "answer": "A specific topic from the interview.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "specific",
+                    "topic",
+                    "interview",
+                    "discussed",
+                    "conversation",
+                    "detail",
+                    "point"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -33491,21 +34629,100 @@
               "weight": "warmup",
               "prompt": "A meeting invite says only 'Sync'. Name 1 thing to do.",
               "answer": "Ask the organizer what decision or update it's for.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "ask",
+                    "organizer",
+                    "agenda",
+                    "purpose",
+                    "why",
+                    "clarify",
+                    "decline"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 3 common meeting purposes.",
               "answer": "Decide, inform and brainstorm.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "decide",
+                    "decision",
+                    "inform",
+                    "update",
+                    "brainstorm",
+                    "ideas",
+                    "plan",
+                    "solve",
+                    "review",
+                    "align",
+                    "kickoff",
+                    "retro",
+                    "share",
+                    "discuss"
+                  ],
+                  [
+                    "decide",
+                    "decision",
+                    "inform",
+                    "update",
+                    "brainstorm",
+                    "ideas",
+                    "plan",
+                    "solve",
+                    "review",
+                    "align",
+                    "kickoff",
+                    "retro",
+                    "share",
+                    "discuss"
+                  ],
+                  [
+                    "decide",
+                    "decision",
+                    "inform",
+                    "update",
+                    "brainstorm",
+                    "ideas",
+                    "plan",
+                    "solve",
+                    "review",
+                    "align",
+                    "kickoff",
+                    "retro",
+                    "share",
+                    "discuss"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You can't name a purpose for a 1-hour meeting. Name 1 option.",
-              "answer": "Decline or ask for an agenda.",
-              "answer_kind": "phrase"
+              "answer": "Decline, or ask for an agenda.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "decline",
+                    "agenda",
+                    "ask",
+                    "skip",
+                    "purpose",
+                    "email",
+                    "cancel"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -33523,7 +34740,20 @@
               "weight": "warmup",
               "prompt": "Why prepare 1 point before a meeting instead of improvising?",
               "answer": "It's much easier to speak up with something ready.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "easier",
+                    "ready",
+                    "speak up",
+                    "confiden",
+                    "contribute",
+                    "prepared",
+                    "clear"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -33537,7 +34767,21 @@
               "weight": "stretch",
               "prompt": "You think the launch date is risky but say nothing until after the 3 pm meeting. What's the cost?",
               "answer": "The decision gets made without your concern.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "decision",
+                    "without you",
+                    "without your",
+                    "too late",
+                    "unheard",
+                    "missed",
+                    "risk",
+                    "made"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -33554,22 +34798,56 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "A meeting decides 'we should update the FAQ'. What 2 details are missing?",
-              "answer": "An owner and a date.",
-              "answer_kind": "phrase"
+              "answer": "An owner, and a date.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "owner",
+                    "who",
+                    "person"
+                  ],
+                  [
+                    "date",
+                    "deadline",
+                    "when",
+                    "due"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name the 1 question that turns a vague 'we should' into an action.",
-              "answer": "Who owns this and by when?",
-              "answer_kind": "phrase"
+              "answer": "Who owns this, and by when?",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "who"
+                  ],
+                  [
+                    "when",
+                    "date",
+                    "by"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "3 decisions with owners and dates means how many follow-ups to track?",
-              "answer": "3",
-              "answer_kind": "integer"
+              "prompt": "A meeting makes 3 decisions with owners and dates, and 2 more action items with owners. How many follow-ups do you track?",
+              "answer": "5, one per owner and date.",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "5"
+                ]
+              }
             }
           ]
         },
@@ -33594,7 +34872,17 @@
               "weight": "core",
               "prompt": "Your meeting is Thursday at 10 am. When should the agenda go out at the latest?",
               "answer": "Wednesday at 10 am.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "wednesday",
+                    "24 hours",
+                    "day before",
+                    "1 day"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -33633,7 +34921,16 @@
               "weight": "stretch",
               "prompt": "Which needs a live meeting: a 'status update' or a hard decision with disagreement?",
               "answer": "A hard decision with disagreement.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "A status update",
+                  "A hard decision with disagreement"
+                ],
+                "accept": [
+                  "A hard decision with disagreement"
+                ]
+              }
             }
           ]
         }
@@ -33671,15 +34968,45 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 site with salary data.",
-              "answer": "Glassdoor (or Levels.fyi).",
-              "answer_kind": "phrase"
+              "answer": "Glassdoor, or Levels.fyi.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "glassdoor",
+                    "levels",
+                    "payscale",
+                    "indeed",
+                    "bls",
+                    "salary.com",
+                    "linkedin",
+                    "h1b"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why research the range before naming a number to HR?",
               "answer": "So you don't anchor low.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "don't anchor",
+                    "anchor too low",
+                    "lowball",
+                    "anchor",
+                    "low",
+                    "undersell",
+                    "less",
+                    "market",
+                    "know",
+                    "range"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -33704,7 +35031,22 @@
               "weight": "core",
               "prompt": "Name 1 good reason to give.",
               "answer": "Market data for the role.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "market",
+                    "data",
+                    "experience",
+                    "skill",
+                    "competing",
+                    "offer",
+                    "result",
+                    "range",
+                    "research"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -33729,7 +35071,60 @@
               "weight": "warmup",
               "prompt": "Name 3 non-salary items to negotiate.",
               "answer": "Signing bonus, vacation and remote days.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "bonus",
+                    "vacation",
+                    "pto",
+                    "remote",
+                    "equity",
+                    "stock",
+                    "title",
+                    "start date",
+                    "flexib",
+                    "relocation",
+                    "training",
+                    "benefit",
+                    "401k",
+                    "hours"
+                  ],
+                  [
+                    "bonus",
+                    "vacation",
+                    "pto",
+                    "remote",
+                    "equity",
+                    "stock",
+                    "title",
+                    "start date",
+                    "flexib",
+                    "relocation",
+                    "training",
+                    "benefit",
+                    "401k",
+                    "hours"
+                  ],
+                  [
+                    "bonus",
+                    "vacation",
+                    "pto",
+                    "remote",
+                    "equity",
+                    "stock",
+                    "title",
+                    "start date",
+                    "flexib",
+                    "relocation",
+                    "training",
+                    "benefit",
+                    "401k",
+                    "hours"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
@@ -33742,8 +35137,23 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 non-salary ask if you take 2 evening classes a week.",
-              "answer": "Flexible hours or remote days.",
-              "answer_kind": "phrase"
+              "answer": "Flexible hours, or remote days.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "flexib",
+                    "remote",
+                    "hours",
+                    "schedule",
+                    "tuition",
+                    "education",
+                    "leave",
+                    "early",
+                    "days"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -33775,7 +35185,24 @@
               "weight": "stretch",
               "prompt": "Name 1 calm response to 'That's above our budget'.",
               "answer": "I understand. Is there flexibility on a signing bonus?",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "understand",
+                    "flexib",
+                    "bonus",
+                    "other",
+                    "instead",
+                    "could",
+                    "review",
+                    "equity",
+                    "vacation",
+                    "start",
+                    "what"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -33793,7 +35220,32 @@
               "weight": "warmup",
               "prompt": "Name 3 terms to check in a written offer.",
               "answer": "Salary, start date and bonus.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "salary",
+                    "pay",
+                    "base"
+                  ],
+                  [
+                    "start",
+                    "date"
+                  ],
+                  [
+                    "bonus",
+                    "equity",
+                    "title",
+                    "benefit",
+                    "vacation",
+                    "role",
+                    "location",
+                    "remote",
+                    "hours"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
@@ -33807,7 +35259,21 @@
               "weight": "stretch",
               "prompt": "You agreed to a $5,000 bonus on a call. Why get it in writing?",
               "answer": "Verbal agreements can be misremembered.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "verbal",
+                    "forget",
+                    "misremember",
+                    "record",
+                    "proof",
+                    "change",
+                    "binding",
+                    "dispute"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -33839,21 +35305,61 @@
               "weight": "warmup",
               "prompt": "How often should you check in with past colleagues: every 3 to 6 months or only when job hunting?",
               "answer": "Every 3 to 6 months.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Every 3 to 6 months",
+                  "Only when job hunting"
+                ],
+                "accept": [
+                  "Every 3 to 6 months"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 easy reason to reach out.",
               "answer": "Sharing an article they'd like.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "article",
+                    "congrat",
+                    "news",
+                    "birthday",
+                    "thank",
+                    "question",
+                    "update",
+                    "share",
+                    "event",
+                    "post",
+                    "promotion"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why message an old manager 6 months before you need a reference?",
               "answer": "The relationship stays real, not transactional.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "real",
+                    "relationship",
+                    "transactional",
+                    "genuine",
+                    "trust",
+                    "not just",
+                    "asking",
+                    "warm"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -33878,14 +35384,66 @@
               "weight": "core",
               "prompt": "Why might an acquaintance from 1 class help a job search more than a best friend?",
               "answer": "They know people and openings your close circle doesn't.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "different",
+                    "new",
+                    "people",
+                    "circle",
+                    "reach",
+                    "openings",
+                    "network",
+                    "weak ties",
+                    "know others"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 sources of weak ties for a student.",
-              "answer": "Old classmates and club members.",
-              "answer_kind": "list"
+              "answer": "Old classmates, and club members.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "classmate",
+                    "club",
+                    "team",
+                    "professor",
+                    "teacher",
+                    "alumni",
+                    "internship",
+                    "volunteer",
+                    "event",
+                    "job",
+                    "coworker",
+                    "neighbor",
+                    "online",
+                    "group"
+                  ],
+                  [
+                    "classmate",
+                    "club",
+                    "team",
+                    "professor",
+                    "teacher",
+                    "alumni",
+                    "internship",
+                    "volunteer",
+                    "event",
+                    "job",
+                    "coworker",
+                    "neighbor",
+                    "online",
+                    "group"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -33903,21 +35461,64 @@
               "weight": "warmup",
               "prompt": "Name 1 easy way to help someone in your network.",
               "answer": "Introduce them to someone useful.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "introduc",
+                    "share",
+                    "forward",
+                    "recommend",
+                    "refer",
+                    "endorse",
+                    "connect"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A friend is job hunting in UX design. What could you forward?",
-              "answer": "A UX job posting or a contact who works in UX.",
-              "answer_kind": "sentence"
+              "answer": "A UX job posting, or a contact who works in UX.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "posting",
+                    "job",
+                    "opening",
+                    "role",
+                    "listing",
+                    "contact",
+                    "introduc",
+                    "person",
+                    "someone",
+                    "course",
+                    "article"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why make 2 introductions without asking for anything back?",
               "answer": "It builds trust and goodwill.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "trust",
+                    "goodwill",
+                    "generous",
+                    "relationship",
+                    "reputation",
+                    "reciproc",
+                    "give"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -33942,7 +35543,30 @@
               "weight": "core",
               "prompt": "Name 1 good question for an informational chat.",
               "answer": "What does a typical week look like?",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "what",
+                    "how",
+                    "which",
+                    "why"
+                  ],
+                  [
+                    "week",
+                    "day",
+                    "like",
+                    "path",
+                    "skill",
+                    "advice",
+                    "wish",
+                    "hard",
+                    "best",
+                    "get into"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -33966,22 +35590,68 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 1 thing to put in a LinkedIn headline besides a job title.",
-              "answer": "Who you help or what you do.",
-              "answer_kind": "phrase"
+              "answer": "Who you help, or what you do.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "help",
+                    "do",
+                    "value",
+                    "skill",
+                    "specialty",
+                    "who you serve",
+                    "focus",
+                    "outcome",
+                    "industry"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Improve the headline 'Looking for opportunities'.",
               "answer": "Data analyst helping retail teams cut waste.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "analyst",
+                    "designer",
+                    "engineer",
+                    "developer",
+                    "manager",
+                    "writer",
+                    "marketer",
+                    "specialist",
+                    "student",
+                    "helping",
+                    "who",
+                    "building"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why keep a LinkedIn profile current?",
-              "answer": "People look you up before meeting.",
-              "answer_kind": "phrase"
+              "answer": "People look you up before meeting you.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "look you up",
+                    "check",
+                    "search",
+                    "first impression",
+                    "before meeting",
+                    "recruiter",
+                    "people look"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -34012,15 +35682,42 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name the 2 sections that matter most in meeting notes.",
-              "answer": "Decisions and actions.",
-              "answer_kind": "list"
+              "answer": "Decisions, and actions.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "decision"
+                  ],
+                  [
+                    "action",
+                    "task",
+                    "next step",
+                    "owner"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your notes are 3 pages with no decisions marked. What should change?",
               "answer": "Mark decisions and actions clearly.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "mark",
+                    "decision",
+                    "action",
+                    "highlight",
+                    "section",
+                    "summary",
+                    "shorter"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -34044,22 +35741,59 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "A meeting ends Monday at 3 pm. When is the latest to send notes?",
-              "answer": "Tuesday at 3 pm",
-              "answer_kind": "phrase"
+              "answer": "Tuesday at 3 pm.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "tuesday",
+                    "24 hours",
+                    "next day",
+                    "1 day"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Notes take 5 minutes right after a meeting. Why not wait a week?",
               "answer": "Memory fades and details get lost.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "fade",
+                    "forget",
+                    "memory",
+                    "lost",
+                    "details",
+                    "stale",
+                    "momentum"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 problem a follow-up prevents.",
               "answer": "Disagreement later about what was agreed.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "disagree",
+                    "confusion",
+                    "forgot",
+                    "misunderstand",
+                    "dropped",
+                    "who does what",
+                    "agreed",
+                    "miss"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -34077,21 +35811,78 @@
               "weight": "warmup",
               "prompt": "Rewrite 'someone should email the vendor' as an action.",
               "answer": "Priya to email the vendor by Thursday.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "to",
+                    "will"
+                  ],
+                  [
+                    "email",
+                    "contact",
+                    "write"
+                  ],
+                  [
+                    "by",
+                    "monday",
+                    "tuesday",
+                    "wednesday",
+                    "thursday",
+                    "friday",
+                    "today",
+                    "tomorrow"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name the 3 parts of this follow-up format.",
               "answer": "Decisions, actions and open questions.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "decision"
+                  ],
+                  [
+                    "action",
+                    "task"
+                  ],
+                  [
+                    "question",
+                    "open",
+                    "follow-up",
+                    "risk",
+                    "issue"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why write 'Priya: email vendor by Thu' rather than 'email vendor'?",
               "answer": "Each person can find their tasks and the date.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "person",
+                    "owner",
+                    "who",
+                    "their tasks",
+                    "find",
+                    "date",
+                    "accountab",
+                    "clear"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -34109,14 +35900,40 @@
               "weight": "warmup",
               "prompt": "Name 1 line that invites corrections.",
               "answer": "Reply if I missed anything.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "reply",
+                    "let me know",
+                    "correct",
+                    "missed",
+                    "anything",
+                    "add",
+                    "fix"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Nobody replies within 2 days. What can you assume?",
               "answer": "The notes are accepted.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "accepted",
+                    "agreed",
+                    "correct",
+                    "fine",
+                    "accurate",
+                    "stand",
+                    "ok"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -34155,7 +35972,20 @@
               "weight": "stretch",
               "prompt": "An action has no update after 2 weeks. Name 1 step.",
               "answer": "Ask the owner for a new date.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "ask",
+                    "owner",
+                    "new date",
+                    "check in",
+                    "follow up",
+                    "nudge",
+                    "reassign"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -34193,15 +36023,46 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Write a 1-sentence takeaway for a talk about late deliveries.",
-              "answer": "For example: Moving the cutoff to 2 pm would cut late deliveries by half.",
-              "answer_kind": "sentence"
+              "answer": "Moving the cutoff to 2 pm would cut late deliveries by half.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "would",
+                    "will",
+                    "should",
+                    "could",
+                    "cut",
+                    "reduce",
+                    "halve",
+                    "fix",
+                    "cause",
+                    "because",
+                    "move",
+                    "change",
+                    "if"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "A slide doesn't support the takeaway. What should you do?",
-              "answer": "Cut it or move it to an appendix.",
-              "answer_kind": "phrase"
+              "answer": "Cut it, or move it to an appendix.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "cut",
+                    "appendix",
+                    "remove",
+                    "drop",
+                    "delete",
+                    "backup"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -34219,21 +36080,65 @@
               "weight": "warmup",
               "prompt": "Your slide shows 3 charts and 2 bullet lists. What's the fix?",
               "answer": "Split it so each slide has 1 idea.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "split",
+                    "one idea",
+                    "1 idea",
+                    "separate",
+                    "cut",
+                    "fewer",
+                    "simplif"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your slide has 80 words. Name 1 fix.",
-              "answer": "Cut it to the key phrase and say the rest.",
-              "answer_kind": "sentence"
+              "answer": "Cut it to the key phrase, and say the rest.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "cut",
+                    "fewer words",
+                    "key phrase",
+                    "say",
+                    "speak",
+                    "picture",
+                    "image",
+                    "chart",
+                    "split",
+                    "shorten"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 thing slides do better than speech.",
-              "answer": "Show a chart or image.",
-              "answer_kind": "phrase"
+              "answer": "Show a chart or an image.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "chart",
+                    "image",
+                    "picture",
+                    "graph",
+                    "visual",
+                    "diagram",
+                    "data",
+                    "photo",
+                    "show"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -34251,7 +36156,19 @@
               "weight": "warmup",
               "prompt": "Your slot is 10 minutes and your first run takes 14. What should you do?",
               "answer": "Cut 4 minutes of content.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "cut",
+                    "4 minutes",
+                    "trim",
+                    "remove",
+                    "shorten",
+                    "drop"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -34265,7 +36182,21 @@
               "weight": "stretch",
               "prompt": "Why rehearse a 10-minute talk out loud instead of in your head?",
               "answer": "You find gaps and timing problems.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "gap",
+                    "timing",
+                    "time",
+                    "stumble",
+                    "flow",
+                    "catch",
+                    "problems",
+                    "hear"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -34283,14 +36214,52 @@
               "weight": "warmup",
               "prompt": "Someone asks something you don't know. Name 1 good reply.",
               "answer": "I don't know, but I'll find out and send it by Friday.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "don't know",
+                    "not sure",
+                    "find out",
+                    "get back",
+                    "follow up",
+                    "check",
+                    "i'll"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 likely question for a talk proposing a $50,000 budget.",
               "answer": "Where does the money come from?",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "where",
+                    "how",
+                    "why",
+                    "what",
+                    "when",
+                    "which",
+                    "who"
+                  ],
+                  [
+                    "money",
+                    "budget",
+                    "cost",
+                    "return",
+                    "roi",
+                    "pay",
+                    "fund",
+                    "alternative",
+                    "risk"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -34315,14 +36284,37 @@
               "weight": "warmup",
               "prompt": "Your CEO has 5 minutes. Lead with the method or the impact?",
               "answer": "The impact.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "The method",
+                  "The impact"
+                ],
+                "accept": [
+                  "The impact"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 thing engineers may want that executives skip.",
               "answer": "Technical details of the method.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "technical",
+                    "detail",
+                    "method",
+                    "how it works",
+                    "code",
+                    "data",
+                    "architecture",
+                    "implementation"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -34361,21 +36353,68 @@
               "weight": "warmup",
               "prompt": "Your tasks live in email, Slack and 2 notebooks. What's the fix?",
               "answer": "Move them onto 1 list.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "one list",
+                    "1 list",
+                    "single",
+                    "onto",
+                    "consolidat",
+                    "one place",
+                    "move",
+                    "merge"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 place tasks hide besides your list.",
-              "answer": "Email (or chat messages).",
-              "answer_kind": "phrase"
+              "answer": "Email, or chat messages.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "email",
+                    "chat",
+                    "slack",
+                    "message",
+                    "notebook",
+                    "sticky",
+                    "head",
+                    "calendar",
+                    "text",
+                    "meeting notes",
+                    "teams"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why put everything on 1 list?",
               "answer": "You can't prioritize what you can't see.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "can't see",
+                    "can't prioritize",
+                    "see",
+                    "prioritiz",
+                    "overview",
+                    "compare",
+                    "hidden",
+                    "forget",
+                    "trade",
+                    "everything"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -34399,15 +36438,37 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Which Eisenhower box hides most real progress?",
-              "answer": "Important but not urgent.",
-              "answer_kind": "phrase"
+              "answer": "Important, not urgent.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Urgent and important",
+                  "Important, not urgent",
+                  "Urgent, not important",
+                  "Neither"
+                ],
+                "accept": [
+                  "Important, not urgent"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Where does 'reply to a routine newsletter' go?",
               "answer": "Neither urgent nor important.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Urgent and important",
+                  "Important, not urgent",
+                  "Urgent, not important",
+                  "Neither"
+                ],
+                "accept": [
+                  "Neither"
+                ]
+              }
             }
           ]
         },
@@ -34425,14 +36486,42 @@
               "weight": "warmup",
               "prompt": "A new urgent task arrives. Name 1 reply.",
               "answer": "I can take it, but the report moves to Friday. OK?",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "but",
+                    "move",
+                    "slip",
+                    "instead",
+                    "tradeoff",
+                    "which",
+                    "priorit",
+                    "delay",
+                    "push",
+                    "later",
+                    "friday"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "You tell your manager the report slips if you take the new task. Who decides now?",
               "answer": "Your manager, now that they know the cost.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "manager",
+                    "boss",
+                    "they",
+                    "lead",
+                    "them"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -34464,7 +36553,22 @@
               "weight": "core",
               "prompt": "A coworker books a meeting over your 2-hour focus block. Name 1 response.",
               "answer": "Suggest another time, since that block is reserved.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "another time",
+                    "other time",
+                    "suggest",
+                    "reschedule",
+                    "move",
+                    "decline",
+                    "blocked",
+                    "reserved",
+                    "propose"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -34496,14 +36600,52 @@
               "weight": "core",
               "prompt": "Name 1 question to ask in a 20-minute weekly review.",
               "answer": "What are my top 3 for next week?",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "what",
+                    "which",
+                    "how",
+                    "did",
+                    "where"
+                  ],
+                  [
+                    "top",
+                    "priority",
+                    "next week",
+                    "done",
+                    "important",
+                    "slip",
+                    "drop",
+                    "matter"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Without a weekly review, what happens to a 30-item list?",
               "answer": "It drifts and stops matching reality.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "drift",
+                    "stale",
+                    "reality",
+                    "outdated",
+                    "grow",
+                    "chaos",
+                    "ignore",
+                    "mess",
+                    "no longer",
+                    "useless"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -34534,22 +36676,77 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name the 3 parts of this question format.",
-              "answer": "What you tried, what you expected and what happened.",
-              "answer_kind": "list"
+              "answer": "What you tried, what you expected, and what happened.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "tried",
+                    "did"
+                  ],
+                  [
+                    "expected",
+                    "expect"
+                  ],
+                  [
+                    "happened",
+                    "got",
+                    "result",
+                    "actual"
+                  ]
+                ],
+                "order": true
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Improve 'The build is broken, help?'",
-              "answer": "I ran npm build after pulling main; I expected success; it fails with error X.",
-              "answer_kind": "sentence"
+              "answer": "I ran npm build after pulling main. I expected it to pass, but it fails with error X.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "ran",
+                    "tried",
+                    "run",
+                    "did"
+                  ],
+                  [
+                    "expected",
+                    "expect"
+                  ],
+                  [
+                    "error",
+                    "fails",
+                    "failed",
+                    "got",
+                    "says",
+                    "happened"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You start writing 'Tried X, expected Y' and spot your own typo. What just happened?",
               "answer": "Writing the question solved it.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "solved",
+                    "answered",
+                    "found",
+                    "rubber duck",
+                    "writing",
+                    "figured",
+                    "clarif"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -34567,21 +36764,82 @@
               "weight": "warmup",
               "prompt": "Name 1 thing to mention when you ask after a 15-minute search.",
               "answer": "Where you already looked.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "where you looked",
+                    "looked",
+                    "searched",
+                    "tried",
+                    "already",
+                    "docs",
+                    "what you checked"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "You've been stuck 3 hours. What should you do?",
-              "answer": "Ask now and say what you tried.",
-              "answer_kind": "phrase"
+              "answer": "Ask now, and say what you tried.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "ask",
+                    "now",
+                    "help",
+                    "reach out",
+                    "say what you tried"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 places to search before asking.",
-              "answer": "Docs and past threads.",
-              "answer_kind": "list"
+              "answer": "The docs, and past threads.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "doc",
+                    "wiki",
+                    "readme",
+                    "thread",
+                    "slack",
+                    "channel",
+                    "search",
+                    "google",
+                    "stack",
+                    "faq",
+                    "ticket",
+                    "code",
+                    "manual",
+                    "history"
+                  ],
+                  [
+                    "doc",
+                    "wiki",
+                    "readme",
+                    "thread",
+                    "slack",
+                    "channel",
+                    "search",
+                    "google",
+                    "stack",
+                    "faq",
+                    "ticket",
+                    "code",
+                    "manual",
+                    "history"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -34599,21 +36857,53 @@
               "weight": "warmup",
               "prompt": "A question about the payment API: the API's owner or the office manager?",
               "answer": "The API's owner.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "The API's owner",
+                  "The office manager"
+                ],
+                "accept": [
+                  "The API's owner"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why ask in a public channel instead of a DM?",
               "answer": "Others can find the answer later.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "others",
+                    "later",
+                    "find",
+                    "share",
+                    "everyone",
+                    "search",
+                    "learn",
+                    "benefit"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "A Python question at a 300-person company: ask in the #python channel or DM a random engineer?",
               "answer": "The #python channel.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "The #python channel",
+                  "DM a random engineer"
+                ],
+                "accept": [
+                  "The #python channel"
+                ]
+              }
             }
           ]
         },
@@ -34630,22 +36920,84 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 3 clarifying questions for a new task.",
-              "answer": "What's the goal, when is it due and what does done look like?",
-              "answer_kind": "list"
+              "answer": "What's the goal, when is it due, and what does done look like?",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "goal",
+                    "why",
+                    "purpose"
+                  ],
+                  [
+                    "due",
+                    "when",
+                    "deadline"
+                  ],
+                  [
+                    "done",
+                    "look like",
+                    "success",
+                    "format",
+                    "who",
+                    "audience",
+                    "scope",
+                    "priority"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "You're told 'clean up the report'. Name 1 question to ask.",
               "answer": "What should change, and who is it for?",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "what",
+                    "who",
+                    "which",
+                    "why",
+                    "how",
+                    "when"
+                  ],
+                  [
+                    "change",
+                    "for",
+                    "audience",
+                    "clean",
+                    "done",
+                    "look like",
+                    "mean"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why ask 3 clarifying questions before a 2-week task?",
               "answer": "So you don't do the wrong work well.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "don't do the wrong",
+                    "not do the wrong",
+                    "wrong work",
+                    "wrong",
+                    "waste",
+                    "rework",
+                    "right thing",
+                    "misunderstand",
+                    "redo"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -34663,14 +37015,39 @@
               "weight": "warmup",
               "prompt": "3 people asked you the same setup question this month. What should you do?",
               "answer": "Write the answer in the team docs.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "doc",
+                    "write",
+                    "faq",
+                    "wiki",
+                    "readme",
+                    "share",
+                    "post"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why add an answer to the team docs once 2 people have asked?",
               "answer": "The next person can find it.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "find",
+                    "next person",
+                    "save time",
+                    "repeat",
+                    "others",
+                    "self-serve"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -34709,21 +37086,64 @@
               "weight": "warmup",
               "prompt": "You said 'I'll send the slides' in 3 meetings this week. Where should those go?",
               "answer": "On your commitments list, each with a due date.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "list",
+                    "commitment",
+                    "tracker",
+                    "to-do",
+                    "write",
+                    "log",
+                    "note"
+                  ],
+                  [
+                    "date",
+                    "due",
+                    "deadline",
+                    "when"
+                  ]
+                ],
+                "need": 1
+              }
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Your list has 12 items and 2 are overdue. What share is on time?",
-              "answer": "10 of 12, about 83%",
-              "answer_kind": "phrase"
+              "prompt": "Your list has 12 items and 2 are overdue. What percent is on time, to the nearest whole number?",
+              "answer": "83%, 10 of 12.",
+              "answer_kind": "percent",
+              "grading": {
+                "accept": [
+                  "83"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 details to record with each commitment besides the task.",
-              "answer": "Who it's for and when it's due.",
-              "answer_kind": "list"
+              "answer": "Who it's for, and when it's due.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "who",
+                    "for whom",
+                    "person",
+                    "owner",
+                    "requester"
+                  ],
+                  [
+                    "when",
+                    "due",
+                    "date",
+                    "deadline"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -34739,16 +37159,30 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "A task feels like 4 days. With a 25% buffer, what date do you give?",
-              "answer": "5 days from now",
-              "answer_kind": "phrase"
+              "prompt": "A task feels like 4 days. With a 25% buffer, how many days do you promise?",
+              "answer": "5 days from now.",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "5"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Which builds more trust: promising Friday and delivering Thursday, or promising Tuesday and delivering Thursday?",
-              "answer": "Promising Friday and delivering Thursday.",
-              "answer_kind": "phrase"
+              "answer": "Promise Friday, deliver Thursday.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Promise Friday, deliver Thursday",
+                  "Promise Tuesday, deliver Thursday"
+                ],
+                "accept": [
+                  "Promise Friday, deliver Thursday"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -34779,15 +37213,45 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 things to include when flagging a slip.",
-              "answer": "A new date and what you need to hit it.",
-              "answer_kind": "list"
+              "answer": "A new date, and what you need to hit it.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "new date",
+                    "date",
+                    "when",
+                    "eta",
+                    "timeline"
+                  ],
+                  [
+                    "need",
+                    "help",
+                    "blocker",
+                    "reason",
+                    "why",
+                    "what changed",
+                    "support"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Which hurts trust more: a warning 3 days early or silence until the deadline?",
               "answer": "Silence until the deadline.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "A warning 3 days early",
+                  "Silence until the deadline"
+                ],
+                "accept": [
+                  "Silence until the deadline"
+                ]
+              }
             }
           ]
         },
@@ -34805,7 +37269,22 @@
               "weight": "warmup",
               "prompt": "You fixed the bug Sam reported. What 1 thing should you send?",
               "answer": "A short message saying it's fixed, with a link.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "message",
+                    "note",
+                    "done",
+                    "fixed",
+                    "tell",
+                    "update",
+                    "reply",
+                    "link",
+                    "email"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -34818,8 +37297,22 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why send 'done' if the work speaks for itself?",
-              "answer": "Other people can't see it finish, so they would chase you.",
-              "answer_kind": "sentence"
+              "answer": "Other people can't see it finish, so they'd chase you.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "can't see",
+                    "don't know",
+                    "chase",
+                    "follow up",
+                    "close the loop",
+                    "visible",
+                    "wonder",
+                    "ask"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -34836,22 +37329,73 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Rewrite 'I'll try to get to it' as a clear answer for something you can't do this week.",
-              "answer": "I can't take this on this week, but I could start Monday.",
-              "answer_kind": "sentence"
+              "answer": "\"I can't take this on this week, but I could start Monday.\"",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "can't",
+                    "cannot",
+                    "won't",
+                    "unable",
+                    "not able"
+                  ],
+                  [
+                    "could",
+                    "can",
+                    "monday",
+                    "next week",
+                    "instead",
+                    "but",
+                    "later",
+                    "after"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Which is more reliable: 'maybe' or a clear 'no' with an alternative?",
               "answer": "A clear 'no' with an alternative.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Maybe",
+                  "A clear no with an alternative"
+                ],
+                "accept": [
+                  "A clear no with an alternative"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You already have 3 deadlines this Friday. A 4th request arrives. Name 1 honest reply.",
-              "answer": "I can do it next Wednesday, or drop something else for it.",
-              "answer_kind": "sentence"
+              "answer": "\"I can do it next Wednesday, or drop something else for it.\"",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "next",
+                    "monday",
+                    "tuesday",
+                    "wednesday",
+                    "thursday",
+                    "later",
+                    "drop",
+                    "instead",
+                    "priorit",
+                    "which",
+                    "trade",
+                    "move",
+                    "can't",
+                    "after"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -34882,8 +37426,17 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "You have 10 hours for applications. Spend 1 hour each on 10 roles or 6 minutes each on 100?",
-              "answer": "1 hour each on 10.",
-              "answer_kind": "phrase"
+              "answer": "1 hour each on 10 roles.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "1 hour each on 10 roles",
+                  "6 minutes each on 100"
+                ],
+                "accept": [
+                  "1 hour each on 10 roles"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -34897,7 +37450,20 @@
               "weight": "stretch",
               "prompt": "Name 1 sign a role fits.",
               "answer": "You meet most of the key requirements.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "requirement",
+                    "qualif",
+                    "meet",
+                    "skills",
+                    "match",
+                    "most",
+                    "experience"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -34913,23 +37479,57 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "A posting lists 5 requirements. How many should your application address?",
-              "answer": "All 5.",
-              "answer_kind": "integer"
+              "prompt": "A posting lists 3 must-have and 2 nice-to-have requirements. How many should your application address?",
+              "answer": "All 5, with the must-haves first.",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "5"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A posting says 'SQL required'. Name 1 way to show it.",
-              "answer": "A CV bullet using SQL with a result.",
-              "answer_kind": "phrase"
+              "answer": "A résumé bullet using SQL, with a result.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "bullet",
+                    "résumé",
+                    "resume",
+                    "project",
+                    "example",
+                    "portfolio",
+                    "result",
+                    "github",
+                    "cover letter",
+                    "certif"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why mirror the posting's words?",
               "answer": "Screeners and software look for them.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "screen",
+                    "ats",
+                    "software",
+                    "keyword",
+                    "recruiter",
+                    "match",
+                    "filter"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -34947,21 +37547,58 @@
               "weight": "warmup",
               "prompt": "Your friend Maya works at the company. What should you ask for?",
               "answer": "A referral, with the job link and why you fit.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "referral",
+                    "refer",
+                    "recommend"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 thing to include in a referral ask.",
-              "answer": "The job link and why you fit.",
-              "answer_kind": "phrase"
+              "answer": "The job link, and why you fit.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "link",
+                    "posting",
+                    "job",
+                    "résumé",
+                    "resume",
+                    "why you fit",
+                    "fit",
+                    "role",
+                    "summary"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why ask Maya for a referral instead of applying cold?",
               "answer": "Referred candidates are more likely to get interviews.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "interview",
+                    "likely",
+                    "chance",
+                    "more",
+                    "noticed",
+                    "priorit",
+                    "trust"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -34979,7 +37616,31 @@
               "weight": "warmup",
               "prompt": "Name 3 columns for an application tracker.",
               "answer": "Date, status and next step.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "date",
+                    "applied",
+                    "when"
+                  ],
+                  [
+                    "status",
+                    "stage"
+                  ],
+                  [
+                    "next",
+                    "step",
+                    "follow",
+                    "company",
+                    "role",
+                    "contact",
+                    "link",
+                    "deadline"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
@@ -35056,15 +37717,52 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 1 skill a new analyst might pick to improve over 6 months.",
-              "answer": "SQL (or presenting findings).",
-              "answer_kind": "phrase"
+              "answer": "SQL, or presenting findings.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "sql",
+                    "excel",
+                    "python",
+                    "present",
+                    "writing",
+                    "statistic",
+                    "visualiz",
+                    "tableau",
+                    "communicat",
+                    "modeling",
+                    "r",
+                    "spreadsheet",
+                    "data",
+                    "storytell",
+                    "power bi"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 good reason to pick a skill.",
               "answer": "It would most help your work in 6 months.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "help",
+                    "work",
+                    "need",
+                    "impact",
+                    "role",
+                    "goal",
+                    "valu",
+                    "career",
+                    "demand",
+                    "use"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -35102,8 +37800,25 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 source of feedback on your practice.",
-              "answer": "A mentor or colleague.",
-              "answer_kind": "phrase"
+              "answer": "A mentor or a colleague.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "mentor",
+                    "colleague",
+                    "manager",
+                    "peer",
+                    "coach",
+                    "teacher",
+                    "expert",
+                    "reviewer",
+                    "friend",
+                    "course",
+                    "community"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -35121,21 +37836,64 @@
               "weight": "warmup",
               "prompt": "Who should you ask for a 30-minute chat about getting better at estimates?",
               "answer": "Someone known for good estimates.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "good at",
+                    "known",
+                    "expert",
+                    "skilled",
+                    "someone who",
+                    "best",
+                    "experienced"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 specific question to bring.",
               "answer": "How did you learn to estimate projects?",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "how",
+                    "what",
+                    "when",
+                    "which",
+                    "why"
+                  ],
+                  [
+                    "estimat",
+                    "learn",
+                    "mistake",
+                    "buffer",
+                    "tool",
+                    "approach",
+                    "wrong"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Which gets a yes more often: 'Can you mentor me?' or 'Can I ask you 2 questions about estimating?'",
               "answer": "Can I ask you 2 questions about estimating?",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Can you mentor me?",
+                  "Can I ask you 2 questions about estimating?"
+                ],
+                "accept": [
+                  "Can I ask you 2 questions about estimating?"
+                ]
+              }
             }
           ]
         },
@@ -35153,14 +37911,43 @@
               "weight": "warmup",
               "prompt": "Name 1 stretch task for someone learning to present.",
               "answer": "Presenting the team update at the monthly all-hands.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "present",
+                    "talk",
+                    "update",
+                    "demo",
+                    "meeting",
+                    "all-hands",
+                    "lead",
+                    "pitch",
+                    "workshop"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why ask your manager for a stretch task instead of waiting 6 months?",
               "answer": "Stretch work is rarely offered.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "rarely offered",
+                    "rare",
+                    "not offered",
+                    "ask",
+                    "wait",
+                    "nobody",
+                    "won't come",
+                    "seldom"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -35185,14 +37972,45 @@
               "weight": "warmup",
               "prompt": "You logged 20 hours of practice but your talks haven't changed. What's missing?",
               "answer": "A measure of results.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "measure",
+                    "results",
+                    "feedback",
+                    "test",
+                    "metric",
+                    "outcome",
+                    "check",
+                    "deliberate"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 measurable sign of better presenting.",
               "answer": "Giving a 10-minute talk without notes.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "without notes",
+                    "no notes",
+                    "fewer filler",
+                    "filler",
+                    "questions",
+                    "score",
+                    "rating",
+                    "time",
+                    "feedback",
+                    "minutes",
+                    "record"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -35230,8 +38048,21 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Sales pushes for features fast. What are they probably measured on?",
-              "answer": "Revenue or deals closed.",
-              "answer_kind": "phrase"
+              "answer": "Revenue, or deals closed.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "revenue",
+                    "deals",
+                    "sales",
+                    "quota",
+                    "bookings",
+                    "money",
+                    "closed"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -35270,14 +38101,42 @@
               "weight": "core",
               "prompt": "Why mention 'fewer support tickets' when asking Support for help?",
               "answer": "It ties your request to their goal, so it gets priority.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "their goal",
+                    "goal",
+                    "ties",
+                    "link",
+                    "priorit",
+                    "interest",
+                    "benefit",
+                    "care"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You need Legal to review fast. Name 1 shared goal to mention.",
               "answer": "Launching without legal risk.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "risk",
+                    "compliance",
+                    "safe",
+                    "legal",
+                    "launch",
+                    "lawsuit",
+                    "liabil",
+                    "protect"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -35295,21 +38154,107 @@
               "weight": "warmup",
               "prompt": "Name 3 groups that might belong on a stakeholder map for a new checkout page.",
               "answer": "Payments, Support and Marketing.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "payment",
+                    "finance",
+                    "billing",
+                    "support",
+                    "marketing",
+                    "legal",
+                    "security",
+                    "design",
+                    "engineering",
+                    "product",
+                    "sales",
+                    "data",
+                    "ops",
+                    "fraud"
+                  ],
+                  [
+                    "payment",
+                    "finance",
+                    "billing",
+                    "support",
+                    "marketing",
+                    "legal",
+                    "security",
+                    "design",
+                    "engineering",
+                    "product",
+                    "sales",
+                    "data",
+                    "ops",
+                    "fraud"
+                  ],
+                  [
+                    "payment",
+                    "finance",
+                    "billing",
+                    "support",
+                    "marketing",
+                    "legal",
+                    "security",
+                    "design",
+                    "engineering",
+                    "product",
+                    "sales",
+                    "data",
+                    "ops",
+                    "fraud"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 columns for a stakeholder map.",
-              "answer": "Who they are and what they care about.",
-              "answer_kind": "list"
+              "answer": "Who they are, and what they care about.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "who",
+                    "name",
+                    "team",
+                    "group"
+                  ],
+                  [
+                    "care",
+                    "want",
+                    "goal",
+                    "need",
+                    "interest",
+                    "influence",
+                    "impact",
+                    "power"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You learn Security must approve 1 week before launch. When should you have found out?",
               "answer": "At the start, when mapping stakeholders.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "start",
+                    "beginning",
+                    "early",
+                    "first",
+                    "mapping",
+                    "kickoff"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -35327,7 +38272,18 @@
               "weight": "warmup",
               "prompt": "Your change affects Billing next Monday. When should they hear?",
               "answer": "At least a week before.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "week",
+                    "7 days",
+                    "early",
+                    "before",
+                    "advance"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -35341,7 +38297,16 @@
               "weight": "stretch",
               "prompt": "Is a heads-up a request for permission? Answer yes or no.",
               "answer": "Not always, but it lets them plan.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Yes",
+                  "Not always"
+                ],
+                "accept": [
+                  "Not always"
+                ]
+              }
             }
           ]
         },
@@ -35359,14 +38324,57 @@
               "weight": "warmup",
               "prompt": "Name 3 parts of a good escalation.",
               "answer": "A neutral summary, options and a recommendation.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "summary",
+                    "neutral",
+                    "facts",
+                    "context"
+                  ],
+                  [
+                    "option",
+                    "choice",
+                    "alternative"
+                  ],
+                  [
+                    "recommend",
+                    "proposal",
+                    "ask",
+                    "decision"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Write 1 line of a neutral escalation about a 2-week delay.",
-              "answer": "Design and Engineering disagree on scope; A ships in 2 weeks, B in 4. I recommend A.",
-              "answer_kind": "sentence"
+              "answer": "Design and Engineering disagree on scope: A ships in 2 weeks, B in 4. I recommend A.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "disagree",
+                    "differ",
+                    "option",
+                    "a",
+                    "b",
+                    "either",
+                    "choose",
+                    "decision"
+                  ],
+                  [
+                    "recommend",
+                    "suggest",
+                    "propose",
+                    "weeks"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -35405,21 +38413,72 @@
               "weight": "warmup",
               "prompt": "A retail manager is moving into HR. Name 1 transferable skill.",
               "answer": "Hiring and training staff.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "hiring",
+                    "training",
+                    "staff",
+                    "coach",
+                    "scheduling",
+                    "conflict",
+                    "people",
+                    "team",
+                    "interview",
+                    "manage",
+                    "recruit",
+                    "onboard"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A teacher moving to training design. Name 1 transferable skill.",
               "answer": "Explaining complex ideas simply.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "explain",
+                    "teaching",
+                    "lesson",
+                    "plan",
+                    "present",
+                    "assess",
+                    "curriculum",
+                    "communicat",
+                    "feedback",
+                    "simply"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 likely gap for a designer moving into product management.",
-              "answer": "Writing roadmaps or prioritizing features.",
-              "answer_kind": "phrase"
+              "answer": "Writing roadmaps, or prioritizing features.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "roadmap",
+                    "priorit",
+                    "strategy",
+                    "business",
+                    "metric",
+                    "data",
+                    "stakeholder",
+                    "market",
+                    "technical",
+                    "spec",
+                    "requirements"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -35437,21 +38496,61 @@
               "weight": "warmup",
               "prompt": "Name 1 public project for a teacher moving into UX design.",
               "answer": "Redesigning a school website and writing up the process.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "redesign",
+                    "design",
+                    "app",
+                    "website",
+                    "site",
+                    "case study",
+                    "prototype",
+                    "research",
+                    "wireframe",
+                    "portfolio"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Which proves a skill better: a 'certificate' or a public project?",
               "answer": "A public project.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "A certificate",
+                  "A public project"
+                ],
+                "accept": [
+                  "A public project"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 place to share a project.",
-              "answer": "GitHub (or a personal site).",
-              "answer_kind": "phrase"
+              "answer": "GitHub, or a personal site.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "github",
+                    "portfolio",
+                    "personal site",
+                    "website",
+                    "blog",
+                    "behance",
+                    "dribbble",
+                    "linkedin",
+                    "medium"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -35469,21 +38568,61 @@
               "weight": "warmup",
               "prompt": "Why is moving from Sales to Marketing inside your company easier than elsewhere?",
               "answer": "People already trust you.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "trust",
+                    "know you",
+                    "already",
+                    "reputation",
+                    "relationship",
+                    "internal",
+                    "track record"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 way to start.",
               "answer": "Volunteer on a small project for that team.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "volunteer",
+                    "project",
+                    "shadow",
+                    "help",
+                    "coffee",
+                    "chat",
+                    "ask",
+                    "offer"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You want to join the Data team. How do you learn what they need?",
               "answer": "Ask someone on it for a short chat.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "ask",
+                    "chat",
+                    "talk",
+                    "someone",
+                    "coffee",
+                    "meet",
+                    "interview"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -35500,8 +38639,30 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Rewrite 'Sorry, I was just a teacher' as part of a career-change story.",
-              "answer": "As a teacher I designed lessons for 120 students; now I design training for adults.",
-              "answer_kind": "sentence"
+              "answer": "As a teacher I designed lessons for 120 students, and now I design training for adults.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "as a teacher",
+                    "teacher",
+                    "taught",
+                    "designed",
+                    "led",
+                    "managed",
+                    "built"
+                  ],
+                  [
+                    "now",
+                    "want",
+                    "ready",
+                    "bring",
+                    "skills",
+                    "apply"
+                  ]
+                ],
+                "need": 1
+              }
             },
             {
               "slot": 2,
@@ -35533,21 +38694,65 @@
               "weight": "warmup",
               "prompt": "Name 1 small test of a move into writing within 2 months.",
               "answer": "A freelance article for a local paper.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "freelance",
+                    "article",
+                    "blog",
+                    "post",
+                    "newsletter",
+                    "guest",
+                    "pitch",
+                    "submit",
+                    "essay",
+                    "story"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why try 1 freelance job before quitting to freelance?",
               "answer": "To check you actually like the work.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "like",
+                    "enjoy",
+                    "test",
+                    "check",
+                    "risk",
+                    "real",
+                    "data",
+                    "sure"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your 1 test task in design felt draining. What does that tell you?",
-              "answer": "Rethink the move before leaping.",
-              "answer_kind": "phrase"
+              "answer": "Rethink the move before you leap.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "rethink",
+                    "reconsider",
+                    "not for you",
+                    "wrong fit",
+                    "test more",
+                    "pause",
+                    "don't leap",
+                    "another"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -35578,22 +38783,79 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 2 things each brag doc entry should record.",
-              "answer": "What you did and what changed because of it.",
-              "answer_kind": "list"
+              "answer": "What you did, and what changed because of it.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "did",
+                    "what you did",
+                    "task",
+                    "work",
+                    "action"
+                  ],
+                  [
+                    "changed",
+                    "result",
+                    "impact",
+                    "outcome",
+                    "effect"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Improve 'Worked on the website.'",
               "answer": "Cut page load from 4 seconds to 2.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "0",
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "percent",
+                    "%"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 uses for a brag doc.",
-              "answer": "Performance reviews and your CV.",
-              "answer_kind": "list"
+              "answer": "Performance reviews, and your résumé.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "review",
+                    "performance",
+                    "promotion",
+                    "raise"
+                  ],
+                  [
+                    "résumé",
+                    "resume",
+                    "cv",
+                    "interview",
+                    "portfolio",
+                    "linkedin",
+                    "application"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -35611,21 +38873,71 @@
               "weight": "warmup",
               "prompt": "Your manager hasn't heard from you in 6 weeks. What's the risk?",
               "answer": "They can't advocate for work they don't know about.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "advocate",
+                    "don't know",
+                    "unaware",
+                    "invisible",
+                    "credit",
+                    "overlook",
+                    "promotion",
+                    "forget"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 benefit of updating your manager unasked.",
               "answer": "It gives them material to advocate for you.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "advocate",
+                    "material",
+                    "aware",
+                    "credit",
+                    "trust",
+                    "support",
+                    "know",
+                    "visible"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Write a 3-bullet update for a week where you shipped 1 fix.",
               "answer": "Shipped the export fix. Next: billing tests. Blocked: nothing.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "shipped",
+                    "done",
+                    "fixed",
+                    "finished",
+                    "released"
+                  ],
+                  [
+                    "next",
+                    "plan"
+                  ],
+                  [
+                    "blocked",
+                    "nothing",
+                    "none",
+                    "waiting"
+                  ]
+                ],
+                "need": 3
+              }
             }
           ]
         },
@@ -35642,8 +38954,34 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Rewrite 'Spent 3 weeks on the report.' to show impact.",
-              "answer": "Report led to a 10% budget cut.",
-              "answer_kind": "phrase"
+              "answer": "The report led to a 10% budget cut.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "led",
+                    "result",
+                    "saved",
+                    "cut",
+                    "grew",
+                    "reduced",
+                    "helped",
+                    "drove",
+                    "0",
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "percent",
+                    "%"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -35657,7 +38995,30 @@
               "weight": "stretch",
               "prompt": "Rewrite 'Helped with hiring.' to show impact.",
               "answer": "Interviewed 20 candidates, leading to 3 hires.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "0",
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9"
+                  ],
+                  [
+                    "hire",
+                    "hired",
+                    "candidate",
+                    "interview"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -35674,8 +39035,21 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Why demo unfinished work in a 5-minute slot instead of waiting for launch?",
-              "answer": "You get early feedback and the work becomes visible.",
-              "answer_kind": "sentence"
+              "answer": "You get early feedback, and the work becomes visible.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "feedback",
+                    "early",
+                    "visible",
+                    "course correct",
+                    "see",
+                    "catch",
+                    "input"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -35689,7 +39063,16 @@
               "weight": "stretch",
               "prompt": "In a 5-minute demo, show 10 slides or the working feature?",
               "answer": "The working feature.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "10 slides",
+                  "The working feature"
+                ],
+                "accept": [
+                  "The working feature"
+                ]
+              }
             }
           ]
         },
@@ -35707,14 +39090,40 @@
               "weight": "warmup",
               "prompt": "Rewrite 'Thanks team!' as specific credit.",
               "answer": "Thanks to Jo for fixing the export bug in 1 day.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "thanks",
+                    "thank"
+                  ],
+                  [
+                    "for"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why name Jo and the bug in a thank-you instead of writing 'Thanks all'?",
               "answer": "Specific credit shows what Jo actually did.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "specific",
+                    "credit",
+                    "actually did",
+                    "real",
+                    "meaning",
+                    "valued",
+                    "recogni",
+                    "what they did"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -35753,21 +39162,65 @@
               "weight": "warmup",
               "prompt": "A 3-page report recommends hiring 2 people. Where should that recommendation go?",
               "answer": "In the first paragraph.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "first",
+                    "top",
+                    "start",
+                    "opening",
+                    "beginning",
+                    "summary"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name the 2 things a first paragraph should give.",
-              "answer": "The conclusion and the recommendation.",
-              "answer_kind": "list"
+              "answer": "The conclusion, and the recommendation.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "conclusion",
+                    "finding",
+                    "answer",
+                    "result",
+                    "bottom line"
+                  ],
+                  [
+                    "recommend",
+                    "ask",
+                    "action",
+                    "next step",
+                    "decision"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why put the answer first for a VP?",
               "answer": "They may only read the top.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "top",
+                    "only read",
+                    "skim",
+                    "busy",
+                    "first",
+                    "time",
+                    "stop"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -35784,22 +39237,71 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Improve the heading 'Results'.",
-              "answer": "For example: Signups doubled after the redesign",
-              "answer_kind": "phrase"
+              "answer": "Signups doubled after the redesign.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "0",
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "doubled",
+                    "rose",
+                    "fell",
+                    "grew",
+                    "dropped",
+                    "up",
+                    "down",
+                    "beat",
+                    "missed",
+                    "tripled",
+                    "halved"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A reader skims only the 5 headings of your report. What should those headings do?",
               "answer": "State each section's point.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "point",
+                    "state",
+                    "finding",
+                    "claim",
+                    "takeaway",
+                    "message",
+                    "say"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Is 'Q3 costs rose 12%' or 'Costs' the stronger heading?",
               "answer": "Q3 costs rose 12%",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Q3 costs rose 12%",
+                  "Costs"
+                ],
+                "accept": [
+                  "Q3 costs rose 12%"
+                ]
+              }
             }
           ]
         },
@@ -35817,7 +39319,33 @@
               "weight": "warmup",
               "prompt": "Name 4 parts of an actionable summary.",
               "answer": "Situation, finding, recommendation and the ask.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "situation",
+                    "context",
+                    "background"
+                  ],
+                  [
+                    "finding",
+                    "result",
+                    "data"
+                  ],
+                  [
+                    "recommend",
+                    "solution",
+                    "proposal"
+                  ],
+                  [
+                    "ask",
+                    "request",
+                    "next step",
+                    "decision"
+                  ]
+                ],
+                "need": 4
+              }
             },
             {
               "slot": 2,
@@ -35863,7 +39391,24 @@
               "weight": "stretch",
               "prompt": "Rewrite 'We will operationalize the initiative in Q2.'",
               "answer": "We will start the project in Q2.",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "start",
+                    "begin",
+                    "launch",
+                    "kick off",
+                    "roll out"
+                  ],
+                  [
+                    "project",
+                    "plan",
+                    "work"
+                  ]
+                ],
+                "need": 1
+              }
             }
           ]
         },
@@ -35881,21 +39426,60 @@
               "weight": "warmup",
               "prompt": "Your reader thinks the doc asks for budget, but you wanted headcount. What does that mean?",
               "answer": "The document is unclear, so revise it.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "unclear",
+                    "revise",
+                    "rewrite",
+                    "confus",
+                    "fix",
+                    "my fault",
+                    "not clear"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your 2-page doc goes to 50 people. Who should read it first?",
               "answer": "1 colleague, as a test reader.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "colleague",
+                    "1 person",
+                    "one person",
+                    "test reader",
+                    "teammate",
+                    "peer",
+                    "someone"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 question to ask your test reader.",
               "answer": "What do you think this asks you to do?",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "what",
+                    "which",
+                    "where",
+                    "how",
+                    "why",
+                    "do you",
+                    "does this"
+                  ]
+                ]
+              }
             }
           ]
         }
