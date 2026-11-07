@@ -155087,15 +155087,43 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Turn the topic \"phones at school\" into a claim someone could argue against.",
-              "answer": "For example: Schools should ban phones during class.",
-              "answer_kind": "phrase"
+              "answer": "Schools should ban phones during class.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "should",
+                    "must",
+                    "ought",
+                    "need"
+                  ],
+                  [
+                    "phone"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "What makes a thesis 'debatable'?",
               "answer": "A reasonable person could disagree with it.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "disagree",
+                    "argue against",
+                    "reasonable",
+                    "contest",
+                    "another side",
+                    "other side",
+                    "opposing",
+                    "not a fact"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -155126,8 +155154,27 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 kind of evidence for \"Later school start times help students.\"",
-              "answer": "A study showing improved sleep or grades after a later start.",
-              "answer_kind": "sentence"
+              "answer": "A study showing better sleep or grades after a later start.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "study",
+                    "research",
+                    "data",
+                    "survey",
+                    "statistic",
+                    "test score",
+                    "grade",
+                    "attendance",
+                    "sleep",
+                    "expert",
+                    "report",
+                    "school",
+                    "district"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -155144,8 +155191,25 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Start a counterargument sentence for \"Schools should ban phones\".",
-              "answer": "For example: Some argue that phones help students research in class.",
-              "answer_kind": "sentence"
+              "answer": "Some argue that phones help students research in class.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "some",
+                    "others",
+                    "critics",
+                    "opponents",
+                    "people",
+                    "may",
+                    "might",
+                    "argue",
+                    "claim",
+                    "say",
+                    "believe"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -155158,8 +155222,23 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why include 1 counterargument paragraph?",
-              "answer": "It shows fairness and makes your argument more convincing.",
-              "answer_kind": "sentence"
+              "answer": "It shows fairness, and makes your argument more convincing.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "fair",
+                    "convinc",
+                    "credib",
+                    "stronger",
+                    "persua",
+                    "trust",
+                    "address",
+                    "answer",
+                    "objection"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -155190,8 +155269,20 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name the fallacy: \"Either we ban cars or the planet is doomed.\"",
-              "answer": "False dilemma",
-              "answer_kind": "word"
+              "answer": "False dilemma.",
+              "answer_kind": "word",
+              "grading": {
+                "keys": [
+                  [
+                    "false dilemma",
+                    "false dichotomy",
+                    "either-or",
+                    "either or",
+                    "black and white",
+                    "false choice"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -155215,15 +155306,60 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 3 parts of a strong conclusion.",
-              "answer": "A restated claim, a summary of reasons and a call to action.",
-              "answer_kind": "list"
+              "answer": "A restated claim, a summary of reasons, and a call to action.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "restate",
+                    "claim",
+                    "thesis"
+                  ],
+                  [
+                    "summar",
+                    "reason",
+                    "recap",
+                    "point"
+                  ],
+                  [
+                    "call to action",
+                    "action",
+                    "implication",
+                    "so what",
+                    "significance",
+                    "next step"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Write a call to action for an essay titled \"Schools Should Recycle\".",
-              "answer": "For example: Ask your principal to add recycling bins this semester.",
-              "answer_kind": "sentence"
+              "answer": "Ask your principal to add recycling bins this semester.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "ask",
+                    "join",
+                    "start",
+                    "sign",
+                    "tell",
+                    "write",
+                    "bring",
+                    "put",
+                    "use",
+                    "help",
+                    "talk",
+                    "vote",
+                    "recycle",
+                    "add",
+                    "let"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -155287,14 +155423,24 @@
               "weight": "warmup",
               "prompt": "Write the MLA in-text citation for page 45 of a book by Smith.",
               "answer": "(Smith 45)",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "(Smith 45)"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "The sentence says \"Smith argues...\". What citation follows the quote from page 12?",
               "answer": "(12)",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "(12)"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -155319,21 +155465,40 @@
               "weight": "warmup",
               "prompt": "Write the APA in-text citation for a 2021 article by Lee.",
               "answer": "(Lee, 2021)",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "(Lee, 2021)"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Write it for a 2019 article by Park and Kim.",
               "answer": "(Park & Kim, 2019)",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "(Park & Kim, 2019)",
+                  "(Park and Kim, 2019)"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "What does APA add for a direct quote from page 7 of Lee 2021?",
               "answer": "The page: (Lee, 2021, p. 7)",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "(Lee, 2021, p. 7)",
+                  "the page",
+                  "page number",
+                  "p. 7"
+                ]
+              }
             }
           ]
         },
@@ -155351,7 +155516,21 @@
               "weight": "warmup",
               "prompt": "Order these authors: Park, Adams, Lee.",
               "answer": "Adams, Lee, Park",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "adams"
+                  ],
+                  [
+                    "lee"
+                  ],
+                  [
+                    "park"
+                  ]
+                ],
+                "order": true
+              }
             },
             {
               "slot": 2,
@@ -155363,9 +155542,14 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "You cited 5 sources in the text. How many works cited entries should there be?",
-              "answer": "5",
-              "answer_kind": "integer"
+              "prompt": "You cited Smith twice, and Lee, Park and Adams once each. How many Works Cited entries do you need?",
+              "answer": "4, one per source.",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "4"
+                ]
+              }
             }
           ]
         },
@@ -155389,8 +155573,22 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 ways to use a source's words honestly.",
-              "answer": "Quote it with quotation marks and a citation, or paraphrase with a citation.",
-              "answer_kind": "list"
+              "answer": "Quote it with quotation marks and a citation, or paraphrase it with a citation.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "quot",
+                    "quotation marks"
+                  ],
+                  [
+                    "paraphras",
+                    "own words",
+                    "summar"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -155435,15 +155633,67 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 things worth circling while annotating.",
-              "answer": "Striking words and repeated images.",
-              "answer_kind": "list"
+              "answer": "Striking words, and repeated images.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "word",
+                    "image",
+                    "repeat",
+                    "pattern",
+                    "shift",
+                    "contrast",
+                    "metaphor",
+                    "symbol",
+                    "verb",
+                    "detail",
+                    "sound",
+                    "phrase",
+                    "question",
+                    "name"
+                  ],
+                  [
+                    "word",
+                    "image",
+                    "repeat",
+                    "pattern",
+                    "shift",
+                    "contrast",
+                    "metaphor",
+                    "symbol",
+                    "verb",
+                    "detail",
+                    "sound",
+                    "phrase",
+                    "question",
+                    "name"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why write 8 margin notes instead of only highlighting?",
-              "answer": "Writing forces you to think about why it matters.",
-              "answer_kind": "sentence"
+              "answer": "Writing makes you think about why it matters.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "think",
+                    "why",
+                    "matter",
+                    "engage",
+                    "process",
+                    "analy",
+                    "understand",
+                    "explain",
+                    "meaning"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -155461,7 +155711,16 @@
               "weight": "warmup",
               "prompt": "Which word sounds more positive: 'slender' or 'skinny'?",
               "answer": "Slender",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Slender",
+                  "Skinny"
+                ],
+                "accept": [
+                  "Slender"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -155493,21 +155752,54 @@
               "weight": "warmup",
               "prompt": "Is \"Her smile was sunshine\" a simile or a metaphor?",
               "answer": "Metaphor",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Simile",
+                  "Metaphor"
+                ],
+                "accept": [
+                  "Metaphor"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Is \"The wind whispered\" a simile or personification?",
               "answer": "Personification",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Simile",
+                  "Personification"
+                ],
+                "accept": [
+                  "Personification"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "What does \"as cold as ice\" suggest about a person's manner?",
-              "answer": "That they are unfriendly or distant.",
-              "answer_kind": "phrase"
+              "answer": "That they're unfriendly or distant.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "unfriendly",
+                    "distant",
+                    "cold",
+                    "aloof",
+                    "unkind",
+                    "unemotional",
+                    "harsh",
+                    "detached",
+                    "uncaring"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -155531,8 +155823,37 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 words that often signal a shift.",
-              "answer": "But and yet.",
-              "answer_kind": "list"
+              "answer": "But, and yet.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "but",
+                    "yet",
+                    "however",
+                    "although",
+                    "though",
+                    "still",
+                    "suddenly",
+                    "then",
+                    "instead",
+                    "while"
+                  ],
+                  [
+                    "but",
+                    "yet",
+                    "however",
+                    "although",
+                    "though",
+                    "still",
+                    "suddenly",
+                    "then",
+                    "instead",
+                    "while"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -155557,21 +155878,44 @@
               "weight": "warmup",
               "prompt": "In a 150-word close reading, should you quote whole paragraphs or short phrases?",
               "answer": "Short phrases.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Whole paragraphs",
+                  "Short phrases"
+                ],
+                "accept": [
+                  "Short phrases"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "A 150-word paragraph quotes 2 words. How many explanations should follow?",
+              "prompt": "A 150-word paragraph quotes \"cold\" and \"silent.\" How many explanations should follow?",
               "answer": "2, one for each quote.",
-              "answer_kind": "phrase"
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "2"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Is \"The story is about a boy who gets lost\" analysis or summary?",
               "answer": "Summary",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Analysis",
+                  "Summary"
+                ],
+                "accept": [
+                  "Summary"
+                ]
+              }
             }
           ]
         }
@@ -155635,14 +155979,30 @@
               "weight": "warmup",
               "prompt": "Rewrite \"The ball was kicked by Sam.\" in active voice.",
               "answer": "Sam kicked the ball.",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "sam kicked"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Is \"Mistakes were made.\" active or passive?",
               "answer": "Passive",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Active",
+                  "Passive"
+                ],
+                "accept": [
+                  "Passive"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -155667,14 +156027,46 @@
               "weight": "warmup",
               "prompt": "Name 2 common logical orders for paragraphs.",
               "answer": "Chronological, and least to most important.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "chronolog",
+                    "time",
+                    "sequence",
+                    "order"
+                  ],
+                  [
+                    "importance",
+                    "least to most",
+                    "most to least",
+                    "spatial",
+                    "cause",
+                    "problem",
+                    "compare",
+                    "general to specific",
+                    "climactic"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Your strongest reason is in paragraph 2 of 4. Where might it go for impact?",
               "answer": "Last, in the final body paragraph.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "last",
+                    "end",
+                    "final",
+                    "closing"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -155705,15 +156097,57 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 problems reading aloud catches.",
-              "answer": "Missing words and overly long sentences.",
-              "answer_kind": "list"
+              "answer": "Missing words, and overly long sentences.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "missing",
+                    "word",
+                    "long",
+                    "run-on",
+                    "awkward",
+                    "repeat",
+                    "typo",
+                    "rhythm",
+                    "flow",
+                    "clunky",
+                    "grammar"
+                  ],
+                  [
+                    "missing",
+                    "word",
+                    "long",
+                    "run-on",
+                    "awkward",
+                    "repeat",
+                    "typo",
+                    "rhythm",
+                    "flow",
+                    "clunky",
+                    "grammar"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Running out of breath on 1 sentence suggests what?",
               "answer": "The sentence is too long.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "too long",
+                    "long",
+                    "split",
+                    "shorten",
+                    "break"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -155731,7 +156165,22 @@
               "weight": "warmup",
               "prompt": "Why proofread a 1-page draft backward?",
               "answer": "You focus on each sentence instead of the flow.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "each sentence",
+                    "each word",
+                    "flow",
+                    "meaning",
+                    "focus",
+                    "surface",
+                    "error",
+                    "slow",
+                    "isolate"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -155744,8 +156193,27 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 things to check last when proofreading.",
-              "answer": "Names and numbers (also formatting).",
-              "answer_kind": "list"
+              "answer": "Names, and numbers.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "name",
+                    "spelling"
+                  ],
+                  [
+                    "number",
+                    "date",
+                    "format",
+                    "title",
+                    "heading",
+                    "citation",
+                    "page",
+                    "font"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         }
@@ -155776,15 +156244,41 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 1 nonverbal sign of active listening.",
-              "answer": "Eye contact (or nodding).",
-              "answer_kind": "phrase"
+              "answer": "Eye contact, or nodding.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "eye contact",
+                    "nod",
+                    "lean",
+                    "face",
+                    "smile",
+                    "posture",
+                    "turn toward",
+                    "open"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Write a follow-up question to \"I had a tough week.\"",
-              "answer": "For example: What made it tough?",
-              "answer_kind": "phrase"
+              "answer": "What made it tough?",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "what",
+                    "why",
+                    "how",
+                    "which",
+                    "tell me",
+                    "want to talk"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -155809,21 +156303,67 @@
               "weight": "warmup",
               "prompt": "Complete a paraphrase of \"I think tests cause too much stress.\"",
               "answer": "So you're saying tests make students too stressed?",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "so you're saying",
+                    "so you think",
+                    "you mean",
+                    "you feel",
+                    "you're saying",
+                    "sounds like"
+                  ],
+                  [
+                    "test",
+                    "stress",
+                    "anxi",
+                    "pressure"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why say \"So you're saying\" before responding?",
-              "answer": "To check you understood correctly.",
-              "answer_kind": "phrase"
+              "answer": "To check that you understood correctly.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "check",
+                    "understood",
+                    "understand",
+                    "correct",
+                    "confirm",
+                    "accura",
+                    "clarify"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "A speaker corrects your paraphrase. What does that tell you?",
               "answer": "You misunderstood, so listen again.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "misunderstood",
+                    "misheard",
+                    "missed",
+                    "wrong",
+                    "listen again",
+                    "ask",
+                    "clarify",
+                    "try again"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -155840,8 +156380,39 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 2 signpost phrases that flag key points.",
-              "answer": "First and the key point is.",
-              "answer_kind": "list"
+              "answer": "First, and the key point is.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "first",
+                    "second",
+                    "finally",
+                    "most important",
+                    "key point",
+                    "main",
+                    "remember",
+                    "in summary",
+                    "the point",
+                    "to sum up",
+                    "above all"
+                  ],
+                  [
+                    "first",
+                    "second",
+                    "finally",
+                    "most important",
+                    "key point",
+                    "main",
+                    "remember",
+                    "in summary",
+                    "the point",
+                    "to sum up",
+                    "above all"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
@@ -155855,7 +156426,16 @@
               "weight": "stretch",
               "prompt": "Should notes on a 10-minute podcast be full sentences or short phrases?",
               "answer": "Short phrases.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Full sentences",
+                  "Short phrases"
+                ],
+                "accept": [
+                  "Short phrases"
+                ]
+              }
             }
           ]
         },
@@ -155879,15 +156459,45 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Why make the 'steelman' case before arguing against a view?",
-              "answer": "It shows you understand it and makes your response stronger.",
-              "answer_kind": "sentence"
+              "answer": "It shows you understand it, and makes your response stronger.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "understand",
+                    "fair",
+                    "stronger",
+                    "credib",
+                    "respect",
+                    "honest",
+                    "strongest",
+                    "real",
+                    "best version"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "A supporter reads your summary of their view and says \"That's not what we think.\" What went wrong?",
               "answer": "You missed their strongest version, so redo it.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "strongest",
+                    "missed",
+                    "redo",
+                    "straw",
+                    "weak",
+                    "wrong",
+                    "misrepresent",
+                    "fair",
+                    "again"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -155905,21 +156515,61 @@
               "weight": "warmup",
               "prompt": "Which word is more loaded: 'plan' or 'scheme'?",
               "answer": "Scheme",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Plan",
+                  "Scheme"
+                ],
+                "accept": [
+                  "Scheme"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 sign a source may be biased.",
-              "answer": "Loaded language (or only one side quoted).",
-              "answer_kind": "phrase"
+              "answer": "Loaded language, or only one side quoted.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "loaded",
+                    "one side",
+                    "emotional",
+                    "missing",
+                    "funding",
+                    "sponsor",
+                    "selective",
+                    "exaggerat",
+                    "omit",
+                    "attack",
+                    "only",
+                    "language"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "2 clips describe 1 event as a 'protest' and a 'riot'. What does that show?",
               "answer": "Different framing of the same event.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "fram",
+                    "perspective",
+                    "bias",
+                    "word choice",
+                    "spin",
+                    "different view",
+                    "angle"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -155958,14 +156608,32 @@
               "weight": "core",
               "prompt": "Where do the cue questions go on a Cornell page: left column or bottom?",
               "answer": "Left column",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Left column",
+                  "Bottom"
+                ],
+                "accept": [
+                  "Left column"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "How long should the bottom summary be: 2 or 3 sentences or a full page?",
               "answer": "2 or 3 sentences",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "2 or 3 sentences",
+                  "A full page"
+                ],
+                "accept": [
+                  "2 or 3 sentences"
+                ]
+              }
             }
           ]
         },
@@ -155983,21 +156651,60 @@
               "weight": "warmup",
               "prompt": "Abbreviate 'because' and 'without' in notes.",
               "answer": "b/c and w/o",
-              "answer_kind": "phrase"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "b/c",
+                    "bc",
+                    "b/c."
+                  ],
+                  [
+                    "w/o",
+                    "wo"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Shorten \"The French Revolution began in 1789 when angry crowds stormed the Bastille prison\" to a note of 6 words or fewer.",
               "answer": "Fr. Rev. 1789: Bastille stormed",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "1789"
+                  ],
+                  [
+                    "bastille"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "A 10-minute talk gave you 4 pages of notes. What should change?",
-              "answer": "Write shorter phrases and only key points.",
-              "answer_kind": "phrase"
+              "answer": "Write shorter phrases, and only key points.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "shorter",
+                    "less",
+                    "key points",
+                    "phrases",
+                    "abbreviat",
+                    "only",
+                    "fewer",
+                    "summar"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -156015,21 +156722,49 @@
               "weight": "warmup",
               "prompt": "In an outline with 3 headings, does a sub-point go under or beside its main point?",
               "answer": "Under, indented.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Under",
+                  "Beside"
+                ],
+                "accept": [
+                  "Under"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Your notes have 3 main topics. How many top-level headings?",
-              "answer": "3",
-              "answer_kind": "integer"
+              "prompt": "Your notes cover a war's causes, its events and its results. How many top-level headings do you need?",
+              "answer": "3, one for each main topic.",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "3"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 benefit of outlined notes for review.",
               "answer": "You can see how ideas connect at a glance.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "connect",
+                    "glance",
+                    "structure",
+                    "see",
+                    "organiz",
+                    "relationship",
+                    "hierarch",
+                    "quick"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -156054,14 +156789,35 @@
               "weight": "core",
               "prompt": "When should the first review happen: within 24 hours or after a week?",
               "answer": "Within 24 hours",
-              "answer_kind": "integer"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Within 24 hours",
+                  "After a week"
+                ],
+                "accept": [
+                  "Within 24 hours"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why add missing details within 24 hours?",
-              "answer": "You still remember the lesson, so gaps are easy to fill.",
-              "answer_kind": "sentence"
+              "answer": "You still remember the lesson, so the gaps are easy to fill.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "remember",
+                    "fresh",
+                    "recent",
+                    "memory",
+                    "easy",
+                    "still"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -156078,8 +156834,24 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Turn the note \"Mitochondria = energy for the cell\" into a question.",
-              "answer": "What does the mitochondria do for the cell?",
-              "answer_kind": "phrase"
+              "answer": "What do the mitochondria do for the cell?",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "what",
+                    "how",
+                    "why",
+                    "which"
+                  ],
+                  [
+                    "mitochondria",
+                    "cell",
+                    "energy"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
@@ -156093,7 +156865,16 @@
               "weight": "stretch",
               "prompt": "Which works better for a test in 1 week: rereading or self-testing?",
               "answer": "Self-testing",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Rereading",
+                  "Self-testing"
+                ],
+                "accept": [
+                  "Self-testing"
+                ]
+              }
             }
           ]
         }
@@ -156131,15 +156912,39 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Write a stronger topic sentence linking uniforms to \"focus\".",
-              "answer": "For example: Uniforms reduce distractions, helping students focus.",
-              "answer_kind": "phrase"
+              "answer": "Uniforms reduce distractions, helping students focus.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "uniform"
+                  ],
+                  [
+                    "focus",
+                    "concentrat",
+                    "attention",
+                    "distract"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "How many main ideas should 1 paragraph have?",
-              "answer": "1",
-              "answer_kind": "integer"
+              "prompt": "How many main ideas should a paragraph of 5 to 8 sentences carry?",
+              "answer": "One.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "One",
+                  "Two or three",
+                  "As many as fit"
+                ],
+                "accept": [
+                  "One"
+                ]
+              }
             }
           ]
         },
@@ -156157,21 +156962,88 @@
               "weight": "warmup",
               "prompt": "Which is more specific: \"studies show\" or \"a 2019 study of 1000 adults\"?",
               "answer": "A 2019 study of 1000 adults.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Studies show",
+                  "A 2019 study of 1000 adults"
+                ],
+                "accept": [
+                  "A 2019 study of 1000 adults"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 3 kinds of evidence.",
-              "answer": "Facts, quotations and examples (also statistics).",
-              "answer_kind": "list"
+              "answer": "Facts, quotations and examples.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "fact",
+                    "statistic",
+                    "data",
+                    "number",
+                    "quotation",
+                    "quote",
+                    "example",
+                    "anecdote",
+                    "study",
+                    "expert",
+                    "research",
+                    "survey"
+                  ],
+                  [
+                    "fact",
+                    "statistic",
+                    "data",
+                    "number",
+                    "quotation",
+                    "quote",
+                    "example",
+                    "anecdote",
+                    "study",
+                    "expert",
+                    "research",
+                    "survey"
+                  ],
+                  [
+                    "fact",
+                    "statistic",
+                    "data",
+                    "number",
+                    "quotation",
+                    "quote",
+                    "example",
+                    "anecdote",
+                    "study",
+                    "expert",
+                    "research",
+                    "survey"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "A paragraph has a topic sentence and 1 vague sentence. How many more pieces of evidence should you add?",
-              "answer": "1 or 2",
-              "answer_kind": "phrase"
+              "answer": "1 or 2.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "1",
+                    "2",
+                    "1 or 2",
+                    "one or two",
+                    "a couple"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -156188,22 +157060,56 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Complete the link: \"Students with uniforms reported 20% fewer distractions. This shows...\"",
-              "answer": "that uniforms can help students focus.",
-              "answer_kind": "phrase"
+              "answer": "...that uniforms can help students focus.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "uniform"
+                  ],
+                  [
+                    "focus",
+                    "concentrat",
+                    "distract",
+                    "attention",
+                    "help"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "A paragraph has 2 quotes and no explanation. How many explanation sentences should you add?",
-              "answer": "2",
-              "answer_kind": "integer"
+              "prompt": "A paragraph quotes a 2019 study and a teacher, with no explanation. At least how many explanation sentences should you add?",
+              "answer": "2, one for each quote.",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "2"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why add a \"This shows\" sentence instead of just quoting?",
               "answer": "To show how it proves your point.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "prove",
+                    "point",
+                    "connect",
+                    "link",
+                    "explain",
+                    "why it matters",
+                    "reader",
+                    "support"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -156221,21 +157127,52 @@
               "weight": "warmup",
               "prompt": "Which transition shows contrast: 'therefore' or 'however'?",
               "answer": "However",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Therefore",
+                  "However"
+                ],
+                "accept": [
+                  "However"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Which transition introduces an example: 'for instance' or 'in contrast'?",
               "answer": "For instance",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "For instance",
+                  "In contrast"
+                ],
+                "accept": [
+                  "For instance"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Fill in: \"It rained all day. ___, the game was canceled.\"",
               "answer": "As a result (or Therefore).",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "as a result",
+                    "therefore",
+                    "so",
+                    "consequently",
+                    "because of this",
+                    "thus",
+                    "hence"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -156259,15 +157196,44 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Write a better closing sentence for the \"Exercise improves mood\" paragraph.",
-              "answer": "For example: A daily walk may be one of the simplest ways to feel better.",
-              "answer_kind": "paragraph"
+              "answer": "A daily walk may be one of the simplest ways to feel better.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "exercise",
+                    "walk",
+                    "move",
+                    "run",
+                    "activity",
+                    "workout",
+                    "feel",
+                    "mood",
+                    "happier",
+                    "better"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Besides summarizing, what can the 1 closing sentence of a paragraph do?",
               "answer": "Link to the next paragraph.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "link",
+                    "transition",
+                    "next",
+                    "connect",
+                    "lead",
+                    "bridge",
+                    "set up"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -156306,7 +157272,16 @@
               "weight": "core",
               "prompt": "In \"She went for a run\", is 'run' a noun or a verb?",
               "answer": "Noun",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Noun",
+                  "Verb"
+                ],
+                "accept": [
+                  "Noun"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -156345,7 +157320,16 @@
               "weight": "stretch",
               "prompt": "Is 'quickly' in \"He ran quickly\" an adjective or an adverb?",
               "answer": "Adverb",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Adjective",
+                  "Adverb"
+                ],
+                "accept": [
+                  "Adverb"
+                ]
+              }
             }
           ]
         },
@@ -156363,21 +157347,44 @@
               "weight": "warmup",
               "prompt": "Correct \"Me and Jo went to the store.\"",
               "answer": "Jo and I went to the store.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "Jo and I went to the store."
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Who does 'he' refer to in \"When Sam met Joe, he smiled\"?",
-              "answer": "It is unclear, so the sentence should name Sam or Joe.",
-              "answer_kind": "sentence"
+              "answer": "It's unclear, so the sentence should name Sam or Joe.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "unclear",
+                    "ambiguous",
+                    "either",
+                    "can't tell",
+                    "could be",
+                    "both",
+                    "not clear"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Correct \"Give the book to Sara and I.\"",
               "answer": "Give the book to Sara and me.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "Give the book to Sara and me."
+                ]
+              }
             }
           ]
         },
@@ -156472,22 +157479,42 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Punctuate \"I bought eggs milk and bread.\"",
-              "answer": "I bought eggs, milk, and bread. (or eggs, milk and bread)",
-              "answer_kind": "list"
+              "answer": "I bought eggs, milk, and bread.",
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "I bought eggs, milk, and bread.",
+                  "I bought eggs, milk and bread."
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Punctuate \"After the game we ate pizza.\"",
               "answer": "After the game, we ate pizza.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "After the game, we ate pizza."
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "What is the comma before 'and' in a list called?",
-              "answer": "The Oxford (serial) comma.",
-              "answer_kind": "phrase"
+              "answer": "The Oxford, or serial, comma.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "oxford",
+                    "serial",
+                    "harvard"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -156505,7 +157532,12 @@
               "weight": "warmup",
               "prompt": "Correct \"The dog's are barking.\"",
               "answer": "The dogs are barking.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "The dogs are barking."
+                ]
+              }
             },
             {
               "slot": 2,
@@ -156519,7 +157551,12 @@
               "weight": "stretch",
               "prompt": "Correct \"Its' raining.\"",
               "answer": "It's raining.",
-              "answer_kind": "word"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "It's raining."
+                ]
+              }
             }
           ]
         },
@@ -156551,7 +157588,18 @@
               "weight": "stretch",
               "prompt": "Rewrite \"My favorite foods are: pizza and tacos.\" so the colon is correct.",
               "answer": "I have 2 favorite foods: pizza and tacos.",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    ": pizza",
+                    "foods: pizza",
+                    "two favorite foods",
+                    "2 favorite foods",
+                    "favorite foods are pizza"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -156569,21 +157617,40 @@
               "weight": "warmup",
               "prompt": "Punctuate the 6 words: she said I will be late",
               "answer": "She said, \"I will be late.\"",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "She said, \"I will be late.\""
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "In American English, does the comma go inside or outside the closing quotation mark?",
               "answer": "Inside",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Inside",
+                  "Outside"
+                ],
+                "accept": [
+                  "Inside"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Punctuate the 6 words: I love this song he shouted",
               "answer": "\"I love this song,\" he shouted.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "\"I love this song,\" he shouted."
+                ]
+              }
             }
           ]
         },
@@ -156608,14 +157675,45 @@
               "weight": "core",
               "prompt": "Why read aloud when checking the commas in a 300-word draft?",
               "answer": "You can hear where natural pauses fall.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "hear",
+                    "pause",
+                    "natural",
+                    "breath",
+                    "rhythm",
+                    "ear",
+                    "sound"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name the 2 punctuation errors most readers notice.",
-              "answer": "Comma splices and misused apostrophes.",
-              "answer_kind": "list"
+              "answer": "Comma splices, and misused apostrophes.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "comma splice",
+                    "splice",
+                    "run-on",
+                    "run on"
+                  ],
+                  [
+                    "apostrophe",
+                    "its",
+                    "it's",
+                    "your",
+                    "their"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         }
@@ -156645,9 +157743,19 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "A chapter has 6 headings. How many should you read during a preview?",
-              "answer": "All 6",
-              "answer_kind": "integer"
+              "prompt": "During a preview of a 6-section chapter, how many of its headings should you read?",
+              "answer": "All of them.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "All of them",
+                  "Only the first one",
+                  "None"
+                ],
+                "accept": [
+                  "All of them"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -156660,8 +157768,45 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 parts of a chapter to read during a preview besides headings.",
-              "answer": "The first and last paragraphs (also bold terms or a summary box).",
-              "answer_kind": "list"
+              "answer": "The first and last paragraphs.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "first",
+                    "opening",
+                    "intro",
+                    "last",
+                    "final",
+                    "conclusion",
+                    "summary",
+                    "bold",
+                    "key term",
+                    "picture",
+                    "caption",
+                    "chart",
+                    "question",
+                    "review"
+                  ],
+                  [
+                    "first",
+                    "opening",
+                    "intro",
+                    "last",
+                    "final",
+                    "conclusion",
+                    "summary",
+                    "bold",
+                    "key term",
+                    "picture",
+                    "caption",
+                    "chart",
+                    "question",
+                    "review"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -156685,15 +157830,38 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Where does the 1st slash go in \"After lunch the class went outside to play\"?",
-              "answer": "Right after the word lunch.",
-              "answer_kind": "phrase"
+              "answer": "Right after the word \"lunch.\"",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "after lunch",
+                    "lunch"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why does reading in 3-word phrases improve comprehension?",
               "answer": "Attention moves from decoding single words to the meaning of each group.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "meaning",
+                    "groups",
+                    "chunk",
+                    "phrase",
+                    "ideas",
+                    "decod",
+                    "faster",
+                    "flow",
+                    "understand"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -156724,8 +157892,21 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "You read 250 words per minute but answered 1 of 4 questions correctly. What should change?",
-              "answer": "Slow down and focus on understanding.",
-              "answer_kind": "phrase"
+              "answer": "Slow down, and focus on understanding.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "slow",
+                    "understand",
+                    "comprehen",
+                    "focus",
+                    "meaning",
+                    "reread",
+                    "careful"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -156749,15 +157930,46 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 sign you have stopped understanding.",
-              "answer": "You cannot say what the last paragraph said.",
-              "answer_kind": "phrase"
+              "answer": "You can't say what the last paragraph said.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "can't say",
+                    "cannot say",
+                    "can't recall",
+                    "don't remember",
+                    "can't remember",
+                    "lost",
+                    "confus",
+                    "same line",
+                    "zone",
+                    "wander",
+                    "reread"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why reread 1 paragraph instead of the whole 20-page chapter?",
               "answer": "It targets the confusion and saves time.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "target",
+                    "confusion",
+                    "time",
+                    "focus",
+                    "specific",
+                    "where",
+                    "efficien",
+                    "save"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -156781,8 +157993,18 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Write 280 minutes as hours and minutes.",
-              "answer": "4 hours 40 minutes",
-              "answer_kind": "phrase"
+              "answer": "4 hours 40 minutes.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "4 hours 40",
+                    "4 h 40",
+                    "4:40",
+                    "4 hr 40"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -156820,8 +158042,20 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "What do quotation marks around \"teen sleep\" do in a search?",
-              "answer": "Search for the exact phrase.",
-              "answer_kind": "phrase"
+              "answer": "They search for the exact phrase.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "exact phrase",
+                    "exact",
+                    "together",
+                    "phrase",
+                    "in that order",
+                    "as written"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -156834,8 +158068,24 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Rewrite \"why are teens tired\" as better keywords.",
-              "answer": "For example: teen sleep deprivation school start times.",
-              "answer_kind": "phrase"
+              "answer": "teen sleep deprivation school start times",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "teen",
+                    "adolescent"
+                  ],
+                  [
+                    "sleep",
+                    "tired",
+                    "fatigue",
+                    "deprivation",
+                    "start time"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -156853,14 +158103,40 @@
               "weight": "warmup",
               "prompt": "A health article from 2004 for a 2026 paper: what concern?",
               "answer": "It may be outdated.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "outdated",
+                    "old",
+                    "dated",
+                    "stale",
+                    "new research",
+                    "changed",
+                    "current"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 reason a company's website may be biased about its product.",
               "answer": "It wants to sell the product.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "sell",
+                    "profit",
+                    "money",
+                    "promote",
+                    "market",
+                    "advertis",
+                    "interest"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -156885,21 +158161,48 @@
               "weight": "warmup",
               "prompt": "Is a 1944 soldier's letter primary or secondary?",
               "answer": "Primary",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Primary",
+                  "Secondary"
+                ],
+                "accept": [
+                  "Primary"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Is a 2020 biography of Lincoln primary or secondary?",
               "answer": "Secondary",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Primary",
+                  "Secondary"
+                ],
+                "accept": [
+                  "Secondary"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Is the 1953 Watson and Crick paper reporting DNA's structure primary or secondary?",
               "answer": "Primary",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Primary",
+                  "Secondary"
+                ],
+                "accept": [
+                  "Primary"
+                ]
+              }
             }
           ]
         },
@@ -156917,14 +158220,53 @@
               "weight": "warmup",
               "prompt": "Name 4 details to log for a web source.",
               "answer": "Author, title, date and URL.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "author",
+                    "writer"
+                  ],
+                  [
+                    "title",
+                    "name"
+                  ],
+                  [
+                    "date",
+                    "year",
+                    "accessed"
+                  ],
+                  [
+                    "url",
+                    "link",
+                    "web address",
+                    "site",
+                    "publisher"
+                  ]
+                ],
+                "need": 4
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why log the page number, like p. 45, of a quote?",
               "answer": "So you can cite it and find it again.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "cite",
+                    "find",
+                    "again",
+                    "check",
+                    "locate",
+                    "reference",
+                    "verify",
+                    "go back"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -156949,21 +158291,62 @@
               "weight": "warmup",
               "prompt": "A paragraph cites 3 sources for 1 claim. Is that synthesis or a list?",
               "answer": "Synthesis",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Synthesis",
+                  "A list"
+                ],
+                "accept": [
+                  "Synthesis"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 phrase that connects 2 sources.",
-              "answer": "Similarly (or In contrast).",
-              "answer_kind": "phrase"
+              "answer": "Similarly, or In contrast.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "similarly",
+                    "likewise",
+                    "in contrast",
+                    "however",
+                    "both",
+                    "unlike",
+                    "whereas",
+                    "also",
+                    "agrees",
+                    "echoes",
+                    "building on",
+                    "by contrast"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "2 sources disagree. What should your paragraph do?",
-              "answer": "Explain the disagreement and which is better supported.",
-              "answer_kind": "phrase"
+              "answer": "Explain the disagreement, and which side is better supported.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "explain",
+                    "disagree",
+                    "weigh",
+                    "compare",
+                    "better supported",
+                    "evidence",
+                    "evaluate",
+                    "both"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -157033,8 +158416,27 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Fix \"Because the bus was late.\"",
-              "answer": "For example: I missed class because the bus was late.",
-              "answer_kind": "sentence"
+              "answer": "I missed class because the bus was late.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "because the bus was late"
+                  ],
+                  [
+                    "i",
+                    "we",
+                    "she",
+                    "he",
+                    "they",
+                    "missed",
+                    "was",
+                    "were",
+                    "late for"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -157064,16 +158466,24 @@
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Join those 2 sentences with the conjunction 'so'.",
+              "prompt": "Join \"I was tired. I went to bed.\" with the conjunction \"so.\"",
               "answer": "I was tired, so I went to bed.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "I was tired, so I went to bed."
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Join those 2 sentences with a semicolon instead.",
+              "prompt": "Join \"I was tired. I went to bed.\" with a semicolon instead.",
               "answer": "I was tired; I went to bed.",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": []
+              }
             }
           ]
         },
@@ -157090,22 +158500,52 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Combine \"Maria won. Maria was happy.\"",
-              "answer": "Maria was happy that she won (or: Maria won and was happy).",
-              "answer_kind": "sentence"
+              "answer": "Maria was happy that she won.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "maria"
+                  ],
+                  [
+                    "won",
+                    "win",
+                    "winning"
+                  ],
+                  [
+                    "happy"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Combine \"I like tea. I do not like coffee.\" with 'but'.",
               "answer": "I like tea, but I do not like coffee.",
-              "answer_kind": "sentence"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "I like tea, but I do not like coffee.",
+                  "I like tea, but I don't like coffee.",
+                  "I like tea but not coffee."
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Combine \"The book was long. It was worth reading.\" with 'although'.",
               "answer": "Although the book was long, it was worth reading.",
-              "answer_kind": "sentence"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "Although the book was long, it was worth reading.",
+                  "The book was worth reading, although it was long.",
+                  "Although it was long, the book was worth reading."
+                ]
+              }
             }
           ]
         },
@@ -157137,7 +158577,19 @@
               "weight": "stretch",
               "prompt": "Your sentences average 30 words. What should you try?",
               "answer": "Splitting some long sentences.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "split",
+                    "shorter",
+                    "break",
+                    "vary",
+                    "cut",
+                    "short"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -157183,7 +158635,32 @@
               "weight": "stretch",
               "prompt": "Name the 3 parts of a short talk.",
               "answer": "An opening, the main points and a close.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "open",
+                    "intro",
+                    "hook",
+                    "start"
+                  ],
+                  [
+                    "main point",
+                    "body",
+                    "point",
+                    "middle",
+                    "reason"
+                  ],
+                  [
+                    "close",
+                    "conclusion",
+                    "end",
+                    "summary",
+                    "ending"
+                  ]
+                ],
+                "order": true
+              }
             }
           ]
         },
@@ -157200,8 +158677,19 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Rewrite \"Well, there are many things, and I think maybe...\" to lead with a point.",
-              "answer": "For example: I think homework should be limited, because...",
-              "answer_kind": "sentence"
+              "answer": "I think homework should be limited, because...",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "i think",
+                    "i believe",
+                    "my point",
+                    "should",
+                    "because"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -157215,7 +158703,21 @@
               "weight": "stretch",
               "prompt": "Why state the point in the 1st sentence of a discussion answer?",
               "answer": "Listeners know what you mean right away.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "listener",
+                    "clear",
+                    "right away",
+                    "know",
+                    "follow",
+                    "understand",
+                    "focus",
+                    "immediately"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -157233,21 +158735,65 @@
               "weight": "warmup",
               "prompt": "Name 1 phrase that builds on a classmate's point.",
               "answer": "Building on what you said...",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "building on",
+                    "add to",
+                    "adding to",
+                    "agree",
+                    "like you said",
+                    "to add",
+                    "that reminds",
+                    "following up",
+                    "as you said"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 phrase that politely disagrees.",
-              "answer": "I see it differently because...",
-              "answer_kind": "phrase"
+              "answer": "I see it differently, because...",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "differently",
+                    "disagree",
+                    "another view",
+                    "see it",
+                    "i'm not sure",
+                    "respectfully",
+                    "on the other hand",
+                    "i wonder",
+                    "point but"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why say \"Building on what Ana said\" before your own idea?",
-              "answer": "It shows listening and keeps the discussion connected.",
-              "answer_kind": "phrase"
+              "answer": "It shows you listened, and keeps the discussion connected.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "listen",
+                    "connect",
+                    "respect",
+                    "acknowledg",
+                    "build",
+                    "flow",
+                    "link",
+                    "show"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -157264,8 +158810,23 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Complete: \"I hadn't thought of that. Given ___, I now think...\"",
-              "answer": "For example: Given the data on sleep, I now think start times should be later.",
-              "answer_kind": "sentence"
+              "answer": "Given the data on sleep, I now think start times should be later.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "given"
+                  ],
+                  [
+                    "think",
+                    "believe",
+                    "agree",
+                    "realize",
+                    "see"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
@@ -157297,21 +158858,67 @@
               "weight": "warmup",
               "prompt": "A 1-minute talk with 200 words is too fast or about right at 130 words per minute?",
               "answer": "Too fast",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Too fast",
+                  "About right"
+                ],
+                "accept": [
+                  "Too fast"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 3 delivery skills to rate.",
               "answer": "Volume, pace and eye contact.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "volume",
+                    "loud"
+                  ],
+                  [
+                    "pace",
+                    "speed",
+                    "rate"
+                  ],
+                  [
+                    "eye contact",
+                    "gesture",
+                    "posture",
+                    "tone",
+                    "pause",
+                    "clarity",
+                    "filler",
+                    "body"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "In a 1-minute talk, when should you pause?",
               "answer": "After a key point.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "key point",
+                    "after",
+                    "important",
+                    "main point",
+                    "let it land",
+                    "transition",
+                    "before"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -157343,7 +158950,16 @@
               "weight": "warmup",
               "prompt": "Spell the word that means to get: 'recieve' or 'receive'?",
               "answer": "Receive",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "recieve",
+                  "receive"
+                ],
+                "accept": [
+                  "receive"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -157357,7 +158973,16 @@
               "weight": "stretch",
               "prompt": "Which spelling is correct: 'beleive' or 'believe'?",
               "answer": "Believe",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "beleive",
+                  "believe"
+                ],
+                "accept": [
+                  "believe"
+                ]
+              }
             }
           ]
         },
@@ -157374,22 +158999,37 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Add '-ing' to 'hop'.",
-              "answer": "Hopping",
-              "answer_kind": "word"
+              "answer": "hopping. Double the p after a short vowel.",
+              "answer_kind": "code",
+              "grading": {
+                "accept": [
+                  "hopping"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Add '-ing' to 'hope'.",
-              "answer": "Hoping",
-              "answer_kind": "word"
+              "answer": "hoping. Drop the silent e before -ing.",
+              "answer_kind": "code",
+              "grading": {
+                "accept": [
+                  "hoping"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Add '-ed' to 'prefer'.",
-              "answer": "Preferred",
-              "answer_kind": "word"
+              "answer": "preferred. Double the r when the stress is on the last syllable.",
+              "answer_kind": "code",
+              "grading": {
+                "accept": [
+                  "preferred"
+                ]
+              }
             }
           ]
         },
@@ -157438,22 +159078,37 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "What is the plural of 'church'?",
-              "answer": "Churches",
-              "answer_kind": "word"
+              "answer": "churches. Add -es after ch.",
+              "answer_kind": "code",
+              "grading": {
+                "accept": [
+                  "churches"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "What is the plural of 'baby'?",
-              "answer": "Babies",
-              "answer_kind": "word"
+              "answer": "babies. Change y to i and add -es.",
+              "answer_kind": "code",
+              "grading": {
+                "accept": [
+                  "babies"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "What is the plural of 'mouse'?",
-              "answer": "Mice",
-              "answer_kind": "word"
+              "answer": "mice. It's irregular.",
+              "answer_kind": "code",
+              "grading": {
+                "accept": [
+                  "mice"
+                ]
+              }
             }
           ]
         },
@@ -157477,8 +159132,34 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 error spellcheck usually misses.",
-              "answer": "A real word used wrongly, like 'there' for 'their'.",
-              "answer_kind": "sentence"
+              "answer": "A real word used wrongly, like \"there\" for \"their.\"",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "real word",
+                    "wrong word",
+                    "homophone",
+                    "their",
+                    "there",
+                    "they're",
+                    "your",
+                    "you're",
+                    "its",
+                    "it's",
+                    "to",
+                    "too",
+                    "two",
+                    "than",
+                    "then",
+                    "affect",
+                    "effect",
+                    "form",
+                    "from",
+                    "used wrongly"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -157516,15 +159197,54 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Imitate the shape of \"The rain fell, the river rose, the town waited.\"",
-              "answer": "For example: The bell rang, the doors opened, the hall filled.",
-              "answer_kind": "sentence"
+              "answer": "The bell rang, the doors opened, the hall filled.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "rang",
+                    "fell",
+                    "rose",
+                    "ran",
+                    "grew",
+                    "came",
+                    "went",
+                    "flew",
+                    "shone",
+                    "sang",
+                    "blew",
+                    "broke",
+                    "froze",
+                    "stood",
+                    "opened",
+                    "closed",
+                    "filled",
+                    "emptied",
+                    "started",
+                    "stopped",
+                    "waited",
+                    "barked",
+                    "laughed",
+                    "cheered"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "When imitating a sentence by Hemingway, do you keep the content or the structure?",
               "answer": "The structure.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "The content",
+                  "The structure"
+                ],
+                "accept": [
+                  "The structure"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -157549,7 +159269,16 @@
               "weight": "warmup",
               "prompt": "Which position in a 20-word sentence is usually most emphatic: the middle or the end?",
               "answer": "The end.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "The middle",
+                  "The end"
+                ],
+                "accept": [
+                  "The end"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -157562,8 +159291,18 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "A paragraph has sentences of 22, 25 and 4 words. Which is likely the emphasis?",
-              "answer": "The 4-word sentence.",
-              "answer_kind": "phrase"
+              "answer": "The 4-word one.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "The 22-word one",
+                  "The 25-word one",
+                  "The 4-word one"
+                ],
+                "accept": [
+                  "The 4-word one"
+                ]
+              }
             }
           ]
         },
@@ -157580,8 +159319,44 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Rewrite \"The room was messy\" with concrete detail.",
-              "answer": "For example: Three pizza boxes sat on the bed and a sock hung from the lamp.",
-              "answer_kind": "sentence"
+              "answer": "Three pizza boxes sat on the bed, and a sock hung from the lamp.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "0",
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "one",
+                    "two",
+                    "three",
+                    "four",
+                    "five",
+                    "pile",
+                    "sock",
+                    "shirt",
+                    "plate",
+                    "box",
+                    "cup",
+                    "bed",
+                    "floor",
+                    "book",
+                    "paper",
+                    "wrapper",
+                    "dish",
+                    "clothes",
+                    "stain",
+                    "dust"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -157595,7 +159370,28 @@
               "weight": "stretch",
               "prompt": "Name the 5 senses a writer can draw details from.",
               "answer": "Sight, sound, smell, taste and touch.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "sight"
+                  ],
+                  [
+                    "sound",
+                    "hearing"
+                  ],
+                  [
+                    "smell"
+                  ],
+                  [
+                    "taste"
+                  ],
+                  [
+                    "touch"
+                  ]
+                ],
+                "need": 5
+              }
             }
           ]
         },
@@ -157626,8 +159422,30 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Rewrite \"He was nervous.\" to show it.",
-              "answer": "For example: He tapped his pen and checked the clock 3 times.",
-              "answer_kind": "sentence"
+              "answer": "He tapped his pen and checked the clock 3 times.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "tap",
+                    "check",
+                    "bit",
+                    "bite",
+                    "sweat",
+                    "shook",
+                    "shake",
+                    "fidget",
+                    "pace",
+                    "swallow",
+                    "glance",
+                    "wipe",
+                    "tremble",
+                    "drum",
+                    "cracked",
+                    "clench"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -157644,8 +159462,27 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 1 common writing tic to cut.",
-              "answer": "Overusing 'very' (or 'just').",
-              "answer_kind": "phrase"
+              "answer": "Overusing \"very,\" or \"just.\"",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "very",
+                    "just",
+                    "really",
+                    "actually",
+                    "basically",
+                    "that",
+                    "so",
+                    "filler",
+                    "adverb",
+                    "passive",
+                    "cliche",
+                    "literally",
+                    "things"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -157659,7 +159496,22 @@
               "weight": "stretch",
               "prompt": "Where does a writer's voice come from?",
               "answer": "Consistent choices in words, rhythm and structure.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "choice",
+                    "consisten",
+                    "word",
+                    "rhythm",
+                    "structure",
+                    "pattern",
+                    "habit",
+                    "personality",
+                    "decision"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -157697,15 +159549,54 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Write a main-idea sentence for the bee article in 25 words or fewer.",
-              "answer": "For example: Bees pollinate many crops, so farms depend on healthy bee populations.",
-              "answer_kind": "sentence"
+              "answer": "Bees pollinate many crops, so farms depend on healthy bee populations.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "bee"
+                  ],
+                  [
+                    "pollinat",
+                    "crop",
+                    "food",
+                    "farm",
+                    "plant",
+                    "flower",
+                    "depend",
+                    "need"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 places in a text where the main idea often appears.",
-              "answer": "In the opening and the conclusion.",
-              "answer_kind": "list"
+              "answer": "In the opening, and the conclusion.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "open",
+                    "start",
+                    "beginning",
+                    "intro",
+                    "first",
+                    "title"
+                  ],
+                  [
+                    "end",
+                    "conclusion",
+                    "last",
+                    "closing",
+                    "summary",
+                    "topic sentence"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -157730,7 +159621,16 @@
               "weight": "core",
               "prompt": "Should a summary include the author's examples? Answer yes or no.",
               "answer": "Usually no, only the main points.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Yes",
+                  "Usually no"
+                ],
+                "accept": [
+                  "Usually no"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -157754,8 +159654,27 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Paraphrase \"The rapid growth of cities has increased traffic congestion.\"",
-              "answer": "For example: As cities grow quickly, roads get more crowded.",
-              "answer_kind": "sentence"
+              "answer": "As cities grow quickly, roads get more crowded.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "city",
+                    "cities",
+                    "town",
+                    "urban"
+                  ],
+                  [
+                    "traffic",
+                    "road",
+                    "car",
+                    "crowded",
+                    "jam",
+                    "congest"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
@@ -157768,8 +159687,21 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "What should you do with the source while writing your 1st paraphrase?",
-              "answer": "Close it or look away.",
-              "answer_kind": "phrase"
+              "answer": "Close it, or look away.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "close",
+                    "look away",
+                    "cover",
+                    "put away",
+                    "hide",
+                    "turn over",
+                    "don't look"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -157787,14 +159719,70 @@
               "weight": "warmup",
               "prompt": "Rewrite \"The author wrongly says homework is useless.\" neutrally.",
               "answer": "The author argues that homework is not useful.",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "argues",
+                    "claims",
+                    "says",
+                    "states",
+                    "believes",
+                    "contends",
+                    "suggests",
+                    "thinks",
+                    "writes"
+                  ],
+                  [
+                    "useless",
+                    "not useful",
+                    "no use",
+                    "little value",
+                    "doesn't help"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 neutral signal verbs.",
-              "answer": "Argues and explains (also states or claims).",
-              "answer_kind": "list"
+              "answer": "Argues, and explains.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "argue",
+                    "explain",
+                    "state",
+                    "claim",
+                    "suggest",
+                    "describe",
+                    "note",
+                    "report",
+                    "write",
+                    "observe",
+                    "contend",
+                    "propose"
+                  ],
+                  [
+                    "argue",
+                    "explain",
+                    "state",
+                    "claim",
+                    "suggest",
+                    "describe",
+                    "note",
+                    "report",
+                    "write",
+                    "observe",
+                    "contend",
+                    "propose"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -157824,16 +159812,43 @@
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "You cannot summarize section 2. What should you do?",
+              "prompt": "You can't summarize section 2 of a chapter you've finished. What should you do?",
               "answer": "Reread section 2.",
-              "answer_kind": "integer"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "reread",
+                    "re-read",
+                    "read again",
+                    "go back",
+                    "review",
+                    "slow",
+                    "ask"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why is a 3-sentence summary a good test of understanding?",
-              "answer": "It requires you to know the main points without the text.",
-              "answer_kind": "sentence"
+              "answer": "It needs you to know the main points without the text.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "understand",
+                    "main points",
+                    "without the text",
+                    "from memory",
+                    "know",
+                    "own words",
+                    "test",
+                    "recall"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -157864,8 +159879,19 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Fix the tense: \"I walked in and she says hello.\"",
-              "answer": "I walked in and she said hello.",
-              "answer_kind": "phrase"
+              "answer": "I walked in, and she said hello.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "said"
+                  ],
+                  [
+                    "walked"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
@@ -157879,7 +159905,20 @@
               "weight": "stretch",
               "prompt": "Fix: \"Yesterday we go to the park.\"",
               "answer": "Yesterday we went to the park.",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "went",
+                    "walked",
+                    "drove"
+                  ],
+                  [
+                    "park"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -157897,14 +159936,26 @@
               "weight": "warmup",
               "prompt": "Correct \"The list of names are long.\"",
               "answer": "The list of names is long.",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "is long"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Correct \"Each of the students have a book.\"",
               "answer": "Each of the students has a book.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "Each of the students has a book."
+                ]
+              }
             },
             {
               "slot": 3,
@@ -157936,7 +159987,15 @@
               "weight": "core",
               "prompt": "Correct \"I have wrote 3 pages.\"",
               "answer": "I have written 3 pages.",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "have written",
+                    "written"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -157993,21 +160052,50 @@
               "weight": "warmup",
               "prompt": "Make the antecedent plural: \"Every student should bring their book.\"",
               "answer": "Students should bring their books.",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "students",
+                    "all students"
+                  ],
+                  [
+                    "their books",
+                    "books"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Correct \"The company changed their logo\" for formal American usage.",
               "answer": "The company changed its logo.",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "its logo"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "What pronoun agrees with 'Neither of the boys' in formal writing: his or their?",
               "answer": "His",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "His",
+                  "Their"
+                ],
+                "accept": [
+                  "His"
+                ]
+              }
             }
           ]
         }
@@ -158039,7 +160127,16 @@
               "weight": "warmup",
               "prompt": "What tone does \"Kindly submit the form by Friday.\" have: formal or casual?",
               "answer": "Formal",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Formal",
+                  "Casual"
+                ],
+                "accept": [
+                  "Formal"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -158053,7 +160150,16 @@
               "weight": "stretch",
               "prompt": "Is tone the writer's attitude or the reader's feeling?",
               "answer": "The writer's attitude.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "The writer's attitude",
+                  "The reader's feeling"
+                ],
+                "accept": [
+                  "The writer's attitude"
+                ]
+              }
             }
           ]
         },
@@ -158070,8 +160176,30 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Rewrite \"cant make it tmrw sry\" formally.",
-              "answer": "For example: I am sorry, but I will not be able to attend tomorrow.",
-              "answer_kind": "sentence"
+              "answer": "I'm sorry, but I won't be able to attend tomorrow.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "sorry",
+                    "apolog",
+                    "regret",
+                    "unfortunately"
+                  ],
+                  [
+                    "not be able",
+                    "unable",
+                    "cannot",
+                    "can't",
+                    "will not",
+                    "won't"
+                  ],
+                  [
+                    "tomorrow"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
@@ -158084,8 +160212,41 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 features of formal writing.",
-              "answer": "Complete sentences and no slang (also polite phrases).",
-              "answer_kind": "list"
+              "answer": "Complete sentences, and no slang.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "complete",
+                    "full sentence",
+                    "no slang",
+                    "slang",
+                    "polite",
+                    "no contraction",
+                    "precise",
+                    "vocabulary",
+                    "grammar",
+                    "third person",
+                    "objective",
+                    "structure"
+                  ],
+                  [
+                    "complete",
+                    "full sentence",
+                    "no slang",
+                    "slang",
+                    "polite",
+                    "no contraction",
+                    "precise",
+                    "vocabulary",
+                    "grammar",
+                    "third person",
+                    "objective",
+                    "structure"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -158103,21 +160264,60 @@
               "weight": "warmup",
               "prompt": "Which audience suits simple words and short sentences: a 7-year-old or a principal?",
               "answer": "A 7-year-old",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "A 7-year-old",
+                  "A principal"
+                ],
+                "accept": [
+                  "A 7-year-old"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 things to adjust for a new audience.",
-              "answer": "Vocabulary and formality (also detail).",
-              "answer_kind": "list"
+              "answer": "Vocabulary, and formality.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "vocabulary",
+                    "word",
+                    "language"
+                  ],
+                  [
+                    "formal",
+                    "tone",
+                    "register",
+                    "detail",
+                    "length",
+                    "example",
+                    "sentence",
+                    "explanation",
+                    "background"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Is a cover letter for a summer job at the City Library formal or informal?",
               "answer": "Formal",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Formal",
+                  "Informal"
+                ],
+                "accept": [
+                  "Formal"
+                ]
+              }
             }
           ]
         },
@@ -158134,8 +160334,24 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Rewrite \"Send me the file.\" politely.",
-              "answer": "For example: Could you please send me the file by 3 pm?",
-              "answer_kind": "sentence"
+              "answer": "Could you please send me the file by 3 pm?",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "please",
+                    "could you",
+                    "would you",
+                    "kindly",
+                    "can you"
+                  ],
+                  [
+                    "send",
+                    "file"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
@@ -158174,14 +160390,42 @@
               "weight": "core",
               "prompt": "Rewrite \"The results are, like, totally huge\" for a formal essay.",
               "answer": "The results are significant.",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "significant",
+                    "substantial",
+                    "considerable",
+                    "large",
+                    "major",
+                    "notable",
+                    "dramatic",
+                    "striking",
+                    "remarkable"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why read a 300-word essay aloud to check tone?",
               "answer": "You hear shifts more easily than you see them.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "hear",
+                    "ear",
+                    "shift",
+                    "aloud",
+                    "sound",
+                    "notice",
+                    "catch"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -158252,14 +160496,45 @@
               "weight": "core",
               "prompt": "The root 'bio' means life. What does 'biology' mean?",
               "answer": "The study of life.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "study of life",
+                    "study of living",
+                    "science of life",
+                    "living things",
+                    "life"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Using 'tele' (far) and 'scope' (look), what does 'telescope' mean?",
               "answer": "An instrument for looking at far things.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "far",
+                    "distant",
+                    "look",
+                    "see",
+                    "view"
+                  ],
+                  [
+                    "instrument",
+                    "tool",
+                    "device",
+                    "looking",
+                    "see",
+                    "view"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -158276,8 +160551,15 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Write a sentence using 'meticulous'.",
-              "answer": "For example: She kept meticulous notes, dating every page.",
-              "answer_kind": "sentence"
+              "answer": "She kept meticulous notes, dating every page.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "meticulous"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -158290,8 +160572,15 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Write a sentence using 'reluctant'.",
-              "answer": "For example: He was reluctant to speak first in class.",
-              "answer_kind": "sentence"
+              "answer": "He was reluctant to speak first in class.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "reluctant"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -158323,7 +160612,22 @@
               "weight": "stretch",
               "prompt": "Why do 4 spaced reviews beat a single long session?",
               "answer": "Each review happens just before forgetting, which strengthens memory more.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "forget",
+                    "forgetting",
+                    "spacing",
+                    "stronger",
+                    "strengthen",
+                    "retriev",
+                    "recall",
+                    "memory",
+                    "long-term"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -185486,8 +187790,22 @@
               "slot": 2,
               "weight": "core",
               "prompt": "In E minor, spell the 3 notes of the V chord using harmonic minor.",
-              "answer": "B D# F#",
-              "answer_kind": "word"
+              "answer": "B, D#, F#.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "b"
+                  ],
+                  [
+                    "d#"
+                  ],
+                  [
+                    "f#"
+                  ]
+                ],
+                "order": true
+              }
             },
             {
               "slot": 3,
@@ -186271,8 +188589,22 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Spell a G major triad, root first, with its 3 notes.",
-              "answer": "G B D",
-              "answer_kind": "word"
+              "answer": "G, B, D.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "g"
+                  ],
+                  [
+                    "b"
+                  ],
+                  [
+                    "d"
+                  ]
+                ],
+                "order": true
+              }
             },
             {
               "slot": 2,
@@ -186303,15 +188635,43 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Spell a C# diminished triad.",
-              "answer": "C# E G",
-              "answer_kind": "word"
+              "answer": "C#, E, G.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "c#"
+                  ],
+                  [
+                    "e"
+                  ],
+                  [
+                    "g"
+                  ]
+                ],
+                "order": true
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Spell the 3 notes of an F augmented triad.",
-              "answer": "F A C#",
-              "answer_kind": "word"
+              "answer": "F, A, C#.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "f"
+                  ],
+                  [
+                    "a"
+                  ],
+                  [
+                    "c#"
+                  ]
+                ],
+                "order": true
+              }
             },
             {
               "slot": 3,
@@ -186355,15 +188715,43 @@
               "slot": 2,
               "weight": "core",
               "prompt": "In F major, spell the IV chord.",
-              "answer": "Bb D F",
-              "answer_kind": "word"
+              "answer": "Bb, D, F.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "bb"
+                  ],
+                  [
+                    "d"
+                  ],
+                  [
+                    "f"
+                  ]
+                ],
+                "order": true
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "In D major, spell the vii chord, built on degree 7.",
-              "answer": "C# E G",
-              "answer_kind": "word"
+              "answer": "C#, E, G.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "c#"
+                  ],
+                  [
+                    "e"
+                  ],
+                  [
+                    "g"
+                  ]
+                ],
+                "order": true
+              }
             }
           ]
         },
