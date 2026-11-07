@@ -90373,7 +90373,16 @@
               "weight": "warmup",
               "prompt": "Which comes first: correction or a creative grade in step 1?",
               "answer": "Correction.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Correction",
+                  "A creative grade"
+                ],
+                "accept": [
+                  "Correction"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -90387,7 +90396,21 @@
               "weight": "stretch",
               "prompt": "A white wall reads blue in 1 of 3 shots. What's the first fix?",
               "answer": "Balance out the blue cast.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "balance",
+                    "white balance",
+                    "neutral",
+                    "remove",
+                    "correct",
+                    "blue",
+                    "cast",
+                    "temperature"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -90412,7 +90435,20 @@
               "weight": "core",
               "prompt": "Why does staring at 1 shot for an hour fool you?",
               "answer": "Your eye adapts to its color.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "adapt",
+                    "eye",
+                    "used to",
+                    "fatigue",
+                    "tired",
+                    "normal",
+                    "accustom"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -90437,7 +90473,16 @@
               "weight": "warmup",
               "prompt": "Of 2 controls, lift or gain, which mainly moves shadows?",
               "answer": "Lift.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Lift",
+                  "Gain"
+                ],
+                "accept": [
+                  "Lift"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -90483,7 +90528,25 @@
               "weight": "stretch",
               "prompt": "Why soften a window's edge by a lot in DaVinci Resolve?",
               "answer": "So the viewer can't see it.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "can't see",
+                    "won't see",
+                    "not see",
+                    "invisible",
+                    "unnoticed",
+                    "notice",
+                    "obvious",
+                    "hide",
+                    "natural",
+                    "seam",
+                    "edge",
+                    "halo"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -90508,14 +90571,44 @@
               "weight": "core",
               "prompt": "A film goes warm to cold from act 1 to act 3. What might that suggest?",
               "answer": "Things are getting worse.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "worse",
+                    "darker",
+                    "cold",
+                    "lonely",
+                    "sad",
+                    "decline",
+                    "hope",
+                    "lost",
+                    "fall",
+                    "grim"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why plan a palette for all 3 acts ahead of time?",
               "answer": "So color changes when the story does.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "story",
+                    "meaning",
+                    "plan",
+                    "consisten",
+                    "arc",
+                    "intent",
+                    "deliberate",
+                    "change with"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -90546,22 +90639,56 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "What's the rule called for keeping the camera on one side of 2 people?",
-              "answer": "The 180 degree rule.",
-              "answer_kind": "phrase"
+              "answer": "The 180-degree rule.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "180",
+                    "line"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A looks right in shot 1, then right again in shot 2 facing B. What went wrong?",
               "answer": "The camera crossed the line.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "crossed",
+                    "line",
+                    "180",
+                    "wrong side",
+                    "jumped"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 legal way to cross the line in the middle of a 2 shot scene.",
               "answer": "Move the camera across it during the shot.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "move",
+                    "during",
+                    "on camera",
+                    "dolly",
+                    "walk",
+                    "cutaway",
+                    "neutral",
+                    "new line",
+                    "actor moves"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -90579,21 +90706,53 @@
               "weight": "warmup",
               "prompt": "A looks to the right of the lens. Which way should B look?",
               "answer": "To the left of the lens.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "To the left of the lens",
+                  "To the right of the lens"
+                ],
+                "accept": [
+                  "To the left of the lens"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A is 6 feet tall and B is 5. Which of the 2 looks slightly down?",
               "answer": "A, the taller one.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "A, the taller one",
+                  "B, the shorter one"
+                ],
+                "accept": [
+                  "A, the taller one"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why hold the off-camera actor's face near the lens?",
               "answer": "So the look reads as nearly straight at the other person.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "straight",
+                    "eyeline",
+                    "close",
+                    "nearly",
+                    "direct",
+                    "connect",
+                    "believable",
+                    "at each other"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -90611,7 +90770,16 @@
               "weight": "warmup",
               "prompt": "Where's the best time to cut a person sitting down: during the move or after it?",
               "answer": "During the move.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "During the move",
+                  "After it"
+                ],
+                "accept": [
+                  "During the move"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -90642,8 +90810,22 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Shots 1 and 2 are filmed 4 hours apart. What's the simplest way to match a coffee level?",
-              "answer": "Take a photo and refill from it.",
-              "answer_kind": "phrase"
+              "answer": "Take a photo, and refill from it.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "photo",
+                    "picture",
+                    "mark",
+                    "note",
+                    "refill",
+                    "measure",
+                    "tape",
+                    "line"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -90656,8 +90838,61 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 3 things to log for an actor before a break.",
-              "answer": "Hair, buttons and which hand holds the prop.",
-              "answer_kind": "list"
+              "answer": "Hair, buttons, and which hand holds the prop.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "hair",
+                    "makeup",
+                    "button",
+                    "clothes",
+                    "costume",
+                    "sleeve",
+                    "collar",
+                    "jewel",
+                    "hand",
+                    "prop",
+                    "position",
+                    "glasses",
+                    "tie",
+                    "watch"
+                  ],
+                  [
+                    "hair",
+                    "makeup",
+                    "button",
+                    "clothes",
+                    "costume",
+                    "sleeve",
+                    "collar",
+                    "jewel",
+                    "hand",
+                    "prop",
+                    "position",
+                    "glasses",
+                    "tie",
+                    "watch"
+                  ],
+                  [
+                    "hair",
+                    "makeup",
+                    "button",
+                    "clothes",
+                    "costume",
+                    "sleeve",
+                    "collar",
+                    "jewel",
+                    "hand",
+                    "prop",
+                    "position",
+                    "glasses",
+                    "tie",
+                    "watch"
+                  ]
+                ],
+                "need": 3
+              }
             }
           ]
         },
@@ -90689,7 +90924,22 @@
               "weight": "stretch",
               "prompt": "Why might 5 jump cuts of someone waiting work well?",
               "answer": "They squeeze time and make the wait feel restless.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "time",
+                    "squeeze",
+                    "compress",
+                    "restless",
+                    "impatien",
+                    "passing",
+                    "boredom",
+                    "long",
+                    "wait"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -90721,14 +90971,38 @@
               "weight": "warmup",
               "prompt": "What does a master shot cover: 1 line or the whole scene?",
               "answer": "The whole scene.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "1 line",
+                  "The whole scene"
+                ],
+                "accept": [
+                  "The whole scene"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 reason an editor is glad to have a master.",
               "answer": "It's there when no other angle works.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "backup",
+                    "safety",
+                    "fallback",
+                    "no other",
+                    "nothing else",
+                    "orient",
+                    "geography",
+                    "cover",
+                    "always"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -90751,23 +91025,53 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "How many singles does a 2 person talk need?",
-              "answer": "2, one on each person.",
-              "answer_kind": "phrase"
+              "prompt": "A dinner scene has table of three, and every speaker needs a single. How many singles do you shoot?",
+              "answer": "3, one on each person.",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "3"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why use the same 50mm lens on both singles?",
               "answer": "So the two faces match when you cut.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "match",
+                    "consisten",
+                    "same size",
+                    "same look",
+                    "faces",
+                    "cut together",
+                    "even"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why keep rolling on Ana while Ben talks off camera?",
-              "answer": "A's reactions are often the best part of the scene.",
-              "answer_kind": "sentence"
+              "answer": "Her reactions are often the best part of the scene.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "reaction",
+                    "listen",
+                    "response",
+                    "face",
+                    "best part",
+                    "cut to"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -90785,21 +91089,65 @@
               "weight": "warmup",
               "prompt": "Name 1 insert for a scene where a man opens a locked box.",
               "answer": "A close-up of the key turning.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "key",
+                    "lock",
+                    "hand",
+                    "lid",
+                    "box",
+                    "close-up",
+                    "insert",
+                    "turn",
+                    "click",
+                    "open"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "The actor flubs 2 words mid-line. How does an insert help?",
               "answer": "You cut to it and hide the bad part.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "hide",
+                    "cover",
+                    "cut away",
+                    "cut to",
+                    "mask",
+                    "skip",
+                    "fix"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "What's a cutaway, compared with a 2 second insert of the phone in her hand?",
               "answer": "A shot of something outside the action, like the street.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "outside",
+                    "elsewhere",
+                    "away",
+                    "street",
+                    "surround",
+                    "not part of",
+                    "room",
+                    "world",
+                    "something else"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -90817,21 +91165,63 @@
               "weight": "warmup",
               "prompt": "Why repeat 3 seconds of action at the end of one shot and the start of the next?",
               "answer": "It gives the editor overlap to cut on the move.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "overlap",
+                    "cut on",
+                    "match",
+                    "action",
+                    "editor",
+                    "smooth",
+                    "choice"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "You have 1 hour and 12 planned shots. What do you drop first?",
               "answer": "The shots with no clear job in the scene.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "no clear job",
+                    "no job",
+                    "not needed",
+                    "least needed",
+                    "least important",
+                    "nice to have",
+                    "unnecessary",
+                    "extra",
+                    "coverage you won't use"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 thing a 6 panel storyboard tells you before the shoot.",
               "answer": "Which shots you need, and in what order.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "shots",
+                    "order",
+                    "angle",
+                    "what you need",
+                    "list",
+                    "plan",
+                    "coverage",
+                    "framing"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -90855,15 +91245,43 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Why does a 3 minute unbroken shot often raise tension?",
-              "answer": "Time feels real and there's no break.",
-              "answer_kind": "phrase"
+              "answer": "Time feels real, and there's no break.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "real",
+                    "no break",
+                    "unbroken",
+                    "no escape",
+                    "time",
+                    "continuous",
+                    "can't look away",
+                    "trapped"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "A big emotional moment happens 20 feet from the lens. What's the risk in a long take?",
               "answer": "You can't get close enough to see the face.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "face",
+                    "close",
+                    "far",
+                    "emotion",
+                    "miss",
+                    "small",
+                    "detail",
+                    "can't see"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -90895,7 +91313,25 @@
               "weight": "warmup",
               "prompt": "Rewrite 'be angrier' as 1 thing an actor can do.",
               "answer": "Make him admit what he did.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "make",
+                    "get",
+                    "force",
+                    "stop",
+                    "convince",
+                    "push",
+                    "demand",
+                    "win",
+                    "admit",
+                    "break",
+                    "corner",
+                    "hurt"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -90909,7 +91345,22 @@
               "weight": "stretch",
               "prompt": "Why not read a line aloud for an actor in take 3?",
               "answer": "They'll copy you and lose their own truth.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "copy",
+                    "mimic",
+                    "imitat",
+                    "own",
+                    "truth",
+                    "parrot",
+                    "line reading",
+                    "robot",
+                    "stiff"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -90934,14 +91385,44 @@
               "weight": "core",
               "prompt": "Why not rehearse a big crying scene 10 times?",
               "answer": "The real feeling gets used up before the camera rolls.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "used up",
+                    "stale",
+                    "fresh",
+                    "burn out",
+                    "lose",
+                    "drain",
+                    "wear",
+                    "spent",
+                    "mechanical"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 thing to talk about before run 1.",
               "answer": "What each person wants.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "want",
+                    "need",
+                    "goal",
+                    "objective",
+                    "backstory",
+                    "relationship",
+                    "stakes",
+                    "why",
+                    "motive"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -90966,14 +91447,43 @@
               "weight": "core",
               "prompt": "Rewrite in under 8 words: 'Maybe try to be less stiff, more relaxed, a bit faster'.",
               "answer": "This time, try to make her laugh.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "make",
+                    "get",
+                    "try to",
+                    "convince",
+                    "win",
+                    "stop",
+                    "tease",
+                    "surprise",
+                    "push"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why give a note in private on a set of 20 people?",
               "answer": "It keeps the actor safe and focused.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "safe",
+                    "focus",
+                    "embarrass",
+                    "trust",
+                    "respect",
+                    "private",
+                    "confiden",
+                    "calm"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -90991,21 +91501,64 @@
               "weight": "warmup",
               "prompt": "A friend freezes on camera. Name 1 way to help.",
               "answer": "Give them a task, like making tea.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "task",
+                    "activity",
+                    "tea",
+                    "cook",
+                    "do something",
+                    "chat",
+                    "talk",
+                    "forget",
+                    "business",
+                    "prop",
+                    "errand"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why keep rolling for 2 minutes after you've said action?",
               "answer": "They relax and forget the camera.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "relax",
+                    "forget",
+                    "natural",
+                    "settle",
+                    "ease",
+                    "real",
+                    "nerves"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why let a non-actor change the words of a 1 page script?",
               "answer": "It sounds natural in their own words.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "natural",
+                    "own words",
+                    "real",
+                    "comfortable",
+                    "authentic",
+                    "believ",
+                    "fluent"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -91022,8 +91575,25 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 1 thing to do before shooting a very hard scene with 12 crew.",
-              "answer": "Clear out everyone not needed.",
-              "answer_kind": "phrase"
+              "answer": "Clear out everyone who isn't needed.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "clear",
+                    "closed set",
+                    "everyone",
+                    "crew out",
+                    "private",
+                    "quiet",
+                    "talk",
+                    "warm",
+                    "rehears",
+                    "prepare",
+                    "trust"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -91068,22 +91638,65 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Turn the topic 'homelessness' into 1 question that could lead to a 10 minute film.",
-              "answer": "Why did this shelter in my town close in 2019?",
-              "answer_kind": "sentence"
+              "answer": "Why did the shelter in my town close in 2019?",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "why",
+                    "how",
+                    "what",
+                    "who",
+                    "where",
+                    "when",
+                    "did",
+                    "does",
+                    "can"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why is a question better than a topic for a 1 hour film?",
-              "answer": "It gives you a direction and something to find out.",
-              "answer_kind": "sentence"
+              "answer": "It gives you a direction, and something to find out.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "direction",
+                    "focus",
+                    "find out",
+                    "search",
+                    "answer",
+                    "drive",
+                    "purpose",
+                    "structure"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You know your answer before shooting day 1. What's the risk?",
               "answer": "You'll only collect what agrees with you.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "bias",
+                    "confirm",
+                    "only",
+                    "agrees",
+                    "miss",
+                    "ignore",
+                    "blind",
+                    "surprise"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -91101,21 +91714,66 @@
               "weight": "warmup",
               "prompt": "Make this question open: 'Were you scared in 1995?'",
               "answer": "What was 1995 like for you?",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "what",
+                    "how",
+                    "tell me",
+                    "describe"
+                  ],
+                  [
+                    "1995",
+                    "then",
+                    "that time",
+                    "like"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why stay silent for 5 seconds after an answer?",
               "answer": "People often fill it with something honest.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "fill",
+                    "honest",
+                    "more",
+                    "keep talking",
+                    "deeper",
+                    "true",
+                    "real",
+                    "add"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why not say 'mm-hmm' during a 15 minute interview?",
               "answer": "It sits on the track, and you can't cut it out.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "track",
+                    "cut",
+                    "audio",
+                    "overlap",
+                    "recorded",
+                    "ruin",
+                    "can't remove",
+                    "on top"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -91132,22 +91790,69 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 2 things to tell a subject before you film for 1 hour.",
-              "answer": "What the film is and where it'll be shown.",
-              "answer_kind": "list"
+              "answer": "What the film is, and where it'll be shown.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "film",
+                    "project",
+                    "about",
+                    "purpose",
+                    "what it is"
+                  ],
+                  [
+                    "shown",
+                    "where",
+                    "release",
+                    "audience",
+                    "online",
+                    "festival",
+                    "use",
+                    "rights",
+                    "consent"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A 15 year old wants to be in your film. Whose signature do you need too?",
               "answer": "A parent's or guardian's.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "parent",
+                    "guardian"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "A subject regrets 1 scene before release. Name 1 fair response.",
               "answer": "Talk about it, and cut or change it if it could hurt them.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "talk",
+                    "listen",
+                    "discuss",
+                    "cut",
+                    "change",
+                    "remove",
+                    "blur",
+                    "consent",
+                    "respect",
+                    "hurt"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -91171,15 +91876,66 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 things to prepare so you can start shooting in 5 seconds.",
-              "answer": "A light kit and a safe preset exposure.",
-              "answer_kind": "list"
+              "answer": "A light kit, and a safe preset exposure.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "light",
+                    "kit",
+                    "battery",
+                    "card",
+                    "preset",
+                    "exposure",
+                    "settings",
+                    "mic",
+                    "audio",
+                    "charged",
+                    "lens",
+                    "white balance",
+                    "camera",
+                    "bag"
+                  ],
+                  [
+                    "light",
+                    "kit",
+                    "battery",
+                    "card",
+                    "preset",
+                    "exposure",
+                    "settings",
+                    "mic",
+                    "audio",
+                    "charged",
+                    "lens",
+                    "white balance",
+                    "camera",
+                    "bag"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why stay for 3 hours when you need 10 minutes of footage?",
               "answer": "People forget the camera and act naturally.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "forget",
+                    "natural",
+                    "relax",
+                    "used to",
+                    "ignore",
+                    "real",
+                    "trust",
+                    "moments"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -91197,14 +91953,43 @@
               "weight": "warmup",
               "prompt": "You have 40 hours of footage for a 40 minute film. What's the first step?",
               "answer": "Log and transcribe it.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "log",
+                    "transcri",
+                    "organiz",
+                    "label",
+                    "watch",
+                    "review",
+                    "sort",
+                    "tag"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why might 8 cards on a wall help more than a timeline?",
               "answer": "You can try orders fast and see the whole shape.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "shape",
+                    "order",
+                    "rearrange",
+                    "structure",
+                    "whole",
+                    "see",
+                    "try",
+                    "fast",
+                    "move"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -91250,7 +92035,21 @@
               "weight": "core",
               "prompt": "You have 5 takes of 1 line. Which 1 goes in the assembly?",
               "answer": "The one with the most life in it.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "life",
+                    "best",
+                    "energy",
+                    "truth",
+                    "feel",
+                    "real",
+                    "spark",
+                    "emotion"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -91289,7 +92088,21 @@
               "weight": "stretch",
               "prompt": "A scene cuts every 2 seconds for no reason. What's the effect?",
               "answer": "It feels busy, and we stop caring about the cuts.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "busy",
+                    "tiring",
+                    "stop caring",
+                    "chaotic",
+                    "exhaust",
+                    "noise",
+                    "frantic",
+                    "meaning"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -91314,14 +92127,40 @@
               "weight": "core",
               "prompt": "Why hide a cut inside a long 40 second speech with a reaction?",
               "answer": "You can trim the words without the jump showing.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "trim",
+                    "cut",
+                    "shorten",
+                    "hide",
+                    "jump",
+                    "smooth",
+                    "cover"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "What's the 'tennis match' mistake in a talk of 2 people?",
               "answer": "Always cutting to the speaker, back and forth.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "speaker",
+                    "back and forth",
+                    "always",
+                    "every line",
+                    "predictable",
+                    "ping",
+                    "whoever talks"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -91346,14 +92185,41 @@
               "weight": "core",
               "prompt": "Why duplicate the sequence before cutting a shot you love, in Premiere?",
               "answer": "It keeps a safe copy, so you feel free to try.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "safe",
+                    "backup",
+                    "copy",
+                    "undo",
+                    "free",
+                    "experiment",
+                    "keep",
+                    "return"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "How can you test if a 10 second shot is needed?",
               "answer": "Take it out and see if anyone misses it.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "take it out",
+                    "remove",
+                    "cut it",
+                    "see",
+                    "miss",
+                    "without",
+                    "watch"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -91371,21 +92237,67 @@
               "weight": "warmup",
               "prompt": "Name 1 thing to watch during a screening of 3 people, other than the film.",
               "answer": "Where they check their phones.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "phone",
+                    "fidget",
+                    "look away",
+                    "laugh",
+                    "lean",
+                    "shift",
+                    "restless",
+                    "face",
+                    "yawn",
+                    "bored",
+                    "whisper",
+                    "react"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A viewer says 'cut the ending' at minute 10. What's the note really telling you?",
               "answer": "Something isn't working, but the fix may be elsewhere.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "elsewhere",
+                    "something isn't working",
+                    "problem",
+                    "earlier",
+                    "real cause",
+                    "symptom",
+                    "not the ending"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why not explain the film before showing it to 3 friends?",
               "answer": "The audience won't have that help, so you'd hide the problems.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "hide",
+                    "bias",
+                    "won't have",
+                    "real audience",
+                    "honest",
+                    "fresh",
+                    "clean",
+                    "cheat",
+                    "explain"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -91415,16 +92327,26 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "What's the shutter for 24 fps by the 180 degree rule?",
+              "prompt": "By the 180-degree rule, what shutter speed goes with 24 fps? Give the nearest common setting.",
               "answer": "1/50 of a second, near 1/48.",
-              "answer_kind": "phrase"
+              "answer_kind": "fraction",
+              "grading": {
+                "accept": [
+                  "1/50"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "What shutter goes with 60 fps?",
               "answer": "1/120 of a second.",
-              "answer_kind": "phrase"
+              "answer_kind": "fraction",
+              "grading": {
+                "accept": [
+                  "1/120"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -91463,7 +92385,19 @@
               "weight": "stretch",
               "prompt": "Name 1 cost of a very high ISO of 12800.",
               "answer": "More noise in the image.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "noise",
+                    "grain",
+                    "grainy",
+                    "detail",
+                    "muddy",
+                    "color shift"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -91526,8 +92460,21 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "A sky is flat at 100 in the shot. What does that mean?",
-              "answer": "It's clipped and has no detail left.",
-              "answer_kind": "phrase"
+              "answer": "It's clipped, and has no detail left.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "clip",
+                    "blown",
+                    "no detail",
+                    "white",
+                    "lost",
+                    "overexpos",
+                    "burned"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -91552,14 +92499,44 @@
               "weight": "core",
               "prompt": "Why does Log footage look gray on set?",
               "answer": "It keeps more range for later, to be graded.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "range",
+                    "grade",
+                    "latitude",
+                    "dynamic",
+                    "flat",
+                    "later",
+                    "detail",
+                    "highlights"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "A face is 2 stops under a bright window. Name 1 fix on set.",
               "answer": "Add light on the face.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "light",
+                    "bounce",
+                    "reflector",
+                    "fill",
+                    "lamp",
+                    "card",
+                    "board",
+                    "move",
+                    "turn",
+                    "exposure"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -91598,14 +92575,42 @@
               "weight": "core",
               "prompt": "Why might 85mm flatter a face more than 24mm from 1 foot?",
               "answer": "The long lens doesn't stretch the features.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "doesn't stretch",
+                    "doesn't distort",
+                    "no distortion",
+                    "less distortion",
+                    "features",
+                    "flatter",
+                    "compress",
+                    "nose",
+                    "natural"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name the effect of a long lens on a street 300 feet long.",
               "answer": "It looks squeezed, with things stacked close.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "squeez",
+                    "compress",
+                    "stack",
+                    "close",
+                    "flatten",
+                    "shorter",
+                    "crowded"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -91629,15 +92634,46 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 things other than aperture that thin the depth of field.",
-              "answer": "A longer lens and moving closer.",
-              "answer_kind": "list"
+              "answer": "A longer lens, and moving closer.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "long",
+                    "longer",
+                    "telephoto",
+                    "focal"
+                  ],
+                  [
+                    "closer",
+                    "close",
+                    "distance",
+                    "move in",
+                    "background farther",
+                    "sensor"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You shoot at f/1.4 with 2 people 4 feet apart. What's the risk?",
               "answer": "Only one of them will be sharp.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "sharp",
+                    "focus",
+                    "soft",
+                    "blur",
+                    "one of them",
+                    "miss"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -91654,22 +92690,64 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Why mark 2 spots on the lens ring before a take?",
-              "answer": "So you can hit each one by feel on cue.",
-              "answer_kind": "sentence"
+              "answer": "So you can hit each one by feel, on cue.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "hit",
+                    "feel",
+                    "cue",
+                    "accurate",
+                    "repeat",
+                    "without looking",
+                    "quickly",
+                    "precise"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "What's a good cue for a 2 second focus pull?",
               "answer": "A look or a line from the person we go to.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "look",
+                    "line",
+                    "turn",
+                    "move",
+                    "speak",
+                    "glance",
+                    "motivat",
+                    "reaction"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 way a focus pull replaces a cut.",
               "answer": "It shifts our attention to another person in the same shot.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "attention",
+                    "shift",
+                    "move",
+                    "another person",
+                    "same shot",
+                    "guide",
+                    "reveal",
+                    "redirect"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -91687,21 +92765,60 @@
               "weight": "warmup",
               "prompt": "A character feels trapped in a city. Which lens stacks the buildings behind them: wide or long?",
               "answer": "Long.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Wide",
+                  "Long"
+                ],
+                "accept": [
+                  "Long"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A 16mm lens close to a shouting face does what?",
               "answer": "It distorts the face and feels unsettling.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "distort",
+                    "warp",
+                    "unsettl",
+                    "uneasy",
+                    "stretch",
+                    "grotesque",
+                    "aggress",
+                    "bulge",
+                    "menac"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 scene type where 35mm or 50mm feels most like normal sight.",
               "answer": "A quiet conversation.",
-              "answer_kind": "word"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "conversation",
+                    "dialogue",
+                    "talk",
+                    "dinner",
+                    "walk",
+                    "everyday",
+                    "quiet",
+                    "natural",
+                    "interview"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -91765,7 +92882,23 @@
               "weight": "warmup",
               "prompt": "Name the 3 lights in 3 point lighting.",
               "answer": "Key, fill and back.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "key"
+                  ],
+                  [
+                    "fill"
+                  ],
+                  [
+                    "back",
+                    "rim",
+                    "hair"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
@@ -91796,22 +92929,60 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Which gives softer shadows: a bulb or the same bulb through a 4 foot sheet?",
-              "answer": "Through the sheet.",
-              "answer_kind": "word"
+              "answer": "The same bulb through a 4-foot sheet.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "A bare bulb",
+                  "The same bulb through a 4-foot sheet"
+                ],
+                "accept": [
+                  "The same bulb through a 4-foot sheet"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why is the sun hard on a clear day, even though it's huge?",
               "answer": "It's so far away that it acts small.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "far",
+                    "distance",
+                    "small",
+                    "point",
+                    "tiny",
+                    "acts small"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 scene type that often suits hard light, like in 1940s film noir.",
               "answer": "A tense crime scene.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "crime",
+                    "noir",
+                    "thriller",
+                    "interrogat",
+                    "tense",
+                    "mystery",
+                    "horror",
+                    "night",
+                    "danger",
+                    "villain",
+                    "alley"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -91829,7 +93000,14 @@
               "weight": "warmup",
               "prompt": "A key is 2 stops brighter than the fill. What's the ratio?",
               "answer": "4:1.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "4:1",
+                  "4 to 1",
+                  "4"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -91843,7 +93021,16 @@
               "weight": "stretch",
               "prompt": "Which feels more dramatic: a 2:1 or an 8:1 ratio?",
               "answer": "8:1.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "2:1",
+                  "8:1"
+                ],
+                "accept": [
+                  "8:1"
+                ]
+              }
             }
           ]
         },
@@ -91861,7 +93048,16 @@
               "weight": "warmup",
               "prompt": "Where should an actor stand for more shape: facing a window or 45 degrees to it?",
               "answer": "45 degrees to it.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Facing the window",
+                  "45 degrees to it"
+                ],
+                "accept": [
+                  "45 degrees to it"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -91875,7 +93071,16 @@
               "weight": "stretch",
               "prompt": "Light falls off fast. Moving from 2 feet to 4 feet from a window cuts it about how much?",
               "answer": "To about a quarter.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "To about half",
+                  "To about a quarter"
+                ],
+                "accept": [
+                  "To about a quarter"
+                ]
+              }
             }
           ]
         },
@@ -91907,7 +93112,21 @@
               "weight": "stretch",
               "prompt": "Why might auto white balance ruin a 1 minute take?",
               "answer": "The color can shift partway through.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "shift",
+                    "change",
+                    "drift",
+                    "partway",
+                    "mid",
+                    "inconsisten",
+                    "color",
+                    "flicker"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -91939,7 +93158,33 @@
               "weight": "warmup",
               "prompt": "Name the 4 main groups of tracks in a mix.",
               "answer": "Dialogue, effects, ambience and music.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "dialogue",
+                    "dialog",
+                    "voice"
+                  ],
+                  [
+                    "effect",
+                    "sfx",
+                    "foley"
+                  ],
+                  [
+                    "ambience",
+                    "ambient",
+                    "background",
+                    "room tone",
+                    "atmos"
+                  ],
+                  [
+                    "music",
+                    "score"
+                  ]
+                ],
+                "need": 4
+              }
             },
             {
               "slot": 2,
@@ -91953,7 +93198,22 @@
               "weight": "stretch",
               "prompt": "Why keep music on its own track in a mix of 10 tracks?",
               "answer": "You can change it without touching the rest.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "change",
+                    "swap",
+                    "replace",
+                    "independ",
+                    "adjust",
+                    "without",
+                    "separate",
+                    "rights",
+                    "control"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -91971,21 +93231,115 @@
               "weight": "warmup",
               "prompt": "Name 3 layers for a city apartment scene at 2 am.",
               "answer": "Room hum, far traffic and a rare siren.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "hum",
+                    "fridge",
+                    "room",
+                    "tone",
+                    "traffic",
+                    "car",
+                    "siren",
+                    "clock",
+                    "neighbor",
+                    "tv",
+                    "pipe",
+                    "wind",
+                    "rain",
+                    "dog",
+                    "bus",
+                    "train",
+                    "footsteps",
+                    "buzz"
+                  ],
+                  [
+                    "hum",
+                    "fridge",
+                    "room",
+                    "tone",
+                    "traffic",
+                    "car",
+                    "siren",
+                    "clock",
+                    "neighbor",
+                    "tv",
+                    "pipe",
+                    "wind",
+                    "rain",
+                    "dog",
+                    "bus",
+                    "train",
+                    "footsteps",
+                    "buzz"
+                  ],
+                  [
+                    "hum",
+                    "fridge",
+                    "room",
+                    "tone",
+                    "traffic",
+                    "car",
+                    "siren",
+                    "clock",
+                    "neighbor",
+                    "tv",
+                    "pipe",
+                    "wind",
+                    "rain",
+                    "dog",
+                    "bus",
+                    "train",
+                    "footsteps",
+                    "buzz"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A scene has 5 cuts and the sound of the room jumps each time. What fixes it?",
               "answer": "A steady ambience across the cuts.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "ambience",
+                    "room tone",
+                    "tone",
+                    "steady",
+                    "bed",
+                    "background",
+                    "fill",
+                    "continuous",
+                    "crossfade"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why might true silence for 3 seconds feel powerful in a loud film?",
               "answer": "It stands out after so much noise.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "stand out",
+                    "contrast",
+                    "after",
+                    "noise",
+                    "unexpected",
+                    "attention",
+                    "shock",
+                    "tension"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -92003,7 +93357,36 @@
               "weight": "warmup",
               "prompt": "Name 3 layers of a movie punch.",
               "answer": "A low body, a sharp attack and a tail.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "low",
+                    "body",
+                    "thump",
+                    "bass",
+                    "weight"
+                  ],
+                  [
+                    "sharp",
+                    "attack",
+                    "crack",
+                    "slap",
+                    "snap",
+                    "hit"
+                  ],
+                  [
+                    "tail",
+                    "decay",
+                    "swish",
+                    "whoosh",
+                    "cloth",
+                    "rustle",
+                    "reverb"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
@@ -92017,7 +93400,21 @@
               "weight": "stretch",
               "prompt": "A monster in a 1 minute scene is never seen. What can sound do?",
               "answer": "Let us imagine it, which is often scarier.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "imagine",
+                    "scarier",
+                    "suggest",
+                    "hint",
+                    "presence",
+                    "mind",
+                    "fear",
+                    "unseen"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -92041,8 +93438,26 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 devices to check a mix on before you upload it.",
-              "answer": "A laptop and earbuds.",
-              "answer_kind": "list"
+              "answer": "A laptop, and earbuds.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "laptop",
+                    "computer",
+                    "speaker"
+                  ],
+                  [
+                    "earbud",
+                    "headphone",
+                    "phone",
+                    "tv",
+                    "car",
+                    "monitor"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -92113,21 +93528,58 @@
               "weight": "warmup",
               "prompt": "Which gives a nervous feeling in a 30 second scene: tripod or handheld?",
               "answer": "Handheld.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Tripod",
+                  "Handheld"
+                ],
+                "accept": [
+                  "Handheld"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 advantage of a tripod on a talky 2 page scene.",
               "answer": "It keeps the frame clean and focuses us on the actors.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "steady",
+                    "stable",
+                    "clean",
+                    "still",
+                    "focus",
+                    "actors",
+                    "calm",
+                    "smooth"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why might a still frame be scarier than a moving 1 in a horror film?",
               "answer": "We're left waiting and searching the frame.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "wait",
+                    "search",
+                    "watch",
+                    "anticipat",
+                    "dread",
+                    "nothing moves",
+                    "scan",
+                    "expect"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -92145,7 +93597,16 @@
               "weight": "warmup",
               "prompt": "Which move looks up a 300 foot tower: a pan or a tilt?",
               "answer": "A tilt.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "A pan",
+                  "A tilt"
+                ],
+                "accept": [
+                  "A tilt"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -92159,7 +93620,20 @@
               "weight": "stretch",
               "prompt": "Name 1 reason to hold still for 1 second at the end of a pan.",
               "answer": "It gives the editor a clean place to cut.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "cut",
+                    "edit",
+                    "clean",
+                    "settle",
+                    "rest",
+                    "land",
+                    "hold"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -92177,21 +93651,60 @@
               "weight": "warmup",
               "prompt": "Of 2 moves, push in or pull out, which shows she's suddenly alone?",
               "answer": "Pull out.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Push in",
+                  "Pull out"
+                ],
+                "accept": [
+                  "Pull out"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "You want a 3 foot push and have no dolly. Name 1 cheap tool.",
-              "answer": "A chair with wheels or a skateboard.",
-              "answer_kind": "phrase"
+              "answer": "An office chair with wheels, or a skateboard.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "wheel",
+                    "chair",
+                    "skateboard",
+                    "cart",
+                    "wagon",
+                    "wheelchair",
+                    "car",
+                    "blanket",
+                    "towel",
+                    "dolly",
+                    "slider",
+                    "stroller",
+                    "shopping"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "What's the 'Vertigo' effect, from the 1958 film?",
               "answer": "A dolly move one way while the lens zooms the other.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "dolly"
+                  ],
+                  [
+                    "zoom"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -92209,7 +93722,21 @@
               "weight": "warmup",
               "prompt": "How should you walk to reduce bob in a 20 second shot?",
               "answer": "Bend your knees and step heel to toe.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "knee",
+                    "heel",
+                    "toe",
+                    "bend",
+                    "soft",
+                    "glide",
+                    "ninja",
+                    "groucho"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -92223,7 +93750,22 @@
               "weight": "stretch",
               "prompt": "Why does following a character from behind for 10 seconds feel different from leading them?",
               "answer": "We see where they're going, and it feels like we're going too.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "see where",
+                    "going",
+                    "with them",
+                    "we're",
+                    "follow",
+                    "share",
+                    "their view",
+                    "unknown",
+                    "anticipat"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -92240,22 +93782,70 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 3 jobs a camera move can do.",
-              "answer": "Reveal something, follow someone or change how close we feel.",
-              "answer_kind": "list"
+              "answer": "Reveal something, follow someone, and change how close we feel.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "reveal",
+                    "show"
+                  ],
+                  [
+                    "follow",
+                    "track"
+                  ],
+                  [
+                    "close",
+                    "intima",
+                    "distance",
+                    "feeling",
+                    "emphas",
+                    "tension"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A drone shot opens a talky 2 person scene for no reason. What's the fix?",
               "answer": "Cut it, or use a plain wide that sets the place.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "cut",
+                    "remove",
+                    "plain",
+                    "wide",
+                    "establish",
+                    "simple",
+                    "drop"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "A pan to a gun on the table at 0:30 does what?",
               "answer": "It reveals a thing the character hasn't seen.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "reveal",
+                    "show",
+                    "danger",
+                    "tension",
+                    "audience knows",
+                    "hasn't seen",
+                    "information",
+                    "suspense"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -92287,7 +93877,54 @@
               "weight": "warmup",
               "prompt": "Name 3 things a breakdown sheet lists for a scene.",
               "answer": "Cast, props and location.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "cast",
+                    "actor",
+                    "character",
+                    "people"
+                  ],
+                  [
+                    "prop",
+                    "object"
+                  ],
+                  [
+                    "location",
+                    "place",
+                    "set",
+                    "wardrobe",
+                    "costume",
+                    "vehicle",
+                    "effect",
+                    "sound",
+                    "time",
+                    "extra",
+                    "makeup"
+                  ],
+                  [
+                    "cast",
+                    "actor",
+                    "character",
+                    "people",
+                    "prop",
+                    "object",
+                    "location",
+                    "place",
+                    "set",
+                    "wardrobe",
+                    "costume",
+                    "vehicle",
+                    "effect",
+                    "sound",
+                    "time",
+                    "extra",
+                    "makeup"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
@@ -92301,7 +93938,23 @@
               "weight": "stretch",
               "prompt": "Why highlight things that cost real money on a $500 film?",
               "answer": "So you can plan or cut those first.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "plan",
+                    "cut",
+                    "budget",
+                    "cost",
+                    "priorit",
+                    "see",
+                    "decide",
+                    "first",
+                    "afford",
+                    "money"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -92319,7 +93972,21 @@
               "weight": "warmup",
               "prompt": "Why shoot all 4 shots facing the same wall in a row?",
               "answer": "It saves moving the lights and the camera.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "save",
+                    "move",
+                    "lights",
+                    "setup",
+                    "time",
+                    "reset",
+                    "camera",
+                    "efficien"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -92332,8 +93999,27 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 thing that goes in each row of a shot list, besides the number.",
-              "answer": "The shot size or what it shows.",
-              "answer_kind": "phrase"
+              "answer": "The shot size, or what it shows.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "size",
+                    "wide",
+                    "close",
+                    "angle",
+                    "shows",
+                    "what it",
+                    "lens",
+                    "movement",
+                    "description",
+                    "subject",
+                    "action",
+                    "scene",
+                    "framing"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -92365,7 +94051,16 @@
               "weight": "stretch",
               "prompt": "Which scene should you shoot first: the hardest or the easiest of 3?",
               "answer": "The hardest.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "The hardest",
+                  "The easiest"
+                ],
+                "accept": [
+                  "The hardest"
+                ]
+              }
             }
           ]
         },
@@ -92383,14 +94078,81 @@
               "weight": "warmup",
               "prompt": "Why scout at 4 pm if you're shooting at 4 pm?",
               "answer": "You'll see where the sun will be.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "sun",
+                    "light",
+                    "shadow",
+                    "where the light",
+                    "daylight"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 3 things to check on a scout, other than how it looks.",
               "answer": "Noise, power and permission.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "noise",
+                    "sound",
+                    "traffic",
+                    "plane",
+                    "power",
+                    "outlet",
+                    "electric",
+                    "permission",
+                    "permit",
+                    "parking",
+                    "bathroom",
+                    "access",
+                    "space",
+                    "neighbor",
+                    "signal"
+                  ],
+                  [
+                    "noise",
+                    "sound",
+                    "traffic",
+                    "plane",
+                    "power",
+                    "outlet",
+                    "electric",
+                    "permission",
+                    "permit",
+                    "parking",
+                    "bathroom",
+                    "access",
+                    "space",
+                    "neighbor",
+                    "signal"
+                  ],
+                  [
+                    "noise",
+                    "sound",
+                    "traffic",
+                    "plane",
+                    "power",
+                    "outlet",
+                    "electric",
+                    "permission",
+                    "permit",
+                    "parking",
+                    "bathroom",
+                    "access",
+                    "space",
+                    "neighbor",
+                    "signal"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 3,
@@ -92422,7 +94184,16 @@
               "weight": "core",
               "prompt": "With $100 left, which do you buy first: a nicer lens or a good mic?",
               "answer": "A good mic.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "A nicer lens",
+                  "A good mic"
+                ],
+                "accept": [
+                  "A good mic"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -92461,21 +94232,65 @@
               "weight": "warmup",
               "prompt": "You leave 2 seconds after 'I'm leaving you'. What's the effect?",
               "answer": "The line gets time to land.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "land",
+                    "sink",
+                    "weight",
+                    "impact",
+                    "feel",
+                    "absorb",
+                    "breath",
+                    "register"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why cut away every gap between lines in a 2 person fight?",
               "answer": "It makes them sound like they're on top of each other.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "overlap",
+                    "top of each other",
+                    "rushed",
+                    "interrupt",
+                    "fast",
+                    "real",
+                    "heated",
+                    "tension"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 thing that sets the rhythm of a scene with no music, in a 30 second talk.",
               "answer": "How people speak and breathe.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "speak",
+                    "speech",
+                    "breath",
+                    "pace",
+                    "dialogue",
+                    "delivery",
+                    "pause",
+                    "movement",
+                    "action",
+                    "cut"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -92500,14 +94315,41 @@
               "weight": "core",
               "prompt": "A chase has every shot at 1 second for 3 minutes. What's the problem?",
               "answer": "No change, so it feels flat and tiring.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "no change",
+                    "same",
+                    "monoton",
+                    "flat",
+                    "tiring",
+                    "numb",
+                    "no variety",
+                    "relentless"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why put a 5 second shot right after a fast 30 second run?",
               "answer": "It lets the audience breathe.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "breathe",
+                    "rest",
+                    "contrast",
+                    "relief",
+                    "pause",
+                    "recover",
+                    "settle"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -92539,7 +94381,20 @@
               "weight": "stretch",
               "prompt": "You've cut 20 straight shots on the beat. Name 1 fix.",
               "answer": "Let some beats pass, or cut a few off the beat.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "off the beat",
+                    "let some",
+                    "skip",
+                    "vary",
+                    "syncopat",
+                    "break",
+                    "pass"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -92557,21 +94412,61 @@
               "weight": "warmup",
               "prompt": "Show a 2 hour drive in 10 seconds. Name 1 tool.",
               "answer": "A cut from leaving to arriving, or a montage.",
-              "answer_kind": "sentence"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "cut",
+                    "jump cut",
+                    "montage",
+                    "dissolve",
+                    "match cut",
+                    "time-lapse",
+                    "ellipsis",
+                    "fade"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A film stretches a 10 second bomb fuse to 30 seconds on screen. How?",
               "answer": "He adds extra angles and cuts.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "angles",
+                    "cuts",
+                    "reaction",
+                    "cutaway",
+                    "insert",
+                    "slow motion",
+                    "extra",
+                    "repeat",
+                    "overlap"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your character walks 40 seconds to a door and nothing happens. What should you do?",
               "answer": "Cut most of the walk.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "cut",
+                    "trim",
+                    "shorten",
+                    "remove",
+                    "skip"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -92596,7 +94491,22 @@
               "weight": "core",
               "prompt": "Why rate each of 10 minutes on a scale of 1 to 5?",
               "answer": "To spot sags across the whole film.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "sag",
+                    "slow",
+                    "dip",
+                    "drag",
+                    "weak",
+                    "spot",
+                    "pattern",
+                    "boring",
+                    "whole"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -92635,21 +94545,70 @@
               "weight": "warmup",
               "prompt": "2 friends chat about the weather for 2 pages and nothing changes. What's missing?",
               "answer": "A goal. Neither of them wants anything.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "goal",
+                    "want",
+                    "conflict",
+                    "stakes",
+                    "tension",
+                    "change",
+                    "objective"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "In a job interview scene, name 1 want for each of the 2 people.",
-              "answer": "She wants the job and he wants to catch a lie on her resume.",
-              "answer_kind": "sentence"
+              "answer": "She wants the job, and he wants to catch a lie on her résumé.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "wants",
+                    "want",
+                    "needs",
+                    "hopes",
+                    "tries"
+                  ],
+                  [
+                    "job",
+                    "hire",
+                    "lie",
+                    "test",
+                    "catch",
+                    "impress",
+                    "find",
+                    "fill"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "A scene has a clear want but no one opposes it. Name 1 fix.",
               "answer": "Give the other character a want that blocks it.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "oppos",
+                    "block",
+                    "want",
+                    "conflict",
+                    "other character",
+                    "obstacle",
+                    "resist",
+                    "disagree"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -92667,21 +94626,59 @@
               "weight": "warmup",
               "prompt": "A scene opens with 'Hi, how are you?' and the fight begins on page 2. Where should it start?",
               "answer": "At the fight, or just before it.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "fight",
+                    "argument",
+                    "conflict",
+                    "just before",
+                    "later",
+                    "in the middle",
+                    "late"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why cut the last 20 seconds after the big reveal?",
               "answer": "The scene's turn is over, and the audience is already ahead.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "over",
+                    "done",
+                    "turn",
+                    "ahead",
+                    "already know",
+                    "drag",
+                    "nothing new",
+                    "ended"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name the rule in 4 words for where to start and stop.",
               "answer": "Enter late, leave early.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "enter late"
+                  ],
+                  [
+                    "leave early"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -92699,7 +94696,19 @@
               "weight": "warmup",
               "prompt": "At the start she trusts him. At the end she has his lie on tape. What turned?",
               "answer": "Her trust. She now knows he lied.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "trust",
+                    "belief",
+                    "faith",
+                    "relationship",
+                    "knows",
+                    "power"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -92713,7 +94722,26 @@
               "weight": "stretch",
               "prompt": "Add a turn to a 1 minute scene where a waiter takes an order.",
               "answer": "The customer sees the waiter is her missing brother.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "sees",
+                    "realiz",
+                    "recogni",
+                    "finds",
+                    "discover",
+                    "reveal",
+                    "drops",
+                    "refuses",
+                    "knows",
+                    "is her",
+                    "is his",
+                    "turns out",
+                    "secret"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -92731,21 +94759,77 @@
               "weight": "warmup",
               "prompt": "A couple fights about 1 dirty cup. What might the real fight be?",
               "answer": "Who carries the weight of the relationship.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "relationship",
+                    "respect",
+                    "care",
+                    "effort",
+                    "fair",
+                    "weight",
+                    "resent",
+                    "unappreciat",
+                    "love",
+                    "control",
+                    "feel",
+                    "listen"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Replace 'I'm scared you'll leave' with 1 line that hints at it.",
               "answer": "\"Did you pack the big suitcase?\"",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "pack",
+                    "bag",
+                    "suitcase",
+                    "leaving",
+                    "ticket",
+                    "key",
+                    "coat",
+                    "drive",
+                    "train",
+                    "flight",
+                    "move",
+                    "go",
+                    "tomorrow",
+                    "plan",
+                    "staying",
+                    "come back"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why does 'I hate you' often play weaker than 'Your coat's by the door'?",
               "answer": "It's said outright, while the second makes us feel the meaning.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "outright",
+                    "on the nose",
+                    "direct",
+                    "said",
+                    "tell",
+                    "subtext",
+                    "feel",
+                    "imply",
+                    "hint",
+                    "infer"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -92763,21 +94847,65 @@
               "weight": "warmup",
               "prompt": "2 actors stand 10 feet apart, then 1 foot apart. What might that show?",
               "answer": "They've grown closer, or one is pressing the other.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "close",
+                    "intima",
+                    "pressing",
+                    "threat",
+                    "pressure",
+                    "tension",
+                    "connect",
+                    "confront",
+                    "invade"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why plan 3 moves before you place the camera?",
               "answer": "The moves decide where the camera needs to be.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "decide",
+                    "camera",
+                    "where",
+                    "position",
+                    "placement",
+                    "follow",
+                    "need"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "A 4 minute scene at a table feels dead. Name 1 blocking fix.",
               "answer": "Give one actor a reason to stand and cross the room.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "stand",
+                    "move",
+                    "cross",
+                    "walk",
+                    "get up",
+                    "action",
+                    "prop",
+                    "task",
+                    "business",
+                    "reason to move"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -92809,21 +94937,67 @@
               "weight": "warmup",
               "prompt": "You have 1 kitchen and 2 friends. Name 1 tension that suits this.",
               "answer": "One is hiding the fact that they're moving away.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "hid",
+                    "secret",
+                    "lie",
+                    "leav",
+                    "moving",
+                    "confess",
+                    "owe",
+                    "break",
+                    "cheat",
+                    "tell",
+                    "news",
+                    "fight",
+                    "money",
+                    "steal",
+                    "ill",
+                    "sick",
+                    "truth"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "How long is 1 script page on screen, about?",
-              "answer": "1 minute.",
-              "answer_kind": "integer"
+              "prompt": "About how long is 1 script page on screen?",
+              "answer": "About 1 minute.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "About 1 minute",
+                  "About 10 minutes"
+                ],
+                "accept": [
+                  "About 1 minute"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why does a 3 page short beat a 30 page 1 for a first film?",
               "answer": "You can actually finish it.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "finish",
+                    "done",
+                    "complete",
+                    "manageable",
+                    "small",
+                    "learn",
+                    "realistic",
+                    "actually"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -92848,14 +95022,40 @@
               "weight": "core",
               "prompt": "Your outdoor scene is on day 1 and rain is on the way. Name 1 backup.",
               "answer": "Move an indoor scene up.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "indoor",
+                    "inside",
+                    "swap",
+                    "move",
+                    "reschedule",
+                    "cover",
+                    "tarp",
+                    "umbrella",
+                    "different day",
+                    "rain day",
+                    "backup day"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Which should you shoot on day 1: the most or least important scene?",
               "answer": "The most important.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "The most important",
+                  "The least important"
+                ],
+                "accept": [
+                  "The most important"
+                ]
+              }
             }
           ]
         },
@@ -92872,22 +95072,76 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 2 jobs that come after you lock picture.",
-              "answer": "Sound mix and color.",
-              "answer_kind": "list"
+              "answer": "The sound mix, and color.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "sound",
+                    "mix",
+                    "audio",
+                    "music",
+                    "score",
+                    "foley"
+                  ],
+                  [
+                    "color",
+                    "grade",
+                    "grading",
+                    "titles",
+                    "credits",
+                    "export",
+                    "vfx"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why is using a famous song in your 5 minute short a risk?",
               "answer": "You don't have the rights.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "don't have the rights",
+                    "no rights",
+                    "without the rights",
+                    "rights",
+                    "license",
+                    "copyright",
+                    "permission",
+                    "blocked",
+                    "taken down",
+                    "legal",
+                    "sued",
+                    "festival"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You've been polishing 1 scene for 3 weeks. What should you do?",
               "answer": "Set a date and finish.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "finish",
+                    "deadline",
+                    "date",
+                    "stop",
+                    "move on",
+                    "let go",
+                    "lock",
+                    "ship"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -92912,14 +95166,53 @@
               "weight": "core",
               "prompt": "Why check rules before posting your film on YouTube?",
               "answer": "Some festivals need a premiere.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "premiere",
+                    "festival",
+                    "rule",
+                    "eligib",
+                    "online",
+                    "disqualif",
+                    "first"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 3 things to keep ready for a submission.",
               "answer": "A trailer, a still and a summary.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "trailer",
+                    "teaser",
+                    "clip"
+                  ],
+                  [
+                    "still",
+                    "photo",
+                    "poster",
+                    "image"
+                  ],
+                  [
+                    "summary",
+                    "synopsis",
+                    "logline",
+                    "bio",
+                    "credits",
+                    "statement",
+                    "link",
+                    "subtitles"
+                  ]
+                ],
+                "need": 3
+              }
             }
           ]
         },
@@ -92937,7 +95230,21 @@
               "weight": "warmup",
               "prompt": "10 people laughed at a moment you meant as sad. What do you do with that?",
               "answer": "Note it, and use it on your next film.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "note",
+                    "learn",
+                    "use",
+                    "next film",
+                    "lesson",
+                    "accept",
+                    "remember",
+                    "recut"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -92951,7 +95258,25 @@
               "weight": "stretch",
               "prompt": "Name 1 way to spot where a crowd of 10 lost interest.",
               "answer": "Watch when they check their phones.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "phone",
+                    "watch",
+                    "faces",
+                    "fidget",
+                    "whisper",
+                    "laugh",
+                    "look away",
+                    "ask",
+                    "survey",
+                    "shift",
+                    "cough",
+                    "bored"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -92983,7 +95308,16 @@
               "weight": "warmup",
               "prompt": "Of 2 sizes, wide or close-up, which shows the whole room?",
               "answer": "Wide.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Wide",
+                  "Close-up"
+                ],
+                "accept": [
+                  "Wide"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -92997,7 +95331,18 @@
               "weight": "stretch",
               "prompt": "A hand slides a key across a table. Name the shot.",
               "answer": "An insert, a close-up of the detail.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "insert",
+                    "close-up",
+                    "closeup",
+                    "cu",
+                    "detail"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -93022,14 +95367,43 @@
               "weight": "core",
               "prompt": "Where do a person's eyes usually go on the grid?",
               "answer": "On the top line.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "top line",
+                    "top third",
+                    "upper third",
+                    "top",
+                    "upper"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Wes Anderson centers almost everything. What feeling can that give?",
               "answer": "Order, stillness and a storybook look.",
-              "answer_kind": "list"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "order",
+                    "stillness",
+                    "storybook",
+                    "symmetr",
+                    "control",
+                    "formal",
+                    "calm",
+                    "balance",
+                    "staged",
+                    "tidy",
+                    "whimsical",
+                    "artificial"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -93054,7 +95428,21 @@
               "weight": "core",
               "prompt": "Name 1 feeling you get by leaving no looking room at all.",
               "answer": "Tension, like being trapped.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "tension",
+                    "trapped",
+                    "cramped",
+                    "uneasy",
+                    "claustro",
+                    "boxed",
+                    "confined",
+                    "anxi"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -93079,21 +95467,57 @@
               "weight": "warmup",
               "prompt": "Of 2 angles, high or low, which makes a villain look stronger?",
               "answer": "Low.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "High",
+                  "Low"
+                ],
+                "accept": [
+                  "Low"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A kid is shot from 7 feet up. What might it suggest?",
               "answer": "He's small or helpless.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "small",
+                    "helpless",
+                    "weak",
+                    "vulnerable",
+                    "powerless",
+                    "alone",
+                    "tiny"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "A boss is shot low for 3 scenes, then high when she's fired. What did the change show?",
               "answer": "She lost her power.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "lost",
+                    "power",
+                    "fall",
+                    "status",
+                    "weak",
+                    "demot",
+                    "diminish",
+                    "small"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -93111,21 +95535,69 @@
               "weight": "warmup",
               "prompt": "Name the 3 layers of a deep frame.",
               "answer": "Foreground, middle ground and background.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "foreground",
+                    "front"
+                  ],
+                  [
+                    "middle",
+                    "midground"
+                  ],
+                  [
+                    "background",
+                    "back"
+                  ]
+                ],
+                "order": true
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why pull an actor 6 feet away from a wall?",
-              "answer": "It adds depth and lets you light the two apart.",
-              "answer_kind": "sentence"
+              "answer": "It adds depth, and lets you light the two apart.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "depth",
+                    "separat",
+                    "light",
+                    "shadow",
+                    "apart",
+                    "background",
+                    "blur"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 way a background can carry story in a 10 second shot.",
               "answer": "Someone we should worry about walks past behind her.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "behind",
+                    "background",
+                    "walks",
+                    "passes",
+                    "someone",
+                    "sign",
+                    "clue",
+                    "watch",
+                    "window",
+                    "reflection",
+                    "mirror",
+                    "figure"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -93164,14 +95636,38 @@
               "weight": "core",
               "prompt": "Where does a boom usually sit for a medium shot of 2 people?",
               "answer": "Above, just out of frame.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Above, just out of frame",
+                  "Below, at waist height"
+                ],
+                "accept": [
+                  "Above, just out of frame"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why is a camera mic at 10 feet bad for dialogue?",
               "answer": "It's far off, so it picks up the room and noise.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "far",
+                    "room",
+                    "noise",
+                    "echo",
+                    "distance",
+                    "reverb",
+                    "thin",
+                    "hollow",
+                    "background"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -93196,14 +95692,42 @@
               "weight": "core",
               "prompt": "Your take hits 0 dB on 1 shout. What's the damage?",
               "answer": "It clipped, and that part can't be fixed.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "clip",
+                    "distort",
+                    "can't fix",
+                    "ruined",
+                    "lost",
+                    "permanent",
+                    "unfixable"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "You set levels while the actor reads quietly, but the scene has 2 shouts. What should you do?",
               "answer": "Set them again at full voice.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "again",
+                    "full voice",
+                    "loud",
+                    "shout",
+                    "reset",
+                    "lower",
+                    "rehearse",
+                    "peak",
+                    "headroom"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -93221,21 +95745,58 @@
               "weight": "warmup",
               "prompt": "A lav picks up scratching on 1 take. What's the likely cause?",
               "answer": "Clothes rubbing against it.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "clothes",
+                    "rub",
+                    "fabric",
+                    "cloth",
+                    "shirt",
+                    "friction",
+                    "move",
+                    "tape"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 shot where a lav beats a boom: a 100 foot wide or a tight close-up.",
               "answer": "A 100 foot wide.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "A 100-foot wide",
+                  "A tight close-up"
+                ],
+                "accept": [
+                  "A 100-foot wide"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why leave a 1 inch loop in the wire near the mic?",
               "answer": "It stops the cable tugging on the mic when they move.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "tug",
+                    "pull",
+                    "strain",
+                    "stress",
+                    "relief",
+                    "move",
+                    "slack",
+                    "cable"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -93253,21 +95814,116 @@
               "weight": "warmup",
               "prompt": "Name 3 room sounds to switch off before you roll.",
               "answer": "A fridge, the air conditioner and a fan.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "fridge",
+                    "refrigerator",
+                    "air",
+                    "ac",
+                    "hvac",
+                    "fan",
+                    "heater",
+                    "clock",
+                    "tv",
+                    "computer",
+                    "phone",
+                    "dishwasher",
+                    "washer",
+                    "dryer",
+                    "light",
+                    "buzz",
+                    "freezer"
+                  ],
+                  [
+                    "fridge",
+                    "refrigerator",
+                    "air",
+                    "ac",
+                    "hvac",
+                    "fan",
+                    "heater",
+                    "clock",
+                    "tv",
+                    "computer",
+                    "phone",
+                    "dishwasher",
+                    "washer",
+                    "dryer",
+                    "light",
+                    "buzz",
+                    "freezer"
+                  ],
+                  [
+                    "fridge",
+                    "refrigerator",
+                    "air",
+                    "ac",
+                    "hvac",
+                    "fan",
+                    "heater",
+                    "clock",
+                    "tv",
+                    "computer",
+                    "phone",
+                    "dishwasher",
+                    "washer",
+                    "dryer",
+                    "light",
+                    "buzz",
+                    "freezer"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why put your car keys on a fridge you unplugged for 1 take?",
               "answer": "So you won't leave without turning it back on.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "remember",
+                    "won't forget",
+                    "don't forget",
+                    "won't leave",
+                    "can't leave",
+                    "turn it back",
+                    "plug back",
+                    "spoil",
+                    "food",
+                    "reminder"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "A bare room has lots of echo. Name 1 cheap fix.",
               "answer": "Hang blankets off camera.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "blanket",
+                    "duvet",
+                    "quilt",
+                    "towel",
+                    "mattress",
+                    "pillow",
+                    "rug",
+                    "curtain",
+                    "cushion",
+                    "foam",
+                    "coat"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -93299,7 +95955,21 @@
               "weight": "stretch",
               "prompt": "What are 'wild lines' for a line ruined by a plane at 2:00?",
               "answer": "Sound recorded with no picture, to replace it.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "no picture",
+                    "audio only",
+                    "sound only",
+                    "without picture",
+                    "replace",
+                    "redo",
+                    "record again",
+                    "re-record"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -93331,21 +96001,65 @@
               "weight": "warmup",
               "prompt": "Pick the want in 'Mia hopes life gets better' or 'Mia must win $500 by Friday'.",
               "answer": "Mia must win $500 by Friday.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Mia hopes life gets better",
+                  "Mia must win $500 by Friday"
+                ],
+                "accept": [
+                  "Mia must win $500 by Friday"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A 2 minute short has a boy who 'feels lonely'. Name 1 change that makes it a want.",
               "answer": "Give him a goal he can act on, like asking one kid to play.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "goal",
+                    "want",
+                    "act",
+                    "specific",
+                    "concrete",
+                    "try",
+                    "ask",
+                    "make",
+                    "win",
+                    "find",
+                    "get",
+                    "task",
+                    "plan"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Rewrite 'Tom is sad about Dad' as a want with a deadline of 1 day.",
               "answer": "Tom must fix Dad's old radio before the funeral tomorrow.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "must",
+                    "has to",
+                    "needs to",
+                    "wants to",
+                    "tries to",
+                    "before",
+                    "by",
+                    "tomorrow",
+                    "tonight",
+                    "today"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -93363,21 +96077,59 @@
               "weight": "warmup",
               "prompt": "Is 'it rains' or 'her brother sold the bike' the stronger obstacle for Ana at 5 pm?",
               "answer": "Her brother sold the bike.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "It rains",
+                  "Her brother sold the bike"
+                ],
+                "accept": [
+                  "Her brother sold the bike"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why does an obstacle with a person in it usually beat 1 more accident?",
               "answer": "A person pushes back and makes the character choose.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "push back",
+                    "choose",
+                    "choice",
+                    "react",
+                    "oppos",
+                    "conflict",
+                    "wants",
+                    "active",
+                    "person"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Ana's friend offers the bike if Ana lies to her mom. What does this obstacle force?",
               "answer": "A choice between the bike and her honesty.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "choice",
+                    "choose",
+                    "decide",
+                    "honest",
+                    "lie",
+                    "dilemma",
+                    "conscience",
+                    "mom"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -93402,14 +96154,38 @@
               "weight": "core",
               "prompt": "A girl finds a lost dog at 0:20 and returns it at 0:40 with no trouble. Which act is missing?",
               "answer": "The confrontation, the middle.",
-              "answer_kind": "phrase"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "The setup",
+                  "The confrontation",
+                  "The resolution"
+                ],
+                "accept": [
+                  "The confrontation"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your ending at 2:50 answers a question never raised before 2:00. What should you fix?",
               "answer": "Set up that question early in the first act.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "set up",
+                    "setup",
+                    "earlier",
+                    "early",
+                    "first act",
+                    "plant",
+                    "raise",
+                    "introduce"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -93427,21 +96203,77 @@
               "weight": "warmup",
               "prompt": "Show 'he forgives his sister' in 1 action, with no dialogue.",
               "answer": "He sets a second plate at the table for her.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "he",
+                    "sets",
+                    "hands",
+                    "gives",
+                    "hugs",
+                    "opens",
+                    "calls",
+                    "returns",
+                    "invites",
+                    "pours",
+                    "plate",
+                    "door",
+                    "seat",
+                    "cup",
+                    "chair",
+                    "key",
+                    "place"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A coat stays on its hook in shot 1 and is worn in shot 5. What can this show?",
               "answer": "She finally feels ready to leave.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "ready",
+                    "leave",
+                    "change",
+                    "decid",
+                    "finally",
+                    "courage",
+                    "go out",
+                    "move on",
+                    "confiden"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Your last line is 'I've learned to trust people.' Replace it with 1 image.",
               "answer": "She hands her house key to the neighbor.",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "hands",
+                    "gives",
+                    "opens",
+                    "leaves",
+                    "unlocks",
+                    "lets",
+                    "shares",
+                    "lends",
+                    "key",
+                    "door",
+                    "hug",
+                    "smile"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -93459,7 +96291,29 @@
               "weight": "warmup",
               "prompt": "Name the 3 parts of a logline.",
               "answer": "Character, goal and obstacle.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "character",
+                    "hero",
+                    "protagonist",
+                    "who"
+                  ],
+                  [
+                    "goal",
+                    "want",
+                    "desire"
+                  ],
+                  [
+                    "obstacle",
+                    "conflict",
+                    "stakes",
+                    "problem"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
@@ -93473,7 +96327,28 @@
               "weight": "stretch",
               "prompt": "Write a logline under 30 words for a boy and a stolen bike.",
               "answer": "A 12-year-old has one day to get his stolen bike back from the older kids who run his block.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "bike"
+                  ],
+                  [
+                    "must",
+                    "has",
+                    "wants",
+                    "tries",
+                    "needs",
+                    "get",
+                    "steal",
+                    "win",
+                    "back",
+                    "before",
+                    "day"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         }
@@ -93505,14 +96380,36 @@
               "weight": "warmup",
               "prompt": "Of 2 transitions, a cut or a dissolve, which suggests time passing?",
               "answer": "A dissolve.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "A cut",
+                  "A dissolve"
+                ],
+                "accept": [
+                  "A dissolve"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A fade to black at 7:00 of a 15 minute film signals what?",
               "answer": "The end of a chapter.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "chapter",
+                    "end",
+                    "section",
+                    "act",
+                    "break",
+                    "pause",
+                    "shift"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -93544,14 +96441,40 @@
               "weight": "core",
               "prompt": "For a coin to match a moon, where must they sit in the 2 frames?",
               "answer": "In the same place in frame.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "same place",
+                    "same spot",
+                    "same position",
+                    "line up",
+                    "match",
+                    "center"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "What does a match cut tell us beyond the 2 shapes?",
               "answer": "It links the two things in meaning.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "link",
+                    "meaning",
+                    "connect",
+                    "idea",
+                    "theme",
+                    "relation",
+                    "compare",
+                    "metaphor"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -93583,7 +96506,20 @@
               "weight": "stretch",
               "prompt": "Why do J and L cuts help a 2 person talk?",
               "answer": "They hide the cuts and make it flow.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "flow",
+                    "hide",
+                    "smooth",
+                    "natural",
+                    "overlap",
+                    "seamless",
+                    "lead"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -93601,7 +96537,19 @@
               "weight": "warmup",
               "prompt": "'Who stole it?' is followed by a shot of Max counting cash. What's the link?",
               "answer": "A question and its answer.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "question",
+                    "answer",
+                    "answers",
+                    "reveal",
+                    "who did it",
+                    "max"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -93615,7 +96563,20 @@
               "weight": "stretch",
               "prompt": "Why might a 5 second building shot hurt a fast 90 minute thriller?",
               "answer": "It slows things and adds nothing.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "slow",
+                    "pace",
+                    "nothing",
+                    "momentum",
+                    "drag",
+                    "unnecessary",
+                    "stall"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -93633,21 +96594,61 @@
               "weight": "warmup",
               "prompt": "What ends 'The Searchers' from 1956?",
               "answer": "A door closing on the hero, seen from inside.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "door",
+                    "doorway",
+                    "closing",
+                    "frame",
+                    "inside"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A film opens on an empty chair and ends with someone in it. What does this do?",
               "answer": "It shows change by mirroring.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "change",
+                    "mirror",
+                    "bookend",
+                    "echo",
+                    "contrast",
+                    "arc",
+                    "full circle",
+                    "growth"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why plan the first shot of a 5 minute film with care?",
               "answer": "It teaches people how to watch the rest.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "teach",
+                    "how to watch",
+                    "tone",
+                    "expect",
+                    "set",
+                    "rules",
+                    "promise",
+                    "first impression",
+                    "style"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -93679,7 +96680,23 @@
               "weight": "warmup",
               "prompt": "3 of your shorts feature an empty house. What might that point to?",
               "answer": "A theme you keep coming back to.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "theme",
+                    "interest",
+                    "obsess",
+                    "recurring",
+                    "pattern",
+                    "voice",
+                    "keep coming",
+                    "return",
+                    "mean something",
+                    "personal"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -93718,14 +96735,42 @@
               "weight": "core",
               "prompt": "Why watch 3 films and not 1 when studying a director?",
               "answer": "You can see what stays the same.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "pattern",
+                    "same",
+                    "consisten",
+                    "style",
+                    "habit",
+                    "choices",
+                    "common",
+                    "repeat"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "What's the danger of copying Tarantino's dialogue in your first 3 films?",
-              "answer": "You'll sound like him and not like you.",
-              "answer_kind": "phrase"
+              "answer": "You'll sound like him, and not like you.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "sound like him",
+                    "copy",
+                    "imitat",
+                    "own voice",
+                    "not like you",
+                    "derivative",
+                    "lose",
+                    "knockoff"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -93749,15 +96794,43 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Why try 1 idea in 4 small films and not 1 big 1?",
-              "answer": "You learn faster and you actually finish.",
-              "answer_kind": "phrase"
+              "answer": "You learn faster, and you actually finish.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "learn",
+                    "faster",
+                    "finish",
+                    "practice",
+                    "experiment",
+                    "feedback",
+                    "more",
+                    "iterate"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 risk of waiting 5 years to make your 1 big film.",
               "answer": "It may never get made.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "never",
+                    "not made",
+                    "stall",
+                    "never get made",
+                    "lose",
+                    "skill",
+                    "forget",
+                    "moment"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -93789,7 +96862,20 @@
               "weight": "stretch",
               "prompt": "Why label your role on each of 5 clips?",
               "answer": "So people know what you actually did.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "know",
+                    "credit",
+                    "clear",
+                    "what you did",
+                    "role",
+                    "honest",
+                    "actually"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -93821,7 +96907,23 @@
               "weight": "stretch",
               "prompt": "Name 1 reason to find 2 friends to make films with.",
               "answer": "They keep you going and share the work.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "going",
+                    "share",
+                    "motivat",
+                    "help",
+                    "support",
+                    "work",
+                    "crew",
+                    "feedback",
+                    "accountab",
+                    "fun"
+                  ]
+                ]
+              }
             }
           ]
         }
