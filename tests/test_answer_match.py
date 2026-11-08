@@ -210,3 +210,10 @@ def test_no_marking_in_the_library_takes_the_next_problems_answer():
             if skill_check.grade_as(kind, problem['answer'], theirs, grading, problem['prompt']):
                 loose.append((node_id, step['title'], problem['slot'], theirs[:60]))
     assert loose == []
+
+
+def test_accented_words_stay_whole_and_match_without_accents():
+    assert match.tokens('¿Dónde está la estación?') == match.tokens('donde esta la estacion')
+    grading = {'keys': [['estacion'], ['donde']]}
+    assert match.grade('phrase', '¿Dónde está la estación?', 'Donde esta la estacion', grading) is True
+    assert match.grade('phrase', '¿Dónde está la estación?', 'Dónde está el banco', grading) is False

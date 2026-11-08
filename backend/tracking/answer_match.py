@@ -46,6 +46,7 @@ import cmath
 import math
 import random
 import re
+import unicodedata
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Set, Tuple
 
 from backend.tracking.mathtext import to_plain, typed_plain  # noqa: F401 (to_plain is used by the tests too)
@@ -118,8 +119,21 @@ _INFINITY = ((re.compile(r'(?:-|minus |negative )\s*(?:∞|infinity\b|inf\b)'), 
 _NOTES = ((re.compile(r'\b([a-g]) ?flat\b'), r'\1b'), (re.compile(r'\b([a-g]) ?sharp\b'), r'\1#'))
 
 
+_LATIN_SPECIAL = {'ß': 'ss', 'æ': 'ae', 'œ': 'oe', 'ø': 'o', 'ł': 'l', 'đ': 'd', 'ð': 'd', 'þ': 'th'}
+
+
+def _latin_letter(mark: str) -> str:
+    if mark in _LATIN_SPECIAL:
+        return _LATIN_SPECIAL[mark]
+    return ''.join(part for part in unicodedata.normalize('NFKD', mark) if not unicodedata.combining(part))
+
+
 def _fold(text: str) -> str:
     text = str(text or '').translate(_QUOTES).lower()
+    # Accented Latin letters lose their accents, so "estación" is one word and
+    # matches "estacion" typed without them. Only the Latin range, so ≠ and
+    # the Greek letters below keep their meaning.
+    text = re.sub(r'[\u00c0-\u024f]', lambda found: _latin_letter(found.group(0)), text)
     text = text.replace('>=', '≥').replace('<=', '≤').replace('!=', '≠').replace('=<', '≤').replace('=>', '≥')
     text = text.replace('²', '^2').replace('³', '^3')
     for mark, word in (('∀', ' for all '), ('∃', ' there exists '), ('¬', ' not '), ('∧', ' and '),

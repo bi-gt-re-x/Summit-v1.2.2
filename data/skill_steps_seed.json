@@ -87028,7 +87028,12 @@
               "weight": "core",
               "prompt": "Correct the German 'Ich sehe der Hund.'",
               "answer": "Ich sehe den Hund.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "Ich sehe den Hund."
+                ]
+              }
             },
             {
               "slot": 3,
@@ -87067,21 +87072,82 @@
               "weight": "warmup",
               "prompt": "Reply to 'Me gusta el fútbol' with a follow-up question in Spanish.",
               "answer": "¿Cuál es tu equipo favorito?",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "cual",
+                    "que",
+                    "quien",
+                    "donde",
+                    "cuando",
+                    "como",
+                    "por que",
+                    "te gusta",
+                    "juegas",
+                    "equipo",
+                    "ves",
+                    "favorito"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "What does '¿Y tú?' do in a conversation?",
               "answer": "It turns the question back to the other person.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "turn",
+                    "back",
+                    "ask",
+                    "other person",
+                    "you",
+                    "return",
+                    "share",
+                    "keep going"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 Spanish question words.",
               "answer": "Qué and dónde.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "que",
+                    "donde",
+                    "cuando",
+                    "como",
+                    "quien",
+                    "cual",
+                    "por que",
+                    "cuanto",
+                    "cuantos",
+                    "adonde"
+                  ],
+                  [
+                    "que",
+                    "donde",
+                    "cuando",
+                    "como",
+                    "quien",
+                    "cual",
+                    "por que",
+                    "cuanto",
+                    "cuantos",
+                    "adonde"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -87138,14 +87204,35 @@
               "weight": "core",
               "prompt": "What does '¿Me lo puedes repetir?' ask?",
               "answer": "Can you repeat it for me?",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "repeat",
+                    "say it again",
+                    "again"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Say 'I don't know that word' in Spanish.",
               "answer": "No conozco esa palabra.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "no conozco esa palabra",
+                    "no conozco la palabra",
+                    "no conozco",
+                    "no se esa palabra",
+                    "no entiendo esa palabra",
+                    "no se la palabra"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -87195,21 +87282,65 @@
               "weight": "warmup",
               "prompt": "After a talk you note 5 words you lacked. When should you review them?",
               "answer": "Before the next conversation, ideally within 24 hours.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "before the next",
+                    "24 hours",
+                    "soon",
+                    "today",
+                    "tomorrow",
+                    "right away",
+                    "within a day",
+                    "next conversation"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "You made the same 'ser' or 'estar' error 3 times. What should you do?",
               "answer": "Drill that rule before the next session.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "drill",
+                    "practice",
+                    "review",
+                    "study",
+                    "rule",
+                    "exercise"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 things to note in the 5 minutes after a conversation.",
-              "answer": "Words you lacked and errors you noticed.",
-              "answer_kind": "list"
+              "answer": "Words you lacked, and errors you noticed.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "word",
+                    "vocabulary",
+                    "lacked",
+                    "missing",
+                    "didn't know"
+                  ],
+                  [
+                    "error",
+                    "mistake",
+                    "grammar",
+                    "correction"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         }
@@ -87241,7 +87372,16 @@
               "weight": "warmup",
               "prompt": "Which should you learn first in Spanish: 'el' or 'pulpo'?",
               "answer": "El",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "el",
+                  "pulpo"
+                ],
+                "accept": [
+                  "el"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -87280,14 +87420,32 @@
               "weight": "core",
               "prompt": "Is 'día' masculine or feminine?",
               "answer": "Masculine: el día.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Masculine",
+                  "Feminine"
+                ],
+                "accept": [
+                  "Masculine"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Is 'mano' masculine or feminine?",
               "answer": "Feminine: la mano.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Masculine",
+                  "Feminine"
+                ],
+                "accept": [
+                  "Feminine"
+                ]
+              }
             }
           ]
         },
@@ -87305,7 +87463,75 @@
               "weight": "warmup",
               "prompt": "Name 3 Spanish family words.",
               "answer": "Madre, padre and hermano.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "madre",
+                    "mama",
+                    "padre",
+                    "papa",
+                    "hermano",
+                    "hermana",
+                    "hijo",
+                    "hija",
+                    "abuelo",
+                    "abuela",
+                    "tio",
+                    "tia",
+                    "primo",
+                    "prima",
+                    "esposo",
+                    "esposa",
+                    "nieto",
+                    "nieta",
+                    "familia"
+                  ],
+                  [
+                    "madre",
+                    "mama",
+                    "padre",
+                    "papa",
+                    "hermano",
+                    "hermana",
+                    "hijo",
+                    "hija",
+                    "abuelo",
+                    "abuela",
+                    "tio",
+                    "tia",
+                    "primo",
+                    "prima",
+                    "esposo",
+                    "esposa",
+                    "nieto",
+                    "nieta",
+                    "familia"
+                  ],
+                  [
+                    "madre",
+                    "mama",
+                    "padre",
+                    "papa",
+                    "hermano",
+                    "hermana",
+                    "hijo",
+                    "hija",
+                    "abuelo",
+                    "abuela",
+                    "tio",
+                    "tia",
+                    "primo",
+                    "prima",
+                    "esposo",
+                    "esposa",
+                    "nieto",
+                    "nieta",
+                    "familia"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
@@ -87318,8 +87544,19 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Which word does not fit: 'manzana', 'pan', 'coche', 'queso'?",
-              "answer": "Coche, which means car.",
-              "answer_kind": "phrase"
+              "answer": "coche, which means car. The rest are food.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "manzana",
+                  "pan",
+                  "coche",
+                  "queso"
+                ],
+                "accept": [
+                  "coche"
+                ]
+              }
             }
           ]
         },
@@ -87351,7 +87588,16 @@
               "weight": "stretch",
               "prompt": "Does 'librería' mean library or bookstore?",
               "answer": "Bookstore",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Library",
+                  "Bookstore"
+                ],
+                "accept": [
+                  "Bookstore"
+                ]
+              }
             }
           ]
         },
@@ -87375,8 +87621,16 @@
               "slot": 2,
               "weight": "core",
               "prompt": "What time is 'las tres y media'?",
-              "answer": "3:30",
-              "answer_kind": "phrase"
+              "answer": "3:30.",
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "3:30",
+                  "three thirty",
+                  "half past three",
+                  "3.30"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -87422,14 +87676,37 @@
               "weight": "core",
               "prompt": "What is 'la sobremesa'?",
               "answer": "Time spent talking at the table after a meal.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "after",
+                    "talk",
+                    "chat",
+                    "linger",
+                    "table",
+                    "meal",
+                    "conversation",
+                    "stay"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Is dinner in Spain usually closer to 6 pm or 9 pm?",
-              "answer": "9 pm or later.",
-              "answer_kind": "phrase"
+              "answer": "Around 9 pm or later.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Around 6 pm",
+                  "Around 9 pm or later"
+                ],
+                "accept": [
+                  "Around 9 pm or later"
+                ]
+              }
             }
           ]
         },
@@ -87479,21 +87756,68 @@
               "weight": "warmup",
               "prompt": "When is Día de los Muertos?",
               "answer": "November 1 and 2.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "november",
+                    "nov"
+                  ],
+                  [
+                    "1",
+                    "2",
+                    "first",
+                    "second"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "What is celebrated in Spain on January 6?",
-              "answer": "Día de Reyes (Three Kings' Day).",
-              "answer_kind": "phrase"
+              "answer": "Día de Reyes, Three Kings' Day.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "reyes",
+                    "three kings",
+                    "epiphany",
+                    "magi",
+                    "wise men"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "What is an 'ofrenda' for Día de los Muertos?",
               "answer": "An altar with offerings for the dead.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "altar",
+                    "offering",
+                    "shrine",
+                    "display",
+                    "table"
+                  ],
+                  [
+                    "dead",
+                    "ancestor",
+                    "loved ones",
+                    "departed",
+                    "died",
+                    "remember",
+                    "honor"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -87511,14 +87835,30 @@
               "weight": "warmup",
               "prompt": "Is 'juice' in Spain 'jugo' or 'zumo'?",
               "answer": "Zumo",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "jugo",
+                  "zumo"
+                ],
+                "accept": [
+                  "zumo"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "What is 'computer' in Spain?",
-              "answer": "Ordenador (computadora in Latin America).",
-              "answer_kind": "phrase"
+              "answer": "Ordenador, and computadora in Latin America.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "ordenador"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -87557,7 +87897,20 @@
               "weight": "stretch",
               "prompt": "What are 'tapas' in Spain?",
               "answer": "Small dishes shared with drinks.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "small",
+                    "dishes",
+                    "plates",
+                    "snacks",
+                    "bites",
+                    "appetizer",
+                    "portions"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -87596,7 +87949,20 @@
               "weight": "core",
               "prompt": "Why shrink the talk from 4 to 3 to 2 minutes?",
               "answer": "To push speed and smoothness.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "speed",
+                    "smooth",
+                    "fluen",
+                    "faster",
+                    "pressure",
+                    "efficien",
+                    "automatic"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -87620,22 +87986,82 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 2 Spanish chunks worth automating.",
-              "answer": "'Creo que' and 'Lo que pasa es que'.",
-              "answer_kind": "list"
+              "answer": "Creo que, and lo que pasa es que.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "creo que",
+                    "lo que pasa",
+                    "o sea",
+                    "es que",
+                    "me parece",
+                    "pues",
+                    "bueno",
+                    "la verdad",
+                    "por eso",
+                    "a ver",
+                    "tengo que",
+                    "quiero decir",
+                    "sin embargo"
+                  ],
+                  [
+                    "creo que",
+                    "lo que pasa",
+                    "o sea",
+                    "es que",
+                    "me parece",
+                    "pues",
+                    "bueno",
+                    "la verdad",
+                    "por eso",
+                    "a ver",
+                    "tengo que",
+                    "quiero decir",
+                    "sin embargo"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "What does 'lo que pasa es que' mean?",
               "answer": "The thing is that.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "the thing is",
+                    "what happens is",
+                    "the thing",
+                    "the problem is",
+                    "the point is"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why learn 'creo que' as 1 chunk?",
               "answer": "You say it without building it word by word.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "without building",
+                    "automatic",
+                    "one chunk",
+                    "quick",
+                    "fast",
+                    "word by word",
+                    "fluent",
+                    "ready"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -87692,14 +88118,44 @@
               "weight": "core",
               "prompt": "Say 'Now I'm leaving the house' in Spanish.",
               "answer": "Ahora salgo de casa.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "ahora"
+                  ],
+                  [
+                    "salgo",
+                    "me voy",
+                    "estoy saliendo"
+                  ],
+                  [
+                    "casa"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why narrate daily actions in Spanish in your head?",
-              "answer": "It is practice without a partner and finds gaps fast.",
-              "answer_kind": "sentence"
+              "answer": "It's practice without a partner, and it finds gaps fast.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "practice",
+                    "no partner",
+                    "without a partner",
+                    "gaps",
+                    "alone",
+                    "any time",
+                    "daily",
+                    "free"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -87723,15 +88179,38 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 numbers you can track for fluency.",
-              "answer": "Words per minute and pauses per minute.",
-              "answer_kind": "list"
+              "answer": "Words per minute, and pauses per minute.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "words per minute",
+                    "wpm",
+                    "speed",
+                    "words"
+                  ],
+                  [
+                    "pause",
+                    "hesitation",
+                    "filler",
+                    "error",
+                    "um"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Which CEFR level describes speaking with 'a degree of fluency and spontaneity'?",
               "answer": "B2",
-              "answer_kind": "phrase"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "B2"
+                ]
+              }
             }
           ]
         }
@@ -87777,7 +88256,13 @@
               "weight": "stretch",
               "prompt": "Make 'Yo hablo inglés' negative.",
               "answer": "Yo no hablo inglés.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "Yo no hablo inglés.",
+                  "No hablo inglés."
+                ]
+              }
             }
           ]
         },
@@ -87825,23 +88310,50 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Fill: 'Yo ___ estudiante' (ser or estar).",
+              "prompt": "Fill: \"Yo ___ estudiante.\" Use ser or estar.",
               "answer": "Soy",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "soy",
+                  "estoy"
+                ],
+                "accept": [
+                  "soy"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Fill: 'Ella ___ cansada' (ser or estar).",
+              "prompt": "Fill: \"Ella ___ cansada.\" Use ser or estar.",
               "answer": "Está",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "es",
+                  "está"
+                ],
+                "accept": [
+                  "está"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Fill: 'Madrid ___ en España' (ser or estar).",
+              "prompt": "Fill: \"Madrid ___ en España.\" Use ser or estar.",
               "answer": "Está",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "es",
+                  "está"
+                ],
+                "accept": [
+                  "está"
+                ]
+              }
             }
           ]
         },
@@ -87891,21 +88403,50 @@
               "weight": "warmup",
               "prompt": "What does '¿Dónde vives?' mean?",
               "answer": "Where do you live?",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "where"
+                  ],
+                  [
+                    "live"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Translate 'When is the party?' into Spanish.",
               "answer": "¿Cuándo es la fiesta?",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "¿Cuándo es la fiesta?",
+                  "Cuando es la fiesta"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Which mark opens a Spanish question?",
-              "answer": "¿ (an upside-down question mark).",
-              "answer_kind": "phrase"
+              "answer": "¿, an upside-down question mark.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "upside-down",
+                    "upside down",
+                    "inverted",
+                    "opening question mark",
+                    "backwards question",
+                    "flipped"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -87937,21 +88478,48 @@
               "weight": "warmup",
               "prompt": "Spanish 'make a decision': 'tomar' or 'hacer' una decisión?",
               "answer": "Tomar",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "tomar",
+                  "hacer"
+                ],
+                "accept": [
+                  "tomar"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Spanish 'pay attention': 'prestar' or 'pagar' atención?",
               "answer": "Prestar",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "prestar",
+                  "pagar"
+                ],
+                "accept": [
+                  "prestar"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Which verb goes with 'una foto' in Spanish: 'sacar' or 'poner'?",
-              "answer": "Sacar (tomar also works).",
-              "answer_kind": "phrase"
+              "answer": "sacar, and tomar works too.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "sacar",
+                  "poner"
+                ],
+                "accept": [
+                  "sacar"
+                ]
+              }
             }
           ]
         },
@@ -87976,14 +88544,39 @@
               "weight": "core",
               "prompt": "What does 'tomar el pelo' mean?",
               "answer": "To pull someone's leg.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "pull someone's leg",
+                    "pull your leg",
+                    "pulling",
+                    "tease",
+                    "joke",
+                    "kid",
+                    "fool",
+                    "leg"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "What does 'costar un ojo de la cara' mean?",
               "answer": "To cost an arm and a leg.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "arm and a leg",
+                    "expensive",
+                    "costly",
+                    "a fortune",
+                    "lot of money"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88001,7 +88594,14 @@
               "weight": "warmup",
               "prompt": "What does 'echar de menos' mean?",
               "answer": "To miss someone or something.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "miss"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -88015,7 +88615,19 @@
               "weight": "stretch",
               "prompt": "What does 'tener ganas de' mean?",
               "answer": "To feel like doing something.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "feel like",
+                    "want to",
+                    "in the mood",
+                    "desire",
+                    "wish",
+                    "look forward"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88047,7 +88659,20 @@
               "weight": "stretch",
               "prompt": "What does 'qué va' mean?",
               "answer": "No way, or not at all.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "no way",
+                    "not at all",
+                    "come on",
+                    "nonsense",
+                    "of course not",
+                    "nah",
+                    "not really"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88079,7 +88704,22 @@
               "weight": "stretch",
               "prompt": "Why check whether an idiom is used in Mexico or Spain?",
               "answer": "Many idioms are regional.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "regional",
+                    "region",
+                    "country",
+                    "differ",
+                    "vary",
+                    "local",
+                    "mean something",
+                    "offensive",
+                    "rude"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -88111,7 +88751,17 @@
               "weight": "warmup",
               "prompt": "You understand 50% of a show. Is it too easy, about right or too hard?",
               "answer": "Too hard",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Too easy",
+                  "About right",
+                  "Too hard"
+                ],
+                "accept": [
+                  "Too hard"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -88156,8 +88806,21 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why keep a log of input hours over 3 months?",
-              "answer": "It shows progress and keeps the habit going.",
-              "answer_kind": "phrase"
+              "answer": "It shows progress, and keeps the habit going.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "progress",
+                    "habit",
+                    "motivat",
+                    "track",
+                    "see",
+                    "consisten",
+                    "goal"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88174,22 +88837,63 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 1 kind of Spanish video where pictures carry the meaning.",
-              "answer": "A cooking video (or a children's cartoon).",
-              "answer_kind": "phrase"
+              "answer": "A cooking video, or a children's cartoon.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "cooking",
+                    "cartoon",
+                    "children",
+                    "kids",
+                    "vlog",
+                    "travel",
+                    "nature",
+                    "sports",
+                    "crafts",
+                    "tutorial",
+                    "unboxing",
+                    "game"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Should a B1 learner use Spanish or English subtitles?",
               "answer": "Spanish subtitles.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Spanish subtitles",
+                  "English subtitles"
+                ],
+                "accept": [
+                  "Spanish subtitles"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why do pictures help a beginner follow a Spanish cartoon?",
-              "answer": "They show the meaning so you can link words to it.",
-              "answer_kind": "sentence"
+              "answer": "They show the meaning, so you can link words to it.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "meaning",
+                    "link",
+                    "show",
+                    "context",
+                    "visual",
+                    "understand",
+                    "guess",
+                    "connect"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88214,7 +88918,20 @@
               "weight": "core",
               "prompt": "Why rewatch the same Spanish episode 3 times?",
               "answer": "Each pass you understand more and catch new words.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "more",
+                    "catch",
+                    "understand",
+                    "new words",
+                    "familiar",
+                    "each time",
+                    "deeper"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -88246,14 +88963,44 @@
               "weight": "core",
               "prompt": "Why read along while listening to a French audiobook?",
               "answer": "It links spellings to sounds.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "spelling",
+                    "sound",
+                    "link",
+                    "connect",
+                    "see",
+                    "match",
+                    "pronunc",
+                    "written"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 Spanish source with both audio and a transcript.",
               "answer": "A podcast that publishes transcripts.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "podcast",
+                    "transcript",
+                    "audiobook",
+                    "news in slow",
+                    "duolingo",
+                    "lyrics",
+                    "ted",
+                    "youtube",
+                    "subtitle",
+                    "radio"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -88298,8 +89045,33 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 clues to the gist of a clip besides the words in it.",
-              "answer": "Tone of voice and background sounds.",
-              "answer_kind": "list"
+              "answer": "Tone of voice, and background sounds.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "tone",
+                    "voice",
+                    "intonation",
+                    "emotion"
+                  ],
+                  [
+                    "background",
+                    "sound",
+                    "noise",
+                    "music",
+                    "setting",
+                    "image",
+                    "picture",
+                    "body",
+                    "gesture",
+                    "face",
+                    "context",
+                    "speaker"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -88316,8 +89088,16 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "You hear 'a las ocho y cuarto'. What time is it?",
-              "answer": "8:15",
-              "answer_kind": "phrase"
+              "answer": "8:15.",
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "8:15",
+                  "quarter past eight",
+                  "eight fifteen",
+                  "8.15"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -88355,15 +89135,51 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Why does writing every word of a 30-second clip train listening?",
-              "answer": "It makes you catch each word, including small ones you would skip.",
-              "answer_kind": "sentence"
+              "answer": "It makes you catch each word, including small ones you'd skip.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "every word",
+                    "each word",
+                    "small words",
+                    "catch",
+                    "detail",
+                    "skip",
+                    "notice",
+                    "precise",
+                    "gaps"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 kind of word learners often miss in Spanish dictation.",
-              "answer": "Articles like 'el' or 'la' (also short words like 'de').",
-              "answer_kind": "sentence"
+              "answer": "Articles like el or la, and short words like de.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "article",
+                    "el",
+                    "la",
+                    "los",
+                    "las",
+                    "de",
+                    "a",
+                    "un",
+                    "una",
+                    "preposition",
+                    "short",
+                    "small",
+                    "pronoun",
+                    "lo",
+                    "se"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88380,22 +89196,61 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Why can 'mis amigos' sound like 'misamigos'?",
-              "answer": "The final 's' links to the next vowel.",
-              "answer_kind": "phrase"
+              "answer": "The final s links to the next vowel.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "link",
+                    "linking",
+                    "joins",
+                    "blend",
+                    "connect",
+                    "vowel",
+                    "run together",
+                    "liaison"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "In 'de esto', which 2 vowels blend?",
-              "answer": "The 2 'e' sounds.",
-              "answer_kind": "phrase"
+              "answer": "The 2 e sounds.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "e"
+                  ],
+                  [
+                    "e",
+                    "both"
+                  ]
+                ],
+                "need": 1
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "How might 'va a ir' sound in fast Spanish?",
-              "answer": "Like 'vair', with the vowels merged.",
-              "answer_kind": "phrase"
+              "answer": "Like \"vair,\" with the vowels merged.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "vair",
+                    "vay",
+                    "bair",
+                    "merge",
+                    "blend",
+                    "one word",
+                    "run together"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88420,7 +89275,19 @@
               "weight": "core",
               "prompt": "You understand 90% at 0.75 speed. What should you try next?",
               "answer": "Normal speed, 1.0.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "normal",
+                    "1.0",
+                    "full speed",
+                    "faster",
+                    "regular",
+                    "native speed"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -88465,8 +89332,45 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 low-effort ways to keep up Spanish.",
-              "answer": "A podcast on your commute and a show in the evening.",
-              "answer_kind": "list"
+              "answer": "A podcast on your commute, and a show in the evening.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "podcast",
+                    "show",
+                    "series",
+                    "music",
+                    "song",
+                    "phone",
+                    "news",
+                    "app",
+                    "book",
+                    "radio",
+                    "youtube",
+                    "commute",
+                    "movie",
+                    "film"
+                  ],
+                  [
+                    "podcast",
+                    "show",
+                    "series",
+                    "music",
+                    "song",
+                    "phone",
+                    "news",
+                    "app",
+                    "book",
+                    "radio",
+                    "youtube",
+                    "commute",
+                    "movie",
+                    "film"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -88497,15 +89401,47 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 way to keep speaking without traveling to Spain.",
-              "answer": "A weekly online tutor or exchange partner.",
-              "answer_kind": "phrase"
+              "answer": "A weekly online tutor, or an exchange partner.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "tutor",
+                    "exchange",
+                    "partner",
+                    "online",
+                    "italki",
+                    "meetup",
+                    "video call",
+                    "friend",
+                    "club",
+                    "zoom",
+                    "class",
+                    "community"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "After 6 months without speaking Spanish, what should your 1st session focus on?",
-              "answer": "Easy topics to rebuild confidence and speed.",
-              "answer_kind": "phrase"
+              "answer": "Easy topics, to rebuild confidence and speed.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "easy",
+                    "simple",
+                    "confiden",
+                    "familiar",
+                    "comfortable",
+                    "rebuild",
+                    "warm",
+                    "basic"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88537,7 +89473,21 @@
               "weight": "stretch",
               "prompt": "Name 1 sign a Spanish word is fading.",
               "answer": "You hesitate before recalling it.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "hesitat",
+                    "slow",
+                    "pause",
+                    "reach",
+                    "forget",
+                    "tip of",
+                    "struggle",
+                    "take longer"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88554,15 +89504,52 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 1 real weekly use for Spanish outside class.",
-              "answer": "Reading the news or volunteering.",
-              "answer_kind": "phrase"
+              "answer": "Reading the news, or volunteering.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "news",
+                    "volunteer",
+                    "cook",
+                    "recipe",
+                    "call",
+                    "friend",
+                    "family",
+                    "church",
+                    "club",
+                    "work",
+                    "customer",
+                    "shopping",
+                    "podcast",
+                    "book",
+                    "game",
+                    "travel",
+                    "pen pal"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "What does switching your phone to Spanish add?",
               "answer": "Daily exposure with no extra time.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "exposure",
+                    "daily",
+                    "every day",
+                    "no extra",
+                    "free",
+                    "passive",
+                    "constant",
+                    "habit"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -88601,7 +89588,21 @@
               "weight": "stretch",
               "prompt": "You scored B2 in 2025 and B1 in 2026. What happened?",
               "answer": "Your level dropped, so add more practice.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "dropped",
+                    "fell",
+                    "declin",
+                    "slipped",
+                    "lost",
+                    "less practice",
+                    "rust",
+                    "went down"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -88632,22 +89633,76 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 1 Spanish-language series on Netflix.",
-              "answer": "La Casa de Papel",
-              "answer_kind": "phrase"
+              "answer": "La Casa de Papel.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "casa de papel",
+                    "money heist",
+                    "elite",
+                    "narcos",
+                    "club de cuervos",
+                    "el ministerio",
+                    "roma",
+                    "las chicas del cable",
+                    "cable girls",
+                    "alta mar",
+                    "vis a vis",
+                    "la reina del sur",
+                    "el chapo",
+                    "monarca",
+                    "gran hotel",
+                    "el internado",
+                    "sky rojo",
+                    "oscuro deseo",
+                    "who killed sara",
+                    "quien mato a sara",
+                    "ingobernable",
+                    "el juego del calamar"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "You understand 40% of a drama. Name 1 easier option.",
-              "answer": "A children's show or a slower series.",
-              "answer_kind": "phrase"
+              "answer": "A children's show, or a slower series.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "children",
+                    "kids",
+                    "cartoon",
+                    "slower",
+                    "easier",
+                    "sitcom",
+                    "telenovela",
+                    "simpler",
+                    "dubbed",
+                    "familiar",
+                    "rewatch"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Are Spanish subtitles easier or harder than no subtitles?",
               "answer": "Easier",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Easier",
+                  "Harder"
+                ],
+                "accept": [
+                  "Easier"
+                ]
+              }
             }
           ]
         },
@@ -88665,21 +89720,63 @@
               "weight": "warmup",
               "prompt": "Order from easiest to hardest: no subtitles, Spanish, English.",
               "answer": "English, Spanish, then none.",
-              "answer_kind": "list"
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "english"
+                  ],
+                  [
+                    "spanish"
+                  ],
+                  [
+                    "none",
+                    "no subtitles",
+                    "without"
+                  ]
+                ],
+                "order": true
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why switch from English to Spanish subtitles?",
               "answer": "You connect sounds to words instead of reading translations.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "connect",
+                    "sound",
+                    "link",
+                    "match",
+                    "hear",
+                    "read",
+                    "spanish",
+                    "translation"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "3 episodes of 45 minutes a week is how many hours?",
-              "answer": "2 hours 15 minutes",
-              "answer_kind": "phrase"
+              "answer": "2 hours 15 minutes.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "2 hours 15",
+                    "2:15",
+                    "135 minutes",
+                    "2.25 hours",
+                    "2 h 15",
+                    "two hours fifteen"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88704,14 +89801,43 @@
               "weight": "core",
               "prompt": "Why read lyrics while listening to a Spanish song?",
               "answer": "You can match the words you hear.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "match",
+                    "hear",
+                    "connect",
+                    "link",
+                    "follow",
+                    "catch",
+                    "understand"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 thing Spanish songs teach that textbooks often skip.",
               "answer": "Slang and casual speech.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "slang",
+                    "casual",
+                    "colloquial",
+                    "informal",
+                    "idiom",
+                    "street",
+                    "real speech",
+                    "culture",
+                    "accent",
+                    "rhythm"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88742,8 +89868,21 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why play a podcast at 0.8 speed at first?",
-              "answer": "It gives time to process each phrase.",
-              "answer_kind": "phrase"
+              "answer": "It gives you time to process each phrase.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "process",
+                    "time",
+                    "understand",
+                    "follow",
+                    "catch",
+                    "keep up",
+                    "phrase"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88775,7 +89914,20 @@
               "weight": "stretch",
               "prompt": "Why copy the full line from the episode onto the card instead of 1 word?",
               "answer": "It keeps the context and the scene.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "context",
+                    "scene",
+                    "meaning",
+                    "usage",
+                    "how it's used",
+                    "memory",
+                    "remember"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -88807,21 +89959,60 @@
               "weight": "warmup",
               "prompt": "Which greeting fits 3 pm: 'buenos días' or 'buenas tardes'?",
               "answer": "Buenas tardes",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "buenos días",
+                  "buenas tardes"
+                ],
+                "accept": [
+                  "buenas tardes"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Reply to '¿Cómo estás?'",
               "answer": "Bien, gracias, ¿y tú?",
-              "answer_kind": "list"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "bien",
+                    "mal",
+                    "regular",
+                    "asi asi",
+                    "muy bien",
+                    "genial",
+                    "cansado",
+                    "cansada"
+                  ],
+                  [
+                    "gracias",
+                    "y tu",
+                    "y usted"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "What does 'mucho gusto' mean?",
               "answer": "Nice to meet you.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "nice to meet",
+                    "pleased to meet",
+                    "pleasure",
+                    "glad to meet"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88846,14 +90037,34 @@
               "weight": "core",
               "prompt": "Ask someone in Spanish to speak more slowly.",
               "answer": "Más despacio, por favor.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "despacio",
+                    "lento",
+                    "mas lento",
+                    "mas despacio"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "What does '¿Cómo se dice...?' ask?",
               "answer": "How do you say...?",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "how do you say",
+                    "how to say",
+                    "how is it said",
+                    "how does one say"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -88871,21 +90082,61 @@
               "weight": "warmup",
               "prompt": "Ask for the check in Spanish.",
               "answer": "La cuenta, por favor.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "cuenta"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "What does '¿Cuánto cuesta?' mean?",
               "answer": "How much does it cost?",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "how much"
+                  ],
+                  [
+                    "cost",
+                    "is it",
+                    "does it"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Order 2 coffees politely in Spanish.",
               "answer": "Quisiera dos cafés, por favor.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "dos",
+                    "2"
+                  ],
+                  [
+                    "cafe"
+                  ],
+                  [
+                    "quisiera",
+                    "quiero",
+                    "me da",
+                    "me pone",
+                    "por favor",
+                    "podria"
+                  ]
+                ],
+                "need": 3
+              }
             }
           ]
         },
@@ -88910,7 +90161,18 @@
               "weight": "core",
               "prompt": "Ask where the station is in Spanish.",
               "answer": "¿Dónde está la estación?",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "donde"
+                  ],
+                  [
+                    "estacion"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
@@ -88942,14 +90204,44 @@
               "weight": "core",
               "prompt": "What does 'una habitación para dos' ask for?",
               "answer": "A room for 2 people.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "room",
+                    "bedroom"
+                  ],
+                  [
+                    "two",
+                    "2",
+                    "double",
+                    "couple"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Ask for 1 ticket to Madrid in Spanish.",
               "answer": "Un billete a Madrid, por favor.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "billete",
+                    "boleto",
+                    "entrada",
+                    "pasaje",
+                    "ticket"
+                  ],
+                  [
+                    "madrid"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         }
@@ -88981,7 +90273,16 @@
               "weight": "warmup",
               "prompt": "Is CEFR level A1 beginner or advanced?",
               "answer": "Beginner",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Beginner",
+                  "Advanced"
+                ],
+                "accept": [
+                  "Beginner"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -88995,7 +90296,12 @@
               "weight": "stretch",
               "prompt": "Which CEFR level comes after B1?",
               "answer": "B2",
-              "answer_kind": "phrase"
+              "answer_kind": "word",
+              "grading": {
+                "accept": [
+                  "B2"
+                ]
+              }
             }
           ]
         },
@@ -89026,8 +90332,29 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 2 clues for guessing a Spanish word.",
-              "answer": "The surrounding words and word parts like cognates.",
-              "answer_kind": "list"
+              "answer": "The surrounding words, and word parts like cognates.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "surrounding",
+                    "context",
+                    "sentence",
+                    "words around"
+                  ],
+                  [
+                    "cognate",
+                    "word part",
+                    "root",
+                    "prefix",
+                    "suffix",
+                    "picture",
+                    "english",
+                    "similar"
+                  ]
+                ],
+                "need": 2
+              }
             }
           ]
         },
@@ -89059,7 +90386,16 @@
               "weight": "stretch",
               "prompt": "A word appears for the 3rd time and you still don't know it. Look it up or skip?",
               "answer": "Look it up.",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Look it up",
+                  "Skip it"
+                ],
+                "accept": [
+                  "Look it up"
+                ]
+              }
             }
           ]
         },
@@ -89083,15 +90419,70 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 kinds of Spanish texts to try after graded readers.",
-              "answer": "News articles and short stories.",
-              "answer_kind": "list"
+              "answer": "News articles, and short stories.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "news",
+                    "article",
+                    "story",
+                    "stories",
+                    "blog",
+                    "comic",
+                    "magazine",
+                    "novel",
+                    "recipe",
+                    "song",
+                    "lyrics",
+                    "children",
+                    "book",
+                    "subtitles",
+                    "social media",
+                    "wikipedia"
+                  ],
+                  [
+                    "news",
+                    "article",
+                    "story",
+                    "stories",
+                    "blog",
+                    "comic",
+                    "magazine",
+                    "novel",
+                    "recipe",
+                    "song",
+                    "lyrics",
+                    "children",
+                    "book",
+                    "subtitles",
+                    "social media",
+                    "wikipedia"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why might chapter 10 of a Spanish novel feel easier than chapter 1?",
               "answer": "The vocabulary and characters repeat, so you know more of them.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "repeat",
+                    "vocabulary",
+                    "characters",
+                    "familiar",
+                    "style",
+                    "used to",
+                    "know more",
+                    "context"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -89115,15 +90506,49 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 1 Spanish-language news site.",
-              "answer": "BBC Mundo (or El País).",
-              "answer_kind": "phrase"
+              "answer": "BBC Mundo, or El País.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "bbc mundo",
+                    "el pais",
+                    "el mundo",
+                    "cnn en espanol",
+                    "infobae",
+                    "clarin",
+                    "el universal",
+                    "la nacion",
+                    "20 minutos",
+                    "abc",
+                    "rtve",
+                    "univision",
+                    "telemundo",
+                    "el tiempo",
+                    "dw"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why read Spanish news about a story you know from English sources?",
               "answer": "Background knowledge helps you guess words.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "background",
+                    "know",
+                    "context",
+                    "guess",
+                    "familiar",
+                    "already",
+                    "predict"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -89155,7 +90580,16 @@
               "weight": "warmup",
               "prompt": "Which fits a new 60-year-old boss: 'tú' or 'usted'?",
               "answer": "Usted",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "tú",
+                  "usted"
+                ],
+                "accept": [
+                  "usted"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -89169,7 +90603,16 @@
               "weight": "stretch",
               "prompt": "Which fits a close friend: 'tú' or 'usted'?",
               "answer": "Tú",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "tú",
+                  "usted"
+                ],
+                "accept": [
+                  "tú"
+                ]
+              }
             }
           ]
         },
@@ -89187,7 +90630,28 @@
               "weight": "warmup",
               "prompt": "Make 'Dame agua' polite.",
               "answer": "¿Me podría dar agua, por favor?",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "podria",
+                    "puede",
+                    "podrias",
+                    "me da",
+                    "seria",
+                    "quisiera"
+                  ],
+                  [
+                    "agua"
+                  ],
+                  [
+                    "favor",
+                    "podria",
+                    "seria"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
@@ -89201,7 +90665,16 @@
               "weight": "stretch",
               "prompt": "Which is more polite: 'Quiero un café' or 'Quisiera un café'?",
               "answer": "Quisiera un café",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Quiero un café",
+                  "Quisiera un café"
+                ],
+                "accept": [
+                  "Quisiera un café"
+                ]
+              }
             }
           ]
         },
@@ -89219,7 +90692,16 @@
               "weight": "warmup",
               "prompt": "In Mexico, how do you address a group of friends: 'vosotros' or 'ustedes'?",
               "answer": "Ustedes",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "vosotros",
+                  "ustedes"
+                ],
+                "accept": [
+                  "ustedes"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -89233,7 +90715,16 @@
               "weight": "stretch",
               "prompt": "Which country uses 'vosotros' in daily speech: Spain or Argentina?",
               "answer": "Spain",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Spain",
+                  "Argentina"
+                ],
+                "accept": [
+                  "Spain"
+                ]
+              }
             }
           ]
         },
@@ -89297,7 +90788,17 @@
               "weight": "stretch",
               "prompt": "What does 'tutear' mean?",
               "answer": "To address someone as tú.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "tu",
+                    "informal",
+                    "familiar",
+                    "first name"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -89342,8 +90843,17 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Does the Spanish 'j' in 'jugo' sound like English 'h' or English 'j'?",
-              "answer": "Like a strong English 'h'.",
-              "answer_kind": "phrase"
+              "answer": "English h, a strong one.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "English h",
+                  "English j"
+                ],
+                "accept": [
+                  "English h"
+                ]
+              }
             }
           ]
         },
@@ -89360,15 +90870,35 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "How is 'ñ' in 'año' pronounced?",
-              "answer": "Like 'ny' in canyon.",
-              "answer_kind": "phrase"
+              "answer": "Like the \"ny\" in canyon.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "ny",
+                    "canyon",
+                    "onion",
+                    "nyeh",
+                    "ni"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Which word has the trilled 'rr': 'pero' or 'perro'?",
               "answer": "Perro",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "pero",
+                  "perro"
+                ],
+                "accept": [
+                  "perro"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -89406,8 +90936,21 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why does 'canción' need a written accent?",
-              "answer": "It ends in 'n' but the stress falls on the last syllable, which breaks the rule.",
-              "answer_kind": "sentence"
+              "answer": "It ends in n, but the stress falls on the last syllable, which breaks the rule.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "last syllable",
+                    "stress",
+                    "accent",
+                    "ends in n",
+                    "rule",
+                    "final",
+                    "breaks"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -89469,9 +91012,15 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "How many basic consonants and vowels does Korean Hangul have?",
-              "answer": "14 consonants and 10 vowels",
-              "answer_kind": "phrase"
+              "prompt": "How many basic consonants and vowels does Korean Hangul have? Give the consonants first.",
+              "answer": "14 consonants and 10 vowels.",
+              "answer_kind": "list",
+              "grading": {
+                "accept": [
+                  "14, 10"
+                ],
+                "order": true
+              }
             }
           ]
         }
@@ -89535,14 +91084,43 @@
               "weight": "warmup",
               "prompt": "Say 'My name is Ana and I am 16' in Spanish.",
               "answer": "Me llamo Ana y tengo dieciséis años.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "me llamo ana",
+                    "mi nombre es ana",
+                    "soy ana"
+                  ],
+                  [
+                    "tengo dieciseis",
+                    "tengo 16",
+                    "16 anos",
+                    "dieciseis anos"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why does Spanish say 'tengo 16 años' rather than 'soy 16'?",
-              "answer": "Spanish uses tener (to have) for age.",
-              "answer_kind": "phrase"
+              "answer": "Spanish uses tener, to have, for age.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "tener",
+                    "have",
+                    "has",
+                    "possess",
+                    "age",
+                    "años",
+                    "years"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -89574,14 +91152,42 @@
               "weight": "core",
               "prompt": "You forget 'cuchara' (spoon). Describe it in Spanish.",
               "answer": "Es la cosa para comer sopa.",
-              "answer_kind": "phrase"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "cosa",
+                    "es",
+                    "para",
+                    "se usa",
+                    "sirve",
+                    "objeto",
+                    "comer",
+                    "sopa",
+                    "como"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "What does 'o sea' do in Spanish speech?",
-              "answer": "It means 'I mean' and buys time to rephrase.",
-              "answer_kind": "sentence"
+              "answer": "It means \"I mean,\" and buys time to rephrase.",
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "i mean",
+                    "in other words",
+                    "rephrase",
+                    "filler",
+                    "time",
+                    "clarif",
+                    "that is"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -89605,15 +91211,40 @@
               "slot": 2,
               "weight": "core",
               "prompt": "Name 2 things to compare between your recording and a native Spanish speaker's.",
-              "answer": "Vowel sounds and stress.",
-              "answer_kind": "list"
+              "answer": "Vowel sounds, and stress.",
+              "answer_kind": "list",
+              "grading": {
+                "keys": [
+                  [
+                    "vowel",
+                    "sound",
+                    "pronunciation"
+                  ],
+                  [
+                    "stress",
+                    "rhythm",
+                    "intonation",
+                    "speed",
+                    "pace",
+                    "pause",
+                    "accent",
+                    "flow"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Recording once a week for 4 weeks gives how many recordings?",
-              "answer": "4",
-              "answer_kind": "integer"
+              "prompt": "Recording yourself twice a week for 4 weeks gives how many recordings?",
+              "answer": "8.",
+              "answer_kind": "integer",
+              "grading": {
+                "accept": [
+                  "8"
+                ]
+              }
             }
           ]
         },
@@ -89644,8 +91275,23 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why talk from 5 key words instead of a script?",
-              "answer": "You build sentences live, as real conversation needs.",
-              "answer_kind": "phrase"
+              "answer": "You build sentences live, the way real conversation needs.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "live",
+                    "real",
+                    "spontan",
+                    "build",
+                    "conversation",
+                    "natural",
+                    "on the spot",
+                    "improvis",
+                    "memoriz"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -89684,14 +91330,35 @@
               "weight": "core",
               "prompt": "Card front: 'el perro'. What goes on the back?",
               "answer": "Dog, with an example sentence.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "dog"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why put an example sentence on a card instead of 1 word?",
               "answer": "It shows how the word is used.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "used",
+                    "usage",
+                    "context",
+                    "how",
+                    "grammar",
+                    "collocation",
+                    "real",
+                    "sentence"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -89722,8 +91389,22 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "You skip 3 days. What happens to your Anki review pile?",
-              "answer": "It grows because due cards stack up.",
-              "answer_kind": "phrase"
+              "answer": "It grows, because due cards stack up.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "grows",
+                    "grow",
+                    "bigger",
+                    "pile up",
+                    "stack",
+                    "more",
+                    "backlog",
+                    "overdue"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -89741,14 +91422,38 @@
               "weight": "warmup",
               "prompt": "You got a card right after 30 seconds. Mark it 'Good' or 'Hard'?",
               "answer": "Hard",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Good",
+                  "Hard"
+                ],
+                "accept": [
+                  "Hard"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Why mark a lucky guess 'Again' in Anki?",
               "answer": "Otherwise it comes back too late and you forget it.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "too late",
+                    "forget",
+                    "lucky",
+                    "guess",
+                    "not learned",
+                    "real",
+                    "honest",
+                    "soon",
+                    "again"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -89780,14 +91485,33 @@
               "weight": "core",
               "prompt": "Which is harder: Spanish to English, or English to Spanish?",
               "answer": "English to Spanish",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Spanish to English",
+                  "English to Spanish"
+                ],
+                "accept": [
+                  "English to Spanish"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why write 'el perro' on the back rather than 'perro'?",
               "answer": "You learn the gender too.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "gender",
+                    "article",
+                    "el",
+                    "masculine"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -89819,7 +91543,22 @@
               "weight": "stretch",
               "prompt": "Your daily reviews take 60 minutes. Name 1 fix.",
               "answer": "Add fewer new cards per day.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "fewer new",
+                    "fewer cards",
+                    "less new",
+                    "cut new",
+                    "reduce",
+                    "limit",
+                    "pause new",
+                    "delete",
+                    "suspend"
+                  ]
+                ]
+              }
             }
           ]
         }
@@ -89865,7 +91604,16 @@
               "weight": "stretch",
               "prompt": "Is 'Hacía sol' preterite or imperfect?",
               "answer": "Imperfect",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Preterite",
+                  "Imperfect"
+                ],
+                "accept": [
+                  "Imperfect"
+                ]
+              }
             }
           ]
         },
@@ -89986,14 +91734,38 @@
               "weight": "core",
               "prompt": "Which tense fits 'every summer we used to go': preterite or imperfect?",
               "answer": "Imperfect",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Preterite",
+                  "Imperfect"
+                ],
+                "accept": [
+                  "Imperfect"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Translate 'Tomorrow I will travel to Mexico'.",
               "answer": "Mañana viajaré a México.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "manana"
+                  ],
+                  [
+                    "viajare",
+                    "voy a viajar"
+                  ],
+                  [
+                    "mexico"
+                  ]
+                ],
+                "need": 3
+              }
             }
           ]
         }
@@ -90038,8 +91810,21 @@
               "slot": 3,
               "weight": "stretch",
               "prompt": "Why not translate 'Hace frío' as 'It makes cold'?",
-              "answer": "English says 'It's cold'; word-for-word sounds wrong.",
-              "answer_kind": "phrase"
+              "answer": "English says \"It's cold,\" and word for word sounds wrong.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "it's cold",
+                    "its cold",
+                    "word-for-word",
+                    "literal",
+                    "wrong",
+                    "unnatural",
+                    "idiom"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -90096,14 +91881,40 @@
               "weight": "core",
               "prompt": "Why translate a Spanish draft back into English a day later?",
               "answer": "To check the meaning survived.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "meaning",
+                    "check",
+                    "survived",
+                    "accura",
+                    "kept",
+                    "lost",
+                    "fresh"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 sign of trouble in a back-translation.",
               "answer": "The meaning has changed.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "meaning changed",
+                    "changed",
+                    "different",
+                    "lost",
+                    "wrong",
+                    "doesn't match",
+                    "shift"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -90121,14 +91932,38 @@
               "weight": "warmup",
               "prompt": "Translate 'It's raining cats and dogs' into Spanish.",
               "answer": "Está lloviendo a cántaros.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "a cantaros",
+                    "cantaros",
+                    "a mares",
+                    "chuzos",
+                    "cae la lluvia",
+                    "llueve mucho",
+                    "muchisimo"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Translate 'Me estás tomando el pelo' into English.",
               "answer": "You're pulling my leg.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "pulling my leg",
+                    "kidding",
+                    "joking",
+                    "teasing",
+                    "messing with"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -90152,15 +91987,39 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 1 site that shows words in real bilingual sentences.",
-              "answer": "Linguee (or Reverso Context).",
-              "answer_kind": "phrase"
+              "answer": "Linguee, or Reverso Context.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "linguee",
+                    "reverso",
+                    "tatoeba",
+                    "deepl",
+                    "spanishdict",
+                    "wordreference",
+                    "glosbe"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "A learner writes 'Estoy embarazada' to mean 'I'm embarrassed'. Correct it.",
-              "answer": "Me da vergüenza (or Estoy avergonzada).",
-              "answer_kind": "phrase"
+              "answer": "Me da vergüenza, or Estoy avergonzada.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "verguenza",
+                    "avergonzad",
+                    "apenado",
+                    "apenada",
+                    "pena"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
@@ -90199,7 +92058,24 @@
               "weight": "warmup",
               "prompt": "Translate 'Today I went to the park' into Spanish.",
               "answer": "Hoy fui al parque.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "hoy"
+                  ],
+                  [
+                    "fui",
+                    "he ido",
+                    "estuve",
+                    "camine"
+                  ],
+                  [
+                    "parque"
+                  ]
+                ],
+                "need": 3
+              }
             },
             {
               "slot": 2,
@@ -90213,7 +92089,21 @@
               "weight": "stretch",
               "prompt": "Say 'Tomorrow I have an exam' in Spanish.",
               "answer": "Mañana tengo un examen.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "manana"
+                  ],
+                  [
+                    "tengo"
+                  ],
+                  [
+                    "examen"
+                  ]
+                ],
+                "need": 3
+              }
             }
           ]
         },
@@ -90230,8 +92120,27 @@
               "slot": 1,
               "weight": "warmup",
               "prompt": "Name 1 way to get Spanish writing corrected.",
-              "answer": "A tutor or a language exchange partner.",
-              "answer_kind": "phrase"
+              "answer": "A tutor, or a language exchange partner.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "tutor",
+                    "teacher",
+                    "exchange",
+                    "partner",
+                    "native",
+                    "italki",
+                    "hellotalk",
+                    "tandem",
+                    "friend",
+                    "forum",
+                    "reddit",
+                    "class",
+                    "profesor"
+                  ]
+                ]
+              }
             },
             {
               "slot": 2,
@@ -90277,7 +92186,13 @@
               "weight": "stretch",
               "prompt": "Join 'No salí. Llovía.' with 'porque'.",
               "answer": "No salí porque llovía.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "accept": [
+                  "No salí porque llovía.",
+                  "No sali porque llovia."
+                ]
+              }
             }
           ]
         },
@@ -90295,21 +92210,63 @@
               "weight": "warmup",
               "prompt": "Write 'Can we meet at 5?' in Spanish.",
               "answer": "¿Podemos vernos a las cinco?",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "podemos",
+                    "nos vemos",
+                    "quedamos",
+                    "vernos",
+                    "encontrarnos"
+                  ],
+                  [
+                    "cinco",
+                    "5"
+                  ]
+                ],
+                "need": 2
+              }
             },
             {
               "slot": 2,
               "weight": "core",
               "prompt": "Formal email opening: 'Hola' or 'Estimado señor'?",
               "answer": "Estimado señor",
-              "answer_kind": "word"
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Hola",
+                  "Estimado señor"
+                ],
+                "accept": [
+                  "Estimado señor"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "Name 1 informal Spanish sign-off for a friend's message.",
-              "answer": "Un abrazo (or Saludos).",
-              "answer_kind": "phrase"
+              "answer": "Un abrazo, or Saludos.",
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "abrazo",
+                    "saludos",
+                    "besos",
+                    "un beso",
+                    "chao",
+                    "chau",
+                    "hasta luego",
+                    "nos vemos",
+                    "cuidate",
+                    "adios",
+                    "hasta pronto"
+                  ]
+                ]
+              }
             }
           ]
         },
@@ -90334,14 +92291,42 @@
               "weight": "core",
               "prompt": "Why rewrite a text instead of just reading its 8 corrections?",
               "answer": "Producing the right form fixes the pattern in memory.",
-              "answer_kind": "sentence"
+              "answer_kind": "sentence",
+              "grading": {
+                "keys": [
+                  [
+                    "produc",
+                    "pattern",
+                    "memory",
+                    "practice",
+                    "active",
+                    "fix",
+                    "habit",
+                    "correct form",
+                    "remember"
+                  ]
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
               "prompt": "The same error shows up in 3 entries. What should you do?",
               "answer": "Drill that rule with targeted practice.",
-              "answer_kind": "phrase"
+              "answer_kind": "phrase",
+              "grading": {
+                "keys": [
+                  [
+                    "drill",
+                    "practice",
+                    "rule",
+                    "target",
+                    "study",
+                    "review",
+                    "focus"
+                  ]
+                ]
+              }
             }
           ]
         }
