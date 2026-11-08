@@ -36,7 +36,7 @@ import {
 } from '@/utils/homePlay';
 
 /** The rating steps C -> B -> A; the ends are named so nothing indexes for them. */
-/* The same student as the hero (see HERO_XP in ./sections): crossing into
+/* The same student as the hero (see ./HeroLive): crossing into
    level 13 at 7,800 XP and ending the term on 8,610, graded B. */
 const GRADES = ['C', 'B'] as const;
 const FIRST_GRADE = 'C';

@@ -14,7 +14,7 @@
  */
 import { Link } from 'react-router-dom';
 import { Range } from '@/components/Range';
-import { RidgeChart } from './RidgeChart';
+import { HeroLive } from './HeroLive';
 import { Trend } from './Trend';
 import type { Theme } from '@/types';
 import { Icon } from '@/components/Icon';
@@ -57,26 +57,57 @@ function greeting(name: string | null): string {
  * outright that what the reader is looking at is the real component running,
  * and nothing here is presented as somebody's account.
  */
-/*
- * One made-up term, and every figure on the page is read off it, so no two
- * cards can disagree about the same student. Six weeks at about 60 XP a day
- * and six at about 145 is 8,610 XP; level N costs N × 100 (utils/format), so
- * that is level 13 with 810 of 1,300 in hand — the 62% bar under the chart.
- * The last thirty days at ~145 a day is ~4,350 XP, or 142 tasks at ~30 each.
- * The work score is the Analytics section's five factors averaged: 83, a B.
- * Change one of these and change the rest with it.
- */
-const HERO_XP = [
-  { name: 'Weeks 1-6', values: [40, 65, 30, 75, 55, 90, 60] },
-  { name: 'Weeks 7-12', values: [95, 140, 110, 175, 130, 210, 165] },
-] as const;
-
 /**
  * The `hm-rise` and `hm-pop` classes below are what useIntro moves. The
  * original added them from script; they are part of what these elements are,
  * so they are written here — and because they only do anything while `hm-armed`
  * is on <html>, a page where the intro never runs is unaffected by them.
  */
+/**
+ * The sign-up that starts on the page: one field and a button.
+ *
+ * Asking for the email here, and only the email, is the smallest thing a
+ * stranger can say yes to. It carries over to the sign-up form
+ * (components/Auth/AuthFlow), which then asks for a name and a password and
+ * nothing else. Left empty, the button still goes to the form, so nobody is
+ * stuck on a field they didn't want to fill in here.
+ */
+function EmailStart({
+  id,
+  onGetStarted,
+}: {
+  id: string;
+  onGetStarted: (email?: string) => void;
+}) {
+  return (
+    <form
+      className="lp-start"
+      noValidate
+      onSubmit={(event) => {
+        event.preventDefault();
+        const email = String(new FormData(event.currentTarget).get('email') ?? '').trim();
+        onGetStarted(email || undefined);
+      }}
+    >
+      <label className="sr-only" htmlFor={id}>
+        Your email
+      </label>
+      <input
+        className="lp-start-input"
+        type="email"
+        id={id}
+        name="email"
+        autoComplete="email"
+        inputMode="email"
+        placeholder="you@school.edu"
+      />
+      <button type="submit" className="lp-btn lp-btn-primary">
+        Get started free <span className="lp-arrow">→</span>
+      </button>
+    </form>
+  );
+}
+
 export function Hero({
   signedIn,
   username,
@@ -84,8 +115,8 @@ export function Hero({
 }: {
   signedIn: boolean;
   username: string | null;
-  /** Opens the account popup. Signed-out visitors have nowhere else to go. */
-  onGetStarted: () => void;
+  /** On to sign-up, with the email if one was typed. */
+  onGetStarted: (email?: string) => void;
 }) {
   return (
     <section className="lp-hero">
@@ -165,16 +196,9 @@ export function Hero({
             </>
           ) : (
             <>
-              <button
-                type="button"
-                id="dashboardBtn"
-                className="lp-btn lp-btn-primary"
-                onClick={onGetStarted}
-              >
-                Get started free <span className="lp-arrow">→</span>
-              </button>
-              <a href="#how" className="lp-btn lp-btn-ghost">
-                See how it works <span className="lp-arrow lp-arrow-down">↓</span>
+              <EmailStart id="heroEmail" onGetStarted={onGetStarted} />
+              <a href="#how" className="lp-hero-how">
+                or see how it works <span className="lp-arrow lp-arrow-down">↓</span>
               </a>
             </>
           )}
@@ -182,33 +206,12 @@ export function Hero({
       </div>
 
       <div className="lp-hero-art" aria-hidden="true">
-        <div className="lp-preview lp-preview-dash">
-          <div className="lp-prev-head">
-            <span>Daily XP</span>
-            <span className="lp-dot" />
-          </div>
-          <div className="lp-prev-sub">First 6 weeks vs. last 6</div>
-          {/* Was two anonymous sparklines side by side, which is the chart
-              every product page draws and the one nobody reads. The same
-              numbers as a range: each day is a summit at its own height, and
-              the best day of the term is the one wearing snow. */}
-          <RidgeChart
-            className="lp-prev-ridge"
-            series={HERO_XP}
-            axis={['200', '100', '0']}
-            label="Daily XP for one term. About 60 a day in the first half and about 145 in the second."
-          />
-          <div className="lp-prev-row">
-            <span>Level 13</span>
-            <span className="lp-prev-bar">
-              <i style={{ width: '62%' }} />
-            </span>
-          </div>
-        </div>
+        {/* Summit on a laptop, being used. See ./HeroLive. */}
+        <HeroLive />
+        {/* The growth rating, a small badge tucked under the laptop. It stays
+            because the pentagon in it is a door (secret/pentagon-egg.js looks
+            for `.lp-preview-rating .lp-radar`) and has to stay reachable. */}
         <div className="lp-preview lp-preview-rating">
-          <div className="lp-prev-head">
-            <span>Growth rating</span>
-          </div>
           <svg viewBox="0 0 120 120" className="lp-radar">
             <polygon
               points="60,12 108,46 90,104 30,104 12,46"
@@ -220,20 +223,11 @@ export function Hero({
             <polygon points="60,34 90,54 80,92 40,92 30,54" className="lp-radar-fill" />
           </svg>
           <div className="lp-prev-overall">
-            Overall <strong>83</strong>
+            <span>Growth rating</span>
+            <b>
+              Overall <strong>83</strong>
+            </b>
           </div>
-        </div>
-        {/* Two small notes that pop in and out around the cards, the way the
-            app's own toasts do when a task is finished. They sit clear of the
-            rating card and take no clicks, because the pentagon in it is a
-            door (secret/pentagon-egg.js) and has to stay reachable. */}
-        <div className="lp-hero-pops lp-loop">
-          <span className="lp-pop lp-pop-a">
-            <Icon name="check" /> Physics problem set <b>+80 XP</b>
-          </span>
-          <span className="lp-pop lp-pop-b">
-            <Icon name="flame" /> 13-day streak
-          </span>
         </div>
       </div>
     </section>
@@ -439,7 +433,7 @@ export function Pricing({
 }: {
   signedIn: boolean;
   /** Opens the account popup, for the same reason the hero's button does. */
-  onGetStarted: () => void;
+  onGetStarted: (email?: string) => void;
   onTheme: (theme: Theme) => void;
   onToast: (message: string) => void;
 }) {
@@ -516,7 +510,7 @@ export function Pricing({
             <button
               type="button"
               className="lp-btn lp-btn-primary lp-btn-full"
-              onClick={onGetStarted}
+              onClick={() => onGetStarted()}
             >
               Get started free
             </button>
@@ -606,8 +600,8 @@ export function FinalCta({
   onGetStarted,
 }: {
   signedIn: boolean;
-  /** Opens the account popup, for the same reason the hero's button does. */
-  onGetStarted: () => void;
+  /** On to sign-up, for the same reason the hero's form is. */
+  onGetStarted: (email?: string) => void;
 }) {
   return (
     <section className="lp-final">
@@ -636,9 +630,7 @@ export function FinalCta({
           Go to your dashboard <span className="lp-arrow">→</span>
         </Link>
       ) : (
-        <button type="button" className="lp-btn lp-btn-primary lp-btn-lg" onClick={onGetStarted}>
-          Get started free <span className="lp-arrow">→</span>
-        </button>
+        <EmailStart id="finalEmail" onGetStarted={onGetStarted} />
       )}
       {/* The last thing a signed-out reader wants to know is what it costs and
           what it takes. Someone with an account has already answered both, so

@@ -42,6 +42,23 @@ function open(route: string, auth: Partial<AuthValue>) {
 
 const heading = () => document.getElementById('authHeading')?.textContent;
 
+/** Sign-up's first half: type the email and continue to the second. */
+async function startWith(email: string) {
+  const start = document.getElementById('createStart')!;
+  fireEvent.change(start.querySelector('[name=email]')!, { target: { value: email } });
+  fireEvent.submit(start);
+  await waitFor(() => expect(document.getElementById('createForm')).not.toHaveAttribute('hidden'));
+}
+
+/** Sign-up's second half, filled in and sent. */
+function finishWith(name: string, password: string) {
+  const form = document.getElementById('createForm')!;
+  fireEvent.change(form.querySelector('[name=name]')!, { target: { value: name } });
+  fireEvent.change(document.getElementById('createPassword')!, { target: { value: password } });
+  fireEvent.click(form.querySelector('[name=consent]')!);
+  fireEvent.click(form.querySelector('button[type=submit]')!);
+}
+
 beforeEach(() => {
   vi.mocked(authService.signup).mockReset();
 });
@@ -79,14 +96,11 @@ describe('the login page', () => {
       success: true, email: 'new@example.test', dev_link: null, mail_failed: false,
     } as never);
     open('/login?auth=create', { status: 'signed-out', profileComplete: false, refresh });
-    const form = document.querySelector('[data-step="create"] form')!;
-    fireEvent.change(form.querySelector('[name=name]')!, { target: { value: 'New Reader' } });
-    fireEvent.change(form.querySelector('[name=email]')!, { target: { value: 'new@example.test' } });
-    fireEvent.change(document.getElementById('createPassword')!, { target: { value: 'A-long-password-1' } });
-    fireEvent.change(document.getElementById('createConfirm')!, { target: { value: 'A-long-password-1' } });
-    fireEvent.click(form.querySelector('[name=consent]')!);
-    fireEvent.click(form.querySelector('button[type=submit]')!);
-    await waitFor(() => expect(authService.signup).toHaveBeenCalled());
+    await startWith('new@example.test');
+    finishWith('New Reader', 'A-long-password-1');
+    await waitFor(() =>
+      expect(authService.signup).toHaveBeenCalledWith('New Reader', 'new@example.test', 'A-long-password-1'),
+    );
     await waitFor(() => expect(refresh).toHaveBeenCalled());
   });
 
@@ -100,32 +114,50 @@ describe('the login page', () => {
     expect(met()).toHaveLength(5);
   });
 
-  it('shows both passwords together, and says whether they match', () => {
+  it('asks for the email on its own, then a name and a password', async () => {
     open('/login?auth=create', { status: 'signed-out', profileComplete: false });
+    expect(document.getElementById('createForm')).toHaveAttribute('hidden');
+    expect(document.querySelectorAll('#createStart input')).toHaveLength(1);
+    await startWith('new@example.test');
+    expect(document.getElementById('createStart')).toHaveAttribute('hidden');
+    expect(screen.getByText('new@example.test')).toBeInTheDocument();
+    // Three fields in all: the email, a name and one password.
+    expect(document.querySelectorAll('#createForm input:not([type=checkbox])')).toHaveLength(2);
+    fireEvent.click(screen.getByRole('button', { name: 'Change' }));
+    expect(document.getElementById('createStart')).not.toHaveAttribute('hidden');
+  });
+
+  it("won't move on without a real-looking email", async () => {
+    open('/login?auth=create', { status: 'signed-out', profileComplete: false });
+    const start = document.getElementById('createStart')!;
+    fireEvent.change(start.querySelector('[name=email]')!, { target: { value: 'not-an-email' } });
+    fireEvent.submit(start);
+    expect(await screen.findByText('Enter your email to continue.')).toBeInTheDocument();
+    expect(document.getElementById('createForm')).toHaveAttribute('hidden');
+  });
+
+  it('opens on the second half with an email from the landing page', async () => {
+    renderWithProviders(
+      <Routes>
+        <Route path="/login" element={<Login />} />
+      </Routes>,
+      {
+        route: { pathname: '/login', search: '?auth=create', state: { email: 'from@home.test' } },
+        auth: { status: 'signed-out', profileComplete: false },
+      },
+    );
+    expect(document.getElementById('createForm')).not.toHaveAttribute('hidden');
+    expect(screen.getByText('from@home.test')).toBeInTheDocument();
+    await waitFor(() => expect(authService.checkEmail).toHaveBeenCalledWith('from@home.test'));
+  });
+
+  it('shows or hides the password', async () => {
+    open('/login?auth=create', { status: 'signed-out', profileComplete: false });
+    await startWith('new@example.test');
     const pw = document.getElementById('createPassword') as HTMLInputElement;
-    const again = document.getElementById('createConfirm') as HTMLInputElement;
     expect(pw.type).toBe('password');
     fireEvent.click(screen.getByRole('button', { name: 'Show' }));
     expect(pw.type).toBe('text');
-    expect(again.type).toBe('text');
-    fireEvent.change(pw, { target: { value: 'Abcdefg1!' } });
-    fireEvent.change(again, { target: { value: 'Abcdefg1' } });
-    expect(screen.getByText("Passwords don't match yet.")).toBeInTheDocument();
-    fireEvent.change(again, { target: { value: 'Abcdefg1!' } });
-    expect(screen.getByText('Passwords match.')).toBeInTheDocument();
-  });
-
-  it("won't sign up with passwords that don't match", async () => {
-    open('/login?auth=create', { status: 'signed-out', profileComplete: false });
-    const form = document.querySelector('[data-step="create"] form')!;
-    fireEvent.change(form.querySelector('[name=name]')!, { target: { value: 'New Reader' } });
-    fireEvent.change(form.querySelector('[name=email]')!, { target: { value: 'new@example.test' } });
-    fireEvent.change(document.getElementById('createPassword')!, { target: { value: 'A-long-password-1' } });
-    fireEvent.change(document.getElementById('createConfirm')!, { target: { value: 'A-long-password-2' } });
-    fireEvent.click(form.querySelector('[name=consent]')!);
-    fireEvent.click(form.querySelector('button[type=submit]')!);
-    expect(await screen.findByText("The two passwords don't match.")).toBeInTheDocument();
-    expect(authService.signup).not.toHaveBeenCalled();
   });
 
   it('says an email is taken as soon as the field is left', async () => {

@@ -12,7 +12,7 @@
  * resolves its active state the same way it does in the app.
  */
 import { render } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, type MemoryRouterProps } from 'react-router-dom';
 import { vi } from 'vitest';
 import type { ReactElement, ReactNode } from 'react';
 import {
@@ -43,8 +43,8 @@ import type { UserData } from '@/services/tasks';
  * so a field renamed in `contexts.ts` still breaks this file.
  */
 export interface Options {
-  /** Where the router starts. */
-  route?: string;
+  /** Where the router starts: a path, or a location with history state. */
+  route?: NonNullable<MemoryRouterProps['initialEntries']>[number];
   auth?: Partial<AuthValue>;
   settings?: Partial<Omit<SettingsValue, 'prefs'>> & { prefs?: Partial<Prefs> };
   userData?: Partial<UserDataValue>;

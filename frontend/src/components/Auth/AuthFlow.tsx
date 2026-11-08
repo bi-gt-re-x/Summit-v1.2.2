@@ -9,8 +9,8 @@
  *
  *              ┌──────────── choose ────────────┐
  *           Log In                       Create Account
- *              │                    name / e-mail / password
- *              │              (password rules, show and confirm)
+ *              │                  e-mail, then name / password
+ *              │                 (password rules, show / hide)
  *              │                                │
  *              │                     verification e-mail sent
  *              │                        "check your inbox"
@@ -50,11 +50,14 @@ export type AuthStep = 'choose' | 'login' | 'create' | 'inbox' | 'profile' | 'ab
 const COPY: Record<AuthStep, [string, string]> = {
   choose: ['Welcome', 'Log in or create an account to continue.'],
   login: ['Log in', 'Good to see you again.'],
-  create: ['Create account', 'Just a name, an email and a password.'],
+  create: ['Create account', "Start with your email. It's free."],
   inbox: ['Check your inbox', "Click the link we sent and you're in."],
   profile: ['Finish your profile', 'Three quick picks and one last step.'],
   about: ['About you', 'Last step. Tell us where you are and where you want to go.'],
 };
+
+/** Good enough to catch a typo before asking the server. The server decides. */
+const EMAIL_SHAPE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const GOALS = [
   { value: 50, label: 'Light' },
@@ -90,6 +93,7 @@ export function AuthFlow({
   notice,
   onStep,
   next,
+  initialEmail = '',
 }: {
   /** Which panel to show. */
   step: AuthStep;
@@ -98,6 +102,8 @@ export function AuthFlow({
   onStep: (step: AuthStep) => void;
   /** Where the flow finishes: the page they were trying to reach. */
   next: string;
+  /** An email already typed on the landing page, so it isn't asked twice. */
+  initialEmail?: string;
 }) {
   const navigate = useNavigate();
   const { refresh } = useAuth();
@@ -117,10 +123,12 @@ export function AuthFlow({
   const [chosenSkin, setChosenSkin] = useState<ThemeSkin>('');
   const [chosenGoal, setChosenGoal] = useState(100);
   const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState('');
-  /* One switch for both password fields, so what you see in one is what
-     you're matching in the other. */
   const [showPassword, setShowPassword] = useState(false);
+  /* Sign-up asks for one thing at a time: the email first, then a name and a
+     password. Three fields in all, and the first screen has just one. An
+     email brought over from the landing page skips straight to the second. */
+  const [email, setEmail] = useState(initialEmail);
+  const [details, setDetails] = useState(Boolean(initialEmail));
   /* The email is checked when the field is left: an address that already has
      an account is sent to log in before the rest of the form is filled. */
   const [emailTaken, setEmailTaken] = useState(false);
@@ -154,6 +162,13 @@ export function AuthFlow({
     await refresh();
     navigate(next);
   }, [navigate, next, refresh]);
+
+  // An email from the landing page is checked as soon as the form opens.
+  useEffect(() => {
+    if (initialEmail) void checkEmail(initialEmail);
+    // Once, for the email the page opened with.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // The page opens with whatever the URL had to say.
   useEffect(() => setMessage(notice ?? null), [notice]);
@@ -195,17 +210,20 @@ export function AuthFlow({
     return () => clearInterval(timer);
   }, [step, finish, toProfile]);
 
-  // The first field of whichever panel is showing takes focus.
+  // The first field of whichever panel (or half of sign-up) is showing takes
+  // focus. Forms that are `hidden` are skipped, so it lands on what's shown.
   useEffect(() => {
     const timer = setTimeout(() => {
-      card.current
-        ?.querySelector<HTMLElement>('.auth-step:not(.hidden) input, .auth-step:not(.hidden) textarea, .auth-step:not(.hidden) button')
-        ?.focus();
+      const open = '.auth-step:not(.hidden) :is(input, textarea, button)';
+      const fields = card.current?.querySelectorAll<HTMLElement>(open) ?? [];
+      const shown = Array.from(fields).filter((el) => !el.closest('[hidden]'));
+      (shown.find((el) => el.matches('input, textarea')) ?? shown[0])?.focus();
     }, 60);
     return () => clearTimeout(timer);
-  }, [step]);
+  }, [step, details]);
 
-  const [heading, sub] = COPY[step];
+  const [heading, firstSub] = COPY[step];
+  const sub = step === 'create' && details ? 'Now a name and a password.' : firstSub;
 
   async function doLogin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -243,7 +261,10 @@ export function AuthFlow({
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     const name = String(form.get('name') ?? '').trim();
-    const email = String(form.get('email') ?? '').trim();
+    if (!name) {
+      say('Add your name.');
+      return;
+    }
     if (!form.get('consent')) {
       // The button is disabled without it; this is for the Enter key and for
       // anything that submits the form without going through the button.
@@ -258,15 +279,14 @@ export function AuthFlow({
       say("Your password doesn't meet every rule under it yet.");
       return;
     }
-    if (password !== confirm) {
-      say("The two passwords don't match.");
-      return;
-    }
     say('Creating your account…', 'info');
     try {
-      const result = await authService.signup(name, email, password);
+      const result = await authService.signup(name, email.trim(), password);
       if (!result.success) {
-        if (result.field === 'email' && /already/i.test(result.message || '')) setEmailTaken(true);
+        if (result.field === 'email') {
+          if (/already/i.test(result.message || '')) setEmailTaken(true);
+          setDetails(false);
+        }
         say(result.message || "That didn't work.");
         return;
       }
@@ -284,6 +304,19 @@ export function AuthFlow({
     } catch {
       say("Couldn't reach the server.");
     }
+  }
+
+  /** The first half of sign-up: just the email. */
+  async function doStart(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const typed = email.trim();
+    if (!EMAIL_SHAPE.test(typed)) {
+      say('Enter your email to continue.');
+      return;
+    }
+    say('');
+    const taken = await checkEmail(typed);
+    if (!taken) setDetails(true);
   }
 
   async function doResend() {
@@ -330,16 +363,21 @@ export function AuthFlow({
   const strength = strengthOf(password);
   const rules = passwordRules(password);
 
-  async function checkEmail(email: string) {
-    if (!email.trim()) {
+  /** Whether the address already has an account. Also shows the note. */
+  async function checkEmail(address: string): Promise<boolean> {
+    if (!address.trim()) {
       setEmailTaken(false);
-      return;
+      return false;
     }
     try {
-      const result = await authService.checkEmail(email.trim());
-      setEmailTaken(Boolean(result.success && result.valid && !result.available));
+      const result = await authService.checkEmail(address.trim());
+      const taken = Boolean(result.success && result.valid && !result.available);
+      setEmailTaken(taken);
+      if (taken) setDetails(false);
+      return taken;
     } catch {
       setEmailTaken(false);
+      return false;
     }
   }
   const googleUrl = authService.googleSignInUrl(next);
@@ -416,7 +454,55 @@ export function AuthFlow({
 
       {/* Create account */}
       <section className={`auth-step${step === 'create' ? '' : ' hidden'}`} data-step="create">
-        <form id="createForm" noValidate onSubmit={(e) => void doCreate(e)}>
+        {/* Step one: the email, on its own. */}
+        <form
+          id="createStart"
+          noValidate
+          hidden={details}
+          onSubmit={(e) => void doStart(e)}
+        >
+          <label className="auth-label" htmlFor="createEmail">
+            Email
+          </label>
+          <input
+            className="auth-input"
+            type="email"
+            id="createEmail"
+            name="email"
+            autoComplete="email"
+            inputMode="email"
+            required
+            value={email}
+            aria-invalid={emailTaken || undefined}
+            aria-describedby={emailTaken ? 'createEmailTaken' : undefined}
+            onChange={(event) => {
+              setEmail(event.target.value);
+              if (emailTaken) setEmailTaken(false);
+            }}
+            onBlur={(event) => void checkEmail(event.target.value)}
+          />
+          {emailTaken && (
+            <p className="auth-field-note is-bad" id="createEmailTaken" role="alert">
+              That email already has a Summit account.{' '}
+              <button type="button" className="auth-inline-link" onClick={() => go('login')}>
+                Log in instead
+              </button>
+            </p>
+          )}
+          <button type="submit" className="auth-primary">
+            Continue
+          </button>
+        </form>
+        {!details && googleBlock}
+
+        {/* Step two: a name and a password, and that's it. */}
+        <form id="createForm" noValidate hidden={!details} onSubmit={(e) => void doCreate(e)}>
+          <p className="auth-as">
+            <span>{email.trim()}</span>
+            <button type="button" className="auth-inline-link" onClick={() => setDetails(false)}>
+              Change
+            </button>
+          </p>
           <label className="auth-label" htmlFor="createName">
             Name
           </label>
@@ -428,29 +514,6 @@ export function AuthFlow({
             autoComplete="name"
             required
           />
-          <label className="auth-label" htmlFor="createEmail">
-            Email
-          </label>
-          <input
-            className="auth-input"
-            type="email"
-            id="createEmail"
-            name="email"
-            autoComplete="email"
-            required
-            aria-invalid={emailTaken || undefined}
-            aria-describedby={emailTaken ? 'createEmailTaken' : undefined}
-            onChange={() => emailTaken && setEmailTaken(false)}
-            onBlur={(event) => void checkEmail(event.target.value)}
-          />
-          {emailTaken && (
-            <p className="auth-field-note is-bad" id="createEmailTaken" role="alert">
-              That email already has a Summit account.{' '}
-              <button type="button" className="auth-inline-link" onClick={() => go('login')}>
-                Log in instead
-              </button>
-            </p>
-          )}
           <div className="auth-label-row">
             <label className="auth-label" htmlFor="createPassword">
               Password
@@ -459,7 +522,7 @@ export function AuthFlow({
               type="button"
               className="auth-reveal"
               aria-pressed={showPassword}
-              aria-controls="createPassword createConfirm"
+              aria-controls="createPassword"
               onClick={() => setShowPassword((was) => !was)}
             >
               {showPassword ? 'Hide' : 'Show'}
@@ -498,38 +561,6 @@ export function AuthFlow({
               </li>
             ))}
           </ul>
-          <label className="auth-label" htmlFor="createConfirm">
-            Confirm password
-          </label>
-          <input
-            className="auth-input"
-            type={showPassword ? 'text' : 'password'}
-            id="createConfirm"
-            autoComplete="new-password"
-            required
-            aria-describedby="pwMatch"
-            value={confirm}
-            onChange={(event) => setConfirm(event.target.value)}
-          />
-          <p
-            id="pwMatch"
-            className={`auth-field-note${confirm ? (confirm === password ? ' is-good' : ' is-bad') : ''}`}
-            aria-live="polite"
-          >
-            {!confirm ? 'Type it again to make sure.' : confirm === password ? 'Passwords match.' : "Passwords don't match yet."}
-          </p>
-          {/* One box for both, because they are one decision: whether to
-              open an account here on the stated terms. Two boxes to tick is
-              two boxes to tick without reading.
-
-              The age half is not decoration. Summit is built for students and
-              much of its audience is at school, and an account here is an
-              e-mail address plus a term's worth of what somebody works on
-              and when — which is a different kind of record to hold about a
-              twelve-year-old than about an adult, and a different set of
-              rules (COPPA in the US, and the GDPR age of consent in the EU,
-              which several member states set above 13). Asking is what makes
-              the answer in the privacy policy true. */}
           <label className="auth-consent" htmlFor="createConsent">
             <input
               type="checkbox"

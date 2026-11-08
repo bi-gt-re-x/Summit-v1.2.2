@@ -77,9 +77,13 @@ const defined = new Map(sheets.map((path) => [name(path), new Set(
 )]));
 
 const main = readFileSync(join(SRC, 'main.tsx'), 'utf8');
-const everywhere = new Set(
-  [...main.matchAll(/import '@\/styles\/([\w/-]+\.css)'/g)].flatMap((m) => [...(defined.get(m[1]!) ?? [])]),
-);
+/* The paper look's sheets load on every app page, just not from main.tsx
+   (see styles/paperLook.ts), so they count as loaded everywhere too. */
+const paperLook = readFileSync(join(STYLES, 'paperLook.ts'), 'utf8');
+const everywhere = new Set([
+  ...[...main.matchAll(/import '@\/styles\/([\w/-]+\.css)'/g)].flatMap((m) => [...(defined.get(m[1]!) ?? [])]),
+  ...[...paperLook.matchAll(/import '\.\/([\w/-]+\.css)'/g)].flatMap((m) => [...(defined.get(m[1]!) ?? [])]),
+]);
 
 const code = walk(SRC)
   .filter((path) => /\.tsx?$/.test(path) && !path.includes('.test.'))

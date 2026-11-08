@@ -12,7 +12,7 @@
  * account" is up rather than after it. A stranger on the landing page never
  * downloads it.
  */
-import { Suspense, lazy, useEffect } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { Ambient, AppBoundary, Loading, Rail, Toasts, Topbar, VerifyBanner } from '@/components';
 import { RequireAccount } from './RequireAccount';
@@ -30,6 +30,7 @@ import Unbuilt, { PATHS as UNBUILT_PATHS } from '@/pages/Unbuilt';
 import { storedUsername } from '@/services/auth';
 import type { Prefs } from '@/services/settings';
 import { analyticsHomePath } from '@/utils/analyticsPrefs';
+import { loadPaper, paperLoaded } from '@/utils/paperLook';
 import { rememberExit } from '@/utils/settingsExit';
 
 const loadDashboard = () => import('@/pages/Dashboard');
@@ -250,6 +251,23 @@ export default function App() {
      rather than on the calendar because the calendar's own route redirects and
      a redirect drops the fragment. See hooks/useVoid.ts. */
   useVoid();
+
+  /* The paper look loads on demand (styles/paperLook.ts). A visit that began
+     on the landing page doesn't have it yet, so the first app page holds on
+     the loading screen until it's in rather than showing in the wrong
+     colours. Usually a few hundred milliseconds, once per visit. */
+  const [paper, setPaper] = useState(paperLoaded);
+  useEffect(() => {
+    if (landing || paper) return;
+    let live = true;
+    void loadPaper().then(() => {
+      if (live) setPaper(true);
+    });
+    return () => {
+      live = false;
+    };
+  }, [landing, paper]);
+  if (!landing && !paper) return <Loading />;
 
   return (
     <>

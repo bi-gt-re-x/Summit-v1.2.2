@@ -41,10 +41,7 @@ import '@/styles/preferences.css';
 import '@/styles/rail.css';
 import '@/styles/summit.css';
 import '@/styles/minimal.css';
-import '@/styles/paper-remap.css';
-import '@/styles/paper.css';
-import '@/styles/paper-dark.css';
-import '@/styles/paper-dark-hand.css';
+import { loadPaper, skipsPaper } from '@/utils/paperLook';
 
 const container = document.getElementById('root');
 if (!container) {
@@ -72,7 +69,12 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   });
 }
 
-createRoot(container).render(
+/* The paper look is the app's, not the landing page's (styles/paperLook.ts),
+ * so a visit that starts on an app route waits for it before the first
+ * render and one that starts on /home or /login doesn't. */
+const start = skipsPaper(window.location.pathname) ? Promise.resolve() : loadPaper();
+
+void start.then(() => createRoot(container).render(
   <StrictMode>
     {/* Outside the providers, because a provider throwing is exactly the case
         the boundary inside App.tsx cannot catch — there would be no App. */}
@@ -111,4 +113,4 @@ createRoot(container).render(
       </BrowserRouter>
     </RootBoundary>
   </StrictMode>,
-);
+));

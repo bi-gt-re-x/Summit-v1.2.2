@@ -322,6 +322,25 @@ body:has(.auth-page) .app-main {
 
 /* One line under a field: the match check, an email that's taken. */
 .auth-field-note { margin: 2px 0 0; font-size: var(--text-sm); color: var(--color-ink-muted); }
+/* Sign-up's two halves take turns. `display` on the form would otherwise
+   beat the `hidden` attribute and show both. */
+.auth-card form[hidden] { display: none; }
+
+/* Sign-up's second half: the email from the first, with a way back to it. */
+.auth-as {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    margin: 0 0 var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-2);
+    font-size: var(--text-sm);
+    color: var(--color-ink);
+}
+.auth-as span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .auth-field-note.is-good { color: #2e9e6b; }
 .auth-field-note.is-bad { color: #d94f4f; }
 .auth-inline-link {

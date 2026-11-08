@@ -88,8 +88,11 @@ export default function Homepage() {
 
   const [params] = useSearchParams();
   const navigate = useNavigate();
+  /* An email typed into the page's start form rides along in the history
+     state, not the URL, so it never lands in a log or a shared link. */
   const toLogin = useCallback(
-    (step: 'login' | 'create') => navigate(`/login?auth=${step}`),
+    (step: 'login' | 'create', email?: string) =>
+      navigate(`/login?auth=${step}`, email ? { state: { email } } : undefined),
     [navigate],
   );
   const { status, username, signOut } = useAuth();
@@ -221,7 +224,7 @@ export default function Homepage() {
           <Hero
             signedIn={signedIn}
             username={username}
-            onGetStarted={() => toLogin('create')}
+            onGetStarted={(email) => toLogin('create', email)}
           />
 
           <Numbers />
@@ -368,12 +371,12 @@ export default function Homepage() {
           <Faq />
           <Pricing
             signedIn={signedIn}
-            onGetStarted={() => toLogin('create')}
+            onGetStarted={(email) => toLogin('create', email)}
             onTheme={setTheme}
             onToast={say}
           />
           <TechStack />
-          <FinalCta signedIn={signedIn} onGetStarted={() => toLogin('create')} />
+          <FinalCta signedIn={signedIn} onGetStarted={(email) => toLogin('create', email)} />
         </div>
       </div>
 

@@ -19,13 +19,14 @@
  * A signed-in, finished account has nothing to do here and is sent on to
  * `next`; one that still owes its profile gets that panel.
  */
-import { useCallback, useMemo } from 'react';
-import { Link, Navigate, useSearchParams } from 'react-router-dom';
+import { useCallback, useEffect, useMemo } from 'react';
+import { Link, Navigate, useLocation, useSearchParams } from 'react-router-dom';
 import { AuthFlow, type AuthStep } from '@/components/Auth';
 import { Icon, type IconName } from '@/components/Icon';
 import { Loading } from '@/components';
 import { Range } from '@/components/Range';
 import { useAuth, useDocumentTitle } from '@/hooks';
+import { loadPaper } from '@/utils/paperLook';
 import '@/styles/summit.css';
 import '@/styles/auth.css';
 
@@ -60,6 +61,10 @@ const POINTS: [IconName, string][] = [
 
 export default function Login() {
   const [params, setParams] = useSearchParams();
+  /* The email from the landing page's start form, sent in history state so
+     it stays out of the URL (pages/Homepage.tsx). */
+  const arrived = useLocation().state as { email?: unknown } | null;
+  const initialEmail = typeof arrived?.email === 'string' ? arrived.email : '';
   const { status, profileComplete } = useAuth();
 
   // Any panel the flow itself can move to, since it writes each one back here;
@@ -73,6 +78,14 @@ export default function Login() {
   const next = safeNext(params.get('next'));
 
   useDocumentTitle(TITLES[step]);
+
+  /* The app's look (styles/paperLook.ts) isn't used here, but the dashboard
+     after this page needs it. Fetched while the form is being filled in, so
+     finishing doesn't wait on it. */
+  useEffect(() => {
+    const timer = setTimeout(() => void loadPaper(), 1200);
+    return () => clearTimeout(timer);
+  }, []);
 
   const setStep = useCallback(
     (to: AuthStep) => {
@@ -154,7 +167,13 @@ export default function Login() {
 
       <main className="auth-main">
         <div className="auth-main-top">{home}</div>
-        <AuthFlow step={step} notice={notice} next={next} onStep={setStep} />
+        <AuthFlow
+          step={step}
+          notice={notice}
+          next={next}
+          onStep={setStep}
+          initialEmail={initialEmail}
+        />
       </main>
     </div>
   );
