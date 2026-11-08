@@ -112,6 +112,14 @@ function lastActivity(goal: Goal, tasks: Task[], today: Date): string {
   return `${months} month${months === 1 ? '' : 's'} ago`;
 }
 
+/** "12 days", "about 4 months", "over 5 years": a count you can hold. */
+function span(days: number): string {
+  if (days === 1) return '1 day';
+  if (days < 56) return `${days} days`;
+  if (days < 550) return `about ${Math.round(days / 30.4)} months`;
+  return `over ${Math.floor(days / 365.25)} year${days < 730 ? '' : 's'}`;
+}
+
 const HEALTH_LABEL: Record<string, string> = {
   'on-track': 'On track',
   behind: 'Behind',
@@ -185,7 +193,7 @@ export function GoalTable({ goals, tasks, onOpen, onEdit, today = new Date() }: 
                   <span className="gx-quiet">
                     {numbers.numeric && numbers.target > 0
                       ? `${numbers.current} / ${numbers.target}${numbers.label ? ` ${numbers.label}` : ''}`
-                      : `${numbers.current} / ${numbers.target} milestones`}
+                      : `${numbers.current} / ${numbers.target} ${numbers.target === 1 ? 'checkpoint' : 'checkpoints'}`}
                   </span>
                 </td>
 
@@ -203,8 +211,10 @@ export function GoalTable({ goals, tasks, onOpen, onEdit, today = new Date() }: 
                         {deadline === null
                           ? ''
                           : deadline < 0
-                            ? `${Math.abs(deadline)} days over`
-                            : `${deadline} days left`}
+                            ? `${span(-deadline)} over`
+                            : deadline === 0
+                              ? 'Due today'
+                              : `${span(deadline)} left`}
                       </span>
                     </>
                   ) : (

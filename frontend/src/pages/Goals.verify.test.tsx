@@ -157,6 +157,7 @@ describe('reaching the goal', () => {
     show();
     const article = await card();
     await userEvent.click(within(article).getByRole('button', { name: /not yet/i }));
+    await userEvent.click(within(article).getByRole('button', { name: 'Reopen the last checkpoint' }));
     expect(verifyGoal).toHaveBeenCalledWith('g-1', false);
     expect(within(article).queryByRole('group', { name: /you reached it/i })).not.toBeInTheDocument();
     await waitFor(() => expect(figure(article)).not.toBe('100%'), { timeout: 2000 });

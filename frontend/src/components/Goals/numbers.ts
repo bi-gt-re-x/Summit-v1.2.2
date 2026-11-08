@@ -73,7 +73,7 @@ export function goalNumbers(goal: Goal): GoalNumbers {
       goalType: 'xp',
       current: done,
       target: rows.length,
-      label: rows.length === 1 ? 'milestone' : 'milestones',
+      label: rows.length === 1 ? 'checkpoint' : 'checkpoints',
       progress,
       numeric: false,
     };

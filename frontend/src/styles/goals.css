@@ -5421,3 +5421,42 @@ html[data-theme="dark"] .gx-page .ag-card .ag-heat-grid i.is-l0 { background: co
 }
 .gx-idea-open:hover { color: var(--gx-text); border-color: var(--gx-muted); }
 .gx-idea-open svg { width: 14px; height: 14px; }
+
+/* "X is in Finished goals now", after a goal is confirmed done. */
+.gx-finished-do { display: flex; gap: var(--space-2); }
+
+/* "Not yet": what's left becomes a checkpoint, or the target goes up. */
+.ag-verify-left { flex: 1 1 100%; flex-wrap: wrap; align-items: center; }
+.ag-verify-add { display: flex; gap: var(--space-2); flex: 1 1 320px; min-width: 0; }
+.ag-verify-add input {
+    flex: 1;
+    min-width: 0;
+    min-height: 52px;
+    padding: 0 14px;
+    border: 1px solid var(--gx-line);
+    border-radius: var(--radius-md);
+    background: var(--gx-card);
+    color: var(--gx-text);
+    font: inherit;
+    font-size: var(--text-sm);
+}
+.ag-verify-add input:focus { outline: 2px solid color-mix(in srgb, var(--gx-text) 30%, transparent); outline-offset: 1px; }
+.ag-verify-back {
+    padding: 8px 10px;
+    border: 0;
+    background: none;
+    color: var(--gx-muted);
+    font: inherit;
+    font-size: var(--text-sm);
+    cursor: pointer;
+}
+.ag-verify-back:hover { color: var(--gx-text); }
+
+/* The table's date reads on one line, with how long is left under it. */
+.gx-table-date { white-space: nowrap; }
+
+
+/* "Suggest steps" in the detail panel sits under the checklist. As a bare
+   child of the checkpoint's grid it fell into the 26px icon column and
+   wrapped to a squashed two-line box. */
+.gx-ms > .gx-ai { grid-column: 2 / -1; justify-self: start; white-space: nowrap; }

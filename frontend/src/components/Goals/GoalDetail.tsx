@@ -216,7 +216,7 @@ export function GoalDetail(props: GoalDetailProps) {
           <dl className="gx-facts">
             <div>
               <dt>Started</dt>
-              <dd>{formatGoalDate(goal.start_date || goal.created_at) || '-'}</dd>
+              <dd>{formatGoalDate(goal.start_date || goal.created_at) || 'Not set'}</dd>
             </div>
             <div>
               <dt>Target date</dt>
@@ -226,7 +226,7 @@ export function GoalDetail(props: GoalDetailProps) {
               <dt>Days left</dt>
               <dd>
                 {health.signals.daysLeft === null
-                  ? '-'
+                  ? 'No date'
                   : health.signals.daysLeft < 0
                     ? `${Math.abs(health.signals.daysLeft)} over`
                     : health.signals.daysLeft}
@@ -242,7 +242,7 @@ export function GoalDetail(props: GoalDetailProps) {
         {/* ---- The checkpoints -------------------------------------------- */}
         <section className="gx-panel">
           <header className="gx-panel-head">
-            <h3>Milestones</h3>
+            <h3>Checkpoints</h3>
             <span className="gx-quiet">
               {rows.filter((row) => row.status === 'done').length} of {rows.length} reached
             </span>
@@ -448,7 +448,7 @@ export function GoalDetail(props: GoalDetailProps) {
             <div>
               <span className="gx-quiet">At this rate</span>
               <strong>
-                {pace.lands ? formatGoalDate(pace.lands) : '-'}
+                {pace.lands ? formatGoalDate(pace.lands) : 'Not yet known'}
               </strong>
               <span className="gx-quiet">
                 {pace.drift === null

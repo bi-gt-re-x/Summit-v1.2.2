@@ -7180,6 +7180,22 @@ html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-pag
     color: var(--gx-text);
     border-color: var(--gx-muted)
 }
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ag-verify-add input {
+    border: 1px solid var(--gx-line);
+    background: var(--gx-card);
+    color: var(--gx-text)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ag-verify-add input:focus {
+    outline: 2px solid color-mix(in srgb, var(--gx-text) 30%, transparent)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ag-verify-back {
+    border: 0;
+    background: none;
+    color: var(--gx-muted)
+}
+html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .ag-verify-back:hover {
+    color: var(--gx-text)
+}
 html[data-theme="dark"]:not([data-skin]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .calendar-card {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6),
 

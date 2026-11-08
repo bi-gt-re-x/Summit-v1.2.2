@@ -122,7 +122,7 @@ const MOVED_BY: Record<GoalType, string> = {
   xp: 'Every task you finish adds its XP to this total.',
   streak: 'One finished task on a day keeps the run alive; a day with none ends it.',
   tasks: 'Each task you mark complete counts once.',
-  focus: 'Time on the focus timer is added when the session ends.',
+  focus: "Summit doesn't have a focus timer any more, so this total won't grow. Keep it as a record, or remove it.",
 };
 
 /**
@@ -301,7 +301,7 @@ export function SystemGoals({ counters, onEdit, onDelete, onNew }: SystemGoalsPr
   if (counters.length === 0) {
     return (
       <p className="gx-empty">
-        None yet. Set a target like 50,000 XP, a 30-day streak, 500 tasks or 100 hours of focus.
+        None yet. Set a target like 50,000 XP, a 30-day streak or 500 tasks.
         <button type="button" className="gx-link" onClick={onNew}>
           Set one
         </button>

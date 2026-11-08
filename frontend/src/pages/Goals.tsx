@@ -95,12 +95,10 @@ import type { TabId } from '@/components/Goals';
 import { fromTitles, stepProgress } from '@/utils/milestoneSteps';
 import { ConfirmDialog } from '@/components/ui';
 import '@/styles/goals.css';
-import { announceStatsChanged } from '@/utils/statsBus';
-import { awaitingVerify, withStoneStatus, withSteps } from '@/utils/goalProgress';
+import { STATS_CHANGED, TASKS_WRITTEN, announceStatsChanged } from '@/utils/statsBus';
+import { awaitingVerify, withStoneStatus, withStones, withSteps } from '@/utils/goalProgress';
 import { GoalCelebration, type Celebration } from '@/components/Goals/GoalCelebration';
 
-/** How often to re-read while a focus goal is running. */
-const FOCUS_POLL_MS = 30_000;
 
 /**
  * How many goals the ladder and the timelines draw.
@@ -197,6 +195,8 @@ export default function Goals() {
      moment they are made (see `quietWrite`), and a re-read that lands while
      one is still out would put the old figures back for a beat. */
   const pendingWrites = useRef(0);
+  /** Tasks being ticked off right now, so a double click finishes one once. */
+  const finishing = useRef(new Set<string>());
 
   const load = useCallback(
     async (quiet = false) => {
@@ -231,16 +231,25 @@ export default function Goals() {
     void load();
   }, [load]);
 
-  const hasRunningFocus = useMemo(
-    () => list.some((goal) => measureOf(goal) === 'focus' && goal.status === 'active'),
-    [list],
-  );
-
+  /* Counters move when work is finished anywhere in the app, so the page
+     re-reads the moment it hears about it, and when the tab comes back into
+     view. This replaced a 30-second poll for focus counters, which waited on a
+     focus timer that no longer exists (it was removed on 2026-10-31), so it
+     polled forever and changed nothing. Skipped while a write of this page's
+     own is still out, which re-reads when it lands. */
   useEffect(() => {
-    if (!hasRunningFocus) return;
-    const timer = setInterval(() => void load(true), FOCUS_POLL_MS);
-    return () => clearInterval(timer);
-  }, [hasRunningFocus, load]);
+    const refresh = () => {
+      if (pendingWrites.current === 0 && document.visibilityState === 'visible') void load(true);
+    };
+    window.addEventListener(STATS_CHANGED, refresh);
+    window.addEventListener(TASKS_WRITTEN, refresh);
+    document.addEventListener('visibilitychange', refresh);
+    return () => {
+      window.removeEventListener(STATS_CHANGED, refresh);
+      window.removeEventListener(TASKS_WRITTEN, refresh);
+      document.removeEventListener('visibilitychange', refresh);
+    };
+  }, [load]);
 
   useEffect(() => {
     const wait = msUntilNextDeadline(list);
@@ -329,20 +338,38 @@ export default function Goals() {
    */
   const completeMove = useCallback(
     async (task: Task) => {
-      if (!username || busy) return;
-      setBusy(true);
-      const result = await taskService.completeTask(task.id);
-      setBusy(false);
-      if (!result.success) {
-        setError(result.message ?? "That task couldn't be completed.");
+      if (!username || finishing.current.has(task.id)) return;
+      finishing.current.add(task.id);
+      // Ticked on the click. The server's answer (XP, streak, the goal's own
+      // figures) lands behind it, and a failure puts the task back.
+      account.mutate((current) => ({
+        ...current,
+        tasks: current.tasks.map((row) =>
+          row.id === task.id ? { ...row, status: 'done', completed_at: new Date().toISOString() } : row,
+        ),
+      }));
+      pendingWrites.current += 1;
+      try {
+        const result = await taskService.completeTask(task.id);
+        if (!result.success) {
+          setError(result.message ?? "That task couldn't be completed.");
+          account.reload();
+          return;
+        }
+        // The rail's level and the bell did not hear about completions made
+        // here. See utils/statsBus.
+        announceStatsChanged();
+      } catch {
+        setError("That task couldn't be completed. Check your connection.");
+        account.reload();
         return;
+      } finally {
+        pendingWrites.current -= 1;
+        finishing.current.delete(task.id);
       }
-      // The rail's level and the bell did not hear about completions made
-      // here. See utils/statsBus.
-      announceStatsChanged();
       await Promise.all([load(true), account.reload()]);
     },
-    [account, busy, load, username],
+    [account, load, username],
   );
 
   /**
@@ -359,17 +386,20 @@ export default function Goals() {
   const linkTask = useCallback(
     async (goal: Goal, task: Task, milestoneId?: string) => {
       if (!username) return;
-      const result = await taskService.updateTask(task.id, {
-        goal_id: goal.id,
-        milestone_id: milestoneId ?? null,
-      });
-      if (!result.success) {
-        setError(result.message ?? "That task couldn't be linked.");
-        return;
-      }
-      await Promise.all([load(true), account.reload()]);
+      // Linked on the click; a failure puts it back.
+      account.mutate((current) => ({
+        ...current,
+        tasks: current.tasks.map((row) =>
+          row.id === task.id ? { ...row, goal_id: goal.id, milestone_id: milestoneId } : row,
+        ),
+      }));
+      const saved = await quietWrite(() =>
+        taskService.updateTask(task.id, { goal_id: goal.id, milestone_id: milestoneId ?? null }),
+      );
+      account.reload();
+      if (!saved) return;
     },
-    [account, load, username],
+    [account, quietWrite, username],
   );
 
   // ---- Goal writes --------------------------------------------------------
@@ -453,6 +483,35 @@ export default function Goals() {
   const saveGoal = useCallback(
     async (draft: NewGoal) => {
       if (!username) return;
+      /* An edit is drawn on the click and the dialog closes at once; the
+         save runs behind it and a failure re-reads the goal as it was.
+         Making a goal still waits, since the card needs the server's id. */
+      if (draft.id) {
+        const id = draft.id;
+        patchGoal(id, (goal) => ({
+          ...goal,
+          title: draft.title,
+          description: draft.description ?? goal.description,
+          priority: draft.priority ?? goal.priority,
+          deadline: draft.deadline ?? goal.deadline,
+        }));
+        setModalOpen(false);
+        setEditing(undefined);
+        void quietWrite(() =>
+          goalService.updateGoal(id, {
+            title: draft.title,
+            description: draft.description,
+            goal_type: draft.goal_type,
+            priority: draft.priority,
+            deadline: draft.deadline,
+            target_xp: draft.target_xp,
+            target_streak: draft.target_streak,
+            target_tasks: draft.target_tasks,
+            target_focus: draft.target_focus,
+          }),
+        );
+        return;
+      }
       const ok = await write(() =>
         draft.id
           ? goalService.updateGoal(draft.id, {
@@ -473,15 +532,44 @@ export default function Goals() {
         setEditing(undefined);
       }
     },
-    [username, write],
+    [patchGoal, quietWrite, username, write],
   );
 
   const setValue = useCallback(
     (goal: Goal, value: number) => {
       if (!username) return;
-      void write(() => goalService.updateGoal(goal.id, { current_value: value }));
+      patchGoal(goal.id, (row) => {
+        const target = Number(row.target_number) || 0;
+        return {
+          ...row,
+          current_value: value,
+          progress: target > 0 ? Math.min(100, Math.round((value / target) * 1000) / 10) : row.progress,
+        };
+      });
+      void quietWrite(() => goalService.updateGoal(goal.id, { current_value: value }));
     },
-    [username, write],
+    [patchGoal, quietWrite, username],
+  );
+
+  /**
+   * "Not yet" on a number goal at its target: the target goes up. Drawn at
+   * once (back under 100%, the question cleared, as the server will), saved
+   * behind it.
+   */
+  const raiseTarget = useCallback(
+    (goal: Goal, target: number) => {
+      if (!username) return;
+      patchGoal(goal.id, (row) => ({
+        ...row,
+        target_number: target,
+        status: 'active',
+        needs_verify: false,
+        verified_at: undefined,
+        progress: Math.min(100, Math.round((Number(row.current_value || 0) / target) * 1000) / 10),
+      }));
+      void quietWrite(() => goalService.updateGoal(goal.id, { target_number: target }));
+    },
+    [patchGoal, quietWrite, username],
   );
 
   /* Which chart a card draws. Written like any other edit, so the card redraws
@@ -489,19 +577,22 @@ export default function Goals() {
   const setChart = useCallback(
     (goal: Goal, chart: string) => {
       if (!username) return;
-      void write(() => goalService.updateGoal(goal.id, { chart }));
+      patchGoal(goal.id, (row) => ({ ...row, chart }));
+      void quietWrite(() => goalService.updateGoal(goal.id, { chart }));
     },
-    [username, write],
+    [patchGoal, quietWrite, username],
   );
 
   const confirmDelete = useCallback(async () => {
     if (!username || !pendingDelete) return;
     const gone = pendingDelete.id;
-    await write(() => goalService.deleteGoal(gone));
+    // Gone on the click. A failed delete re-reads and brings it back.
+    setList((goals) => goals.filter((goal) => goal.id !== gone));
     setPendingDelete(null);
     // The drawer was showing the goal that no longer exists.
     setOpenId((current) => (current === gone ? null : current));
-  }, [username, pendingDelete, write]);
+    await quietWrite(() => goalService.deleteGoal(gone));
+  }, [username, pendingDelete, quietWrite]);
 
   // ---- Milestone writes ---------------------------------------------------
   /**
@@ -515,9 +606,34 @@ export default function Goals() {
   const addMilestone = useCallback(
     async (goal: Goal, title: string) => {
       if (!username) return;
-      const created = await goalService.addMilestone(goal.id, { title });
+      // On the list at once under a stand-in id; the re-read swaps in the
+      // real row, or takes it away again if the save failed.
+      const stand = `pending-${Date.now()}`;
+      patchGoal(goal.id, (row) =>
+        withStones(row, [
+          ...(row.milestones ?? []),
+          {
+            id: stand,
+            goal_id: goal.id,
+            title,
+            status: 'pending',
+            position: (row.milestones ?? []).length,
+            steps: [],
+          } as unknown as Milestone,
+        ]),
+      );
+      pendingWrites.current += 1;
+      let created: Awaited<ReturnType<typeof goalService.addMilestone>>;
+      try {
+        created = await goalService.addMilestone(goal.id, { title });
+      } catch {
+        created = { success: false, message: "That checkpoint didn't save. Check your connection." } as typeof created;
+      } finally {
+        pendingWrites.current -= 1;
+      }
       if (!created.success) {
         setError(created.message ?? "That didn't work.");
+        await load(true);
         return;
       }
       await load(true);
@@ -536,7 +652,7 @@ export default function Goals() {
         setPlanning(null);
       }
     },
-    [username, load],
+    [username, load, patchGoal],
   );
 
   const setMilestoneStatus = useCallback(
@@ -561,13 +677,16 @@ export default function Goals() {
   const focusMilestone = useCallback(
     (milestone: Milestone) => {
       if (!username || milestone.status === 'done') return;
-      void write(() => goalService.updateMilestone(milestone.id, { status: 'active' }));
+      patchGoal(milestone.goal_id, (goal) => withStoneStatus(goal, milestone.id, 'active'));
+      void quietWrite(() => goalService.updateMilestone(milestone.id, { status: 'active' }));
     },
-    [username, write],
+    [patchGoal, quietWrite, username],
   );
 
   /** The celebration on screen, or null. See components/Goals/GoalCelebration. */
   const [celebrating, setCelebrating] = useState<Celebration | null>(null);
+  /** The goal just confirmed, so the page can say where it went. */
+  const [justFinished, setJustFinished] = useState<Goal | null>(null);
 
   /**
    * The reader's answer to "is this goal really done?".
@@ -603,6 +722,7 @@ export default function Goals() {
         ...row, status: 'completed', needs_verify: false, verified_at: new Date().toISOString(),
       }));
       setCelebrating({ goal, record: null });
+      setJustFinished(goal);
       pendingWrites.current += 1;
       try {
         const result = await goalService.verifyGoal(goal.id, true);
@@ -638,25 +758,44 @@ export default function Goals() {
   const setMilestoneDate = useCallback(
     (milestone: Milestone, date: string) => {
       if (!username) return;
-      void write(() => goalService.updateMilestone(milestone.id, { target_date: date }));
+      patchGoal(milestone.goal_id, (goal) => ({
+        ...goal,
+        milestones: (goal.milestones ?? []).map((stone) =>
+          stone.id === milestone.id ? { ...stone, target_date: date || null } : stone,
+        ),
+      }) as Goal);
+      void quietWrite(() => goalService.updateMilestone(milestone.id, { target_date: date }));
     },
-    [username, write],
+    [patchGoal, quietWrite, username],
   );
 
   const removeMilestone = useCallback(
     (milestone: Milestone) => {
       if (!username) return;
-      void write(() => goalService.deleteMilestone(milestone.id));
+      patchGoal(milestone.goal_id, (goal) =>
+        withStones(goal, (goal.milestones ?? []).filter((stone) => stone.id !== milestone.id)),
+      );
+      void quietWrite(() => goalService.deleteMilestone(milestone.id));
     },
-    [username, write],
+    [patchGoal, quietWrite, username],
   );
 
   const reorder = useCallback(
     (goal: Goal, order: string[]) => {
       if (!username) return;
-      void write(() => goalService.reorderMilestones(goal.id, order));
+      patchGoal(goal.id, (row) => {
+        const byId = new Map((row.milestones ?? []).map((stone) => [stone.id, stone]));
+        const sorted = order
+          .map((id, position) => {
+            const stone = byId.get(id);
+            return stone ? { ...stone, position } : null;
+          })
+          .filter((stone): stone is Milestone => stone !== null);
+        return withStones(row, sorted.length === byId.size ? sorted : row.milestones ?? []);
+      });
+      void quietWrite(() => goalService.reorderMilestones(goal.id, order));
     },
-    [username, write],
+    [patchGoal, quietWrite, username],
   );
 
   /**
@@ -935,7 +1074,7 @@ export default function Goals() {
                 className="gx-btn"
                 onClick={() => setShowCompleted((shown) => !shown)}
               >
-                {showCompleted ? 'Hide completed' : 'View completed'}
+                {showCompleted ? 'Hide finished goals' : 'Finished goals'}
               </button>
               {/* The second door to the wizard, and the only one that says
                   out loud that a model can write the whole goal.
@@ -985,6 +1124,34 @@ export default function Goals() {
                 of everything is one glance, and the cards below are for
                 acting on one. Not while filtered: the filter is a short list
                 already, and not for a single goal, which its card covers. */}
+            {/* Where a confirmed goal went. It leaves the cards for Finished
+                goals, and without this it looked like it had vanished. */}
+            {justFinished && !showCompleted && (
+              <div className="gx-filtered gx-finished-note" role="status">
+                <span className="gx-filtered-what">
+                  <strong>{justFinished.title}</strong> is in Finished goals now.
+                </span>
+                <span className="gx-finished-do">
+                  <button
+                    type="button"
+                    className="gx-btn"
+                    onClick={() => {
+                      setShowCompleted(true);
+                      setJustFinished(null);
+                      window.setTimeout(() => {
+                        document.getElementById('gx-finished')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                      }, 50);
+                    }}
+                  >
+                    Show it
+                  </button>
+                  <button type="button" className="gx-btn is-quiet" onClick={() => setJustFinished(null)}>
+                    Dismiss
+                  </button>
+                </span>
+              </div>
+            )}
+
             {!attention && outcomes.length >= 2 && (
               <Band title="All goals at a glance" hint="Click one to open it">
                 <GoalTable
@@ -1063,6 +1230,8 @@ export default function Goals() {
                     onMilestoneSteps={setMilestoneSteps}
                     onMilestoneStatus={setMilestoneStatus}
                     onVerify={(entry, done) => void verifyGoal(entry, done)}
+                    onAddMilestone={(entry, title) => void addMilestone(entry, title)}
+                    onRaiseTarget={raiseTarget}
                     nameOf={subjectName}
                     onChart={setChart}
                   />
@@ -1147,7 +1316,7 @@ export default function Goals() {
               </Band>
             ) : (
               <p className="gx-more-note">
-                Want a target on your XP, streak, tasks or focus hours?{' '}
+                Want a target on your XP, streak or finished tasks?{' '}
                 <button type="button" className="gx-link" onClick={() => setSystemOpen(true)}>
                   Add a counter
                 </button>
@@ -1269,7 +1438,10 @@ export default function Goals() {
             Not a tab of its own: it is one band, and the header button that
             reveals it works from wherever you are. */}
         {showCompleted && (
-          <Band title="Recently finished" hint="Done">
+          <div id="gx-finished" />
+        )}
+        {showCompleted && (
+          <Band title="Finished goals" hint="Goals you said were done">
             <RecentlyCompleted goals={list.filter((goal) => !awaitingVerify(goal))} />
           </Band>
         )}

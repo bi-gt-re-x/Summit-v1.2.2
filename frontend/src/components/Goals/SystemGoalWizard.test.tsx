@@ -24,12 +24,14 @@ function show(counters: Goal[] = []) {
 const next = () => screen.getByRole('button', { name: 'Next' });
 
 describe('the system goal setup', () => {
-  it('offers the four counters as a list', () => {
+  /* Three: focus time can't move since the focus timer was removed
+     (2026-10-31), so it isn't offered for a new counter. */
+  it('offers the three counters that can still move', () => {
     show();
     const list = screen.getByRole('list', { name: 'What to count' });
     const rows = within(list).getAllByRole('listitem');
     expect(rows.map((row) => row.querySelector('strong')?.textContent)).toEqual([
-      'XP', 'Streak', 'Tasks', 'Focus time',
+      'XP', 'Streak', 'Tasks',
     ]);
   });
 
@@ -58,18 +60,17 @@ describe('the system goal setup', () => {
   it('sends a counter, with the target in the field that counter reads', async () => {
     const user = userEvent.setup();
     const onSave = show();
-    await user.click(screen.getByRole('button', { name: /^focus time/i }));
+    await user.click(screen.getByRole('button', { name: /^tasks/i }));
     await user.click(next());
-    await user.type(screen.getByLabelText(/target \(hours\)/i), '20');
+    await user.type(screen.getByLabelText(/target \(tasks\)/i), '20');
     await user.click(screen.getByRole('button', { name: 'Set goal' }));
 
     const sent = onSave.mock.calls[0]![0];
     expect(sent).toMatchObject({
-      title: 'Focus for 20 hours',
-      goal_type: 'focus',
-      measure: 'focus',
-      // Hours in, minutes stored — the one conversion GoalModal makes too.
-      target_focus: 1200,
+      title: 'Complete 20 tasks',
+      goal_type: 'tasks',
+      measure: 'tasks',
+      target_tasks: 20,
     });
     // Nothing an outcome carries.
     expect(sent).not.toHaveProperty('milestones');

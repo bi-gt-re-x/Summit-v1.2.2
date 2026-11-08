@@ -21,10 +21,11 @@
  *
  * ## What it does not draw
  *
- * There is no time-invested panel, no focus-per-goal breakdown and no daily
- * average. Two separate reasons, and both matter. The first is that the app
- * records focus time per day rather than per task, so a per-goal hour count
- * has nothing behind it. The second is that this is not the analytics page:
+ * There is no time panel, no focus-per-goal breakdown and no daily average.
+ * Two reasons. The first is that there's no focus timer any more (removed
+ * 2026-10-31), so the only time a goal has is how long its own tasks took,
+ * and the card footer already shows that as "Time on its tasks". The second
+ * is that this is not the analytics page:
  * Goals says where you are going and whether you will get there, and the
  * moment it grows a second column of averages it has become a worse version of
  * the page next door.

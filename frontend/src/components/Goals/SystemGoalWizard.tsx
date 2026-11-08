@@ -11,8 +11,8 @@
  * with five invented checkpoints under "earn 50,000 XP" and no target the app
  * could count toward.
  *
- * A counter is two decisions: which of the four things, and what number. So it
- * is two steps. The first is a list, because the four are the whole choice and
+ * A counter is two decisions: which of the three things, and what number. So it
+ * is two steps. The first is a list, because the three are the whole choice and
  * each needs a sentence on what exactly it counts — "from today" and "your
  * live streak" behave differently, and the difference is the thing a reader
  * picking one needs to know.
@@ -62,14 +62,9 @@ const COUNTERS: Counter[] = [
     placeholder: '100',
     title: (n) => `Complete ${n} tasks`,
   },
-  {
-    type: 'focus',
-    label: 'Focus time',
-    counts: 'Counts the focus time you log from today.',
-    unit: 'hours',
-    placeholder: '50',
-    title: (n) => `Focus for ${n} hours`,
-  },
+  /* No focus-time counter (2026-11-08). The focus timer was removed on
+     2026-10-31, so nothing records focus time any more and a new counter on
+     it could never move. Existing ones still show, and say so. */
 ];
 
 const STEPS = ['What should Summit count?', "What's the target?"] as const;

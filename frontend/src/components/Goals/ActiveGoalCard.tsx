@@ -95,7 +95,7 @@ function shortDate(value?: string): string {
 /** "May 2024" — where the year is the point rather than the day. */
 function monthYear(value?: string): string {
   const at = time(value);
-  if (!at) return '-';
+  if (!at) return 'No date';
   return new Date(at).toLocaleDateString(undefined, { month: 'short', year: 'numeric' });
 }
 
@@ -231,6 +231,10 @@ export interface ActiveGoalCardProps {
    * is (or, on a goal with no target, once every checkpoint is behind it).
    */
   onVerify: (goal: Goal, done: boolean) => void;
+  /** Add a checkpoint at the end, from the "Not yet" answer. */
+  onAddMilestone?: (goal: Goal, title: string) => void;
+  /** A higher target for a number goal, from the "Not yet" answer. */
+  onRaiseTarget?: (goal: Goal, target: number) => void;
   /** Turns a subject id into its name, for the charts that group by subject. */
   nameOf: (id: string) => string;
   /** Pin a chart to the card, or an empty string to let the page pick. */
@@ -265,6 +269,8 @@ export function ActiveGoalCard({
   onMilestoneSteps,
   onMilestoneStatus,
   onVerify,
+  onAddMilestone,
+  onRaiseTarget,
   nameOf,
   onChart,
   explain = false,
@@ -277,6 +283,12 @@ export function ActiveGoalCard({
   const stones = goal.milestones ?? [];
 
   const [menuOpen, setMenuOpen] = useState(false);
+  /* "Not yet" opens real choices instead of guessing: what's left becomes a
+     checkpoint, the last one reopens, or the target goes up. Each one takes
+     the goal back under 100%, so 100% only ever means "finished, say so". */
+  const [notYet, setNotYet] = useState(false);
+  const [leftover, setLeftover] = useState('');
+  const [raised, setRaised] = useState('');
   const [chartOpen, setChartOpen] = useChartOpen(goal.id);
   /* The focus picker, closed by default. It is a disclosure rather than a
      select because the options are checkpoint titles — full sentences, most of
@@ -451,7 +463,7 @@ export function ActiveGoalCard({
       .slice(0, MATCHES);
   }, [linkAt, draft, mine, tasks]);
 
-  /** What the goal has cost, off the clock its finished tasks recorded. */
+  /** How long the goal's finished tasks took. See the note in the footer. */
   const invested = useMemo(
     () =>
       mine.reduce(
@@ -609,31 +621,122 @@ export function ActiveGoalCard({
       {asking && (
         <section className="ag-verify" role="group" aria-labelledby={`ag-verify-${goal.id}`}>
           <div className="ag-verify-text">
-            <strong id={`ag-verify-${goal.id}`}>You reached it. Is this goal done?</strong>
+            <strong id={`ag-verify-${goal.id}`}>
+              {notYet ? "What's left?" : 'You reached it. Is this goal done?'}
+            </strong>
             <span>
-              {stones.length > 0
-                ? 'Every checkpoint is done. Say yes and it moves to your finished goals.'
-                : 'You hit the target. Say yes and it moves to your finished goals.'}
+              {notYet
+                ? stones.length > 0
+                  ? 'Add what still needs doing as a checkpoint, or reopen the last one. Either puts the goal back under 100%.'
+                  : 'Raise the target. The goal goes back under 100% and keeps counting.'
+                : stones.length > 0
+                  ? 'Every checkpoint is ticked. Say yes and it moves to Finished goals, with a record of what it took.'
+                  : 'You hit the target. Say yes and it moves to Finished goals, with a record of what it took.'}
             </span>
           </div>
-          <div className="ag-verify-do">
-            <button
-              type="button"
-              className="ag-verify-yes"
-              disabled={busy}
-              onClick={() => onVerify(goal, true)}
-            >
-              Yes, it&apos;s done
-            </button>
-            <button
-              type="button"
-              className="ag-verify-no"
-              disabled={busy}
-              onClick={() => onVerify(goal, false)}
-            >
-              Not yet
-            </button>
-          </div>
+          {notYet ? (
+            <div className="ag-verify-do ag-verify-left">
+              {stones.length > 0 && onAddMilestone && (
+                <form
+                  className="ag-verify-add"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    const title = leftover.trim();
+                    if (!title) return;
+                    onAddMilestone(goal, title);
+                    setLeftover('');
+                    setNotYet(false);
+                  }}
+                >
+                  <input
+                    value={leftover}
+                    autoFocus
+                    aria-label="What's left, as a checkpoint"
+                    placeholder="What's still left to do"
+                    onChange={(event) => setLeftover(event.target.value)}
+                  />
+                  <button type="submit" className="ag-verify-yes" disabled={!leftover.trim()}>
+                    Add checkpoint
+                  </button>
+                </form>
+              )}
+              {stones.length > 0 ? (
+                <button
+                  type="button"
+                  className="ag-verify-no"
+                  onClick={() => {
+                    setNotYet(false);
+                    onVerify(goal, false);
+                  }}
+                >
+                  Reopen the last checkpoint
+                </button>
+              ) : onRaiseTarget ? (
+                <form
+                  className="ag-verify-add"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    const target = Number(raised);
+                    if (!(target > numbers.current)) return;
+                    onRaiseTarget(goal, target);
+                    setRaised('');
+                    setNotYet(false);
+                  }}
+                >
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    value={raised}
+                    autoFocus
+                    min={numbers.current}
+                    aria-label="New target"
+                    placeholder={`New target, above ${numbers.current.toLocaleString()}${numbers.label ? ` ${numbers.label}` : ''}`}
+                    onChange={(event) => setRaised(event.target.value)}
+                  />
+                  <button
+                    type="submit"
+                    className="ag-verify-yes"
+                    disabled={!(Number(raised) > numbers.current)}
+                  >
+                    Raise the target
+                  </button>
+                </form>
+              ) : (
+                <button
+                  type="button"
+                  className="ag-verify-yes"
+                  onClick={() => {
+                    setNotYet(false);
+                    onEdit(goal);
+                  }}
+                >
+                  Raise the target
+                </button>
+              )}
+              <button type="button" className="ag-verify-back" onClick={() => setNotYet(false)}>
+                Back
+              </button>
+            </div>
+          ) : (
+            <div className="ag-verify-do">
+              <button
+                type="button"
+                className="ag-verify-yes"
+                disabled={busy}
+                onClick={() => onVerify(goal, true)}
+              >
+                Yes, it&apos;s done
+              </button>
+              <button
+                type="button"
+                className="ag-verify-no"
+                disabled={busy}
+                onClick={() => setNotYet(true)}
+              >
+                Not yet
+              </button>
+            </div>
+          )}
         </section>
       )}
 
@@ -1085,17 +1188,22 @@ export function ActiveGoalCard({
             <dl className="ag-facts">
               <div>
                 <dt>Start date</dt>
-                <dd>{formatGoalDate(started) || '-'}</dd>
+                <dd>{formatGoalDate(started) || 'Not set'}</dd>
               </div>
               <div>
                 <dt>Target date</dt>
-                <dd className={overdue ? 'is-late' : undefined}>{formatGoalDate(goal.deadline) || '-'}</dd>
+                <dd className={overdue ? 'is-late' : undefined}>{formatGoalDate(goal.deadline) || 'No date'}</dd>
               </div>
-              <div>
-                <dt>Time invested</dt>
-                {/* Off the clock finished tasks recorded, never estimated. A goal
-                    whose work was never timed says so rather than guessing. */}
-                <dd>{invested > 0 ? hoursMinutes(invested) : '-'}</dd>
+              {/* Named for what it is (2026-11-08). It was "Time invested",
+                  which read as tracked focus time, and Summit has had no focus
+                  timer since 2026-10-31. It is the time this goal's own
+                  tasks took: the calendar block a task was placed in, or the
+                  gap from starting to ticking it off when that was one
+                  sitting (utils/timeSpent). Tasks with neither are left out
+                  rather than guessed. */}
+              <div title="How long this goal's tasks took, from their calendar blocks and finish times. Untimed tasks are left out.">
+                <dt>Time on its tasks</dt>
+                <dd>{invested > 0 ? hoursMinutes(invested) : 'Not timed yet'}</dd>
               </div>
               <div>
                 <dt>Category</dt>

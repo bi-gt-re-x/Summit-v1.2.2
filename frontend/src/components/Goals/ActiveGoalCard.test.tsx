@@ -118,16 +118,57 @@ describe('asking whether a goal is done', () => {
     expect(onVerify.mock.calls[0]![1]).toBe(true);
   });
 
-  it('takes not yet in one press', async () => {
+  /* "Not yet" used to act at once, and on a number goal it opened a dialog
+     that couldn't change the target, so the goal sat at 100% forever. It
+     asks what's left now, and every answer takes the goal back under 100%. */
+  it("asks what's left on not yet, then reopens the last checkpoint", async () => {
     const user = userEvent.setup();
     const onVerify = show();
     await user.click(screen.getByRole('button', { name: /not yet/i }));
+    expect(onVerify).not.toHaveBeenCalled();
+    expect(screen.getByRole('group', { name: "What's left?" })).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Reopen the last checkpoint' }));
     expect(onVerify).toHaveBeenCalledWith(expect.objectContaining({ id: 'g-1' }), false);
+  });
+
+  it("turns what's left into a new checkpoint", async () => {
+    const user = userEvent.setup();
+    const onAddMilestone = vi.fn();
+    show({ onAddMilestone });
+    await user.click(screen.getByRole('button', { name: /not yet/i }));
+    await user.type(screen.getByLabelText("What's left, as a checkpoint"), 'Mock exam under time');
+    await user.click(screen.getByRole('button', { name: 'Add checkpoint' }));
+    expect(onAddMilestone).toHaveBeenCalledWith(expect.objectContaining({ id: 'g-1' }), 'Mock exam under time');
+  });
+
+  it('raises a number goal past where it is', async () => {
+    const user = userEvent.setup();
+    const onRaiseTarget = vi.fn();
+    show({
+      onRaiseTarget,
+      goal: goal({ measure: 'number', milestones: [], current_value: 100, target_number: 100, status: 'completed', needs_verify: true } as Partial<Goal>),
+    });
+    await user.click(screen.getByRole('button', { name: /not yet/i }));
+    const field = screen.getByLabelText('New target');
+    await user.type(field, '90');
+    expect(screen.getByRole('button', { name: 'Raise the target' })).toBeDisabled();
+    await user.clear(field);
+    await user.type(field, '150');
+    await user.click(screen.getByRole('button', { name: 'Raise the target' }));
+    expect(onRaiseTarget).toHaveBeenCalledWith(expect.objectContaining({ id: 'g-1' }), 150);
+  });
+
+  it('can go back to the question', async () => {
+    const user = userEvent.setup();
+    show();
+    await user.click(screen.getByRole('button', { name: /not yet/i }));
+    await user.click(screen.getByRole('button', { name: 'Back' }));
+    expect(question()).toBeInTheDocument();
   });
 
   it('says where the goal goes', () => {
     show();
-    expect(question()).toHaveTextContent(/moves to your finished goals/);
+    expect(question()).toHaveTextContent(/moves to Finished goals/);
   });
 
   it('offers nothing while a write is already in flight', async () => {
@@ -316,7 +357,7 @@ describe('the basic graph', () => {
     // Four dividers make five segments — one per checkpoint, so "1 of 5" is
     // something the bar shows rather than something the caption claims.
     expect(document.querySelectorAll('.ag-scale-ticks i')).toHaveLength(4);
-    expect(screen.getByText('4 milestones to go.')).toBeInTheDocument();
+    expect(screen.getByText('4 checkpoints to go.')).toBeInTheDocument();
   });
 
   it('leaves a large target as one bar', () => {

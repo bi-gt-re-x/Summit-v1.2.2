@@ -75,6 +75,9 @@ export function GoalCelebration({ celebration, onClose }: {
         <h2 id="gc-title" className="gc-title">{goal.title}</h2>
         <p className="gc-line">You said you&apos;d do it, and you did.</p>
 
+        {/* Only once there's something to list. A goal with no days, steps
+            or tasks behind it used to leave an empty band here. */}
+        {(!record || figures.length > 0) && (
         <ul className={`gc-figures${record ? ' is-in' : ''}`} aria-live="polite">
           {figures.map((figure) => (
             <li key={figure.label}>
@@ -83,6 +86,7 @@ export function GoalCelebration({ celebration, onClose }: {
             </li>
           ))}
         </ul>
+        )}
 
         <p className={`gc-saved${record ? ' is-in' : ''}`}>
           {record ? (
