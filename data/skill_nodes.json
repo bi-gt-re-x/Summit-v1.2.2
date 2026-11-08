@@ -2120,7 +2120,7 @@
     },
     {
       "id": "la.diag",
-      "name": "Diagonalisation",
+      "name": "Diagonalization",
       "desc": "Rewriting a transformation in its own eigenbasis so it becomes a diagonal matrix. Applying it a thousand times then costs one exponentiation rather than a thousand multiplications.",
       "tier": "expert",
       "core": false,
@@ -2157,7 +2157,7 @@
       ],
       "group": "Math and science",
       "requires": [
-        "Diagonalisation",
+        "Diagonalization",
         "Least Squares"
       ],
       "recommends": [],
@@ -13752,7 +13752,7 @@
     },
     {
       "id": "sy.revision",
-      "name": "Revision Timetables",
+      "name": "Review Schedules",
       "desc": "A schedule across weeks that revisits everything more than once. Building a beautiful timetable is itself a well-known form of procrastination, so keep it to twenty minutes.",
       "tier": "advanced",
       "core": false,
@@ -13789,7 +13789,7 @@
       ],
       "group": "Studying",
       "requires": [
-        "Revision Timetables"
+        "Review Schedules"
       ],
       "recommends": [],
       "requireIds": [
@@ -25298,7 +25298,7 @@
     {
       "id": "c.perf",
       "name": "Performance",
-      "desc": "Making a program fast enough, starting by measuring rather than guessing. Almost all real gains come from doing less work, not from micro-optimising the work you are already doing.",
+      "desc": "Making a program fast enough, starting by measuring rather than guessing. Almost all real gains come from doing less work, not from micro-optimizing the work you are already doing.",
       "tier": "advanced",
       "core": false,
       "xp": 2300,
@@ -34744,7 +34744,7 @@
     },
     {
       "id": "mg.prioritise",
-      "name": "Prioritising",
+      "name": "Prioritizing",
       "desc": "Deciding what the team will not do this quarter. A list where everything is important is a list that has not been prioritized, whatever order it is in.",
       "tier": "beginner",
       "core": false,
@@ -34779,7 +34779,7 @@
       ],
       "group": "Business and money",
       "requires": [
-        "Prioritising"
+        "Prioritizing"
       ],
       "recommends": [],
       "requireIds": [
@@ -36241,7 +36241,7 @@
     },
     {
       "id": "pd.priority",
-      "name": "Prioritising",
+      "name": "Prioritizing",
       "desc": "Separating what is urgent from what actually matters, and doing the second before the first has finished shouting. Most days are spent entirely on urgent items belonging to other people unless this is deliberate.",
       "tier": "beginner",
       "core": false,
@@ -36296,7 +36296,7 @@
       "group": "Work",
       "requires": [
         "Estimating Time",
-        "Prioritising"
+        "Prioritizing"
       ],
       "recommends": [],
       "requireIds": [
@@ -36507,7 +36507,7 @@
       ],
       "group": "Work",
       "requires": [
-        "Prioritising"
+        "Prioritizing"
       ],
       "recommends": [],
       "requireIds": [
@@ -37331,7 +37331,7 @@
     },
     {
       "id": "ca.cv",
-      "name": "CV & Portfolio",
+      "name": "Résumé & Portfolio",
       "desc": "What you did, at what scale, with what result. Responsibilities describe a job description; outcomes describe you doing it.",
       "tier": "advanced",
       "core": false,
@@ -37366,7 +37366,7 @@
       ],
       "group": "Work",
       "requires": [
-        "CV & Portfolio",
+        "Résumé & Portfolio",
         "Professional Relationships"
       ],
       "recommends": [],
@@ -47446,7 +47446,7 @@
     },
     {
       "id": "en.fuel",
-      "name": "Fuelling",
+      "name": "Fueling",
       "desc": "Carbohydrate before and during anything long, practiced in training rather than tried on the day. The gut is trainable, and race day is the worst possible place to discover it is not.",
       "tier": "intermediate",
       "core": false,
@@ -47481,7 +47481,7 @@
       ],
       "group": "Health and fitness",
       "requires": [
-        "Fuelling"
+        "Fueling"
       ],
       "recommends": [],
       "requireIds": [

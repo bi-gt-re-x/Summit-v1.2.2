@@ -48,7 +48,7 @@ export const CODING: SubjectTree = {
     { id: 'c.async', name: 'Asynchronous Code', icon: 'concurrency', tier: 'advanced', requires: ['c.err', 'c.fns'], state: lock, percent: 0, xp: 2500,
       desc: 'Work that starts now and finishes later (a download, a timer, a database call) without freezing everything else. The mental shift is that the order lines appear in stops being the order they run in.' },
     { id: 'c.perf', name: 'Performance', icon: 'complexity', tier: 'advanced', requires: ['c.ds'], state: lock, percent: 0, xp: 2300,
-      desc: 'Making a program fast enough, starting by measuring rather than guessing. Almost all real gains come from doing less work, not from micro-optimising the work you are already doing.' },
+      desc: 'Making a program fast enough, starting by measuring rather than guessing. Almost all real gains come from doing less work, not from micro-optimizing the work you are already doing.' },
     { id: 'c.design', name: 'Program Design', icon: 'compass', tier: 'expert', core: true, requires: ['c.refactor', 'c.modules'], state: lock, percent: 0, xp: 3000,
       desc: 'Deciding what the pieces of a system are and how they should depend on each other, before there is much code. This is the skill that separates a program that survives its second year from one that gets rewritten.' },
     { id: 'c.web', name: 'Web Development', icon: 'browser', tier: 'intermediate', requires: ['c.oop', 'c.git'], navTo: 'web', state: lock,

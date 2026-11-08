@@ -217,3 +217,21 @@ def test_accented_words_stay_whole_and_match_without_accents():
     grading = {'keys': [['estacion'], ['donde']]}
     assert match.grade('phrase', '¿Dónde está la estación?', 'Donde esta la estacion', grading) is True
     assert match.grade('phrase', '¿Dónde está la estación?', 'Dónde está el banco', grading) is False
+
+
+def test_no_marking_in_the_library_passes_the_question_typed_back():
+    """Key ideas that the question already says are not key ideas."""
+    echo = []
+    for node_id, step, problem, _ in _library():
+        kind = problem.get('answer_kind') or 'phrase'
+        grading = problem.get('grading') or {}
+        if kind in ('yesno', 'truefalse') or not skill_check.auto_graded(kind, problem['answer'], grading):
+            continue
+        asked = match.to_plain(problem['prompt'])
+        if skill_check.refusal(kind, asked, grading):
+            continue
+        if skill_check.grade_as(kind, problem['answer'], asked, grading, problem['prompt']):
+            echo.append((node_id, step['title'], problem['slot'], asked[:60]))
+    assert echo == []
+
+

@@ -21,7 +21,7 @@ export const PRODUCTIVITY: SubjectTree = {
       desc: 'A task that names a physical next action rather than a topic. "Sort out the insurance" sits untouched for weeks; "find the renewal email" gets done in four minutes.' },
     { id: 'pd.today', name: 'Deciding the Day', icon: 'day-plan', tier: 'foundation', core: true, requires: ['pd.tasks'], state: prog, percent: 55, xp: 1500,
       desc: 'Choosing a small number of things for today, in the morning or the night before. A list of thirty is not a plan; it is a way of guaranteeing the day ends in a sense of failure.' },
-    { id: 'pd.priority', name: 'Prioritising', icon: 'priority', tier: 'beginner', requires: ['pd.today'], state: open, percent: 30, xp: 1600,
+    { id: 'pd.priority', name: 'Prioritizing', icon: 'priority', tier: 'beginner', requires: ['pd.today'], state: open, percent: 30, xp: 1600,
       desc: 'Separating what is urgent from what actually matters, and doing the second before the first has finished shouting. Most days are spent entirely on urgent items belonging to other people unless this is deliberate.' },
     { id: 'pd.estimate', name: 'Estimating Time', icon: 'estimate', tier: 'beginner', requires: ['pd.today'], state: lock, percent: 0, xp: 1500,
       desc: 'Guessing how long something will take and then checking. Everybody underestimates, consistently, and the only fix is a record of how wrong you were last time.' },

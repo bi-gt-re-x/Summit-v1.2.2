@@ -48,7 +48,7 @@ export const STUDY: SubjectTree = {
       desc: 'Working with others, which is excellent for explaining and testing and terrible for first exposure. It needs a stated purpose or it becomes a social event with books open.' },
     { id: 'sy.sources', name: 'Finding Material', icon: 'research', tier: 'advanced', requires: ['sy.summarise'], state: lock, percent: 0, xp: 1800,
       desc: 'Past papers, textbooks, lectures and problem sets, chosen for the question you actually have. Past papers are consistently the most underused resource available.' },
-    { id: 'sy.revision', name: 'Revision Timetables', icon: 'revision', tier: 'advanced', requires: ['sy.deep', 'sy.sources'], state: lock, percent: 0, xp: 2000,
+    { id: 'sy.revision', name: 'Review Schedules', icon: 'revision', tier: 'advanced', requires: ['sy.deep', 'sy.sources'], state: lock, percent: 0, xp: 2000,
       desc: 'A schedule across weeks that revisits everything more than once. Building a beautiful timetable is itself a well-known form of procrastination, so keep it to twenty minutes.' },
     { id: 'sy.exam', name: 'Exam Technique', icon: 'exam', tier: 'advanced', core: true, requires: ['sy.revision'], state: lock, percent: 0, xp: 2100,
       desc: 'Reading the question, allocating time by marks, and writing what is being asked for. A large fraction of lost marks are technique rather than knowledge.' },

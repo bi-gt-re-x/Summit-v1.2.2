@@ -43,7 +43,7 @@ export const CAREER: SubjectTree = {
       desc: 'Choosing what to get better at rather than absorbing whatever the job happens to teach. Time at a desk is not experience; repeated practice on hard things is.' },
     { id: 'ca.network', name: 'Professional Relationships', icon: 'network-people', tier: 'advanced', requires: ['ca.stakeholders'], state: lock, percent: 0, xp: 1900,
       desc: 'Staying in touch with people you worked well with, before you need anything. Most jobs arrive through weak connections rather than through applications.' },
-    { id: 'ca.cv', name: 'CV & Portfolio', icon: 'resume', tier: 'advanced', requires: ['ca.visible'], state: lock, percent: 0, xp: 1800,
+    { id: 'ca.cv', name: 'Résumé & Portfolio', icon: 'resume', tier: 'advanced', requires: ['ca.visible'], state: lock, percent: 0, xp: 1800,
       desc: 'What you did, at what scale, with what result. Responsibilities describe a job description; outcomes describe you doing it.' },
     { id: 'ca.search', name: 'Job Searching', icon: 'jobsearch', tier: 'advanced', requires: ['ca.cv', 'ca.network'], state: lock, percent: 0, xp: 2000,
       desc: 'A targeted small number of applications beats a hundred generic ones. Reading the posting properly and answering it specifically is most of what gets a reply.' },

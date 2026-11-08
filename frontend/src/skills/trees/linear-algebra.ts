@@ -47,7 +47,7 @@ export const LINEAR_ALGEBRA: SubjectTree = {
       desc: 'The best answer to a system with no exact answer, found by projecting onto what is reachable. Regression is this, and seeing that connection explains where its formula comes from.' },
     { id: 'la.eigen', name: 'Eigenvectors & Eigenvalues', icon: 'eigen', tier: 'expert', core: true, requires: ['la.det', 'la.rank'], state: lock, percent: 0, xp: 2600,
       desc: 'The directions a transformation leaves pointing the same way, and how much it stretches them. Find those and the transformation becomes a simple scaling in the right coordinates.' },
-    { id: 'la.diag', name: 'Diagonalisation', icon: 'diagonal', tier: 'expert', requires: ['la.eigen', 'la.ortho'], state: lock, percent: 0, xp: 2500,
+    { id: 'la.diag', name: 'Diagonalization', icon: 'diagonal', tier: 'expert', requires: ['la.eigen', 'la.ortho'], state: lock, percent: 0, xp: 2500,
       desc: 'Rewriting a transformation in its own eigenbasis so it becomes a diagonal matrix. Applying it a thousand times then costs one exponentiation rather than a thousand multiplications.' },
     { id: 'la.svd', name: 'Singular Value Decomposition', icon: 'svd', tier: 'expert', requires: ['la.diag', 'la.lsq'], state: lock, percent: 0, xp: 2800,
       desc: 'Any matrix at all as a rotation, a stretch and another rotation. It is the most generally useful factorization there is, and the machinery under low-rank approximation and dimensionality reduction.' },

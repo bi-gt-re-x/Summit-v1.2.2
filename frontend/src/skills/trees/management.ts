@@ -27,7 +27,7 @@ export const MANAGEMENT: SubjectTree = {
       desc: 'Specific, timely and about the work. Saved for a review six months later it is no longer feedback, it is a verdict on something nobody could still fix.' },
     { id: 'mg.delegate', name: 'Delegation', icon: 'delegate', tier: 'beginner', core: true, requires: ['mg.clarity'], state: lock, percent: 0, xp: 1800,
       desc: 'Handing over the outcome and the authority, not the task and the instructions. Keeping the interesting work is the most common way a new manager stalls both the team and themselves.' },
-    { id: 'mg.prioritise', name: 'Prioritising', icon: 'priority', tier: 'beginner', requires: ['mg.delegate'], state: lock, percent: 0, xp: 1700,
+    { id: 'mg.prioritise', name: 'Prioritizing', icon: 'priority', tier: 'beginner', requires: ['mg.delegate'], state: lock, percent: 0, xp: 1700,
       desc: 'Deciding what the team will not do this quarter. A list where everything is important is a list that has not been prioritized, whatever order it is in.' },
     { id: 'mg.plan', name: 'Planning Work', icon: 'plan', tier: 'intermediate', requires: ['mg.prioritise'], state: lock, percent: 0, xp: 1800,
       desc: 'Breaking an objective into work with owners and dates that somebody actually believes. Estimates are ranges, and treating one as a commitment is how a plan becomes a fiction.' },

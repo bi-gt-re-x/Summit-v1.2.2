@@ -896,7 +896,7 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Do the 1000 elements of the input array count towards extra space?",
+              "prompt": "Do the 1000 elements of the input array count toward extra space?",
               "answer": "No, extra space is what the algorithm allocates beyond the input.",
               "answer_kind": "yesno"
             }
@@ -1057,7 +1057,7 @@
           "practice": "Compute 5 << 3 and 80 >> 2, and say what each shift did in decimal.",
           "detail": "A left shift by k multiplies by 2 to the k; a right shift divides and discards the remainder. So 5 << 3 is 40 and 80 >> 2 is 20. The discarded remainder is why a right shift is floor division rather than exact.",
           "proof": "40 and 20, and 7 >> 1 gives 3 rather than 3.5.",
-          "pitfall": "Expecting a right shift to round, when it truncates towards zero for positive values.",
+          "pitfall": "Expecting a right shift to round, when it truncates toward zero for positive values.",
           "minutes": 15,
           "problems": [
             {
@@ -3138,7 +3138,7 @@
               "slot": 2,
               "weight": "core",
               "prompt": "In which direction does a value appended to a heap of 5 travel?",
-              "answer": "Up, towards the root.",
+              "answer": "Up, toward the root.",
               "answer_kind": "phrase",
               "grading": {
                 "keys": [
@@ -3356,7 +3356,7 @@
           "title": "Heapify in Linear Time",
           "mastery": "Build a heap from an array faster than by repeated insertion.",
           "practice": "Heapify [7, 4, 9, 1, 3] by sifting down from the last parent, counting the sifts.",
-          "detail": "Start at index n // 2 - 1 and sift down towards index 0. Most nodes are near the bottom and sift a short way, which is why building costs O(n) rather than the O(n log n) of n separate pushes. For 5 elements that is 2 sift-downs.",
+          "detail": "Start at index n // 2 - 1 and sift down toward index 0. Most nodes are near the bottom and sift a short way, which is why building costs O(n) rather than the O(n log n) of n separate pushes. For 5 elements that is 2 sift-downs.",
           "proof": "The array becomes a valid min-heap after 2 sift-downs.",
           "pitfall": "Pushing all n elements one at a time and calling it heapify, which is O(n log n).",
           "minutes": 15,
@@ -57849,7 +57849,7 @@
         {
           "title": "Bitmask DP",
           "mastery": "Use a bitmask as the state to handle subsets of up to about 20 items.",
-          "practice": "Solve a 12 city travelling salesman problem with dp[mask][last] storing the best cost.",
+          "practice": "Solve a 12 city traveling salesman problem with dp[mask][last] storing the best cost.",
           "detail": "With 12 cities there are 4096 masks and 12 ends, about 50,000 states, each tried with 12 next cities. Bitmask DP works when n is around 20 or less.",
           "proof": "An O(2^n n^2) solution that finds the best tour.",
           "pitfall": "Trying bitmask DP with n = 40, which has 10^12 masks.",
@@ -70623,16 +70623,36 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Is \\(0^{n}1^{n}\\) regular? Answer yes or no.",
-              "answer": "No",
-              "answer_kind": "yesno"
+              "prompt": "Where does \\(0^{n}1^{n}\\) sit: regular, context-free but not regular, or not context-free?",
+              "answer": "Context-free but not regular. A finite automaton can't count the 0s, but a stack can.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Regular",
+                  "Context-free but not regular",
+                  "Not context-free"
+                ],
+                "accept": [
+                  "Context-free but not regular"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Is (01)* regular? Answer yes or no.",
-              "answer": "Yes",
-              "answer_kind": "yesno"
+              "prompt": "Where does (01)* sit: regular, context-free but not regular, or not context-free?",
+              "answer": "Regular. A 2-state DFA accepts it.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Regular",
+                  "Context-free but not regular",
+                  "Not context-free"
+                ],
+                "accept": [
+                  "Regular"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -70674,9 +70694,19 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Is \\(0^{n}1^{n}\\) context-free? Answer yes or no.",
-              "answer": "Yes",
-              "answer_kind": "yesno"
+              "prompt": "Where does \\(0^{n}1^{n}2^{n}\\) sit: regular, context-free but not regular, or not context-free?",
+              "answer": "Not context-free. One stack can match 2 counts, not 3.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Regular",
+                  "Context-free but not regular",
+                  "Not context-free"
+                ],
+                "accept": [
+                  "Not context-free"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -139936,9 +139966,20 @@
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Does the sum of \\(2^{n}\\) converge?",
-              "answer": "No.",
-              "answer_kind": "yesno"
+              "prompt": "Does the sum of \\(2^{n}\\) converge, and why?",
+              "answer": "Diverges, geometric with ratio 2. A geometric series needs a ratio under 1 in size.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Converges, geometric with ratio 2",
+                  "Diverges, geometric with ratio 2",
+                  "Converges, by the ratio test",
+                  "Diverges, by the integral test"
+                ],
+                "accept": [
+                  "Diverges, geometric with ratio 2"
+                ]
+              }
             },
             {
               "slot": 3,
@@ -139961,9 +140002,20 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Terms \\(\\frac{3n}{n + 2}\\). Series converge?",
-              "answer": "No, terms go to 3.",
-              "answer_kind": "yesno"
+              "prompt": "Terms \\(\\frac{3n}{n + 2}\\). Does the series converge, and why?",
+              "answer": "Diverges, terms tend to 3. The terms don't go to 0, so the divergence test settles it.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Converges, terms shrink",
+                  "Diverges, terms tend to 3",
+                  "Converges, p-series",
+                  "Diverges, harmonic comparison"
+                ],
+                "accept": [
+                  "Diverges, terms tend to 3"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -139975,9 +140027,20 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Terms \\(\\cos (\\frac{1}{n})\\). Series converge?",
-              "answer": "No, terms go to 1.",
-              "answer_kind": "yesno"
+              "prompt": "Terms \\(\\cos (\\frac{1}{n})\\). Does the series converge, and why?",
+              "answer": "Diverges, terms tend to 1. \\(\\cos (0) = 1\\), so the terms never shrink to 0.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Converges, terms tend to 0",
+                  "Diverges, terms tend to 1",
+                  "Converges, alternating",
+                  "Diverges, p-series with p = 1"
+                ],
+                "accept": [
+                  "Diverges, terms tend to 1"
+                ]
+              }
             }
           ]
         },
@@ -139993,23 +140056,56 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Does the sum of \\(\\frac{1}{n^{3}}\\) converge?",
-              "answer": "Yes, \\(p = 3\\).",
-              "answer_kind": "yesno"
+              "prompt": "Does the sum of \\(\\frac{1}{n^{3}}\\) converge, and why?",
+              "answer": "Converges, p-series with \\(p = 3\\), since p is above 1.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Converges, p-series with p = 3",
+                  "Diverges, p-series with p = 3",
+                  "Converges, geometric",
+                  "Diverges, terms don't tend to 0"
+                ],
+                "accept": [
+                  "Converges, p-series with p = 3"
+                ]
+              }
             },
             {
               "slot": 2,
               "weight": "core",
-              "prompt": "Does the sum of \\(\\frac{1}{n}\\) converge?",
-              "answer": "No, harmonic series.",
-              "answer_kind": "yesno"
+              "prompt": "Does the sum of \\(\\frac{1}{n}\\) converge, and why?",
+              "answer": "Diverges, harmonic series. It's \\(p = 1\\), even though the terms tend to 0.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Converges, terms tend to 0",
+                  "Diverges, harmonic series",
+                  "Converges, p-series",
+                  "Diverges, terms don't tend to 0"
+                ],
+                "accept": [
+                  "Diverges, harmonic series"
+                ]
+              }
             },
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Does the sum of \\(\\frac{1}{n^{1.5} + 1}\\) converge?",
-              "answer": "Yes, compare with \\(\\frac{1}{n^{1.5}}\\).",
-              "answer_kind": "yesno"
+              "prompt": "Does the sum of \\(\\frac{1}{n^{1.5} + 1}\\) converge, and why?",
+              "answer": "Converges, compare with \\(\\frac{1}{n^{1.5}}\\). Each term is smaller, and that p-series has p above 1.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Converges, compare with 1/n^1.5",
+                  "Diverges, compare with 1/n",
+                  "Converges, geometric",
+                  "Diverges, terms don't tend to 0"
+                ],
+                "accept": [
+                  "Converges, compare with 1/n^1.5"
+                ]
+              }
             }
           ]
         },
@@ -140062,9 +140158,19 @@
             {
               "slot": 1,
               "weight": "warmup",
-              "prompt": "Does the sum of \\(\\frac{(-1)^{n}}{n^{2}}\\) converge?",
-              "answer": "Yes.",
-              "answer_kind": "yesno"
+              "prompt": "Classify the sum of \\(\\frac{(-1)^{n}}{n^{2}}\\): absolute convergence, conditional, or divergence?",
+              "answer": "Converges absolutely, since the sum of \\(\\frac{1}{n^{2}}\\) converges.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Converges absolutely",
+                  "Converges conditionally",
+                  "Diverges"
+                ],
+                "accept": [
+                  "Converges absolutely"
+                ]
+              }
             },
             {
               "slot": 2,
@@ -140081,9 +140187,19 @@
             {
               "slot": 3,
               "weight": "stretch",
-              "prompt": "Does \\((-1)^{n}\\frac{n}{n + 1}\\) converge?",
-              "answer": "No, the terms do not go to 0.",
-              "answer_kind": "yesno"
+              "prompt": "An alternating series has terms \\((-1)^{n}\\frac{n}{n + 1}\\). What happens to its sum?",
+              "answer": "Diverges. The terms tend to ±1, not 0.",
+              "answer_kind": "choice",
+              "grading": {
+                "choices": [
+                  "Converges absolutely",
+                  "Converges conditionally",
+                  "Diverges"
+                ],
+                "accept": [
+                  "Diverges"
+                ]
+              }
             }
           ]
         }
