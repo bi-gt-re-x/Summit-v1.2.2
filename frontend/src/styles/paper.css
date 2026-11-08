@@ -514,7 +514,7 @@ html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-page .ag-panel.
     border-radius: 0;
     background: transparent;
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-page .ag-body > .ag-panel.ag-panel:first-child { border-right: 1px solid var(--paper-line-soft); }
+html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-page .ag-body > .ag-panel-chart.ag-panel { border-top: 1px solid var(--paper-line-soft); }
 html:not([data-skin]):not([data-theme="dark"]):has(.gx-page) .gx-page .ag-top > .gx-tile.gx-tile {
     border-radius: 50%;
     background: #E7E8DE;

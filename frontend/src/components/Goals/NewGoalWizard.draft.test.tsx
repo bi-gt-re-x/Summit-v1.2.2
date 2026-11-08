@@ -12,7 +12,7 @@
  * wrong record against it. So the draft fills everything else and leaves the
  * step blocked until the reader answers.
  */
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { NewGoalWizard } from './NewGoalWizard';
@@ -34,7 +34,7 @@ const DRAFTED: WholeGoalDraft = {
   },
 };
 
-function show(over: Partial<NewGoalWizardProps> = {}) {
+function show(over: Partial<NewGoalWizardProps> & { keepFolded?: boolean } = {}) {
   const props = {
     open: true,
     busy: false,
@@ -43,8 +43,14 @@ function show(over: Partial<NewGoalWizardProps> = {}) {
     onSave: vi.fn(),
     onDraft: vi.fn(async () => DRAFTED),
     ...over,
-  } satisfies NewGoalWizardProps;
-  render(<NewGoalWizard {...props} />);
+  } satisfies NewGoalWizardProps & { keepFolded?: boolean };
+  const { keepFolded: _keep, ...wizard } = props;
+  render(<NewGoalWizard {...wizard} />);
+  /* The AI box is one folded line on step one unless the wizard was opened
+     to draft (2026-11-08). These tests are about the box, so open it.
+     fireEvent, so focus stays where the wizard put it. */
+  const fold = screen.queryByRole('button', { name: /draft it with ai/i });
+  if (fold && !over.keepFolded) fireEvent.click(fold);
   return props;
 }
 
@@ -59,6 +65,18 @@ async function pickSubject(name: string) {
 }
 
 describe('the offer itself', () => {
+  it('starts as one folded line under the title and subject', async () => {
+    show({ keepFolded: true });
+    expect(screen.queryByLabelText(/how do you want the goal drafted/i)).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: /draft it with ai/i }));
+    expect(ideaBox()).toBeInTheDocument();
+  });
+
+  it('opens unfolded when the wizard was opened to draft', () => {
+    show({ focusIdea: true, keepFolded: true });
+    expect(ideaBox()).toBeInTheDocument();
+  });
+
   it('is there when the page passed a drafter', () => {
     show();
     expect(draftBtn()).toBeInTheDocument();
@@ -101,7 +119,7 @@ describe('what a draft fills in', () => {
     // The subject is still unanswered, so the step is still blocked — which is
     // the point of the next test. Answer it, then walk to the later steps.
     await pickSubject('Algebra');
-    await userEvent.click(screen.getByRole('button', { name: /next/i }));
+    await userEvent.click(screen.getByRole('button', { name: /^(next|add details)$/i }));
     expect(screen.getByLabelText(/why this one/i)).toHaveValue(
       'It is what the summer programs ask for.',
     );
@@ -136,9 +154,9 @@ describe('what it deliberately leaves alone', () => {
       expect(screen.getByLabelText(/the result you want/i)).toHaveValue('Reach USACO Gold'),
     );
 
-    expect(screen.getByRole('button', { name: /next/i })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /^(next|add details)$/i })).toBeDisabled();
     await pickSubject('Algebra');
-    expect(screen.getByRole('button', { name: /next/i })).toBeEnabled();
+    expect(screen.getByRole('button', { name: /^(next|add details)$/i })).toBeEnabled();
   });
 });
 

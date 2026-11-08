@@ -95,6 +95,8 @@ describe('a ticked step', () => {
     updateMilestone.mockReturnValue(new Promise(() => {}));
     show();
     const article = await card();
+    // The chart is folded under the checkpoint until it's opened.
+    await userEvent.click(within(article).getByRole('button', { name: 'Show chart' }));
     const bar = () => article.querySelectorAll<HTMLElement>('.ag-road-bar i')[1]!.style.width;
     expect(bar()).toBe('50%');
     await userEvent.click(within(article).getByRole('button', { name: 'Finish Step b3' }));

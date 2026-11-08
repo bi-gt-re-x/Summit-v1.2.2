@@ -876,14 +876,15 @@ export default function Goals() {
    * so switching tabs costs nothing and loses no scroll position within one.
    */
   const [tab, setTab] = useState<TabId>('active');
+  /** The counters' full cards, under the compact row on the Goals tab. */
+  const [countersOpen, setCountersOpen] = useState(false);
   const on = (...ids: TabId[]) => ids.includes(tab);
 
-  /* "New goal" makes the kind of goal the tab is about. On the System tab
-     that is a counter, and the outcome wizard there would ask for a subject
-     and a reason and then draft checkpoints under "earn 50,000 XP". */
+  /* "New goal" is always an outcome goal. Counters have their own button in
+     their band on the Goals tab, which opens SystemGoalWizard. */
   const startGoal = () => {
     setDraftFirst(false);
-    return tab === 'system' ? setSystemOpen(true) : setWizardOpen(true);
+    setWizardOpen(true);
   };
 
   const open = list.find((goal) => goal.id === openId) ?? null;
@@ -949,18 +950,16 @@ export default function Goals() {
 
                   Outcomes only. A counter has no title to write, no field and
                   no checkpoints — see SystemGoalWizard. */}
-              {tab !== 'system' && (
-                <button
-                  type="button"
-                  className="gx-btn gx-btn-ai"
-                  onClick={() => { setDraftFirst(true); setWizardOpen(true); }}
-                >
-                  <Spark />
-                  Draft a goal
-                </button>
-              )}
+              <button
+                type="button"
+                className="gx-btn gx-btn-ai"
+                onClick={() => { setDraftFirst(true); setWizardOpen(true); }}
+              >
+                <Spark />
+                Draft a goal
+              </button>
               <button type="button" className="gx-btn is-primary" onClick={startGoal}>
-                {tab === 'system' ? '+ New counter' : '+ New goal'}
+                + New goal
               </button>
             </div>
           </header>
@@ -979,6 +978,27 @@ export default function Goals() {
             components/Goals/ActiveGoalCard. */}
         {on('active') && (
           <>
+            {/* Every goal in one table, first thing on the first tab
+                (2026-11-08). It used to be the last band on Stats, which is
+                the one place a pulse check never looks. Progress, health and
+                the date sit in the same columns for every goal, so the state
+                of everything is one glance, and the cards below are for
+                acting on one. Not while filtered: the filter is a short list
+                already, and not for a single goal, which its card covers. */}
+            {!attention && outcomes.length >= 2 && (
+              <Band title="All goals at a glance" hint="Click one to open it">
+                <GoalTable
+                  goals={outcomes}
+                  tasks={tasks}
+                  onOpen={(goal) => setOpenId(goal.id)}
+                  onEdit={(goal) => {
+                    setEditing(goal);
+                    setModalOpen(true);
+                  }}
+                />
+              </Band>
+            )}
+
             {/* What the reader is looking at, and the way back. A filtered list
                 that does not say it is filtered is a list with goals missing
                 from it, and the header button is small and above the tabs —
@@ -1055,32 +1075,42 @@ export default function Goals() {
                 filter is on: every goal it holds is one the filter just said
                 was fine, so listing them under the problem ones puts the
                 answer back on screen directly below the question. */}
+            {/* The eleventh goal onward. Still tracked and still in the
+                table at the top, just not drawn as a card: past ten, cards
+                stop being a plan. */}
             {!attention && outcomes.length > LIST_GOALS && (
-              <Band
-                title={`Also tracking · ${outcomes.length - LIST_GOALS} ${outcomes.length - LIST_GOALS === 1 ? 'goal' : 'goals'}`}
-                hint="Still tracked, just not shown as cards"
-              >
-                {/* Rows, not cards, and that is the whole point of the band:
-                    these are the goals that did not make the ladder, and a
-                    second card system underneath the first would put them back
-                    in competition with it. Each row carries the three things
-                    that decide whether you want to go and look — what it is,
-                    how far in, and whether it is in trouble — and nothing else.
+              <p className="gx-more-note">
+                {outcomes.length - LIST_GOALS} more{' '}
+                {outcomes.length - LIST_GOALS === 1 ? 'goal is' : 'goals are'} in the table at the
+                top. Click a row to open it.
+              </p>
+            )}
 
-                    The health dot is the addition. Without it the list sorted
-                    by eye into nothing: fourteen goals at assorted percentages,
-                    with no way to tell the one that is quietly failing from the
-                    one that is simply long. It is the same reading and the same
-                    colours as the chip on a card, so the two cannot disagree. */}
-                <ul className="gx-rest">
-                  {outcomes.slice(LIST_GOALS).map((goal) => {
-                    const numbers = goalNumbers(goal);
+            {/* The counters, under the cards rather than a tab of their own
+                (2026-11-08). They are a different kind of goal (see
+                components/Goals/SystemGoals) but not a different place to go,
+                and a fourth tab was one more click to see your whole picture.
+                An account with none gets one quiet line, not an empty band. */}
+            {!attention && (counters.length > 0 ? (
+              <Band title="Counters" hint="Totals Summit keeps for you">
+                {/* One compact row each until asked for more: a counter's
+                    full card is tall, and five of them under the goal cards
+                    made this tab a long scroll again. */}
+                <ul className="gx-counter-strip" aria-label="Counters">
+                  {counters.map((goal) => {
                     const health = goalHealth(goal);
                     return (
                       <li key={goal.id}>
-                        <button type="button" onClick={() => setOpenId(goal.id)}>
-                          <span className="gx-rest-title">{goal.title}</span>
-                          <span className="gx-rest-pct">{Math.round(numbers.progress)}%</span>
+                        <button
+                          type="button"
+                          title={health.reason}
+                          aria-expanded={countersOpen}
+                          onClick={() => setCountersOpen(true)}
+                        >
+                          <span className="gx-counter-name">{goal.title}</span>
+                          <span className="gx-counter-pct">
+                            {Math.round(goalNumbers(goal).progress)}%
+                          </span>
                           <i className={`gx-rest-dot is-${health.state}`} aria-hidden="true" />
                           <span className="gx-sr">{health.label}</span>
                         </button>
@@ -1088,8 +1118,41 @@ export default function Goals() {
                     );
                   })}
                 </ul>
+                <div className="gx-counter-tools">
+                  <button
+                    type="button"
+                    className="gx-btn"
+                    aria-expanded={countersOpen}
+                    onClick={() => setCountersOpen((was) => !was)}
+                  >
+                    {countersOpen ? 'Hide details' : 'Show details and edit'}
+                  </button>
+                  {!countersOpen && (
+                    <button type="button" className="gx-btn" onClick={() => setSystemOpen(true)}>
+                      + Add a counter
+                    </button>
+                  )}
+                </div>
+                {countersOpen && (
+                  <SystemGoals
+                    counters={counters}
+                    onEdit={(goal) => {
+                      setEditing(goal);
+                      setModalOpen(true);
+                    }}
+                    onDelete={setPendingDelete}
+                    onNew={() => setSystemOpen(true)}
+                  />
+                )}
               </Band>
-            )}
+            ) : (
+              <p className="gx-more-note">
+                Want a target on your XP, streak, tasks or focus hours?{' '}
+                <button type="button" className="gx-link" onClick={() => setSystemOpen(true)}>
+                  Add a counter
+                </button>
+              </p>
+            ))}
           </>
         )}
 
@@ -1140,29 +1203,6 @@ export default function Goals() {
               <MilestoneCalendar goals={list} onOpen={(goal) => setOpenId(goal.id)} />
             </Band>
           </>
-        )}
-
-        {/* ---- System Goals -----------------------------------------------
-            The counters the app keeps: XP, streak, tasks, focus. A tab of
-            their own because they are a different kind of goal rather than a
-            second view of the same ones — see components/Goals/SystemGoals.
-
-            The band carries no hint, unlike every other one here: `SystemGoals`
-            opens with the sentence saying what one of these is, and a subtitle
-            above it making the same point more briefly would be the page
-            saying it twice and landing it neither time. */}
-        {on('system') && (
-          <Band title="Counters">
-            <SystemGoals
-              counters={counters}
-              onEdit={(goal) => {
-                setEditing(goal);
-                setModalOpen(true);
-              }}
-              onDelete={setPendingDelete}
-              onNew={() => setSystemOpen(true)}
-            />
-          </Band>
         )}
 
         {/* ---- Stats ------------------------------------------------------
@@ -1222,20 +1262,6 @@ export default function Goals() {
               />
             </Band>
 
-            <Band
-              title="All goals"
-              hint="Same columns for every goal"
-            >
-              <GoalTable
-                goals={outcomes}
-                tasks={tasks}
-                onOpen={(goal) => setOpenId(goal.id)}
-                onEdit={(goal) => {
-                  setEditing(goal);
-                  setModalOpen(true);
-                }}
-              />
-            </Band>
           </>
         )}
 

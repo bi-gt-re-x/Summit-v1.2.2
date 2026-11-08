@@ -102,6 +102,11 @@ function show() {
   });
 }
 
+
+/** The goal cards. The titles are also in the all-goals table above them
+    (2026-11-08), so the cards are what these tests read. */
+const cards = () => within(document.querySelector<HTMLElement>('.ag-list')!);
+
 describe('the attention filter', () => {
   it('counts the goals that are behind, not every goal', async () => {
     show();
@@ -117,16 +122,16 @@ describe('the attention filter', () => {
     const user = userEvent.setup();
     show();
 
-    await waitFor(() => expect(screen.getByText('Reach USACO Gold')).toBeInTheDocument());
-    expect(screen.getByText('Ship Summit v2')).toBeInTheDocument();
+    await waitFor(() => expect(cards().getByText('Reach USACO Gold')).toBeInTheDocument());
+    expect(cards().getByText('Ship Summit v2')).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /2 need attention/ }));
 
     // The two that are late, and neither of the two that are not.
-    expect(screen.getByText('Reach USACO Gold')).toBeInTheDocument();
-    expect(screen.getByText('Qualify for AIME')).toBeInTheDocument();
-    expect(screen.queryByText('Ship Summit v2')).not.toBeInTheDocument();
-    expect(screen.queryByText('Read 24 books')).not.toBeInTheDocument();
+    expect(cards().getByText('Reach USACO Gold')).toBeInTheDocument();
+    expect(cards().getByText('Qualify for AIME')).toBeInTheDocument();
+    expect(cards().queryByText('Ship Summit v2')).not.toBeInTheDocument();
+    expect(cards().queryByText('Read 24 books')).not.toBeInTheDocument();
   });
 
   it('says the list is filtered, where the list is', async () => {
@@ -141,7 +146,7 @@ describe('the attention filter', () => {
     expect(bar).toHaveTextContent(/2 goals need attention/);
     await user.click(within(bar).getByRole('button', { name: /Show all 4/ }));
 
-    expect(screen.getByText('Ship Summit v2')).toBeInTheDocument();
+    expect(cards().getByText('Ship Summit v2')).toBeInTheDocument();
   });
 
   it('gives each filtered card the reason it is there', async () => {
@@ -150,7 +155,7 @@ describe('the attention filter', () => {
 
     // Nothing printed while the reader is choosing their own goals: the chip
     // carries the reason as a tooltip and the card stays about the goal.
-    await waitFor(() => expect(screen.getByText('Reach USACO Gold')).toBeInTheDocument());
+    await waitFor(() => expect(cards().getByText('Reach USACO Gold')).toBeInTheDocument());
     expect(screen.queryByText(/date passed/)).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /2 need attention/ }));
@@ -169,6 +174,6 @@ describe('the attention filter', () => {
 
     await user.click(button);
     expect(button).toHaveAttribute('aria-pressed', 'false');
-    expect(screen.getByText('Ship Summit v2')).toBeInTheDocument();
+    expect(cards().getByText('Ship Summit v2')).toBeInTheDocument();
   });
 });

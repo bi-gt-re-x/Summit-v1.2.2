@@ -7,15 +7,20 @@
  * region answers a question another one already did:
  *
  *     the header   what is this, and how far in am I
- *     the left     how did it get here, and what are the checkpoints
- *     the right    what am I on now, and what do I do next
+ *     the middle   what am I on now, and what do I do next
  *     the footer   when did it start, when is it due, what has it cost
+ *     the chart    how did it get here (folded until opened)
+ *
+ * The chart and the checkpoint used to share a row, half the card each. That
+ * put a chart, a nested checklist and a task linker side by side, which read
+ * as busy before it read as anything. They stack now, with the part you act
+ * on first and the chart one click away (2026-11-08).
  *
  * The old ladder answered the first and the middle and left the last two to
  * three other bands further down the page. Putting them on the card is most of
  * why the page can now be four tabs instead of eleven stacked sections.
  *
- * ## The left panel is one chart, and which one depends on the goal
+ * ## The chart is one chart, and which one depends on the goal
  *
  * Not a fixed chart with the numbers swapped. `pickVisual` in utils/goalVisuals
  * runs goal type → subject → available data and returns exactly one: a
@@ -132,6 +137,37 @@ function Ring({ percent, tone }: { percent: number; tone: string }) {
 // ---------------------------------------------------------------------------
 // The card
 // ---------------------------------------------------------------------------
+/** Which goals' charts are open, remembered on this device. */
+const CHARTS_KEY = 'summit:goals:charts-open';
+
+function readOpenCharts(): string[] {
+  try {
+    const raw = JSON.parse(window.localStorage.getItem(CHARTS_KEY) ?? '[]');
+    return Array.isArray(raw) ? raw.filter((id): id is string => typeof id === 'string') : [];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Whether this goal's chart is showing. Closed until opened, and then it
+ * stays open on this device, so a reader who wants the chart gets it every
+ * time and one who doesn't never has to close it.
+ */
+function useChartOpen(goalId: string): [boolean, (open: boolean) => void] {
+  const [open, setOpen] = useState(() => readOpenCharts().includes(goalId));
+  const set = (next: boolean) => {
+    setOpen(next);
+    try {
+      const others = readOpenCharts().filter((id) => id !== goalId);
+      window.localStorage.setItem(CHARTS_KEY, JSON.stringify(next ? [...others, goalId] : others));
+    } catch {
+      // No storage: it still opens, it just won't be remembered.
+    }
+  };
+  return [open, set];
+}
+
 export interface ActiveGoalCardProps {
   goal: Goal;
   tasks: Task[];
@@ -197,7 +233,7 @@ export interface ActiveGoalCardProps {
   onVerify: (goal: Goal, done: boolean) => void;
   /** Turns a subject id into its name, for the charts that group by subject. */
   nameOf: (id: string) => string;
-  /** Pin a chart to the left panel, or '' to let the page pick. */
+  /** Pin a chart to the card, or an empty string to let the page pick. */
   onChart?: (goal: Goal, chart: string) => void;
   /**
    * Print the health reason instead of hiding it in the chip's tooltip.
@@ -241,6 +277,7 @@ export function ActiveGoalCard({
   const stones = goal.milestones ?? [];
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [chartOpen, setChartOpen] = useChartOpen(goal.id);
   /* The focus picker, closed by default. It is a disclosure rather than a
      select because the options are checkpoint titles — full sentences, most of
      them — and a native select would truncate every one of them to the width
@@ -602,47 +639,6 @@ export function ActiveGoalCard({
 
       {/* ---- body ------------------------------------------------------ */}
       <div className="ag-body">
-        <section className="ag-panel">
-          {visual ? (
-            <GoalVisual
-              goal={goal}
-              context={context}
-              pick={visual}
-              nameOf={nameOf}
-              onOpen={() => onOpen(goal)}
-              onChart={onChart && ((chart) => onChart(goal, chart))}
-            />
-          ) : (
-            /* Nothing fits, which on this page means one thing: no checkpoints
-               and no work recorded against the goal. There is no chart to draw
-               and pretending otherwise would be the one dishonest panel here, so
-               the space asks for the thing that would fill it. */
-            <>
-              <header className="ag-panel-head">
-                <h4>Nothing to chart yet</h4>
-                {onChart && <ChartMenu goal={goal} onChart={(chart) => onChart(goal, chart)} />}
-              </header>
-              <p className="ag-empty">
-                Add checkpoints so the percentage means something.
-              </p>
-              <div className="ag-empty-tools">
-                <AskModel label="Suggest checkpoints" busy={drafting} onAsk={askStones} primary />
-                <button type="button" className="ag-more" onClick={() => onOpen(goal)}>
-                  Add them myself
-                </button>
-              </div>
-            </>
-          )}
-          <div className="ag-panel-foot">
-            <button type="button" className="ag-details" onClick={() => onOpen(goal)}>
-              Details
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
-                <path d="M5 12h13M13 6l6 6-6 6" />
-              </svg>
-            </button>
-          </div>
-        </section>
-
         <section className="ag-panel">
           <header className="ag-panel-head">
             <h4>Current checkpoint</h4>
@@ -1111,6 +1107,72 @@ export function ActiveGoalCard({
             </dl>
           </div>
         </section>
+        {/* The chart, folded under the checkpoint (2026-11-08).
+
+            It used to sit beside the checklist, half the card each, and a
+            chart next to a nested checklist next to a task linker is three
+            things asking to be looked at first. What to do now is the reason
+            to open the card, so it takes the full width; the chart is one
+            click away and remembers being opened. A goal with nothing to
+            chart keeps its empty panel open, because that panel is an offer
+            to plan the goal, not a chart. */}
+        {visual ? (
+          <section className={`ag-panel ag-panel-chart${chartOpen ? ' is-open' : ''}`}>
+            <div className="ag-chart-bar">
+              <button
+                type="button"
+                className="ag-chart-toggle"
+                aria-expanded={chartOpen}
+                aria-controls={`ag-chart-${goal.id}`}
+                onClick={() => setChartOpen(!chartOpen)}
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+                  <path d="M9 6l6 6-6 6" />
+                </svg>
+                {chartOpen ? 'Hide chart' : 'Show chart'}
+              </button>
+              <button type="button" className="ag-details" onClick={() => onOpen(goal)}>
+                Details
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+                  <path d="M5 12h13M13 6l6 6-6 6" />
+                </svg>
+              </button>
+            </div>
+            {chartOpen && (
+              <div id={`ag-chart-${goal.id}`}>
+                <GoalVisual
+                  goal={goal}
+                  context={context}
+                  pick={visual}
+                  nameOf={nameOf}
+                  onOpen={() => onOpen(goal)}
+                  onChart={onChart && ((chart) => onChart(goal, chart))}
+                />
+              </div>
+            )}
+          </section>
+        ) : (
+          <section className="ag-panel ag-panel-chart is-open">
+            {/* Nothing fits, which on this page means one thing: no
+                checkpoints and no work recorded against the goal. There is
+                no chart to draw and pretending otherwise would be the one
+                dishonest panel here, so the space asks for the thing that
+                would fill it. */}
+            <header className="ag-panel-head">
+              <h4>Nothing to chart yet</h4>
+              {onChart && <ChartMenu goal={goal} onChart={(chart) => onChart(goal, chart)} />}
+            </header>
+            <p className="ag-empty">
+              Add checkpoints so the percentage means something.
+            </p>
+            <div className="ag-empty-tools">
+              <AskModel label="Suggest checkpoints" busy={drafting} onAsk={askStones} primary />
+              <button type="button" className="ag-more" onClick={() => onOpen(goal)}>
+                Add them myself
+              </button>
+            </div>
+          </section>
+        )}
       </div>
 
       {cheer && (

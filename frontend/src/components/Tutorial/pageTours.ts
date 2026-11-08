@@ -214,8 +214,8 @@ const goals: Step[] = [
     until: wizard(1),
     skipIfMissing: true,
     title: 'Name it',
-    body: 'Say what you want in a few words, like "Get an A in calculus," and pick the subject it\'s for. Stuck? Type a rough idea in the top box and press Draft it all.',
-    hint: 'Press Next in the form when you\'re ready.',
+    body: 'Say what you want in a few words, like "Get an A in calculus," and pick the subject it\'s for. That\'s all you need. Summit plans the checkpoints for you.',
+    hint: 'Press Create goal to finish now, or Add details to set a date first.',
   },
   {
     id: 'gw-why',
@@ -254,7 +254,7 @@ const goals: Step[] = [
     until: wizard(5),
     skipIfMissing: true,
     title: 'Break it down',
-    body: 'Add three to five checkpoints in the order you\'ll reach them. Each one gets small steps later, and every step you tick moves the goal.',
+    body: 'Add a few stages in the order you\'ll reach them, or skip this and Summit drafts them for you. Every step you tick moves the goal.',
     hint: 'Press Next in the form when you\'re ready.',
   },
   {

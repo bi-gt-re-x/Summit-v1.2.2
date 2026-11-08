@@ -3449,7 +3449,7 @@ button.gx-state-attn.is-on {
    A surface, not a hue: `--gx-card-2` is the same grey the footer already
    uses, so this adds a region to the card without adding a colour to it. The
    goal's own colour stays reserved for the things that carry meaning. */
-.ag-body > .ag-panel:first-child { background: var(--gx-card-2); }
+.ag-body > .ag-panel-chart { background: var(--gx-card-2); }
 /* The two panels are independent columns of a grid, so they are already the same
    height; this stops the shorter one's content from stretching to fill it, and
    leaves whatever is left over at the foot of the column. */
@@ -5063,14 +5063,16 @@ button.gx-state-attn.is-on {
 .ag-body {
     /* 3 : 4 — the reference gives the roadmap a little more than the old 5 : 7,
        enough for a checkpoint's name to be read whole. */
-    grid-template-columns: minmax(0, 3fr) minmax(0, 4fr);
+    /* Stacked, not side by side (2026-11-08): the checkpoint on top at full
+       width, the chart folded under it. See components/Goals/ActiveGoalCard. */
+    grid-template-columns: minmax(0, 1fr);
     gap: var(--ag-gap);
     padding: 4px 6px 6px;
     background: transparent;
     border: 0;
 }
 .ag-panel,
-.ag-body > .ag-panel:first-child {
+.ag-body > .ag-panel-chart {
     gap: 14px;
     padding: 22px 24px;
     border: 1px solid var(--ag-panel-line);
@@ -5254,7 +5256,7 @@ html[data-theme="dark"] .gx-page .ag-note { background: rgba(14, 24, 44, .6); }
 }
 @media (max-width: 720px) {
     .ag-top { padding: calc(18px + 3px) 18px 16px; }
-    .ag-panel, .ag-body > .ag-panel:first-child { padding: 18px; }
+    .ag-panel, .ag-body > .ag-panel-chart { padding: 18px; }
     /* The name gets the row; its bar runs under it. */
     .ag-roadmap li button { grid-template-columns: 14px minmax(0, 1fr) auto; gap: var(--space-2) var(--space-3); }
     .ag-road-dot { grid-row: 1; }
@@ -5330,3 +5332,92 @@ html[data-theme="dark"] .gx-page .ag-card .ag-heat-grid i.is-l0 { background: co
     .gx-drawer { padding: var(--space-5) var(--space-4) var(--space-10); gap: var(--space-4); }
     .gx-drawer .gx-panel { padding: var(--space-4); }
 }
+
+/* ---- The folded chart (2026-11-08) ----------------------------------------
+   One slim row until it's opened: the toggle on the left, Details on the
+   right. Opened, the chart draws under the same row. */
+.ag-panel-chart:not(.is-open) { padding-top: 10px; padding-bottom: 10px; }
+.ag-chart-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+}
+.ag-chart-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px 4px 4px;
+    margin-left: -4px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: none;
+    color: var(--gx-muted);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+}
+.ag-chart-toggle:hover { color: var(--gx-text); background: var(--gx-line-soft); }
+.ag-chart-toggle svg { width: 14px; height: 14px; transition: transform .2s ease; }
+.ag-chart-toggle[aria-expanded="true"] svg { transform: rotate(90deg); }
+
+
+/* The wizard's right-hand pair: Add details (or Next) and Create goal. */
+.gx-wizard-go { display: flex; gap: var(--space-2); }
+
+/* A quiet line under the cards: the goals past ten, or the way to a counter. */
+.gx-more-note {
+    margin: var(--space-2) 0 0;
+    color: var(--gx-muted);
+    font-size: var(--text-sm);
+    text-align: center;
+}
+
+/* The counters as one compact row each, on the Goals tab. The full cards open
+   under them on request. */
+.gx-counter-strip {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--space-2);
+}
+.gx-counter-strip button {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--gx-line);
+    border-radius: var(--radius-md);
+    background: var(--gx-card);
+    color: var(--gx-text);
+    font: inherit;
+    font-size: var(--text-sm);
+    text-align: left;
+    cursor: pointer;
+}
+.gx-counter-strip button:hover { border-color: var(--gx-muted); }
+.gx-counter-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+.gx-counter-pct { color: var(--gx-muted); font-variant-numeric: tabular-nums; }
+.gx-counter-tools { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
+
+/* Step one's folded AI option: one line under the subject. */
+.gx-idea-open {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: var(--space-3);
+    padding: 6px 10px;
+    border: 1px dashed var(--gx-line);
+    border-radius: var(--radius-md);
+    background: none;
+    color: var(--gx-muted);
+    font: inherit;
+    font-size: var(--text-sm);
+    cursor: pointer;
+}
+.gx-idea-open:hover { color: var(--gx-text); border-color: var(--gx-muted); }
+.gx-idea-open svg { width: 14px; height: 14px; }

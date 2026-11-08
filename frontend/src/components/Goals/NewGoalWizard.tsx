@@ -8,10 +8,17 @@
  * matters, when you want it, and how you will know. A form asks all four at
  * once and gets a title and three defaults.
  *
- * So it is five steps, and only the first is required. Every later one can be
+ * So it is six steps, and only the first is required. Every later one can be
  * skipped and added from the goal's own view afterwards, which is the honest
  * bargain: a goal you were made to fully specify before you could write it
  * down is a goal you did not write down.
+ *
+ * **Create goal is on every step, the first one included (2026-11-08).** It
+ * used to wait at the end, so "only the first is required" still meant five
+ * more clicks through questions you meant to skip, and the checkpoints step in
+ * the middle of them is real work. A goal made from step one gets its
+ * checkpoints and their steps drafted by the page (see `addGoal` in
+ * pages/Goals), so nobody has to plan before they can start.
  *
  * The old modal is still here and still works — see GoalModal. It is what
  * edits an existing goal, and what a reader who wants a plain XP counter gets.
@@ -50,7 +57,7 @@
  */
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { categoryForSubject } from './Outcome';
-import { AskModel } from './AskModel';
+import { AskModel, Spark } from './AskModel';
 import { SubjectPicker } from '@/components/SubjectPicker';
 import type { Subject } from '@/services/subjects';
 import type { DraftedGoal, NewGoal } from '@/services/goals';
@@ -261,8 +268,15 @@ export function NewGoalWizard({
      goal's list — the component stays mounted while closed. */
   const asking = useRef(0);
 
+  /* The AI box on step one: open when the wizard was opened to draft, one
+     line otherwise. Worked out on render rather than copied into state, so
+     it's right on the very first frame and the box can take focus. */
+  const [ideaUnfolded, setIdeaOpen] = useState(false);
+  const ideaOpen = focusIdea || ideaUnfolded;
+
   const reset = useCallback(() => {
     asking.current += 1;
+    setIdeaOpen(false);
     setSuggesting(false);
     setSuggestProblem(null);
     setStep(0);
@@ -422,7 +436,9 @@ export function NewGoalWizard({
       >
         <header className="gx-wizard-head">
           <span className="gx-wizard-step">
-            Step {step + 1} of {STEPS.length}
+            {step === 0
+              ? 'Only this step is needed. The rest is optional.'
+              : `Step ${step + 1} of ${STEPS.length} · optional`}
           </span>
           <h2>{STEPS[step]}</h2>
           <button type="button" className="gx-close" onClick={close} aria-label="Close">
@@ -450,16 +466,50 @@ export function NewGoalWizard({
           )}
           {step === 0 && (
             <>
-              {/* The shortcut past the whole form, offered before the form.
- 
-                  Above the title field rather than beside it, because it is
-                  the thing to try *first* — a reader who knows exactly what
-                  their goal is called scrolls past it in a second, and a
-                  reader who does not is looking at the one box they can
-                  actually answer. What comes back fills four of the five
-                  steps; the subject is still theirs to pick, and the step
-                  stays blocked until they do. */}
-              {onDraft && (
+              <label htmlFor="gx-title">The result you want</label>
+              <input
+                id="gx-title"
+                value={title}
+                autoFocus={!focusIdea}
+                placeholder="Reach USACO Gold"
+                onChange={(event) => setTitle(event.target.value)}
+              />
+              <p className="gx-hint">
+                Something you either hit or didn't.
+              </p>
+
+              {/* No fixed list of fields here any more (Math, Coding,
+                  AI / ML…). The goal's color and icon come from the subject
+                  picked below, which offers every subject in the catalog. See
+                  `categoryForSubject` in ./Outcome. */}
+              <label>Which subject is the work for?</label>
+              <div className="gx-subject">
+                <SubjectPicker
+                  id="gx-subject"
+                  label="Subject:"
+                  optional={false}
+                  subjects={subjects}
+                  value={subjectId}
+                  onChange={setSubjectId}
+                />
+              </div>
+              <p className="gx-hint">
+                Required. It links this goal to that subject's page. Without it, the goal only shows up here.
+              </p>
+              {/* Folded to one line unless the wizard was opened to draft
+                  (2026-11-08). Two big boxes above the one field you need made
+                  the first screen look like work. */}
+              {onDraft && !ideaOpen && (
+                <button
+                  type="button"
+                  className="gx-idea-open"
+                  aria-expanded={false}
+                  onClick={() => setIdeaOpen(true)}
+                >
+                  <Spark /> Not sure how to put it? Draft it with AI
+                </button>
+              )}
+              {onDraft && ideaOpen && (
                 <div className="gx-idea">
                   <p className="gx-idea-head">Draft it with AI</p>
                   {/* Two boxes, because they are two different things to
@@ -513,47 +563,8 @@ export function NewGoalWizard({
                 </div>
               )}
 
-              <label htmlFor="gx-title">The result you want</label>
-              <input
-                id="gx-title"
-                value={title}
-                autoFocus={!focusIdea}
-                placeholder="Reach USACO Gold"
-                onChange={(event) => setTitle(event.target.value)}
-              />
-              <p className="gx-hint">
-                Something you either hit or didn't.
-              </p>
-
-              <label htmlFor="gx-desc">Anything worth remembering about it</label>
-              <textarea
-                id="gx-desc"
-                rows={2}
-                value={description}
-                onChange={(event) => setDescription(event.target.value)}
-              />
-
-              {/* No fixed list of fields here any more (Math, Coding,
-                  AI / ML…). The goal's color and icon come from the subject
-                  picked below, which offers every subject in the catalog. See
-                  `categoryForSubject` in ./Outcome. */}
-              <label>Which subject is the work for?</label>
-              <div className="gx-subject">
-                <SubjectPicker
-                  id="gx-subject"
-                  label="Subject:"
-                  optional={false}
-                  subjects={subjects}
-                  value={subjectId}
-                  onChange={setSubjectId}
-                />
-              </div>
-              <p className="gx-hint">
-                Required. It links this goal to that subject's page. Without it, the goal only shows up here.
-              </p>
             </>
           )}
-
           {step === 1 && (
             <>
               <label htmlFor="gx-why">Why this one</label>
@@ -568,6 +579,14 @@ export function NewGoalWizard({
               <p className="gx-hint">
                 Just for you. Summit doesn't use it for anything.
               </p>
+
+              <label htmlFor="gx-desc">Anything worth remembering about it</label>
+              <textarea
+                id="gx-desc"
+                rows={2}
+                value={description}
+                onChange={(event) => setDescription(event.target.value)}
+              />
             </>
           )}
 
@@ -750,7 +769,9 @@ export function NewGoalWizard({
                 </button>
               </form>
               <p className="gx-hint">
-                A stage you reach, like "Solve Silver problems". Leave it empty and AI drafts them after the goal is made. Either way, each checkpoint gets its own steps.
+                {milestones.length
+                  ? 'Each checkpoint gets its own short checklist after the goal is made.'
+                  : "Skip this if you'd like. Leave it empty and Summit drafts the checkpoints, and a checklist for each, right after the goal is made."}
               </p>
             </>
           )}
@@ -793,25 +814,28 @@ export function NewGoalWizard({
           >
             Back
           </button>
-          {step < STEPS.length - 1 ? (
+          {/* Create is offered from the first step, so the questions after it
+              are extras rather than a toll. See the note at the top. */}
+          <span className="gx-wizard-go">
+            {step < STEPS.length - 1 && (
+              <button
+                type="button"
+                className="gx-btn is-quiet"
+                disabled={blocked}
+                onClick={() => setStep(step + 1)}
+              >
+                {step === 0 ? 'Add details' : 'Next'}
+              </button>
+            )}
             <button
               type="button"
               className="gx-btn is-primary"
-              disabled={blocked}
-              onClick={() => setStep(step + 1)}
-            >
-              Next
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="gx-btn is-primary"
-              disabled={busy || !title.trim()}
+              disabled={busy || blocked || !title.trim() || !subjectId}
               onClick={save}
             >
               Create goal
             </button>
-          )}
+          </span>
         </footer>
       </div>
     </div>

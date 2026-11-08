@@ -1,22 +1,15 @@
 /**
- * The band under the ladder, and why it is a list rather than more cards.
+ * Goals past the cap of ten, and where they go.
  *
- * Ten cards is not a rendering budget — it is a statement about how many
- * things can actually be pursued at once. Past that, a goals page stops being
- * a plan and becomes a list of things to feel bad about, and the eleventh goal
- * is never the one being worked on.
+ * Ten cards is not a rendering budget. It is a statement about how many
+ * things can actually be pursued at once, and the eleventh goal is never the
+ * one being worked on.
  *
- * So the overflow is deliberately quieter, and the tests here are mostly about
- * it staying that way: rows, not a second card system underneath the first,
- * because cards below cards would put the goals that did not make the ladder
- * straight back into competition with the ones that did.
- *
- * What each row has to carry is the three things that decide whether it is
- * worth going to look — what it is, how far in, and whether it is in trouble.
- * The third was missing. Every row drew a bullet painted `var(--tone,
- * var(--gx-faint))` over a list where nothing set `--tone`, so fourteen goals
- * got fourteen identical grey dots and the one quietly failing looked exactly
- * like the one that is simply long.
+ * They used to sit in an "Also tracking" list under the cards. Since
+ * 2026-11-08 the first tab opens with a table of *every* goal, so the
+ * overflow lives there with the rest: each row says what it is, how far in,
+ * and whether it is in trouble, in the same columns as everything else. Under
+ * the cards, one quiet line says how many more there are and where.
  */
 import { screen, within } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
@@ -117,61 +110,45 @@ const worked: Task[] = GOALS.filter((one) => one.id !== sinking.id).map((one, at
 const show = () =>
   renderWithProviders(<Goals />, { userData: { data: { stats: stats(), tasks: worked } } });
 
-/** The band itself, found by its heading rather than by position. */
-async function band() {
-  const heading = await screen.findByRole('heading', { name: /Also tracking/ });
+/** The all-goals table at the top of the first tab. */
+async function table() {
+  const heading = await screen.findByRole('heading', { name: 'All goals at a glance' });
   return heading.closest('section')!;
 }
 
 describe('the goals that did not make the ladder', () => {
-  it('says how many there are in the heading', async () => {
+  it('are all in the table at the top, with the ten above the cap', async () => {
     show();
-    expect(await screen.findByRole('heading', { name: 'Also tracking · 2 goals' })).toBeInTheDocument();
+    const rows = within(await table()).getAllByRole('row').slice(1);
+
+    expect(rows).toHaveLength(12);
+    expect(within(await table()).getByText('Ship the parser')).toBeInTheDocument();
+    expect(within(await table()).getByText('Read 24 books')).toBeInTheDocument();
   });
 
-  it('holds exactly the goals past the cap', async () => {
-    show();
-    const rows = within(await band()).getAllByRole('listitem');
-
-    expect(rows).toHaveLength(2);
-    expect(rows[0]).toHaveTextContent('Ship the parser');
-    expect(rows[1]).toHaveTextContent('Read 24 books');
-  });
-
-  it('gives each row how far in it is', async () => {
-    show();
-    expect(within(await band()).getByText('62%')).toBeInTheDocument();
-  });
-
-  /* The addition. Same four states as the chip on a card, so a goal cannot
-     read as failing in the band and fine on its own card. */
+  /* The same reading as the chip on a card, so a goal cannot read as failing
+     in the table and fine on its own card. */
   it('says which of them is in trouble, and which is not', async () => {
     show();
-    const rows = within(await band()).getAllByRole('listitem');
+    const rows = within(await table()).getAllByRole('row');
+    const sinkingRow = rows.find((row) => row.textContent?.includes('Ship the parser'))!;
+    const fineRow = rows.find((row) => row.textContent?.includes('Read 24 books'))!;
 
-    expect(within(rows[0]!).getByText('Behind')).toBeInTheDocument();
-    expect(within(rows[1]!).getByText('On track')).toBeInTheDocument();
+    expect(within(sinkingRow).getByText('Behind')).toBeInTheDocument();
+    expect(within(fineRow).getByText('On track')).toBeInTheDocument();
   });
 
-  /* Not a second card system. A row is one button; a card carries a chart, a
-     checklist and a kebab, and putting those under the ladder would undo the
-     point of having a cap at all. */
-  it('draws rows rather than cards', async () => {
+  it('says under the cards how many more there are, and where', async () => {
     show();
-    const shelf = await band();
-
-    expect(within(shelf).queryByRole('button', { name: /^details$/i })).not.toBeInTheDocument();
-    expect(within(shelf).queryByRole('heading', { name: 'Current checkpoint' })).not.toBeInTheDocument();
-    // One control per row, and it opens the goal.
-    expect(within(shelf).getAllByRole('button')).toHaveLength(2);
+    expect(await screen.findByText(/2 more goals are in the table at the top/)).toBeInTheDocument();
   });
 
-  /* The cap is ten, so the band exists here because of the eleventh and
-     twelfth goals — and the ten above it are still drawn as cards. */
+  /* The cap is ten: the eleventh and twelfth are rows, not cards. */
   it('leaves the ten on the ladder as cards', async () => {
     show();
-    await screen.findByRole('heading', { name: /Also tracking/ });
+    await table();
 
+    expect(document.querySelectorAll('.ag-list .ag-card')).toHaveLength(10);
     expect(screen.getAllByRole('button', { name: /^details$/i })).toHaveLength(10);
   });
 });

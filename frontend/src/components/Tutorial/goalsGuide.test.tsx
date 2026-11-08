@@ -41,8 +41,9 @@ describe('the Goals guide', () => {
     await user.click(screen.getByRole('button', { name: /choose a subject/i }));
     await user.click(screen.getByRole('button', { name: 'Algebra' }));
 
-    for (const step of waits) {
-      await user.click(screen.getByRole('button', { name: 'Next' }));
+    for (const [index, step] of waits.entries()) {
+      // Page one says Add details; Create goal sits beside it on every page.
+      await user.click(screen.getByRole('button', { name: index === 0 ? 'Add details' : 'Next' }));
       expect(showing(step.until!), step.id).toBe(true);
     }
     // And the last page is the one with Create goal on it.

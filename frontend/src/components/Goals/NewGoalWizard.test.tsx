@@ -36,7 +36,9 @@ function show(onSave = vi.fn()) {
 
 /* Exact, not `/next/i`: the "By checkpoints" card on step four is a button
    whose text contains "the next step is where you list them". */
-const next = () => screen.getByRole('button', { name: 'Next' });
+const next = () =>
+  screen.queryByRole('button', { name: 'Next' }) ?? screen.getByRole('button', { name: 'Add details' });
+const create = () => screen.getByRole('button', { name: 'Create goal' });
 
 describe('the subject on a new goal', () => {
   it('will not go past the first step without one', async () => {
@@ -77,6 +79,23 @@ describe('the subject on a new goal', () => {
     // button is the dialog contradicting itself.
     show();
     expect(screen.getByText('required')).toBeInTheDocument();
+  });
+
+  it('can be created straight from the first step', async () => {
+    // The rest is optional, so it can't be a toll of five more clicks.
+    const user = userEvent.setup();
+    const onSave = show();
+
+    expect(create()).toBeDisabled();
+    await user.type(screen.getByLabelText(/the result you want/i), 'Learn Python');
+    expect(create()).toBeDisabled();
+    await user.click(screen.getByRole('button', { name: /choose a subject/i }));
+    await user.click(screen.getByRole('button', { name: 'Algebra' }));
+    await user.click(create());
+
+    expect(onSave).toHaveBeenCalledWith(
+      expect.objectContaining({ title: 'Learn Python', measure: 'milestones', milestones: [] }),
+    );
   });
 
   it('sends the chosen subject to the server', async () => {

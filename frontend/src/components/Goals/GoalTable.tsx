@@ -48,10 +48,12 @@ const DAY = 86_400_000;
  *
  * Completed went with them: it was a tab holding one band, and that band is a
  * button in the header that reveals it wherever you are. */
+/* Three, not four (2026-11-08). Counters moved onto the Goals tab under the
+   cards, and the all-goals table moved to the top of it, so the first tab is
+   the pulse of everything and the other two are for when you want more. */
 export const TABS = [
-  { id: 'active', label: 'Active' },
+  { id: 'active', label: 'Goals' },
   { id: 'timeline', label: 'Timeline' },
-  { id: 'system', label: 'Counters' },
   { id: 'stats', label: 'Stats' },
 ] as const;
 
@@ -90,13 +92,24 @@ function lastActivity(goal: Goal, tasks: Task[], today: Date): string {
     if (!Number.isNaN(at) && at > newest) newest = at;
   }
 
-  if (!newest) return 'No work yet';
-  const days = Math.floor((today.getTime() - newest) / DAY);
+  let days = newest ? Math.floor((today.getTime() - newest) / DAY) : null;
+  /* The server's reading also counts work filed under the goal's subject
+     (backend/tracking/goal_health.py), so this column says the same thing as
+     the health chip beside it rather than "2 months ago" next to "On track". */
+  const reading = goalHealth(goal).signals.daysSinceWork;
+  if (reading !== null && reading !== undefined && (days === null || reading < days)) days = reading;
+
+  if (days === null) return 'No work yet';
   if (days <= 0) return 'Today';
   if (days === 1) return 'Yesterday';
   if (days < 7) return `${days} days ago`;
-  if (days < 30) return `${Math.round(days / 7)} week${days < 14 ? '' : 's'} ago`;
-  return `${Math.round(days / 30)} month${days < 60 ? '' : 's'} ago`;
+  // The word follows the rounded number: 11 days is "2 weeks", not "2 week".
+  if (days < 30) {
+    const weeks = Math.round(days / 7);
+    return `${weeks} week${weeks === 1 ? '' : 's'} ago`;
+  }
+  const months = Math.round(days / 30);
+  return `${months} month${months === 1 ? '' : 's'} ago`;
 }
 
 const HEALTH_LABEL: Record<string, string> = {

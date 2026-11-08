@@ -64,7 +64,7 @@ from backend.tracking.auth import load_user
 router = APIRouter(tags=['goals'])
 
 #: What goal health reads off a task. See backend/tracking/goal_health.py.
-HEALTH_TASK_FIELDS = ('id', 'status', 'completed_at', 'goal_id')
+HEALTH_TASK_FIELDS = ('id', 'status', 'completed_at', 'goal_id', 'subject')
 
 # The four kinds of goal, and which pair of fields each one counts with.
 GOAL_FIELDS = {

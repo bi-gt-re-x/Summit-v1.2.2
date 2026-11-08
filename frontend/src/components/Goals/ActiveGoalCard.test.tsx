@@ -12,7 +12,7 @@
  * both answers go to the page in one press, and it is not on screen before
  * then or while a write is in flight.
  */
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { ActiveGoalCard } from './ActiveGoalCard';
@@ -90,6 +90,9 @@ function show(over: Partial<ActiveGoalCardProps> = {}) {
       {...over}
     />,
   );
+  // The chart starts folded (2026-11-08); these tests read it, so open it.
+  const fold = screen.queryByRole('button', { name: 'Show chart' });
+  if (fold) fireEvent.click(fold);
   return onVerify;
 }
 
@@ -223,6 +226,52 @@ describe('the current checkpoint', () => {
 
     expect(screen.getByText(/No steps yet/)).toBeInTheDocument();
     expect(screen.queryByText('Next')).not.toBeInTheDocument();
+  });
+});
+
+describe('the folded chart', () => {
+  it('starts folded under the checkpoint and remembers being opened', async () => {
+    window.localStorage.removeItem('summit:goals:charts-open');
+    const user = userEvent.setup();
+    const { unmount } = render(
+      <ActiveGoalCard
+        goal={goal({ chart: 'basic' })}
+        tasks={[]}
+        busy={false}
+        onOpen={vi.fn()}
+        onEdit={vi.fn()}
+        onDelete={vi.fn()}
+        onComplete={vi.fn()}
+        onLinkTask={vi.fn()}
+        onSuggest={vi.fn(async () => null)}
+        onSuggestSteps={vi.fn()}
+        onRedraftStones={vi.fn()}
+        onFillSteps={vi.fn()}
+        onSaveStones={vi.fn(async () => true)}
+        onFocusMilestone={vi.fn()}
+        onMilestoneSteps={vi.fn()}
+        onMilestoneStatus={vi.fn()}
+        onVerify={vi.fn()}
+        nameOf={(id) => id}
+      />,
+    );
+    // What to do now comes first; the chart is one row with a toggle.
+    const panels = document.querySelectorAll('.ag-body > .ag-panel');
+    expect(panels[0]).toHaveTextContent('Current checkpoint');
+    expect(panels[1]).toHaveClass('ag-panel-chart');
+    expect(screen.queryByRole('heading', { name: 'Progress' })).not.toBeInTheDocument();
+
+    const toggle = screen.getByRole('button', { name: 'Show chart' });
+    expect(toggle).toHaveAttribute('aria-expanded', 'false');
+    await user.click(toggle);
+    expect(screen.getByRole('heading', { name: 'Progress' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Hide chart' })).toHaveAttribute('aria-expanded', 'true');
+
+    // Opened once, it stays open the next time the card is drawn.
+    unmount();
+    show({ goal: goal({ chart: 'basic' }) });
+    expect(screen.getByRole('heading', { name: 'Progress' })).toBeInTheDocument();
+    window.localStorage.removeItem('summit:goals:charts-open');
   });
 });
 
