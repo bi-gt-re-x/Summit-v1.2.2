@@ -48,6 +48,7 @@ import time
 from collections import Counter
 from datetime import date, datetime, timedelta
 from decimal import ROUND_HALF_UP, Decimal
+from functools import lru_cache
 
 from backend.tracking import evidence, priority, record, time_spent
 from backend.tracking.goal_health import evidence_for, js_round, measure_of
@@ -198,8 +199,19 @@ def _short(value):
 
 
 def _midnight(value):
+    return _midnight_of(str(value or '')[:10])
+
+
+# A plan reads the age of every task the account owns, and a five-year account
+# has twenty thousand of them stamped on a couple of thousand distinct days.
+# Working each one out afresh cost 265k `time.mktime` calls and most of a
+# second per plan, so the day and its epoch time are each worked out once.
+# Both caches hold immutable values, and the local zone does not change under
+# a running process.
+@lru_cache(maxsize=8192)
+def _midnight_of(text):
     try:
-        return datetime.combine(date.fromisoformat(str(value or '')[:10]), datetime.min.time())
+        return datetime.combine(date.fromisoformat(text), datetime.min.time())
     except ValueError:
         return None
 
@@ -207,6 +219,7 @@ def _midnight(value):
 DAY_MS = 86_400_000
 
 
+@lru_cache(maxsize=8192)
 def _ms(moment):
     """Milliseconds since the epoch for a local wall-clock time — real elapsed
     time, so a span across a clock change is an hour longer or shorter, as it

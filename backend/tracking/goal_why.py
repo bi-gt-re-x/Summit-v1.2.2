@@ -105,14 +105,57 @@ def is_direct(task, goal, terms):
     title = str(task.get('title') or '')
     if not title.strip():
         return False
-    words, contexts, topic = _title_facts(title, task.get('subject') or '')
-    if words & terms['title']:
+    return _names_goal(title, task.get('subject') or '', terms['title'],
+                       terms['steps'], terms['contexts'], terms['topics'])
+
+
+def direct_tasks(tasks, goal, terms):
+    """`[task for task in tasks if is_direct(task, goal, terms)]`, in one pass.
+
+    The same test, written out for a whole list because that is how every
+    caller uses it: once per goal, over every task the account has. On a 20k
+    task account the one-call-per-task version spent most of its time calling,
+    and a page that reads seven goals asked 280k times. Here the link test is
+    inlined and each (name, subject) pair is decided once per goal.
+    """
+    goal_id = str(goal.get('id'))
+    title_terms, step_terms = terms['title'], terms['steps']
+    contexts, topics = terms['contexts'], terms['topics']
+    named = {}
+    found = []
+    for task in tasks:
+        # record._links, inlined: the same comparison, without the call.
+        if str(task.get('goal_id') or '') == goal_id or \
+                goal_id in [str(one) for one in (task.get('goal_ids') or [])]:
+            found.append(task)
+            continue
+        title = str(task.get('title') or '')
+        subject = task.get('subject') or ''
+        key = (title, subject)
+        hit = named.get(key)
+        if hit is None:
+            hit = named[key] = bool(title.strip()) and _names_goal(
+                title, subject, title_terms, step_terms, contexts, topics)
+        if hit:
+            found.append(task)
+    return found
+
+
+# The name half of `is_direct` depends only on the task's name and subject and
+# on the goal's terms, and an account repeats its names: Alpha's 20,815 tasks
+# carry 187 distinct (name, subject) pairs. A forecast asks once per goal per
+# task, several times a request, so the answer is kept per pair rather than
+# worked out 280k times. Every argument is a string, frozenset or tuple.
+@lru_cache(maxsize=65536)
+def _names_goal(title, subject, title_terms, step_terms, contexts, topics):
+    words, found, topic = _title_facts(title, subject)
+    if words & title_terms:
         return True
-    if any(one.startswith(mine) or mine.startswith(one) for one in contexts for mine in terms['contexts']):
+    if any(one.startswith(mine) or mine.startswith(one) for one in found for mine in contexts):
         return True
-    if topic and topic in terms['topics']:
+    if topic and topic in topics:
         return True
-    return len(words & terms['steps']) >= 2
+    return len(words & step_terms) >= 2
 
 
 def next_step(goal):
@@ -383,7 +426,7 @@ def read(goal, tasks, row, today, name_of=lambda key: key):
     terms = goal_terms(goal)
     subjects = record.subject_ids(goal)
     done = [task for task in tasks if task.get('status') == 'done' and task.get('completed_at')]
-    direct_all = [task for task in done if is_direct(task, goal, terms)]
+    direct_all = direct_tasks(done, goal, terms)
     direct = _between(direct_all, today, RECENT_DAYS, 0)
     direct_ids = {str(task.get('id')) for task in direct}
     # The subject this work is really filed under, which can differ from the one

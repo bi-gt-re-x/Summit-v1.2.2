@@ -1650,12 +1650,21 @@ def _decode_records(con, table, records):
         return []
     types = {name: sql_type for name, sql_type, _ in columns}
     rows = []
+    # One cursor, one set of columns: which of them need decoding is worked
+    # out once rather than once per value. Every other column is stored as the
+    # app wants it, so a row is a single pass that drops the NULLs, and only
+    # the JSON and BOOLEAN columns go through `_decode`. On a 20k-task account
+    # that is 600k fewer function calls per full task read.
+    keys = special = None
     for record in records:
-        row = {}
-        for name in record.keys():
-            value = record[name]
-            if value is not None:
-                row[name] = _decode(table, name, value, types.get(name, ''))
+        if keys is None:
+            keys = tuple(record.keys())
+            special = [name for name in keys
+                       if (table, name) in JSON_COLUMNS or types.get(name, '') == 'BOOLEAN']
+        row = {name: value for name, value in zip(keys, record) if value is not None}
+        for name in special:
+            if name in row:
+                row[name] = _decode(table, name, row[name], types.get(name, ''))
         rows.append(row)
     return rows
 

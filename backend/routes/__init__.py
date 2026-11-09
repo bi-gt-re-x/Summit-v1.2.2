@@ -16,7 +16,7 @@ always wins over a file that happens to sit at the same path.
 """
 from importlib import import_module
 
-from backend.routes import assets, spa
+from backend.routes import assets, json_replies, spa
 
 # Imported by name so this list reads as the map of the app. The stubs in
 # backend/api/ (library, history, growthtree) are deliberately absent — they
@@ -68,6 +68,9 @@ def register(app):
 
     for path in SHARED_MODULES:
         app.include_router(import_module(path).router)
+
+    # After every router is attached, so every route gets it. See the module.
+    json_replies.install(app)
 
     spa.register(app)
     assets.register(app)

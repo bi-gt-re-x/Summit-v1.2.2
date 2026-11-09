@@ -163,7 +163,7 @@ def scoped(tasks: Sequence[Dict[str, Any]], scope: Dict[str, Any], goals: Sequen
     goal = next((one for one in goals if str(one.get('id')) == str(scope.get('goal') or '')), None)
     if goal is not None:
         terms = goal_why.goal_terms(goal)
-        rows = [task for task in rows if goal_why.is_direct(task, goal, terms)]
+        rows = goal_why.direct_tasks(rows, goal, terms)
     return rows
 
 

@@ -71,6 +71,33 @@ class TestDirectWork:
         assert not gw.is_direct({'title': 'First piece of work today', 'subject': 'x'}, goal, self.terms(goal))
 
 
+    def test_the_one_pass_list_agrees_with_asking_one_at_a_time(self):
+        # direct_tasks is the bulk form every per-goal caller uses; it must pick
+        # exactly the tasks is_direct does, in the same order, repeated names
+        # and odd rows included.
+        goal = a_goal('Violin ARCT', subjects='music')
+        terms = self.terms(goal)
+        rows = [
+            {'title': 'Violin lesson', 'subject': 'music'},
+            {'title': 'Something', 'goal_ids': ['g1']},
+            {'title': 'Something', 'goal_id': 'g1'},
+            {'title': 'Something', 'goal_ids': [7, 'g2']},
+            {'title': 'Refactor my website', 'subject': 'computer_science'},
+            {'title': 'Violin lesson', 'subject': 'music'},
+            {'title': '   ', 'subject': 'music'},
+            {'subject': 'music'},
+            {'title': 'Violin scales', 'subject': None},
+        ]
+        assert gw.direct_tasks(rows, goal, terms) == [one for one in rows if gw.is_direct(one, goal, terms)]
+        assert len(gw.direct_tasks(rows, goal, terms)) == 5
+
+    def test_a_goal_without_an_id_matches_the_same_way(self):
+        goal = a_goal('Violin ARCT', id='')
+        terms = self.terms(goal)
+        rows = [{'title': 'Untitled'}, {'title': 'Violin lesson'}, {'title': 'x', 'goal_id': ''}]
+        assert gw.direct_tasks(rows, goal, terms) == [one for one in rows if gw.is_direct(one, goal, terms)]
+
+
 class TestTheLead:
     def test_most_subject_work_off_target_is_the_cause(self):
         tasks = [task('USACO Gold DP', day) for day in (40, 50, 60, 70, 75, 3, 12)] + \

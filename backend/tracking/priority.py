@@ -460,7 +460,7 @@ def session_tasks(goal: Dict[str, Any], tasks: Sequence[Dict[str, Any]]) -> List
     can't suggest, which holds better than asking it to leave things out.
     """
     terms = goal_why.goal_terms(goal)
-    direct = [task for task in tasks if goal_why.is_direct(task, goal, terms)]
+    direct = goal_why.direct_tasks(tasks, goal, terms)
     done = sum(1 for task in direct if task.get('status') == 'done' and task.get('completed_at'))
     found = list(direct)
     if done < forecast.MIN_DIRECT:

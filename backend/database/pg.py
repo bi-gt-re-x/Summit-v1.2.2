@@ -211,10 +211,25 @@ def _row_factory(cursor):
     keep = [at for at, name in enumerate(names) if name != 'rowid']
     keys = tuple(names[at] for at in keep)
     index = {name: at for at, name in enumerate(keys)}
+    # Only a numeric or money column can hand back a Decimal, so only those go through
+    # `_plain`. A read with no numeric column and no rowid passes the tuple
+    # psycopg built straight through.
+    numeric = [column.type_code in DECIMAL_OIDS for column in description]
+    if len(keep) == len(names) and not any(numeric):
+        def make(values):
+            return Row(keys, tuple(values), index)
+        return make
+    plan = [(at, numeric[at]) for at in keep]
 
     def make(values):
-        return Row(keys, tuple(_plain(values[at]) for at in keep), index)
+        return Row(keys, tuple([_plain(values[at]) if decimal_ else values[at]
+                                for at, decimal_ in plan]), index)
     return make
+
+
+#: Postgres type OIDs psycopg reads as a Decimal: `numeric` (which SUM and AVG
+#: of an integer also return) and `money`.
+DECIMAL_OIDS = frozenset({1700, 790})
 
 
 # --------------------------------------------------------------------------

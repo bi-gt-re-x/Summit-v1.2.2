@@ -139,7 +139,7 @@ def goals_here(subject: str, tasks: Sequence[Dict[str, Any]], goals: Sequence[Di
         if not priority.is_objective(goal):
             continue
         terms = goal_why.goal_terms(goal)
-        direct = [task for task in done if goal_why.is_direct(task, goal, terms)]
+        direct = goal_why.direct_tasks(done, goal, terms)
         here = [task for task in direct if task.get('subject') == subject]
         filed = subject in record.subject_ids(goal)
         share = len(here) / len(direct) if direct else 0.0

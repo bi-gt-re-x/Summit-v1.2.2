@@ -113,7 +113,7 @@ def session_days(goal, tasks, sittings):
         return record._links(task, goal_id) or (task.get('subject') in subjects if subjects else False)
 
     terms = goal_why.goal_terms(goal)
-    direct = {str(task.get('id')): task for task in tasks if goal_why.is_direct(task, goal, terms)}
+    direct = {str(task.get('id')): task for task in goal_why.direct_tasks(tasks, goal, terms)}
     done_direct = sum(1 for task in direct.values() if task.get('status') == 'done' and task.get('completed_at'))
     linked = direct if done_direct >= MIN_DIRECT else {
         **{str(task.get('id')): task for task in tasks if in_subject(task)}, **direct}
