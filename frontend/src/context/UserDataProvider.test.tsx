@@ -222,6 +222,42 @@ describe('mutate moves the whole app', () => {
     expect(screen.getByRole('status')).toHaveTextContent('680');
     expect(getUserData).toHaveBeenCalledTimes(1);
   });
+
+  it('builds each change on the last one, even from a mutate held across awaits', async () => {
+    // "Complete all" holds one `mutate` for the whole loop. When mutate read
+    // the data it was created with, every completion was written onto the
+    // account as it stood before the loop: the second undid the first, and
+    // only the last task's XP showed until the re-read came back.
+    let held: ReturnType<typeof useUserData>['mutate'] | null = null;
+    function Holder() {
+      const { data, mutate } = useUserData();
+      if (!held && data) held = mutate;
+      return <output>{data?.stats.xp ?? '…'}</output>;
+    }
+
+    render(
+      <AuthContext.Provider value={auth('myles')}>
+        <StatsProvider>
+          <UserDataProvider>
+            <Holder />
+          </UserDataProvider>
+        </StatsProvider>
+      </AuthContext.Provider>,
+    );
+
+    await screen.findByText('640');
+    const add = (current: UserData): UserData => ({
+      ...current,
+      stats: { ...current.stats, xp: current.stats.xp + 40 },
+    });
+    act(() => held!(add));
+    await act(async () => {
+      await Promise.resolve();
+    });
+    act(() => held!(add));
+
+    expect(screen.getByRole('status')).toHaveTextContent('720');
+  });
 });
 
 describe('the demand gate', () => {

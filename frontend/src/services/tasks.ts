@@ -35,8 +35,15 @@ export interface UserData {
  * call that makes every page agree on the streak.
  */
 export function getUserData(): Promise<ApiResult<UserData>> {
-  return get<UserData>('/api/get_user_data');
+  // The dashboard has nothing to draw without this, so it gets a time limit:
+  // a server that never answers becomes an error with a retry button instead
+  // of a loading screen that never ends. Generous, because the largest
+  // accounts' task lists run to a few megabytes.
+  return get<UserData>('/api/get_user_data', undefined, { timeoutMs: USER_DATA_TIMEOUT_MS });
 }
+
+/** How long the dashboard waits for its one read before it says so. */
+export const USER_DATA_TIMEOUT_MS = 30_000;
 
 /**
  * The six numbers, without the task list.

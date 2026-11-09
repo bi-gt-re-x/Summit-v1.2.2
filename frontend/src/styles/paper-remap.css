@@ -2381,6 +2381,13 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .page-state-crash p {
     color: var(--ps-muted, #757A80)
 }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .card-crash {
+    border: 1px solid var(--ps-line, #EBEAE6);
+    background: var(--ps-card, #FAF8F4)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .card-crash p {
+    color: var(--ps-muted, #757A80)
+}
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .page-state-detail {
     background: var(--ps-well, #F6F5F1);
     color: var(--ps-muted, #757A80)

@@ -21,7 +21,7 @@
  * thing that asks the server again.
  */
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ErrorState, Loading, PageHero, RefreshButton } from '@/components';
+import { CardBoundary, ErrorState, Loading, PageHero, RefreshButton } from '@/components';
 import {
   DailyQuote,
   FirstWeek,
@@ -262,45 +262,51 @@ export default function Dashboard() {
         }
         // The response carries the new level, so the backend still decides what
         // the level is. Comparing against the one it replaces only notices that
-        // it went up, which is what the celebration is for.
-        const was = data?.stats.level ?? 0;
-        if (result.new_level > was) setLevelled(result.new_level);
+        // it went up, which is what the celebration is for. The level it
+        // replaces is read inside the write below, off the latest data: Complete
+        // all runs this in a loop, and the `data` this callback was made with is
+        // the level from before the loop, so every later task re-raised it.
+        let was = Number.POSITIVE_INFINITY;
 
         // Everything that moved is in the response, so it is written onto the
         // page rather than fetched back. The stamps match the ones the backend
         // wrote — local time, `datetime.now().isoformat()`'s shape — because
         // every "is this today?" test in the app compares them as text.
         const at = new Date();
-        mutate((current) => ({
-          ...current,
-          stats: {
-            ...current.stats,
-            // `new_xp` is the XP inside the new level; `stats.xp` is the
-            // lifetime total, which is what the cards read off it.
-            xp: (Number(current.stats.xp) || 0) + (Number(result.xp_earned) || 0),
-            level: result.new_level,
-            tasks_completed: result.new_tasks_completed,
-            ...taskService.streakPatch(result),
-          },
-          tasks: current.tasks.map((entry) => {
-            if (String(entry.id) !== String(task.id)) return entry;
-            const created = entry.created_at ? new Date(entry.created_at) : null;
-            const due = entry.due_date ? new Date(entry.due_date) : null;
-            return {
-              ...entry,
-              status: 'done' as const,
-              completed_at: isoStamp(at),
-              ...(created && !Number.isNaN(created.getTime())
-                ? {
-                    completion_seconds: Math.round(
-                      Math.max(0, (at.getTime() - created.getTime()) / 1000),
-                    ),
-                  }
-                : {}),
-              ...(due && !Number.isNaN(due.getTime()) ? { met_deadline: at <= due } : {}),
-            };
-          }),
-        }));
+        mutate((current) => {
+          was = Number(current.stats.level) || 0;
+          return {
+            ...current,
+            stats: {
+              ...current.stats,
+              // `new_xp` is the XP inside the new level; `stats.xp` is the
+              // lifetime total, which is what the cards read off it.
+              xp: (Number(current.stats.xp) || 0) + (Number(result.xp_earned) || 0),
+              level: result.new_level,
+              tasks_completed: result.new_tasks_completed,
+              ...taskService.streakPatch(result),
+            },
+            tasks: current.tasks.map((entry) => {
+              if (String(entry.id) !== String(task.id)) return entry;
+              const created = entry.created_at ? new Date(entry.created_at) : null;
+              const due = entry.due_date ? new Date(entry.due_date) : null;
+              return {
+                ...entry,
+                status: 'done' as const,
+                completed_at: isoStamp(at),
+                ...(created && !Number.isNaN(created.getTime())
+                  ? {
+                      completion_seconds: Math.round(
+                        Math.max(0, (at.getTime() - created.getTime()) / 1000),
+                      ),
+                    }
+                  : {}),
+                ...(due && !Number.isNaN(due.getTime()) ? { met_deadline: at <= due } : {}),
+              };
+            }),
+          };
+        });
+        if (result.new_level > was) setLevelled(result.new_level);
 
         // The rail shows the level and the XP total and is mounted outside the
         // router, so it never re-reads on its own. This is the one thing that
@@ -327,7 +333,7 @@ export default function Dashboard() {
         setBusyId(null);
       }
     },
-    [username, mutate, reload, data, prefs.rating_depth],
+    [username, mutate, reload, prefs.rating_depth],
   );
 
   // ---- Rating a finished task ---------------------------------------------
@@ -520,12 +526,20 @@ export default function Dashboard() {
           they were — see Settings, Dashboard. */}
       {prefs.show_stats && (
         <div className="dash-stats pg-stagger">
-          <TodayCard day={day} xpLeft={plan.xp} usual={usual} />
-          <XpCard stats={data.stats} xpToday={day.xp} dailyGoal={dailyGoal} usual={usual} />
-          <StreakCard
-            stats={data.stats}
-            held={levelled !== null || news !== null || rating !== null}
-          />
+          {/* Each card in its own boundary: one that throws becomes a small
+              note in its own cell, not a broken page. */}
+          <CardBoundary label="Today">
+            <TodayCard day={day} xpLeft={plan.xp} usual={usual} />
+          </CardBoundary>
+          <CardBoundary label="XP">
+            <XpCard stats={data.stats} xpToday={day.xp} dailyGoal={dailyGoal} usual={usual} />
+          </CardBoundary>
+          <CardBoundary label="Streak">
+            <StreakCard
+              stats={data.stats}
+              held={levelled !== null || news !== null || rating !== null}
+            />
+          </CardBoundary>
         </div>
       )}
 
@@ -537,42 +551,48 @@ export default function Dashboard() {
       {/* Under the figures it fills in and over the work it points at. Gone
           while the Mango tour runs and once the first week is over. */}
       {firstWeek.line && firstWeekShowing && (
-        <FirstWeek
-          quests={firstWeek.line.quests}
-          busy={questBusy === 'daily' ? null : questBusy}
-          lastClaim={lastClaim}
-          onClaim={(id) => void claimQuest(id)}
-        />
+        <CardBoundary label="First week">
+          <FirstWeek
+            quests={firstWeek.line.quests}
+            busy={questBusy === 'daily' ? null : questBusy}
+            lastClaim={lastClaim}
+            onClaim={(id) => void claimQuest(id)}
+          />
+        </CardBoundary>
       )}
       {/* Takes the first week's place once that's done, until Analytics has
           enough days for Performance. */}
       {daily && dailyShowing && (
-        <TodayQuest
-          quest={daily}
-          maturity={firstWeek.maturity}
-          todayActive={firstWeek.todayActive}
-          busy={questBusy === 'daily'}
-          popped={lastClaim?.quest === daily.id}
-          onClaim={() => void claimQuest('daily')}
-        />
+        <CardBoundary label="Today's quest">
+          <TodayQuest
+            quest={daily}
+            maturity={firstWeek.maturity}
+            todayActive={firstWeek.todayActive}
+            busy={questBusy === 'daily'}
+            popped={lastClaim?.quest === daily.id}
+            onClaim={() => void claimQuest('daily')}
+          />
+        </CardBoundary>
       )}
 
       {/* The "next" card that sat here was the top of the Recommendations
           plan. What to do next is said on that tab only. */}
 
       <div className="dash-main is-solo">
-        <TaskPanel
-          buckets={buckets}
-          tab={tab}
-          onTabChange={setTab}
-          busyId={busyId}
-          subjects={subjects}
-          onComplete={(task) => void complete(task)}
-          onAdd={() => setAdding(true)}
-          canReview={prefs.rating_depth !== 'none'}
-          onCompleteDay={(review) => void completeDay(review)}
-          busy={saving}
-        />
+        <CardBoundary label="Tasks">
+          <TaskPanel
+            buckets={buckets}
+            tab={tab}
+            onTabChange={setTab}
+            busyId={busyId}
+            subjects={subjects}
+            onComplete={(task) => void complete(task)}
+            onAdd={() => setAdding(true)}
+            canReview={prefs.rating_depth !== 'none'}
+            onCompleteDay={(review) => void completeDay(review)}
+            busy={saving}
+          />
+        </CardBoundary>
       </div>
 
       {/* Three, not four. Top Priorities used to sit in this row: the same
@@ -583,18 +603,30 @@ export default function Dashboard() {
           card of its own. */}
       {prefs.show_insights && (
         <div className="dash-insights">
-          <WeeklyOverview week={week} before={weekAgo.total > 0 ? weekAgo : undefined} />
-          <GoalsCard goals={goals} />
-          <RecentActivity entries={activity} />
+          <CardBoundary label="This week">
+            <WeeklyOverview week={week} before={weekAgo.total > 0 ? weekAgo : undefined} />
+          </CardBoundary>
+          <CardBoundary label="Goals">
+            <GoalsCard goals={goals} />
+          </CardBoundary>
+          <CardBoundary label="Recently done">
+            <RecentActivity entries={activity} />
+          </CardBoundary>
         </div>
       )}
 
       {/* Three sessions to plan next, for every subject or one chosen, above
           the quote: the last thing on the page that asks something of the
           reader. See components/NextSessions. */}
-      <NextSessionsPanel where="dashboard" />
+      <CardBoundary label="Your next sessions">
+        <NextSessionsPanel where="dashboard" />
+      </CardBoundary>
 
-      {prefs.show_quote && <DailyQuote />}
+      {prefs.show_quote && (
+        <CardBoundary label="The daily quote">
+          <DailyQuote />
+        </CardBoundary>
+      )}
 
       {levelled !== null && <LevelUp level={levelled} onDone={() => setLevelled(null)} />}
 

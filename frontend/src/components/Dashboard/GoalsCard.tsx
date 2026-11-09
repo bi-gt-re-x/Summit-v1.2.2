@@ -40,14 +40,23 @@ export interface GoalsCardProps {
 /** How late a goal is heading, in days. Undated goals sort after every dated one. */
 function lateness(goal: Goal): number {
   const { drift } = goalPace(goal);
-  if (drift === null) return -Infinity;
+  // A date that doesn't parse gives NaN, which would poison the sort the same
+  // way; with no pace to read, it ranks with the undated goals.
+  if (drift === null || Number.isNaN(drift)) return -Infinity;
   return drift;
 }
 
 export function GoalsCard({ goals, limit = 2 }: GoalsCardProps) {
   const live = goals
     .filter((goal) => goal.status === 'active')
-    .map((goal) => ({ goal, numbers: goalNumbers(goal), drift: lateness(goal) }))
+    .map((goal) => {
+      const numbers = goalNumbers(goal);
+      // A stored value that isn't a number ("abc") reads as NaN, which drew
+      // "NaN%" and "NaN / 100" and handed the sort a comparison it can't make.
+      const progress = Number.isFinite(numbers.progress) ? numbers.progress : 0;
+      const current = Number.isFinite(numbers.current) ? numbers.current : 0;
+      return { goal, numbers: { ...numbers, progress, current }, drift: lateness(goal) };
+    })
     .sort(
       (a, b) =>
         b.drift - a.drift

@@ -67,3 +67,23 @@ describe('the pace of a streak goal', () => {
     expect(pace.need).toBeNull();
   });
 });
+
+describe('a pace that cannot be worked out', () => {
+  const today = new Date(2026, 9, 16);
+  const number = (over: Record<string, unknown>) =>
+    goal('n', { measure: 'number', start_date: '2026-01-01', deadline: '2026-12-31', ...over } as Partial<Goal>);
+
+  it('gives no pace for a stored value that is not a number, rather than throwing', () => {
+    const pace = goalPace(number({ current_value: 'abc', target_number: 100 }), today);
+    expect(pace).toEqual({ need: null, have: null, lands: null, drift: null });
+  });
+
+  it('gives no landing date when the rate would land past the end of time', () => {
+    // 1 a year toward a trillion: the landing is past what a Date can hold,
+    // which used to throw "Invalid time value" and take the page down with it.
+    const pace = goalPace(number({ current_value: 1, target_number: 1e12 }), today);
+    expect(pace.lands).toBeNull();
+    expect(pace.drift).toBeNull();
+    expect(pace.have).toBeGreaterThan(0);
+  });
+});

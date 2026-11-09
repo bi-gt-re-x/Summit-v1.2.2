@@ -91,10 +91,47 @@ function url(path: string, query?: Query): string {
   return qs ? `${full}?${qs}` : full;
 }
 
+/** Options a caller can add to one request. */
+export interface RequestOptions {
+  /**
+   * Give up after this many milliseconds and throw, rather than wait forever.
+   * For reads a whole page is waiting on: without it a server that accepts the
+   * connection and never answers leaves the page on its loading screen with
+   * no error and no retry.
+   */
+  timeoutMs?: number;
+}
+
+/** What a request that ran out of time says. */
+export const TIMED_OUT = 'The server took too long to answer. Try again.';
+
 async function request<T>(
   path: string,
   init: RequestInit,
   query?: Query,
+  options: RequestOptions = {},
+): Promise<ApiResult<T>> {
+  const { timeoutMs } = options;
+  const abort = timeoutMs && timeoutMs > 0 ? new AbortController() : null;
+  const timer = abort ? setTimeout(() => abort.abort(), timeoutMs) : null;
+  const failed = (cause: unknown, fallback: string): ApiError =>
+    abort?.signal.aborted
+      ? new ApiError(TIMED_OUT)
+      : new ApiError(cause instanceof Error ? cause.message : fallback);
+
+  try {
+    return await send<T>(path, init, query, abort?.signal, failed);
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
+async function send<T>(
+  path: string,
+  init: RequestInit,
+  query: Query | undefined,
+  signal: AbortSignal | undefined,
+  failed: (cause: unknown, fallback: string) => ApiError,
 ): Promise<ApiResult<T>> {
   let response: Response;
   try {
@@ -102,11 +139,10 @@ async function request<T>(
       credentials: 'include',
       cache: 'no-store',
       ...init,
+      ...(signal ? { signal } : {}),
     });
   } catch (cause) {
-    throw new ApiError(
-      cause instanceof Error ? cause.message : 'Network request failed',
-    );
+    throw failed(cause, 'Network request failed');
   }
 
   // Before the body is even parsed: whatever this call was, the answer is that
@@ -125,7 +161,14 @@ async function request<T>(
   const live = response.headers?.get?.(LIVE_HEADER);
   if (live) announceLiveChanged(live.split(',').filter(Boolean));
 
-  const body = await response.text();
+  // The time limit covers the body too: a large response that stalls halfway
+  // is as stuck as one that never started.
+  let body: string;
+  try {
+    body = await response.text();
+  } catch (cause) {
+    throw failed(cause, 'The connection dropped before the answer arrived');
+  }
   if (!body) {
     throw new ApiError('The server returned an empty response', response.status);
   }
@@ -143,8 +186,12 @@ async function request<T>(
 
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
 
-export function get<T>(path: string, query?: Query): Promise<ApiResult<T>> {
-  return request<T>(path, { method: 'GET' }, query);
+export function get<T>(
+  path: string,
+  query?: Query,
+  options?: RequestOptions,
+): Promise<ApiResult<T>> {
+  return request<T>(path, { method: 'GET' }, query, options);
 }
 
 export function post<T>(path: string, body?: unknown, query?: Query): Promise<ApiResult<T>> {

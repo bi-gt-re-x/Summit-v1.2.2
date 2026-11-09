@@ -198,6 +198,22 @@ html[data-theme="dark"] .page-state-files code { color: #8b949e; }
     font-size: var(--text-md); line-height: 1.55;
     color: var(--ps-muted, #6b7684);
 }
+/* One dashboard card that broke (components/ErrorBoundary CardBoundary). It
+   takes the card's place in its grid cell, so the row keeps its shape. */
+.card-crash {
+    display: flex; flex-direction: column; align-items: flex-start;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-5);
+    border: 1px solid var(--ps-line, #e6e9ef);
+    border-radius: var(--radius-lg);
+    background: var(--ps-card, #fff);
+}
+.card-crash p {
+    margin: 0;
+    font-size: var(--text-sm); line-height: 1.5;
+    color: var(--ps-muted, #6b7684);
+}
+
 .page-state-detail {
     display: block;
     max-width: 100%;

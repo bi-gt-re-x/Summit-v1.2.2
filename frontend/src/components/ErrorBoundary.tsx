@@ -117,6 +117,45 @@ export class ErrorBoundary extends Component<Props, State> {
 }
 
 /** Around the router: a page fails, the rail and top bar stay. */
+/**
+ * One card that throws stays one broken card, not a broken page.
+ *
+ * The page-level boundary above replaces the whole screen, which is right for
+ * a page that can't draw at all but wrong for the dashboard, where a goal with
+ * one bad stored value used to take the streak, the task list and everything
+ * else down with it. Wrapping each card in this keeps the rest readable and
+ * says which piece failed.
+ */
+export class CardBoundary extends Component<{ children: ReactNode; label: string }, State> {
+  state: State = { error: null };
+
+  static getDerivedStateFromError(error: Error): State {
+    return { error };
+  }
+
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.error(`The ${this.props.label} card broke in`, info.componentStack, error);
+  }
+
+  render() {
+    if (!this.state.error) return this.props.children;
+    return (
+      <div className="card-crash" role="alert">
+        <p>
+          <strong>{this.props.label}</strong> couldn&apos;t load. The rest of the page is fine.
+        </p>
+        <button
+          type="button"
+          className="btn btn-secondary btn-sm"
+          onClick={() => this.setState({ error: null })}
+        >
+          Try again
+        </button>
+      </div>
+    );
+  }
+}
+
 export function AppBoundary({ children, resetKey }: { children: ReactNode; resetKey?: string }) {
   return (
     <ErrorBoundary variant="page" resetKey={resetKey}>

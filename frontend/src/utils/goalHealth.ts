@@ -132,10 +132,19 @@ export interface GoalPace {
   drift: number | null;
 }
 
+/** The date `ms` falls on, or null when it's past what a Date can hold. */
+function landsOn(ms: number): Date | null {
+  const at = new Date(ms);
+  return Number.isNaN(at.getTime()) ? null : at;
+}
+
 export function goalPace(goal: Goal, today: Date = new Date()): GoalPace {
   const numbers = goalNumbers(goal);
   const empty: GoalPace = { need: null, have: null, lands: null, drift: null };
   if (!numbers.target) return empty;
+  // A stored value that isn't a number reads as NaN, and every figure built
+  // on it would be NaN too, down to a landing date that throws when printed.
+  if (!Number.isFinite(numbers.current) || !Number.isFinite(numbers.target)) return empty;
 
   /* `isoDate`, not `toISOString`: a UTC stamp read as a local midnight is a
      day ahead every evening west of UTC, and pace is measured in days. */
@@ -158,7 +167,8 @@ export function goalPace(goal: Goal, today: Date = new Date()): GoalPace {
      streak on a goal set years ago is not 600,000 days behind. It lands the
      day the missing days are worked, and no pace can beat one a day. */
   if (numbers.measure === 'streak') {
-    const landing = new Date(now + remaining * DAY);
+    const landing = landsOn(now + remaining * DAY);
+    if (!landing) return { need: null, have: 1, lands: null, drift: null };
     return {
       need: null,
       have: 1,
@@ -169,7 +179,11 @@ export function goalPace(goal: Goal, today: Date = new Date()): GoalPace {
   if (have <= 0) return { need, have, lands: null, drift: null };
 
   const daysNeeded = Math.ceil(remaining / have);
-  const landing = new Date(now + daysNeeded * DAY);
+  // A crawl toward a big target can project past the last date a Date can
+  // hold (about 275,000 years out), and `toISOString` throws on that. It's
+  // the same answer as no pace at all: it doesn't land at this rate.
+  const landing = landsOn(now + daysNeeded * DAY);
+  if (!landing) return { need, have, lands: null, drift: null };
   return {
     need,
     have,

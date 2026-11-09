@@ -163,6 +163,8 @@ export function UserDataProvider({ children }: { children: ReactNode }) {
     () => (data ? { stats: stats ?? data.stats, tasks: data.tasks } : null),
     [data, stats],
   );
+  const latest = useRef(composed);
+  latest.current = composed;
 
   /**
    * Apply a change to both halves at once.
@@ -177,22 +179,26 @@ export function UserDataProvider({ children }: { children: ReactNode }) {
       // Nothing to change before the first read — the same rule `useApi.mutate`
       // has always had, for the same reason: a write that lands before the read
       // is a write whose answer the read carries.
-      if (!composed) return;
+      const base = latest.current;
+      if (!base) return;
 
-      // Run over the rendered value rather than inside a state updater. The
+      // Run over the latest value rather than inside a state updater. The
       // update has to be applied once and its halves sent to two states, and a
       // React updater must be pure — writing to a second state from inside one
       // would run twice under StrictMode and award the XP twice.
       //
-      // The cost is that two `mutate` calls in the same tick would both read
-      // the same starting point. Every call site is one call in one handler,
-      // applying one server response, so that case does not arise; if it ever
-      // does, this is the line that has to change.
-      const next = update(composed);
+      // "Latest", not "rendered": the dashboard's Complete all holds one
+      // `mutate` for a loop of awaited completions, and reading the value this
+      // callback was created with wrote every completion onto the account as
+      // it stood before the loop, each one undoing the one before. The ref is
+      // moved forward here as well as on render, so a second call in the same
+      // tick builds on the first.
+      const next = update(base);
+      latest.current = next;
       writeStats(() => next.stats);
       mutateTasks((current) => ({ ...current, tasks: next.tasks }));
     },
-    [composed, mutateTasks, writeStats],
+    [mutateTasks, writeStats],
   );
 
   const reload = useCallback(() => {
