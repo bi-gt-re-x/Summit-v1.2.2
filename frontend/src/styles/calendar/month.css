@@ -735,153 +735,12 @@ html[data-theme="dark"] .no-events-message { color: rgba(255, 255, 255, 0.55); }
 }
 
 
-/* Theme integration - Classic Theme */
-
-body.classic .calendar-card {
-
-    background: rgba(255, 255, 255, 0.2);
-
-    border: 2px solid rgba(255, 255, 255, 0.5);
-
-    color: white;
-
-}
-
-
-body.classic .calendar-header h2 {
-
-    color: white;
-
-}
-
-
-body.classic .day-name {
-
-    color: white;
-
-}
-
-
-body.classic .calendar-day {
-
-    background: rgba(255, 255, 255, 0.1);
-
-    color: white;
-
-    border: 1px solid rgba(255, 255, 255, 0.3);
-
-}
-
-
-body.classic .calendar-day:hover {
-
-    background: rgba(255, 255, 255, 0.3);
-
-}
-
-
-body.classic .calendar-day.today {
-
-    background: rgba(255, 255, 255, 0.1);
-
-    color: white;
-
-}
-
-
-body.classic .calendar-day.selected {
-
-    background: rgba(255, 255, 255, 0.4);
-
-    color: white;
-
-    border-color: white;
-
-}
-
-
-body.classic .nav-arrow {
-
-    background: rgba(255, 255, 255, 0.2);
-
-    border: 2px solid rgba(255, 255, 255, 0.5);
-
-    color: white;
-
-}
-
-
-body.classic .nav-arrow:hover {
-
-    background: rgba(255, 255, 255, 0.4);
-
-    border-color: white;
-
-}
-
-
-body.classic .calendar-bottom-box {
-
-    background: rgba(255, 255, 255, 0.1);
-
-    border: 2px solid rgba(255, 255, 255, 0.5);
-
-    color: white;
-
-}
-
-
-body.classic .calendar-bottom-box h3 {
-
-    color: white;
-
-}
-
-
-body.classic .calendar-bottom-box p,
-
-body.classic .calendar-bottom-box ul {
-
-    color: white;
-
-}
-
-
-body.classic .calendar-bottom-box input {
-
-    background: rgba(255, 255, 255, 0.1);
-
-    border: 2px solid rgba(255, 255, 255, 0.5);
-
-    color: white;
-
-}
-
-
-body.classic .task-input {
-
-    border: 2px solid rgba(255, 255, 255, 0.5);
-
-}
-
-
-body.classic .calendar-bottom-box input::placeholder {
-
-    color: rgba(255, 255, 255, 0.7);
-
-}
-
-
-body.classic .timestamp-section input[type="time"] {
-
-    border: 3px solid #ff6b35;
-
-    background: rgba(255, 255, 255, 0.15);
-
-    color: white;
-
-}
-
+/* The "Theme integration - Classic Theme" block that was here is gone. It
+   drew the old vanilla calendar in white on a colored backdrop, and since
+   `body.classic` is on the body for every light theme (ThemeContext), its
+   `.calendar-bottom-box` rules were painting the Month view's plan panel
+   white on white: the "Today's plan" heading and the focus field vanished.
+   Nothing else it named is in the markup any more. */
 
 /* Add-Event overlap warning / free-slot suggestion under the time pickers. */
 .event-suggest {
@@ -1724,7 +1583,14 @@ html[data-theme="dark"] .mv-side::-webkit-scrollbar-thumb { background: #39414d;
 .mv-header {
     display: flex;
     align-items: center;
-    gap: var(--space-4);
+    /* Wraps instead of clipping: with the rail open the title, arrows, Today
+       and the switcher are wider than the column, and the refresh button and
+       half the switcher were cut off at the edge. */
+    flex-wrap: wrap;
+    gap: var(--space-3) var(--space-4);
+    /* The column is a flex column that scrolls, so without this the header
+       shrank back to one row and its second row slid under the card. */
+    flex: none;
     margin-bottom: var(--space-4);
     min-height: 42px;
 }
@@ -2824,4 +2690,48 @@ html[data-theme="light"] .mv-side .calendar-bottom-box h3 {
     }
     .mv-summary-fig { padding-left: 0; border-left: none; }
     .mv-fig-label, .mv-delta { white-space: normal; }
+}
+
+/* ---- Phones ---------------------------------------------------------------
+   A cell is about 46px wide here. The XP figure was cut to "2..." and the
+   focus line to a letter or two, so on a phone the cell keeps the date, the
+   count and the marks along its foot, and the rows stop reserving the four
+   lines of room a desktop cell needs. Tapping a day still opens its plan. */
+@media (max-width: 640px) {
+    .mv-grid { grid-template-rows: repeat(6, minmax(68px, auto)); }
+    .mv-cell { padding: 6px 2px 6px; gap: 4px; align-items: center; }
+    .mv-cell-top { justify-content: center; }
+    .mv-cell-flag,
+    .mv-cell-focus,
+    .mv-cell-xp { display: none; }
+    .mv-daynum { min-width: 26px; height: 26px; padding: 0; font-size: 13px; }
+    .mv-cell-meta { justify-content: center; }
+    .mv-cell-events { font-size: 12px; }
+    .mv-cell-marks { align-self: stretch; padding: 0 4px; }
+    .mv-daynames { padding: var(--space-2) 0; }
+    .mv-dayname { font-size: 10px; letter-spacing: .04em; }
+    .mv-legend { justify-content: flex-start; gap: var(--space-2) var(--space-4); padding: var(--space-3); }
+}
+
+/* ---- When the month's column is narrow, not just the window ---------------
+   The breakpoints above read the window. With the rail open, a 1200-1400px
+   window leaves this column about 600px wide while the window rules still
+   think there's room: the tools row stayed three across and Next up's names
+   broke a letter per line, and the summary's four figures ran into each
+   other. These read the column itself. */
+.mv-left { container: mv-left / inline-size; }
+@container mv-left (max-width: 780px) {
+    .mv-tools { grid-template-columns: minmax(0, 1fr); }
+}
+@container mv-left (max-width: 860px) {
+    .mv-summary { flex-wrap: wrap; }
+    .mv-summary-figs {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        flex: 1 1 100%;
+        width: 100%;
+        gap: var(--space-4) var(--space-3);
+        margin-left: 0;
+    }
+    .mv-summary-fig { padding-left: 0; border-left: none; }
 }

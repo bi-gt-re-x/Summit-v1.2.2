@@ -1246,12 +1246,9 @@ html[data-theme="dark"] .wk-focus-chip.is-empty { color: #6b7280; }
     min-height: 52px;
 }
 
-/* Room for the corner switcher, and only that: 205px of control plus a gap.
-   It was 320px, sized for the wide pill the switcher used to be, and the extra
-   hundred was coming straight out of the Day view's date row. */
-#dayView .wk-header.day-header {
-    padding-right: 232px;
-}
+/* The Day view used to reserve 232px here for the shell's corner switcher.
+   It carries its own switcher in the header now, like the Week view, because
+   on a phone that padding left the date 0px wide and it disappeared. */
 /* The week's date sits in the column beside the sidebar toggle; with the
    selector opposite it, the extra left indent is no longer what centres it. */
 #weekView .wk-headmain { padding-left: 0; }

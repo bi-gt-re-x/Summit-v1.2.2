@@ -21,6 +21,7 @@ import {
   DayColumn,
   DaySidebar,
   TimeLabels,
+  ViewSwitcher,
   minutesToTime,
 } from '@/components/Calendar';
 import { BlockDialogs } from '@/components/Calendar/BlockDialogs';
@@ -501,7 +502,7 @@ export default function Day() {
   if (!hasData) return <ErrorState message={error ?? "Couldn't load your day. Try refreshing."} onRetry={refresh} />;
 
   return (
-    <CalendarShell paneId="dayView">
+    <CalendarShell paneId="dayView" ownSwitcher>
       <div className="wk-header day-header">
         <div className="wk-titlegroup">
           <h2 className="wk-title">{dayTitle(cursor)}</h2>
@@ -540,8 +541,14 @@ export default function Day() {
           </button>
         </div>
 
-        {/* The one control on this page that asks the server again. */}
-        <RefreshButton className="wk-icon-btn" busy={refreshing} onRefresh={refresh} />
+        {/* The switcher sits in this row, as on the Week view, rather than in
+            the shell's corner: the corner needed 232px of padding kept free
+            on this row, and on a phone that left the date no room at all. */}
+        <div className="wk-headtools">
+          <ViewSwitcher />
+          {/* The one control on this page that asks the server again. */}
+          <RefreshButton className="wk-icon-btn" busy={refreshing} onRefresh={refresh} />
+        </div>
       </div>
 
       {error && <ErrorState message={error} onRetry={refresh} />}

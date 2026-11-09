@@ -6142,71 +6142,6 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .task-input::placeholder {
     color: rgba(42, 44, 42, 0.5)
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) body.classic .calendar-card {
-    background: rgba(250, 248, 244, 0.2);
-    border: 2px solid rgba(250, 248, 244, 0.5);
-    color: #FFFFFF
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) body.classic .calendar-header h2 {
-    color: #FFFFFF
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) body.classic .day-name {
-    color: #FFFFFF
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) body.classic .calendar-day {
-    background: rgba(250, 248, 244, 0.1);
-    color: #FFFFFF;
-    border: 1px solid rgba(250, 248, 244, 0.3)
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) body.classic .calendar-day:hover {
-    background: rgba(250, 248, 244, 0.3)
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) body.classic .calendar-day.today {
-    background: rgba(250, 248, 244, 0.1);
-    color: #FFFFFF
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) body.classic .calendar-day.selected {
-    background: rgba(250, 248, 244, 0.4);
-    color: #FFFFFF;
-    border-color: #FAF8F4
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) body.classic .nav-arrow {
-    background: rgba(250, 248, 244, 0.2);
-    border: 2px solid rgba(250, 248, 244, 0.5);
-    color: #FFFFFF
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) body.classic .nav-arrow:hover {
-    background: rgba(250, 248, 244, 0.4);
-    border-color: #FAF8F4
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) body.classic .calendar-bottom-box {
-    background: rgba(250, 248, 244, 0.1);
-    border: 2px solid rgba(250, 248, 244, 0.5);
-    color: #FFFFFF
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) body.classic .calendar-bottom-box h3 {
-    color: #FFFFFF
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) body.classic .calendar-bottom-box p,
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) body.classic .calendar-bottom-box ul {
-    color: #FFFFFF
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) body.classic .calendar-bottom-box input {
-    background: rgba(250, 248, 244, 0.1);
-    border: 2px solid rgba(250, 248, 244, 0.5);
-    color: #FFFFFF
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) body.classic .task-input {
-    border: 2px solid rgba(250, 248, 244, 0.5)
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) body.classic .calendar-bottom-box input::placeholder {
-    color: rgba(255, 255, 255, 0.7)
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) body.classic .timestamp-section input[type="time"] {
-    border: 3px solid #BC8A78;
-    background: rgba(250, 248, 244, 0.15);
-    color: #FFFFFF
-}
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .event-suggest {
     background: #F5F4F0;
     border: 1px solid #E8E7E3;
@@ -6965,6 +6900,11 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
     }
 }
 @media (max-width: 860px) {
+    html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .mv-summary-fig {
+        border-left: none
+    }
+}
+@container mv-left (max-width: 860px) {
     html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .mv-summary-fig {
         border-left: none
     }

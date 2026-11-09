@@ -24,7 +24,10 @@
    cannot ellipsise the way seven at 75px each did. */
 .day-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) 442px;
+    /* 442px only once the window can spare it. Fixed, it took the day column
+       down to about 300px at 1200 with the rail open, which squeezed the focus
+       field to a few letters. */
+    grid-template-columns: minmax(0, 1fr) clamp(340px, 32vw, 442px);
     gap: var(--space-6);
     flex: 1 1 auto;
     min-height: 0;
@@ -512,4 +515,11 @@ html[data-theme="dark"] .day-focus-time { color: #8b95a3; }
     html .day-scroll { max-height: 68vh; min-height: 420px; }
     html .day-sidebar { overflow: visible; }
     html .day-header .wk-titlegroup { flex: 1 1 auto; min-width: 0; }
+}
+
+/* Phones: the date takes its own line, whole, with the arrows and Today
+   under it. Kept on one line with them it was cut to "Monday...". */
+@media (max-width: 640px) {
+    .day-header .wk-titlegroup { flex: 1 1 100%; flex-wrap: wrap; gap: var(--space-2) var(--space-3); }
+    .day-header .wk-title { flex: 1 1 100%; white-space: normal; overflow: visible; }
 }

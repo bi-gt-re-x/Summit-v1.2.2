@@ -553,6 +553,107 @@ html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .calenda
     color: var(--paper-ink);
 }
 
+/* Calendar, Month view. The palette lives in #monthView's tokens, so the
+   sage goes in there: the XP figures, the selection ring, the + Add button and
+   the goal bars were all still the old slate blue. The XP bands become one
+   sage ramp, pale to deep, the order they already were. */
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) #monthView {
+    --mv-accent: var(--paper-sage-deep);
+    --mv-accent-soft: var(--paper-sage-soft);
+    --mv-good: var(--paper-sage-deep);
+    --mv-good-soft: #E6EAE2;
+    --mv-warm: #F2F3EE;
+    --mv-warm-line: #DCE0D6;
+    --mv-warm-ink: #5F6F5D;
+    --mv-band-exceptional: #55664F;
+    --mv-band-great: #748E77;
+    --mv-band-good: #A3B19F;
+    --mv-band-low: #C9D1C4;
+    --mv-band-none: #F0EFEB;
+    --mv-band-none-ink: #A09E9A;
+    --mv-badge-exceptional: #55664F;
+    --mv-badge-exceptional-ink: #FFFFFF;
+    --mv-badge-great: #748E77;
+    --mv-badge-great-ink: #FFFFFF;
+    --mv-badge-good: #D3DBCF;
+    --mv-badge-good-ink: #3F4D3C;
+    --mv-badge-low: #E9ECE5;
+    --mv-badge-low-ink: #55634F;
+}
+/* One flat card, like every other paper card. The day names sit on the card
+   itself instead of a filled strip, and the weekend tint goes: the names
+   already say which days they are. */
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) #monthView .mv-card { box-shadow: none; }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) #monthView .mv-daynames { background: transparent; }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) #monthView .mv-dayname { font-weight: 500; letter-spacing: .08em; color: var(--paper-muted); }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) #monthView .mv-dayname.is-weekend { color: var(--paper-faint); }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) #monthView .mv-cell.is-weekend { background: transparent; }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) #monthView .mv-cell:hover,
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) #monthView .mv-cell.is-weekend:hover { background: var(--paper-hover); }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) #monthView .mv-daynum { font-weight: 600; }
+/* The figures are the app's, so they're quiet: muted ink, not an accent. */
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) #monthView .mv-cell-events { font-weight: 500; color: var(--paper-muted); }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) #monthView .mv-cell-xp { font-weight: 500; color: var(--paper-faint); }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) #monthView .mv-mark { height: 3px; }
+/* Today: a faint sage wash and a ring around the date, the same sage the
+   mini-month and the Week view mark today with. The star goes. */
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) #monthView .mv-cell.is-today,
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) #monthView .mv-cell.is-today:hover { background: #F2F3EE; }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) #monthView .mv-cell.is-today .mv-daynum { box-shadow: 0 0 0 1.5px var(--paper-sage); }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) #monthView .mv-cell.is-today :is(.mv-cell-events, .mv-cell-xp) { color: var(--paper-muted); }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) #monthView .mv-cell-flag.is-today { display: none; }
+/* The day the plan is showing: a thin ring, not a 2px blue frame. */
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) #monthView .mv-cell.is-selected { box-shadow: inset 0 0 0 1.5px var(--paper-sage-deep); }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) #monthView .mv-legend { background: transparent; border-top-color: var(--paper-line-soft); }
+/* The plan's cards: flat, one hairline, a thin priority edge. */
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) #monthView #dailyTasks .task-section {
+    box-shadow: none;
+    border-bottom-width: 1px;
+    border-left-width: 2px;
+}
+
+/* Calendar, Day view. */
+/* The mini-month's today and picked day were discs as big as the cell, about
+   50px across. They're a 32px disc in the middle of it now, drawn as a
+   gradient so the week band behind still runs edge to edge. */
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .day-mini-cell.is-today.is-today {
+    background: radial-gradient(circle 16px at center, var(--paper-sage) 15.5px, transparent 16px);
+    color: #FFFFFF;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .day-mini-cell.is-today.is-today:hover {
+    background: radial-gradient(circle 16px at center, var(--paper-sage-deep) 15.5px, transparent 16px);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .day-mini-cell.is-selected.is-selected:not(.is-today) {
+    background: radial-gradient(circle 16px at center, var(--paper-ink) 15.5px, transparent 16px);
+    color: #FFFFFF;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .day-mini-cell.is-inweek.is-selected:not(.is-today) {
+    background: radial-gradient(circle 16px at center, var(--paper-ink) 15.5px, #F1F0EA 16px);
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .day-mini-cell.is-inweek.is-today.is-today {
+    background: radial-gradient(circle 16px at center, var(--paper-sage) 15.5px, #F1F0EA 16px);
+    box-shadow: -2px 0 0 #F1F0EA, 2px 0 0 #F1F0EA;
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .day-mini-cell.is-week-head.is-today { box-shadow: 2px 0 0 #F1F0EA; }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .day-mini-cell.is-week-tail.is-today { box-shadow: -2px 0 0 #F1F0EA; }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .day-mini-cell.is-inweek { color: var(--paper-body); }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .day-mini-cell.has-open .day-mini-mark { background: var(--paper-faint); }
+/* The busy dot sits just under the number, inside the 32px disc, so it stays
+   on the disc for today and the picked day instead of straddling its edge. */
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .day-mini-mark { bottom: auto; top: calc(50% + 8px); }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .day-mini-dow span { font-weight: 500; color: var(--paper-faint); }
+/* The focus row: one quiet field and a plain + Focus, no dashed box. */
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .day-allday-input { background: transparent; border-color: transparent; }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .day-allday-input:hover { border-color: var(--paper-line); }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .day-allday-input:focus { background: var(--paper-card); border-color: var(--paper-sage); box-shadow: 0 0 0 3px rgba(139, 150, 137, .18); }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .day-focus-add { border-style: solid; border-color: transparent; color: var(--paper-muted); font-weight: 500; }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .day-focus-add:hover { border-color: var(--paper-line); background: var(--paper-hover); color: var(--paper-ink); }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .day-next-card { background: transparent; border-color: var(--paper-line); }
+html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) .day-next-icon { background: var(--paper-inset); border-color: transparent; }
+@media (max-width: 640px) {
+    html:not([data-skin]):not([data-theme="dark"]):has(.calendar-container) #dayView .wk-title { font-size: 28px; line-height: 1.15; }
+}
+
 /* ==========================================================================
    TASKS
    ========================================================================== */
