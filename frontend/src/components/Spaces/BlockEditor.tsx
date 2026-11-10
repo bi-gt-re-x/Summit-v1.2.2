@@ -266,17 +266,45 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
   }, [heights, narrow]);
   useLayoutEffect(measure);
 
-  /* Words wrapping differently after a resize, a font loading, an image:
-     anything that changes an item's height without a render. */
+  /* Words wrapping differently after a resize, a font loading, an image, a
+     live block's numbers arriving: anything that changes an item's height
+     without a render here. Every item is watched from the moment it is on
+     the page until it leaves, so a page swapped whole (an AI build, Undo, a
+     restored version) is watched too, even with as many items as before. */
   const measureRef = useRef(measure);
   measureRef.current = measure;
+  const watch = useRef<ResizeObserver | null>(null);
   useEffect(() => {
     if (typeof ResizeObserver === 'undefined') return undefined;
-    const watch = new ResizeObserver(() => measureRef.current());
-    if (canvas.current) watch.observe(canvas.current);
-    itemNodes.current.forEach((node) => watch.observe(node));
-    return () => watch.disconnect();
-  }, [items.length]);
+    const observer = new ResizeObserver(() => measureRef.current());
+    watch.current = observer;
+    if (canvas.current) observer.observe(canvas.current);
+    itemNodes.current.forEach((node) => observer.observe(node));
+    return () => {
+      observer.disconnect();
+      if (watch.current === observer) watch.current = null;
+    };
+  }, []);
+  /* One ref per item id, kept, so React only calls it as the item comes and goes. */
+  const itemRefs = useRef(new Map<string, (node: HTMLDivElement | null) => void>());
+  const itemRef = (id: string) => {
+    let ref = itemRefs.current.get(id);
+    if (!ref) {
+      ref = (node) => {
+        const was = itemNodes.current.get(id);
+        if (was && was !== node) watch.current?.unobserve(was);
+        if (node) {
+          itemNodes.current.set(id, node);
+          watch.current?.observe(node);
+        } else {
+          itemNodes.current.delete(id);
+          itemRefs.current.delete(id);
+        }
+      };
+      itemRefs.current.set(id, ref);
+    }
+    return ref;
+  };
 
   /** Pick an item up by its handle (or its right edge, to resize it). */
   const pickUp = (event: ReactPointerEvent<HTMLElement>, id: string, mode: Lift['mode']) => {
@@ -1133,10 +1161,7 @@ export function BlockEditor({ blocks: given, onChange: emit, disabled = false, l
           return (
             <div
               key={item.id}
-              ref={(node) => {
-                if (node) itemNodes.current.set(item.id, node);
-                else itemNodes.current.delete(item.id);
-              }}
+              ref={itemRef(item.id)}
               className={`sp-item${lifted ? ` is-lifted is-${lift!.mode}` : ''}${item.pinned ? ' is-pinned' : ''}${box ? ' is-container' : ''}${lift?.into === item.id ? ' is-drop-target' : ''}`}
               style={style}
               data-place={`${item.x},${item.y},${item.w}`}

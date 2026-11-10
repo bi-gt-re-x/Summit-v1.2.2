@@ -4,7 +4,7 @@
  * Driven through a tiny host that holds the blocks, the way the space page
  * does, so every edit is read back off the screen.
  */
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { useState } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { BlockEditor } from './BlockEditor';
@@ -477,5 +477,61 @@ describe('containers', () => {
     render(<Host start={[{ id: 'box', type: 'container', text: '' }]} />);
     fireEvent.change(screen.getByRole('textbox', { name: 'Container name' }), { target: { value: 'This week' } });
     expect(latest[0]!.text).toBe('This week');
+  });
+});
+
+describe('heights', () => {
+  /* jsdom draws nothing, so a stand-in observer records what is watched and
+     lets the test say an item changed size. */
+  class Watch {
+    static all: Watch[] = [];
+    seen = new Set<Element>();
+    constructor(public fire: () => void) {
+      Watch.all.push(this);
+    }
+    observe(node: Element) {
+      this.seen.add(node);
+    }
+    unobserve(node: Element) {
+      this.seen.delete(node);
+    }
+    disconnect() {
+      this.seen.clear();
+    }
+  }
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    Watch.all = [];
+  });
+
+  it('watches every item of a page swapped whole for one just as long', () => {
+    vi.stubGlobal('ResizeObserver', Watch);
+    const swap = (prefix: string) => [
+      { id: `${prefix}0`, type: 'h2' as const, text: 'Goals' },
+      { id: `${prefix}1`, type: 'text' as const, text: 'Rows' },
+    ];
+    const { rerender, container } = render(<BlockEditor blocks={swap('old')} onChange={() => {}} label="Page" />);
+    // An AI build or a restore: as many items as before, every one new.
+    rerender(<BlockEditor blocks={swap('new')} onChange={() => {}} label="Page" />);
+    const items = [...container.querySelectorAll('.sp-canvas > .sp-item')];
+    expect(items).toHaveLength(2);
+    const watch = Watch.all.at(-1)!;
+    for (const item of items) expect(watch.seen.has(item)).toBe(true);
+    // Nothing gone from the page is still watched.
+    expect([...watch.seen].filter((node) => !node.isConnected)).toEqual([]);
+  });
+
+  it('moves what is under an item down when the item grows without a render', () => {
+    vi.stubGlobal('ResizeObserver', Watch);
+    const blocks: Block[] = [
+      { id: 'a', type: 'text', text: 'Live' },
+      { id: 'b', type: 'h2', text: 'Next' },
+    ];
+    const { container } = render(<BlockEditor blocks={blocks} onChange={() => {}} label="Page" />);
+    const [first, second] = [...container.querySelectorAll<HTMLElement>('.sp-canvas > .sp-item')];
+    const tall = vi.spyOn(first!, 'offsetHeight', 'get').mockReturnValue(400);
+    act(() => Watch.all.at(-1)!.fire());
+    expect(parseInt(second!.style.top, 10)).toBeGreaterThanOrEqual(400);
+    tall.mockRestore();
   });
 });
