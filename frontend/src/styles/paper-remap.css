@@ -15757,14 +15757,17 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
 }
 
 /* ---- log.css (every paper page) ---- */
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .lg-page {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .lg-page,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .lg-block {
     --nt-text: var(--color-ink);
     --nt-muted: var(--color-ink-muted);
     --nt-faint: var(--color-ink-faint);
     --nt-line: var(--color-line);
     --nt-card-2: var(--color-surface-2);
     --nt-raised: var(--color-surface);
-    --nt-accent-2: var(--color-accent);
+    --nt-accent-2: var(--color-accent)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .lg-page {
     color: var(--color-ink)
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .lg-mark {
@@ -15980,6 +15983,12 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .lg-confirm p {
     color: var(--color-ink-muted)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .lg-block {
+    color: var(--color-ink)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .lg-block .lg-side {
+    box-shadow: none
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page) .lg-checkin {
     --m1: #B87678;

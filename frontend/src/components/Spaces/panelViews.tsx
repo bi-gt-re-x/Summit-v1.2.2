@@ -72,6 +72,7 @@ import { SkillsChapter } from '@/components/Growth';
 import { NextSessionsPanel } from '@/components/NextSessions/NextSessions';
 import { FollowupPanel } from '@/components/Recommendations';
 import { BadgeTile, pickBadges } from '@/components/Achievements/BadgeWall';
+import { Journal } from '@/components/Log/Journal';
 import { useApi, useAuth, useSkillAttempts } from '@/hooks';
 import { achievements as badgeService, analytics as analyticsService, next as nextService } from '@/services';
 import { NO_PLAN, type NextResult } from '@/services/next';
@@ -89,6 +90,8 @@ export type SetPanel = (patch: Record<string, unknown>) => void;
 interface Base {
   config: PanelConfig;
   set: SetPanel;
+  /** The block's id, for a panel that keeps something on this device per block (the Log's draft). */
+  id?: string;
 }
 
 interface ModelProps extends Base {
@@ -527,7 +530,20 @@ const SELF_VIEWS: Partial<Record<PanelKind, (props: Base) => ReactNode>> = {
   'score-changes': PeriodsView,
   periods: PeriodsView,
   milestones: PeriodsView,
+  log: LogView,
 };
+
+/** The whole Log page, every part working: the block's `show` leaves parts out. */
+function LogView({ config, id }: Base) {
+  const parts = list(config, 'show');
+  return (
+    <Journal
+      embedded
+      slot={`space-${id ?? 'block'}`}
+      show={{ checkin: parts.includes('checkin'), entries: parts.includes('entries'), learned: parts.includes('learned') }}
+    />
+  );
+}
 
 /** Goals finished draws nothing until there is one, which on a page reads as a broken block. */
 function GoalsFinishedView() {
@@ -538,10 +554,10 @@ function GoalsFinishedView() {
 // Which view, and what it waits for
 // --------------------------------------------------------------------------
 /** The body of a panel block: the right view, or a line saying what it's waiting for. */
-export function PanelView({ config, set }: Base) {
+export function PanelView({ config, set, id }: Base) {
   if (MODEL_VIEWS[config.kind]) return <ModelView config={config} set={set} />;
   const Self = SELF_VIEWS[config.kind];
-  return Self ? <Self config={config} set={set} /> : <Note>This panel isn't here anymore.</Note>;
+  return Self ? <Self config={config} set={set} id={id} /> : <Note>This panel isn't here anymore.</Note>;
 }
 
 function ModelView({ config, set }: Base) {

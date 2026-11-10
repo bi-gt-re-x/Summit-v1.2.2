@@ -46,6 +46,7 @@ vi.mock('@/services', async (original) => {
 });
 
 import Log from './Log';
+import { Journal } from '@/components/Log/Journal';
 
 beforeEach(() => {
   localStorage.clear();
@@ -228,5 +229,61 @@ describe('what Summit has learned', () => {
       window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
     });
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+});
+
+describe('as a block on a space', () => {
+  const parts = { checkin: true, entries: true, learned: true };
+
+  it('is the whole Log without the page heading, and leaves the caret alone', async () => {
+    renderWithProviders(<Journal embedded slot="space-b1" show={parts} />);
+    const title = await screen.findByLabelText('Entry title');
+    expect(screen.queryByRole('heading', { level: 1 })).toBeNull();
+    expect(title).not.toHaveFocus();
+    expect(screen.getByRole('button', { name: /Big goals/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /See what Summit has learned/ })).toBeInTheDocument();
+    expect(screen.getByText("How's today?")).toBeInTheDocument();
+  });
+
+  it('leaves out the parts the block is set not to show', async () => {
+    renderWithProviders(<Journal embedded slot="space-b1" show={{ checkin: false, entries: false, learned: false }} />);
+    expect(await screen.findByLabelText('Entry title')).toBeInTheDocument();
+    expect(screen.queryByText("How's today?")).toBeNull();
+    expect(screen.queryByRole('button', { name: /Big goals/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /See what Summit has learned/ })).toBeNull();
+  });
+
+  it("keeps its draft apart from the page's", async () => {
+    localStorage.setItem('summit:log-draft:myles', JSON.stringify({ title: "The page's", body: '', at: 1 }));
+    service.save.mockRejectedValue(new Error('offline'));
+    const user = userEvent.setup();
+    renderWithProviders(<Journal embedded slot="space-b1" show={parts} />);
+    const title = await screen.findByLabelText('Entry title');
+    expect(title).toHaveValue('');
+    await user.type(title, 'From the block');
+    await user.click(screen.getByRole('button', { name: 'Save entry' }));
+    await screen.findByText('Not saved');
+    expect(JSON.parse(localStorage.getItem('summit:log-draft:myles:space-b1') ?? '{}')).toMatchObject({ title: 'From the block' });
+    expect(JSON.parse(localStorage.getItem('summit:log-draft:myles') ?? '{}')).toMatchObject({ title: "The page's" });
+  });
+
+  it('saves on ⌘S only from inside itself', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Journal embedded slot="space-b1" show={parts} />);
+    await user.type(await screen.findByLabelText('Entry title'), 'Kept');
+    fireEvent.keyDown(document.body, { key: 's', metaKey: true });
+    expect(service.save).not.toHaveBeenCalled();
+    fireEvent.keyDown(screen.getByLabelText('Entry title'), { key: 's', metaKey: true });
+    await waitFor(() => expect(service.save).toHaveBeenCalledWith(expect.objectContaining({ title: 'Kept', final: true })));
+  });
+
+  it('opens the delete box over the whole window', async () => {
+    const user = userEvent.setup();
+    const { container } = renderWithProviders(<Journal embedded slot="space-b1" show={parts} />);
+    await user.click(await screen.findByRole('button', { name: /Big goals/ }));
+    await user.click(screen.getByRole('button', { name: /Delete/ }));
+    const dialog = screen.getByRole('alertdialog', { name: 'Delete this entry?' });
+    expect(container.contains(dialog)).toBe(false);
+    expect(document.body.contains(dialog)).toBe(true);
   });
 });

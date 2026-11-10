@@ -52,6 +52,7 @@ const PAGE_NAME: Record<string, string> = {
   '/analytics/growth': 'Growth',
   '/goals': 'Goals',
   '/achievements': 'Achievements',
+  '/log': 'Log',
 };
 
 export interface PanelBlockProps {
@@ -108,10 +109,13 @@ export function PanelBlock({ one, disabled, register, onChange, onKey }: PanelBl
           disabled={disabled}
           onChange={(event) => onChange({ text: event.target.value })}
         />
-        <span className="sp-live-badge" title="Updates when your data changes">
-          <span className="sp-live-dot" aria-hidden="true" />
-          <span className="sp-live-badge-word">Live</span>
-        </span>
+        {/* The Log reads when it opens and on Refresh, not as other tabs write. */}
+        {config.kind !== 'log' && (
+          <span className="sp-live-badge" title="Updates when your data changes">
+            <span className="sp-live-dot" aria-hidden="true" />
+            <span className="sp-live-badge-word">Live</span>
+          </span>
+        )}
         {!disabled && (
           <button
             type="button"
@@ -133,7 +137,7 @@ export function PanelBlock({ one, disabled, register, onChange, onKey }: PanelBl
 
       <div className="sp-panel-body">
         <Guard key={`${config.kind}-${round}`}>
-          <Body config={config} set={set} />
+          <Body config={config} set={set} id={one.id} />
         </Guard>
       </div>
 
@@ -147,10 +151,10 @@ export function PanelBlock({ one, disabled, register, onChange, onKey }: PanelBl
 
 /** The panel itself, drawn again only when its settings change. */
 const Body = memo(
-  function Body({ config, set }: { config: PanelConfig; set: (patch: Record<string, unknown>) => void }) {
-    return <PanelView config={config} set={set} />;
+  function Body({ config, set, id }: { config: PanelConfig; set: (patch: Record<string, unknown>) => void; id: string }) {
+    return <PanelView config={config} set={set} id={id} />;
   },
-  (was, now) => was.set === now.set && panelKey(was.config) === panelKey(now.config),
+  (was, now) => was.set === now.set && was.id === now.id && panelKey(was.config) === panelKey(now.config),
 );
 
 /** A link inside the app, or a plain one where there is no router (a test). */

@@ -1,10 +1,10 @@
-# Analytics, Timer and Achievements panels in Spaces
+# Analytics, Timer, Achievements and Log panels in Spaces
 
 A Space page (`/spaces/:id`, `/team/:id`) can hold **panel blocks**: one of the
 app's own panels, drawn by the same component its page uses, from the
 account's live numbers, with settings of its own. They're in the `/` menu under
-Analytics, Suggestions, Insights and habits, Growth and subjects, Timer, and
-Goals & records.
+Analytics, Suggestions, Insights and habits, Growth and subjects, Timer,
+Goals & records, and Log.
 
 - Kinds and the settings each takes: `shared/rules.json` `spaces.panels`.
 - Cleaning (both sides, pinned by `shared/cases/space_panels.json`):
@@ -178,3 +178,17 @@ twice.
 | `badges` | Badges (`BadgeTile` from the badge wall) | category, earned / up next / all, how many |
 | Records (live) | Personal bests | only the records you tick, category, sort, how many, style |
 | All goals (live) | Goals and their pace | only the goals you tick, or open / all / finished, style |
+
+## Log
+
+| Block kind | What it is | Settings |
+| --- | --- | --- |
+| `log` | The whole Log page (`components/Log/Journal`, which `/log` draws too): title, check-in, the rich editor and its toolbar, autosave, Save entry and ⌘S, Delete with its warning, past entries with search and sort, and "What Summit has learned" with Remove | which parts show: the check-in, past entries, the learned note |
+
+The block leaves out the page heading and doesn't take the caret on load. ⌘S
+saves only from inside it, and ⌘Z there stays with the Log rather than undoing
+the space page (`data-own-keys`). The learned drawer and the delete box open
+over the whole window. Each block keeps its unsaved draft on this device under
+its own key (`summit:log-draft:<user>:space-<block id>`), apart from the
+page's. It reads when it opens and on Refresh rather than following other
+tabs, so its frame has no Live badge.

@@ -17,7 +17,7 @@ import { RULES } from '@/utils/sharedRules';
 
 const PANELS = RULES.spaces.panels;
 
-export type PanelGroup = 'analytics' | 'suggest' | 'insights' | 'growth' | 'goals';
+export type PanelGroup = 'analytics' | 'suggest' | 'insights' | 'growth' | 'goals' | 'log';
 
 export type PanelKind = keyof typeof PANELS.kinds;
 
@@ -124,7 +124,7 @@ export type Needs = 'model' | 'self';
 
 const SELF: ReadonlySet<PanelKind> = new Set<PanelKind>([
   'sessions', 'goals-finished', 'badges',
-  'growth-line', 'then-now', 'movers', 'score-changes', 'periods', 'milestones',
+  'growth-line', 'then-now', 'movers', 'score-changes', 'periods', 'milestones', 'log',
 ]);
 
 export const needsOf = (kind: PanelKind): Needs => (SELF.has(kind) ? 'self' : 'model');
@@ -249,6 +249,7 @@ export const PANEL_INFO: Record<PanelKind, PanelInfo> = {
   'core-hours': { hint: 'The hours that hold half your finished work.', glyph: '◑', keys: ['core', 'hours', 'when'], home: GROWTH },
   years: { hint: 'How hard and how well, one year at a time.', glyph: '⧉', keys: ['years', 'year', 'history'], home: GROWTH },
   badges: { hint: 'Badges you earned or are closest to.', glyph: '🏅', keys: ['badges', 'achievements', 'earned'], home: '/achievements' },
+  log: { hint: 'Your private journal. Write, check in, and look back.', glyph: '✎', keys: ['log', 'journal', 'diary', 'entry', 'check-in', 'mood', 'reflect'], home: '/log' },
 };
 
 /** What each section of the slash menu is called. */
@@ -258,6 +259,7 @@ export const PANEL_GROUP_LABEL: Record<PanelGroup, string> = {
   insights: 'Insights and habits',
   growth: 'Growth and subjects',
   goals: 'Goals & records',
+  log: 'Log',
 };
 
 /** What each setting is called in a block's settings. */
@@ -299,6 +301,7 @@ export const CHOICE_LABEL: Partial<Record<FieldName, Record<string, string>>> = 
     best: 'Biggest rise', worst: 'Biggest drop',
     task: 'Working on', method: 'Method',
     ladder: 'Stages', next: 'Up next', away: 'Time away', note: 'How days count',
+    checkin: 'Check-in', entries: 'Past entries', learned: 'What Summit learned',
   },
 };
 

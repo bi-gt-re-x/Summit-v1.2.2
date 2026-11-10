@@ -1,13 +1,15 @@
 /* ==========================================================================
    log.css — the Log page (pages/Log.tsx) and its review drawer
-   (components/Log/LearnedPanel.tsx).
+   (components/Log/LearnedPanel.tsx), and the same Log as a block on a
+   space's page (`.lg-block`, components/Log/Journal.tsx embedded).
 
    Quiet on purpose: white cards on the app's backdrop, one accent for the
    Save button and the selected entry, no gradients. The editor's own
    typography is `.nt-rich` in notes.css, shared with Notes; the variables it
    reads are set here for this page.
    ========================================================================== */
-.lg-page {
+.lg-page,
+.lg-block {
     --nt-text: var(--color-ink);
     --nt-muted: var(--color-ink-muted);
     --nt-faint: var(--color-ink-faint);
@@ -18,7 +20,8 @@
     --nt-ink-teal: #0f7d84;
     --nt-ink-blue: #2f6fd0;
     --nt-ink-violet: #6c5ce7;
-
+}
+.lg-page {
     display: grid;
     grid-template-columns: minmax(0, 1.6fr) minmax(340px, 1fr);
     gap: var(--space-8);
@@ -440,6 +443,42 @@
 .lg-confirm-actions { display: flex; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-5); }
 
 /* ---------- Narrower ------------------------------------------------------- */
+/* ---------- As a block on a space's page ------------------------------------
+   The page's two columns when the block is wide enough, one when it isn't,
+   going by the block's own width (a block can be a third of the page). The
+   list scrolls inside the block rather than sticking to the window. */
+.lg-block {
+    container-type: inline-size;
+    color: var(--color-ink);
+}
+.lg-block-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-5);
+    align-items: start;
+}
+@container (min-width: 720px) {
+    .lg-block-grid.has-side { grid-template-columns: minmax(0, 1.5fr) minmax(260px, 1fr); }
+}
+.lg-block .lg-main { gap: var(--space-4); }
+.lg-block .lg-body,
+.lg-block .lg-body > .nt-rich { min-height: 220px; }
+.lg-block .lg-body > .nt-rich { max-height: 460px; }
+.lg-block .lg-side {
+    position: static;
+    min-height: 0;
+    max-height: 560px;
+    padding: var(--space-4);
+    box-shadow: none;
+}
+.lg-block .lg-note { padding: var(--space-4); }
+@container (max-width: 520px) {
+    .lg-block .lg-title-row { flex-wrap: wrap; gap: var(--space-2); }
+    .lg-block .lg-status-wrap { min-width: 0; text-align: left; }
+    .lg-block .lg-note { grid-template-columns: minmax(0, 1fr); }
+    .lg-block .lg-note > svg { display: none; }
+}
+
 @media (max-width: 1024px) {
     .lg-page { grid-template-columns: minmax(0, 1fr); }
     .lg-side { position: static; min-height: 0; max-height: none; }

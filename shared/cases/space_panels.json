@@ -23,6 +23,8 @@
     {"why": "badge limits out of range", "raw": {"kind": "badges", "category": "Sports", "which": "locked", "limit": 13}, "clean": {"kind": "badges", "category": "all", "which": "earned", "limit": 6}},
     {"why": "a set ignores what isn't one of its words", "raw": {"kind": "stage", "show": [1, "next", null]}, "clean": {"kind": "stage", "show": ["next"]}},
     {"why": "a growth timeline's lines", "raw": {"kind": "growth-line", "period": "365d", "show": ["overall", "quality"]}, "clean": {"kind": "growth-line", "period": "365d", "show": ["quality", "overall"]}},
-    {"why": "a kind with no settings keeps none", "raw": {"kind": "say-do", "window": "7d", "limit": 3}, "clean": {"kind": "say-do"}}
+    {"why": "a kind with no settings keeps none", "raw": {"kind": "say-do", "window": "7d", "limit": 3}, "clean": {"kind": "say-do"}},
+    {"why": "a Log block shows the whole page unless told otherwise", "raw": {"kind": "log", "window": "7d"}, "clean": {"kind": "log", "show": ["checkin", "entries", "learned"]}},
+    {"why": "a Log block can leave parts out", "raw": {"kind": "log", "show": ["entries", "junk"]}, "clean": {"kind": "log", "show": ["entries"]}}
   ]
 }

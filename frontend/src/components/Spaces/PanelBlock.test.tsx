@@ -90,6 +90,8 @@ function stub() {
       body = { success: true, sittings: [] };
     } else if (url.includes('/api/growth_periods') || url.includes('/api/achievements') || url.includes('/api/next_sessions')) {
       body = { success: false, message: 'Not in this test.' };
+    } else if (url.includes('/api/log')) {
+      body = { success: true, entries: [], insights: [], learning: true };
     } else if (url.includes('/api/next_actions')) {
       body = { success: true, plan: { ...NO_PLAN, budget: Number(new URL(url, 'http://x').searchParams.get('budget') ?? 45) }, lens: null };
     }

@@ -69,11 +69,16 @@ export interface LocalDraft {
   at: number;
 }
 
-const draftKey = (username: string) => `summit:log-draft:${username}`;
+/**
+ * Where the draft is kept. The Log page has the plain key; a Log block on a
+ * space's page passes its own `slot` (its block id), so the page and each
+ * block keep a draft of their own and never put back each other's words.
+ */
+const draftKey = (username: string, slot = '') => `summit:log-draft:${username}${slot ? `:${slot}` : ''}`;
 
-export function readDraft(username: string): LocalDraft | null {
+export function readDraft(username: string, slot = ''): LocalDraft | null {
   try {
-    const raw = localStorage.getItem(draftKey(username));
+    const raw = localStorage.getItem(draftKey(username, slot));
     if (!raw) return null;
     const found = JSON.parse(raw) as Partial<LocalDraft>;
     if (typeof found.title !== 'string' || typeof found.body !== 'string') return null;
@@ -88,17 +93,17 @@ export function readDraft(username: string): LocalDraft | null {
   }
 }
 
-export function writeDraft(username: string, draft: LocalDraft): void {
+export function writeDraft(username: string, draft: LocalDraft, slot = ''): void {
   try {
-    localStorage.setItem(draftKey(username), JSON.stringify(draft));
+    localStorage.setItem(draftKey(username, slot), JSON.stringify(draft));
   } catch {
     /* Private mode or full storage: the server copy is all there is. */
   }
 }
 
-export function clearDraft(username: string): void {
+export function clearDraft(username: string, slot = ''): void {
   try {
-    localStorage.removeItem(draftKey(username));
+    localStorage.removeItem(draftKey(username, slot));
   } catch {
     /* see above */
   }

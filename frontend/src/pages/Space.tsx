@@ -197,7 +197,8 @@ export default function Space({ kind = 'personal' }: SpaceProps) {
       const key = event.key.toLowerCase();
       if (key !== 'z' && key !== 'y') return;
       const target = event.target as HTMLElement | null;
-      if (target?.closest('.sp-chat, .sp-name, .sp-pop')) return;
+      // A block with its own editor (the Log) keeps its own ⌘Z.
+      if (target?.closest('.sp-chat, .sp-name, .sp-pop, [data-own-keys]')) return;
       if (!target?.closest('.sp-page') && target !== document.body) return;
       event.preventDefault();
       if (key === 'y' || event.shiftKey) redo();
