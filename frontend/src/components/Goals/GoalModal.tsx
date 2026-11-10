@@ -221,7 +221,7 @@ export function GoalModal({
           )}
 
           <label htmlFor="goalPriority" className="gm-priority-label">
-            Priority <span className="gm-priority-val">{priority}</span>/10
+            Ambition <span className="gm-priority-val">{priority}</span>/10
           </label>
           <input
             type="range"

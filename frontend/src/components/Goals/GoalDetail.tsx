@@ -233,7 +233,7 @@ export function GoalDetail(props: GoalDetailProps) {
               </dd>
             </div>
             <div>
-              <dt>Priority</dt>
+              <dt>Ambition</dt>
               <dd>{goal.priority} / 10</dd>
             </div>
           </dl>

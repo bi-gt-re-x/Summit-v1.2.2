@@ -33,6 +33,9 @@ export type ActionKind =
   | 'xp'
   /** The strongest suggestion from a skill tree. See backend/tracking/skill_plan.py. */
   | 'skill'
+  /** A dated thing no goal covers (an audition, an essay due), taking today's first
+   *  block. See backend/tracking/priority.py. */
+  | 'commitment'
   /** A skill whose sessions are done and whose check is waiting. Opens the check. */
   | 'check';
 
@@ -73,6 +76,56 @@ export interface Plan {
   top: NextAction | null;
   /** Where the time should go and why. backend/tracking/priority.py. */
   priority?: PriorityDecision;
+  /** True when the reader didn't pick a length and the plan is sized to what fits today. */
+  auto_budget?: boolean;
+  /** Fixes from the Behavior page to have in mind before today's sessions. */
+  behavior?: BehaviorReminder[];
+}
+
+export interface BehaviorReminder {
+  behavior_id: string;
+  title: string;
+  fix: string;
+  how: string;
+  tasks: string[];
+  more: number;
+}
+
+/** A dated thing coming up that needs preparing for. backend/tracking/capacity.py. */
+export interface Commitment {
+  key: string;
+  title: string;
+  kind: 'event' | 'task';
+  day: string;
+  days_left: number;
+  time?: string;
+  task_id?: string;
+  subject?: string;
+  /** The goal it's about, when it shares the goal's words or contest. */
+  goal_id?: string;
+  goal?: string;
+}
+
+/** How much fits today. backend/tracking/capacity.py. */
+export interface Capacity {
+  /** Minutes usually worked on this weekday (or on days worked lately), or null when unknown. */
+  usual: number | null;
+  usual_days: number;
+  usual_of: number;
+  usual_label: string | null;
+  weekday: boolean;
+  evidence: string | null;
+  done: number;
+  busy: number;
+  free: number;
+  left: number;
+  total: number | null;
+  booked: number;
+  over: number;
+  asked: { task_id: string; title: string; minutes: number; goal_id: string }[];
+  move: { task_id: string; title: string; minutes: number; goal_id: string }[];
+  auto: boolean;
+  line: string;
 }
 
 /** How pressing things are: a date inside two weeks, one that's behind, or neither. */
@@ -91,6 +144,9 @@ export interface PriorityAllotment {
   waiting: number;
   /** The weakest part of the goal to spend it on, when the record can name one. */
   best_use: string | null;
+  /** 'commitment' for a dated thing no goal covers, taking the first block. */
+  kind?: 'goal' | 'commitment';
+  commitment?: Commitment | null;
 }
 
 export interface PriorityGoal {
@@ -107,6 +163,14 @@ export interface PriorityGoal {
   gain: number | null;
   gain_evidence: string | null;
   matters: string;
+  /** Ambition: the goal's own 1-10, how much it matters overall. */
+  ambition?: number;
+  ambition_label?: string;
+  /** Priority right now: 'Today', 'Next', 'Waits', 'Can wait' or 'Done', and why. */
+  now?: string;
+  now_why?: string;
+  /** A commitment that's about this goal: its nearest date this week. */
+  commitment?: { title: string; days_left: number } | null;
 }
 
 export interface PriorityDecision {
@@ -133,6 +197,13 @@ export interface PriorityDecision {
   not_now: { key: string; title: string; why: string }[];
   counters: number;
   goals: PriorityGoal[];
+  /** Dated things coming up, each with the goal it's about when there is one. */
+  commitments?: Commitment[];
+  /** The commitment taking today's first block, when one does. */
+  lead?: Commitment | null;
+  /** The goal that matters most to the reader, whatever today needs. */
+  ambition_top?: { goal_id: string; title: string; priority: number; gets_time: boolean } | null;
+  capacity?: Capacity | null;
 }
 
 export interface NextResult {
@@ -146,8 +217,9 @@ export const NO_PLAN: Plan = {
   budget: DEFAULT_BUDGET, actions: [], spare: DEFAULT_BUDGET, more: [], planned: 0, top: null,
 };
 
-export function nextActions(budget: number = DEFAULT_BUDGET): Promise<ApiResult<NextResult>> {
-  return get<NextResult>(`/api/next_actions?budget=${encodeURIComponent(budget)}`);
+/** Today's plan. With no budget, the server sizes it to what fits today. */
+export function nextActions(budget?: number | null): Promise<ApiResult<NextResult>> {
+  return get<NextResult>('/api/next_actions', budget ? { budget } : undefined);
 }
 
 export interface Booked {

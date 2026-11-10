@@ -879,12 +879,29 @@ def _deadline_row(read, name_of, slot):
         weight=1100 - min(left, record.DEADLINE_DAYS))
 
 
+def _commitment_row(allot):
+    """A dated commitment no goal covers (an audition, an essay due), taking today's first block."""
+    found = allot['commitment']
+    when = 'today' if found['days_left'] <= 0 else 'tomorrow' if found['days_left'] == 1 else 'in {} days'.format(found['days_left'])
+    if found['kind'] == 'task':
+        return _action(id='commit-{}'.format(found['key']), kind='commitment', title='Finish "{}"'.format(found['title']),
+                       because="It's due {}, so it comes before goal work today.".format(when),
+                       minutes=allot['minutes'], taskId=found.get('task_id'), subject=found.get('subject') or None,
+                       daysLeft=found['days_left'], weight=900)
+    return _action(id='commit-{}'.format(found['key']), kind='commitment', title='Get ready for {}'.format(found['title']),
+                   because="It's {}, so it gets the first block today.".format(when),
+                   minutes=allot['minutes'], daysLeft=found['days_left'], weight=900)
+
+
 def _focus_rows(decision, goals, tasks, now, name_of, sittings):
     """The row each goal getting time leads with, keyed by goal id."""
     slot = typical_minutes([task for task in tasks if task.get('status') == 'done']) or FALLBACK_TASK_MINUTES
     by_id = {str(goal.get('id')): goal for goal in goals}
     rows = {}
     for allot in decision['allocation']:
+        if allot.get('kind') == 'commitment':
+            rows[allot['goal_id']] = _commitment_row(allot)
+            continue
         goal = by_id.get(allot['goal_id'])
         if goal is None:
             continue

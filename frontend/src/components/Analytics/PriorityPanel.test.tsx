@@ -63,4 +63,40 @@ describe('PriorityPanel', () => {
     expect(screen.getByText(/number or checkpoints/)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Add a goal' })).toHaveAttribute('href', '/goals');
   });
+
+  it('keeps ambition, right now and capacity apart', () => {
+    const audition = { key: 'event:x', title: 'Violin audition', kind: 'event' as const, day: '2026-11-12', days_left: 2 };
+    renderWithProviders(
+      <PriorityPanel
+        decision={{
+          ...decision,
+          mode: 'balance',
+          headline: 'Violin audition is in 2 days, so it comes first today. AMC 10 cutoff gets the rest.',
+          lead: audition,
+          ambition_top: { goal_id: 'a', title: 'AMC 10 cutoff', priority: 9, gets_time: true },
+          allocation: [
+            { goal_id: 'commit:event:x', kind: 'commitment', title: 'Violin audition', minutes: 30, step: null, days_left: 2,
+              state: 'commitment', percent: 0, waiting: 0, best_use: null, commitment: audition },
+            ...decision.allocation,
+          ],
+          capacity: {
+            usual: 90, usual_days: 5, usual_of: 8, usual_label: 'Tuesdays', weekday: true, evidence: 'Preliminary signal',
+            done: 0, busy: 120, free: 300, left: 90, total: 90, booked: 150, over: 60,
+            asked: [], move: [{ task_id: 't1', title: 'Lab report', minutes: 60, goal_id: '' }], auto: true, line: '',
+          },
+          goals: decision.goals.map((row) => ({ ...row, ambition: 8, ambition_label: 'High', now: row.gets_time ? 'Today' : 'Can wait', now_why: "It's on track." })),
+        }}
+        reminders={[{ behavior_id: 'b1', title: 'Impulsive answers on tests', fix: 'Answer-confidence checkpoint', how: '', tasks: ['AMC mock 4'], more: 0 }]}
+      />,
+    );
+    expect(screen.getByRole('columnheader', { name: 'Ambition' })).toBeInTheDocument();
+    expect(screen.getByText(/Matters most to you \(9 of 10\)\. Not first today, but it still gets time\./)).toBeInTheDocument();
+    expect(screen.getByText('On your calendar in 2 days, so it comes first.')).toBeInTheDocument();
+    expect(screen.getByText('About 1h 30m')).toBeInTheDocument();
+    expect(screen.getByText(/Due today: 2h 30m, 1h more than fits/)).toBeInTheDocument();
+    expect(screen.getByText(/Move "Lab report" to another day/)).toBeInTheDocument();
+    expect(screen.getByText('Get ready: Violin audition')).toBeInTheDocument();
+    expect(screen.getByText(/Do “Answer-confidence checkpoint” on "AMC mock 4"/)).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', { name: 'Right now' })).toBeInTheDocument();
+  });
 });

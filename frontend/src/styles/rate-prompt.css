@@ -217,8 +217,46 @@ html[data-theme="dark"] .tk-rate-backdrop {
     outline-offset: 2px;
 }
 
+/* The patterns from the Behavior page this task could show: one line each,
+   "No" / "Yes", and whether the fix was done when there is one. */
+.tk-rate-patterns { display: flex; flex-direction: column; gap: var(--space-3); }
+.tk-rate-pattern { display: flex; flex-direction: column; gap: var(--space-2); }
+.tk-rate-pattern-name { color: var(--rt-ink); font-size: var(--text-sm); font-weight: 600; }
+.tk-rate-pattern-choices { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.tk-rate-pattern-choices > button {
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--rt-line);
+    border-radius: var(--radius-full);
+    background: var(--rt-surface-soft);
+    color: var(--rt-ink-soft);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: border-color .14s ease, background .14s ease, color .14s ease;
+}
+.tk-rate-pattern-choices > button:hover { border-color: color-mix(in srgb, var(--rt-accent) 45%, var(--rt-line)); color: var(--rt-ink); }
+.tk-rate-pattern-choices > button[aria-pressed="true"] {
+    border-color: var(--rt-accent);
+    background: color-mix(in srgb, var(--rt-accent) 12%, transparent);
+    color: var(--rt-accent);
+    font-weight: 600;
+}
+.tk-rate-pattern-fix { color: var(--rt-ink-soft); font-size: var(--text-sm); }
+.tk-rate-pattern-times { display: inline-flex; align-items: center; gap: var(--space-1); color: var(--rt-ink-soft); font-size: var(--text-sm); }
+.tk-rate-pattern-times input {
+    width: 56px;
+    padding: var(--space-1) var(--space-2);
+    border: 1px solid var(--rt-line);
+    border-radius: var(--radius-sm, 6px);
+    background: var(--rt-surface-soft);
+    color: var(--rt-ink);
+    font: inherit;
+    font-size: var(--text-sm);
+}
+
 @media (prefers-reduced-motion: reduce) {
-    .tk-rate-reason { transition: none; }
+    .tk-rate-reason, .tk-rate-pattern-choices > button { transition: none; }
 }
 
 .tk-rate-actions {

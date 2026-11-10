@@ -1221,6 +1221,7 @@ export default function Tasks() {
       {rating && (
         <RatePrompt
           taskName={rating.name}
+          taskId={rating.id}
           depth={prefs.rating_depth}
           onSubmit={saveRating}
           onClose={nextReview}

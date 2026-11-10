@@ -651,6 +651,7 @@ export default function Dashboard() {
       {rating && levelled === null && news === null && (
         <RatePrompt
           taskName={rating.name}
+          taskId={rating.id}
           depth={prefs.rating_depth}
           onSubmit={saveRating}
           onClose={nextReview}

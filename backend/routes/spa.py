@@ -84,6 +84,8 @@ SPA_ROUTES = (
     '/notes',
     # The private journal Summit learns from. See backend/api/journal.py.
     '/log',
+    # The patterns a reader is working to stop. See src/pages/Behavior.tsx.
+    '/behavior',
     # The three Personal spaces in the rail — a name and a page of text each.
     '/spaces/{space_id}',
     # The three Team spaces: the same page, with a member list.

@@ -41,6 +41,14 @@
  * that answer changes, which also clears an answer that no longer belongs to
  * the list it came from.
  *
+ * ## The patterns you're working on
+ *
+ * When `taskId` is passed and the task is the kind of work a pattern on the Behavior
+ * page can show up in ("Impulsive answers on tests" after an AMC mock), one more row
+ * asks whether it happened, and whether the fix was done. That's the session the
+ * pattern's rate is built from (backend/tracking/behavior.py), clean ones included.
+ * It saves on its own, apart from the ratings, and like everything here it can be left.
+ *
  * ## Nothing here is required
  *
  * The task is already done and its XP is already banked before this appears —
@@ -52,6 +60,8 @@
  * without reading, which would poison the very data it exists to collect.
  */
 import { useCallback, useEffect, useState } from 'react';
+import { behavior as behaviorService } from '@/services';
+import type { TaskPattern } from '@/services/behavior';
 import { reasonOf, reasonsFor } from '@/utils/ratings';
 import { problemCount } from '@/utils/problemCount';
 import type { RatingDepth } from '@/services/settings';
@@ -67,6 +77,9 @@ const EXECUTION_WORDS = ['Poor', 'Patchy', 'Solid', 'Strong', 'Excellent'];
 export interface RatePromptProps {
   /** What was finished, so the dialog names the thing it is asking about. */
   taskName: string;
+  /** The task's id, so the patterns it can show up in can be asked about. Optional:
+   *  without it the dialog is the ratings alone. */
+  taskId?: string;
   /**
    * How much to ask. 'reasons' adds the third row; anything else is the two
    * star rows. 'none' never reaches here — the caller does not open the
@@ -196,6 +209,66 @@ function Reasons({
   );
 }
 
+/** A pattern's answer: did it happen (and how often), and was the fix done. */
+interface PatternAnswer {
+  times: number | null;
+  used: boolean | null;
+}
+
+/**
+ * "Did it happen this time?" for each pattern this task could show. Yes, no, or left;
+ * and when there's a fix running, whether it was done.
+ */
+function Patterns({
+  patterns,
+  answers,
+  onChange,
+}: {
+  patterns: TaskPattern[];
+  answers: Record<string, PatternAnswer>;
+  onChange: (id: string, answer: PatternAnswer) => void;
+}) {
+  return (
+    <fieldset className="tk-rate-row tk-rate-patterns">
+      <legend className="tk-rate-label">
+        Did any of these happen?
+        <span>From your Behavior page. Clean sessions count too.</span>
+      </legend>
+      {patterns.map((pattern) => {
+        const answer = answers[pattern.id] ?? { times: null, used: null };
+        const set = (change: Partial<PatternAnswer>) => onChange(pattern.id, { ...answer, ...change });
+        return (
+          <div key={pattern.id} className="tk-rate-pattern">
+            <span className="tk-rate-pattern-name">{pattern.title}</span>
+            <div className="tk-rate-pattern-choices" role="group" aria-label={pattern.title}>
+              <button type="button" aria-pressed={answer.times === 0}
+                onClick={() => set({ times: answer.times === 0 ? null : 0 })}>No</button>
+              <button type="button" aria-pressed={answer.times !== null && answer.times > 0}
+                onClick={() => set({ times: answer.times !== null && answer.times > 0 ? null : 1 })}>Yes</button>
+              {answer.times !== null && answer.times > 0 && (
+                <label className="tk-rate-pattern-times">
+                  <input type="number" min={1} max={50} value={answer.times} aria-label={`How many times: ${pattern.title}`}
+                    onChange={(event) => set({ times: Math.max(1, Math.min(50, Number(event.target.value) || 1)) })} />
+                  <span>{answer.times === 1 ? 'time' : 'times'}</span>
+                </label>
+              )}
+            </div>
+            {pattern.fix && (
+              <div className="tk-rate-pattern-choices" role="group" aria-label={`Did you do ${pattern.fix.title}?`}>
+                <span className="tk-rate-pattern-fix">Did you do &ldquo;{pattern.fix.title}&rdquo;?</span>
+                <button type="button" aria-pressed={answer.used === true}
+                  onClick={() => set({ used: answer.used === true ? null : true })}>Yes</button>
+                <button type="button" aria-pressed={answer.used === false}
+                  onClick={() => set({ used: answer.used === false ? null : false })}>No</button>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </fieldset>
+  );
+}
+
 /** A whole number from a field, or null when it is empty or not one. */
 function whole(text: string): number | null {
   if (!/^\d{1,3}$/.test(text.trim())) return null;
@@ -252,7 +325,26 @@ function Score({
   );
 }
 
-export function RatePrompt({ taskName, depth = 'ratings', onSubmit, onClose }: RatePromptProps) {
+export function RatePrompt({ taskName, taskId, depth = 'ratings', onSubmit, onClose }: RatePromptProps) {
+  const [patterns, setPatterns] = useState<TaskPattern[]>([]);
+  const [patternAnswers, setPatternAnswers] = useState<Record<string, PatternAnswer>>({});
+
+  // The patterns this task can show, if any. Quietly nothing when it can't be read.
+  useEffect(() => {
+    if (!taskId) return undefined;
+    let live = true;
+    behaviorService.forTask(taskId).then((result) => {
+      if (!live || !result.success) return;
+      setPatterns(result.behaviors);
+      setPatternAnswers(Object.fromEntries(result.behaviors
+        .filter((one) => one.times !== null)
+        .map((one) => [one.id, { times: one.times, used: one.used }])));
+    }).catch(() => {});
+    return () => {
+      live = false;
+    };
+  }, [taskId]);
+
   const [difficulty, setDifficulty] = useState(0);
   const [execution, setExecution] = useState(0);
   const [reason, setReason] = useState('');
@@ -285,7 +377,19 @@ export function RatePrompt({ taskName, depth = 'ratings', onSubmit, onClose }: R
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
 
+  const checked = Object.entries(patternAnswers)
+    .filter(([, answer]) => answer.times !== null)
+    .map(([id, answer]) => ({ behavior_id: id, times: answer.times as number, used: answer.used }));
+  const rated = difficulty > 0 || execution > 0 || score !== null;
+
   const save = useCallback(() => {
+    // The pattern answers save on their own: they're a different record, and a
+    // task answered only there still has no ratings to send.
+    if (taskId && checked.length > 0) void behaviorService.answerForTask(taskId, checked).catch(() => {});
+    if (!rated) {
+      onClose();
+      return;
+    }
     // Only what was answered. A zero here means "not answered" and must not
     // reach the server, which would reject it anyway — see `RATING_RANGE`. The
     // reason goes only when it still belongs to the side being asked.
@@ -295,9 +399,9 @@ export function RatePrompt({ taskName, depth = 'ratings', onSubmit, onClose }: R
       ...(keeps ? { reason } : {}),
       ...(score ?? {}),
     });
-  }, [difficulty, execution, keeps, onSubmit, reason, score]);
+  }, [checked, difficulty, execution, keeps, onClose, onSubmit, rated, reason, score, taskId]);
 
-  const answered = difficulty > 0 || execution > 0 || score !== null;
+  const answered = rated || checked.length > 0;
 
   return (
     <div
@@ -342,6 +446,14 @@ export function RatePrompt({ taskName, depth = 'ratings', onSubmit, onClose }: R
             side={asking}
             value={keeps ? reason : ''}
             onChange={setReason}
+          />
+        )}
+
+        {patterns.length > 0 && (
+          <Patterns
+            patterns={patterns}
+            answers={patternAnswers}
+            onChange={(id, answer) => setPatternAnswers((was) => ({ ...was, [id]: answer }))}
           />
         )}
 

@@ -13,6 +13,7 @@ export * as analytics from './analytics';
 export * as api from './api';
 export * as auth from './auth';
 export * as avatars from './avatars';
+export * as behavior from './behavior';
 export * as events from './events';
 export * as focus from './focus';
 export * as goals from './goals';

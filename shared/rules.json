@@ -253,6 +253,57 @@
     ]
   },
 
+  "behavior": {
+    "_about": "Behavior: the patterns a reader already knows they fall into, tracked until they stop. Each is checked against the sessions where it can show up, gets fixes (interventions) tried one at a time, and is judged by whether it comes up less once a fix starts, through the evidence tiers. backend/tracking/behavior.py and the Behavior page (frontend/src/pages/Behavior.tsx) read this. `recent_days` is the window a pattern's frequency is counted over. A fix that has been clean for `clean_run` checked sessions in a row and has run `resolve_days` days is offered as resolved; the reader decides. `detect` holds the floors for patterns Summit spots in the record, over `lookback_days`. A task is a test or contest when its title has one of `test_words` (any case) or `test_acronyms` (capitals only, since \"act\" and \"sat\" are ordinary words).",
+    "recent_days": 30,
+    "clean_run": 6,
+    "resolve_days": 14,
+    "repeat_min_days": 7,
+    "title_max": 120,
+    "detail_max": 600,
+    "label_max": 80,
+    "most_open": 12,
+    "detect": { "lookback_days": 45, "reason_min": 4, "easy_min": 4, "long_min": 4, "long_minutes": 75, "long_share": 0.4 },
+    "long_session_minutes": 60,
+    "late_after_tasks": 3,
+    "test_words": ["test", "tests", "exam", "exams", "quiz", "quizzes", "mock", "contest", "olympiad", "amc", "aime", "mathcounts", "sprint", "target round", "usaco", "midterm", "midterms", "final exam", "finals", "practice test", "past paper", "competition"],
+    "test_acronyms": ["SAT", "PSAT", "ACT"],
+    "scopes": [
+      { "key": "study", "label": "All study work" },
+      { "key": "tests", "label": "Tests and contests" },
+      { "key": "subject", "label": "One subject" },
+      { "key": "words", "label": "Tasks with a word in the name" }
+    ],
+    "statuses": [
+      { "key": "identified", "label": "Identified" },
+      { "key": "intervening", "label": "Intervening" },
+      { "key": "improving", "label": "Improving" },
+      { "key": "resolved", "label": "Resolved" }
+    ],
+    "interventions": [
+      { "key": "confidence", "title": "Answer-confidence checkpoint", "how": "Before you lock in an answer, mark it sure or unsure. Go back to every unsure one before you hand it in.", "words": ["impulsive", "impulse", "rush", "rushed", "rushing", "hasty", "guess", "guessing", "jump", "overconfident", "decision", "decisions", "submit"] },
+      { "key": "easy-recheck", "title": "Easy-problem recheck", "how": "On any problem that feels easy, reread the question once more and check what it actually asks before you answer.", "words": ["easy", "careless", "silly", "overlook", "overlooked", "misread", "sign", "units", "simple", "obvious"] },
+      { "key": "mistake-review", "title": "Mistake review before you start", "how": "Before each session, read your last three mistakes and write one line on how you'll avoid each one today.", "words": ["same mistake", "repeat", "repeated", "again", "recur", "recurring", "keep making", "acknowledge"] },
+      { "key": "focus-blocks", "title": "Goal-first focus blocks", "how": "Write one goal for the block before you start. Work 25 minutes, then tick it off or write what stopped you.", "words": ["hours", "unfocused", "focus", "focused", "distracted", "distraction", "busy", "long", "wander", "phone"] },
+      { "key": "pace-check", "title": "Halfway pace check", "how": "Note the time at the halfway point. If you're behind, move to the problems you can do, then come back.", "words": ["time", "pace", "slow", "ran out", "stuck", "timing"] },
+      { "key": "start-small", "title": "Two-minute start", "how": "Start with the smallest first step and do it for two minutes. Decide whether to keep going after that.", "words": ["procrastinate", "procrastination", "start", "starting", "delay", "avoid", "put off", "late"] },
+      { "key": "if-then", "title": "If-then plan", "how": "Write one line: when this happens, I will do this instead. Read it before each session.", "words": [] }
+    ]
+  },
+  "capacity": {
+    "_about": "Ambition, priority and capacity, kept apart. Ambition is the goal's own priority (1-10): how much it matters overall, and it doesn't change day to day. Priority right now is worked out by backend/tracking/priority.py from dates, pace and dated commitments: an audition or an exam on the calendar, or a school deadline. Capacity is how much work fits today, from backend/tracking/capacity.py: the minutes the reader usually works on this weekday (the last `weeks` of them, median of the days they worked) and the free time left on today's calendar between `day_start` and `day_end`. A commitment is a calendar event within `commit_days` whose name has one of `prep_words`, or a study task due within `due_days` that's high priority or named like one of those or one of `deadline_words` (an essay, a project), since ordinary homework due tomorrow shouldn't push a main goal aside. `prep_acronyms` match in capitals only.",
+    "weeks": 8,
+    "min_days": 3,
+    "day_start": 7,
+    "day_end": 22,
+    "commit_days": 10,
+    "lead_days": 3,
+    "due_days": 2,
+    "lead_share": 0.5,
+    "prep_words": ["audition", "auditions", "exam", "exams", "test", "quiz", "midterm", "final exam", "finals", "recital", "concert", "performance", "competition", "contest", "tournament", "olympiad", "interview", "presentation", "deadline", "due", "tryout", "tryouts", "amc", "aime", "mathcounts", "usaco"],
+    "prep_acronyms": ["SAT", "PSAT", "ACT"],
+    "deadline_words": ["essay", "project", "report", "paper", "application", "presentation", "lab report", "portfolio", "submission", "submit", "assignment"]
+  },
   "log": {
     "_about": "The Log page: a private journal Summit learns from. Each saved entry is read by a model in the background and turned into short insights, each tagged with a kind. A passing feeling fades after `feeling_days` days and never becomes a lasting fact. `quiet_seconds` is how long an entry has to sit unchanged after an autosave before it's read; pressing Save reads it straight away. backend/tracking/journal.py and frontend/src/pages/Log.tsx both read this. `marks` are the tags an entry can carry (Milestone and the rest), set from the editor or the list; an entry can also be pinned to the top.",
     "title_max": 200,

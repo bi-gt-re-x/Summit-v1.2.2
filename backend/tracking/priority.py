@@ -8,11 +8,17 @@ Mathematics and weakest is Computer Science, and it would say to practice Comput
 Science. That's a true fact and terrible advice. Time is the limit, so a good answer
 has to say what the time is for, and what it isn't for:
 
-    What matters most?          The goal's own priority, set by the reader.
-    What's time-sensitive?      The date, and the pace that date asks for.
+    What matters most to you?   Ambition: the goal's own 1-10, set by the reader. It
+                                doesn't change day to day.
+    What needs you right now?   Priority: the date, the pace that date asks for, and
+                                commitments on the way (an audition, an exam, an essay
+                                due), which can come first today without being what
+                                matters most.
     What gives the most back?   How much of the goal a session has really moved.
     What does it cost?          What that time then can't go to.
     What should you leave?      Everything that doesn't serve this, said out loud.
+    How much fits today?        Capacity: backend/tracking/capacity.py, from what you
+                                usually manage on this weekday and today's calendar.
 
 So this ranks goals first and tasks second. Only a goal with a real outcome (a number
 or checkpoints) can lead: XP, streak, task and focus goals count activity, and they
@@ -38,6 +44,15 @@ things a student can check, not a model of anything.
 
 A date inside CRUNCH_HARD days leads whatever the score says.
 
+## Commitments
+
+A dated thing that isn't a goal can still need you first: a violin audition on the
+calendar, a project due tomorrow (backend/tracking/capacity.py finds them). One that's
+about a goal (it shares the goal's words or its contest) counts as that goal's nearest
+date. One that isn't takes the first block of today's time when it's within LEAD_DAYS,
+and the goals share what's left. Neither changes a goal's ambition: the page says that
+MathCounts Nationals still matters most, and when it gets time again.
+
 ## How the time gets split
 
 The budget goes to the top goal first. In a crunch it gets everything. Otherwise a second
@@ -59,6 +74,7 @@ import re
 from datetime import date, datetime, timedelta
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
+from backend.tracking import capacity as capacity_rules
 from backend.tracking import evidence, forecast, goal_why, record, topics
 from backend.tracking.goal_health import measure_of, progress_of
 from backend.tracking.measures import kind_of
@@ -86,6 +102,42 @@ SOFT = ('weak-subject', 'slipping', 'neglected', 'goal-quiet', 'momentum', 'xp',
 QUIET_DROP = ('momentum', 'xp', 'streak')
 #: How far back a student's real weekly capacity is read.
 CAPACITY_DAYS = 28
+#: Inside this many days, a commitment no goal covers takes the first block of today.
+LEAD_DAYS = capacity_rules.LEAD_DAYS
+#: Words two titles can share without being about the same thing.
+GENERIC_TERMS = frozenset({'exam', 'test', 'pass', 'reach', 'grade', 'score', 'get', 'final', 'prep', 'practic',
+                           'practice', 'contest', 'competit', 'competition', 'finish', 'start', 'level', 'round',
+                           'due', 'deadline', 'project', 'essay', 'class', 'school', 'the', 'and', 'for'})
+
+
+def _soon(row: Dict[str, Any]) -> Optional[int]:
+    """The nearest date on a goal: its own, or a commitment that's about it."""
+    dates = [one for one in (row.get('days_left'), (row.get('commitment') or {}).get('days_left')) if one is not None]
+    return min(dates) if dates else None
+
+
+def _about(goal: Dict[str, Any], terms: Dict[str, Any], title: str) -> bool:
+    """Whether a commitment's title is about this goal: a shared word that means something,
+    or the same contest."""
+    words = goal_why._terms(title) - GENERIC_TERMS
+    words = {word for word in words if not word.isdigit()}
+    if words & (set(terms['title']) - GENERIC_TERMS):
+        return True
+    contexts = set(topics.scope({'title': title}).get('contexts') or [])
+    return bool(contexts & set(terms['contexts']))
+
+
+def link_commitments(goals: Sequence[Dict[str, Any]], commitments: Sequence[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
+    """Each commitment that's about a goal, keyed by its key, with the goal it's about."""
+    out = {}
+    live = [goal for goal in goals if is_objective(goal)]
+    terms = {str(goal.get('id')): goal_why.goal_terms(goal) for goal in live}
+    for one in commitments:
+        for goal in live:
+            if _about(goal, terms[str(goal.get('id'))], one['title']):
+                out[one['key']] = {'goal_id': str(goal.get('id')), 'goal': str(goal.get('title') or '')}
+                break
+    return out
 
 
 def _short(day: date) -> str:
@@ -141,8 +193,11 @@ def _urgency(days_left: Optional[int], row: Optional[Dict[str, Any]]) -> float:
 
 
 def stakes(goals: Sequence[Dict[str, Any]], tasks: Sequence[Dict[str, Any]], sittings: Sequence[Dict[str, Any]],
-           today: date, name_of=lambda key: key) -> List[Dict[str, Any]]:
-    """Every objective goal, read and ranked, best first."""
+           today: date, name_of=lambda key: key, commitments: Sequence[Dict[str, Any]] = (),
+           links: Optional[Dict[str, Dict[str, Any]]] = None) -> List[Dict[str, Any]]:
+    """Every objective goal, read and ranked, best first. A commitment that's about a
+    goal counts as its nearest date."""
+    links = link_commitments(goals, commitments) if links is None else links
     rows = []
     for goal in goals:
         if not is_objective(goal):
@@ -178,9 +233,15 @@ def stakes(goals: Sequence[Dict[str, Any]], tasks: Sequence[Dict[str, Any]], sit
             'subjects': _subjects(goal),
             'scope': topics.scope(goal),
             'urgent': _urgency(days_left, read),
+            'commitment': next((one for one in commitments if links.get(one['key'], {}).get('goal_id') == str(goal.get('id'))), None),
         })
     if not rows:
         return []
+    for row in rows:
+        near = row['commitment']
+        if near and row['state'] != 'done' and (row['days_left'] is None or near['days_left'] < row['days_left']):
+            # An audition for the violin goal is that goal's date this week, whatever its own deadline says.
+            row['urgent'] = max(row['urgent'], 10 / (max(near['days_left'], 0) + 10))
     known = [row['gain'] for row in rows if row['gain'] and evidence.speaks(row['return_read'])]
     best = max(known) if known else None
     for row in rows:
@@ -192,9 +253,10 @@ def stakes(goals: Sequence[Dict[str, Any]], tasks: Sequence[Dict[str, Any]], sit
 
     def rank(row):
         # A date this close leads, nearest first, unless it's already handled.
-        pressing = (row['days_left'] is not None and row['days_left'] <= CRUNCH_HARD
+        soon = _soon(row)
+        pressing = (soon is not None and soon <= CRUNCH_HARD
                     and row['state'] != 'done' and not (row['read'] or {}).get('out_of_reach'))
-        return (not pressing, row['days_left'] if pressing else 0, -row['score'], row['title'].lower())
+        return (not pressing, soon if pressing else 0, -row['score'], row['title'].lower())
     rows.sort(key=rank)
     return [row for row in rows if row['state'] != 'done'] + [row for row in rows if row['state'] == 'done']
 
@@ -219,7 +281,7 @@ def _capacity(tasks: Sequence[Dict[str, Any]], today: date) -> Tuple[float, Dict
 
 
 def _mode(top: Dict[str, Any]) -> str:
-    days, read = top['days_left'], top['read'] or {}
+    days, read = _soon(top), top['read'] or {}
     if days is None:
         return 'balance'
     margin = _margin(read)
@@ -286,26 +348,68 @@ def _leave_goal(row: Dict[str, Any], top: Dict[str, Any], until: str) -> Optiona
     return {'key': 'goal-{}'.format(row['id']), 'title': row['title'], 'why': why}
 
 
+def _ambition_word(priority_: float) -> str:
+    return 'High' if priority_ >= 8 else 'Medium' if priority_ >= 5 else 'Low'
+
+
+def _lead_row(lead: Dict[str, Any], minutes: int) -> Dict[str, Any]:
+    """A commitment no goal covers, taking the first block of today."""
+    return {'goal_id': 'commit:{}'.format(lead['key']), 'kind': 'commitment', 'title': lead['title'],
+            'minutes': minutes, 'step': None, 'subject': lead.get('subject') or None,
+            'days_left': lead['days_left'], 'state': 'commitment', 'percent': 0, 'waiting': 0,
+            'best_use': None, 'commitment': lead}
+
+
+def _lead_minutes(lead: Dict[str, Any], budget: int) -> int:
+    """Today's share for a commitment: all of a short budget on the day itself, else half."""
+    if lead['days_left'] <= 0 and budget <= 60:
+        return budget
+    return min(budget, max(min(SESSION, budget), _round_five(budget * capacity_rules.LEAD_SHARE)))
+
+
 def decide(goals: Sequence[Dict[str, Any]], tasks: Sequence[Dict[str, Any]], now: datetime, budget: int,
            sittings: Sequence[Dict[str, Any]] = (), name_of=lambda key: key,
-           topic_rows: Sequence[Dict[str, Any]] = ()) -> Dict[str, Any]:
+           topic_rows: Sequence[Dict[str, Any]] = (), commitments: Sequence[Dict[str, Any]] = (),
+           capacity: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
     """Where the time should go, why, what it costs and what to leave."""
     today = now.date()
     counters = [goal for goal in goals if goal.get('status') == 'active' and not is_objective(goal)]
-    ranked = stakes(goals, tasks, sittings, today, name_of)
+    links = link_commitments(goals, commitments)
+    upcoming = [dict(one, **links.get(one['key'], {})) for one in commitments]
+    ranked = stakes(goals, tasks, sittings, today, name_of, upcoming, links)
     live = [row for row in ranked if row['state'] != 'done']
     if not live:
         return {
             'mode': 'none', 'headline': None, 'focus': None, 'allocation': [], 'answers': [], 'not_now': [],
             'goals': [], 'counters': len(counters), 'stakes': [], 'until': None,
+            'commitments': upcoming, 'lead': None, 'ambition_top': None, 'capacity': capacity,
             'note': ('None of your goals has a number or checkpoints, so nothing here can say what '
                      'matters most. Add one and the plan will build around it.') if counters or goals else None,
         }
     top = live[0]
     mode = _mode(top)
-    split = _split(live, mode, budget)
+    # Ambition: what matters most to the reader, whatever today needs.
+    ambition_top = max(live, key=lambda row: (row['priority'], -live.index(row)))
+
+    # A commitment no goal covers, close enough to come first today. A goal that's
+    # pressing and nearer still goes first.
+    lead = next((one for one in upcoming if not one.get('goal_id') and one['days_left'] <= LEAD_DAYS), None)
+    if lead and mode == 'crunch' and (_soon(top) or 0) <= lead['days_left']:
+        lead = None
+    if lead:
+        first = _lead_minutes(lead, budget)
+        rest = budget - first
+        split = _split(live, mode, rest) if rest >= SESSION else []
+    else:
+        split = _split(live, mode, budget)
     given = {row['id'] for row, _ in split}
-    until = 'after {}'.format(_short(top['deadline'])) if top['deadline'] and mode != 'balance' else 'once this is moving'
+    soon = _soon(top)
+    lead_day = (today + timedelta(days=lead['days_left'])) if lead else None
+    if lead:
+        until = 'after {}'.format(_short(lead_day)) if lead['days_left'] > 0 else 'tomorrow'
+    else:
+        ends = (today + timedelta(days=soon)) if soon is not None else None
+        until = 'after {}'.format(_short(ends)) if ends and mode != 'balance' else 'once this is moving'
 
     # The best use of the time, from what the reader's own ratings say is weakest.
     # A topic with too few tasks behind it can't be called weak yet.
@@ -317,25 +421,39 @@ def decide(goals: Sequence[Dict[str, Any]], tasks: Sequence[Dict[str, Any]], now
             behind = sum(int(row.get('tasks') or 0) for row in topic_rows if row.get('topic') == best_use.get('topic'))
             read = evidence.counted(behind)
             best_use = dict(best_use, read=read) if evidence.speaks(read) else None
-    also = [row for row in live if row['id'] not in given and _shares_work(top, row)]
+    # Goals that move anyway because they're the top goal's work. None when the top goal
+    # itself isn't getting time today (a commitment took it all).
+    also = ([row for row in live if row['id'] not in given and row is not top and _shares_work(top, row)]
+            if top['id'] in given else [])
 
-    allocation = []
+    allocation = [_lead_row(lead, budget - sum(minutes for _, minutes in split))] if lead else []
     for row, minutes in split:
         allocation.append({
-            'goal_id': row['id'], 'title': row['title'], 'minutes': minutes, 'step': row['next'],
+            'goal_id': row['id'], 'kind': 'goal', 'title': row['title'], 'minutes': minutes, 'step': row['next'],
             'subject': next(iter(sorted(row['subjects'])), None), 'days_left': row['days_left'],
             'state': row['state'], 'percent': row['percent'], 'waiting': row['waiting'],
             'best_use': best_use['title'] if best_use and row is top else None,
+            'commitment': row['commitment'],
         })
 
     # ---- the answers -------------------------------------------------------
-    answers = [_matters(top, live), _time_sensitive(top, live), _returns(top, best_use, also)]
-    capacity, capacity_read = _capacity(tasks, today)
-    answers.append(_cost(live, given, {row['id'] for row in also}, capacity, capacity_read))
+    answers = [_matters(ambition_top, top, live, lead, given, until),
+               _time_sensitive(top, live, lead, upcoming),
+               _returns(top, best_use, also)]
+    weekly, weekly_read = _capacity(tasks, today)
+    answers.append(_cost(live, given, {row['id'] for row in also}, weekly, weekly_read))
+    if capacity is not None:
+        capacity = capacity_rules.with_moves(capacity, sorted(given))
+        answers.append(_fits(capacity, budget))
 
     leave = []
     for row in live:
         if row['id'] in given or row in also:
+            continue
+        if lead and row is ambition_top:
+            leave.append({'key': 'goal-{}'.format(row['id']), 'title': row['title'],
+                          'why': "It still matters most to you, but {} is {}. It gets time again {}.".format(
+                              lead['title'], capacity_rules.when_words(lead['days_left']), until)})
             continue
         found = _leave_goal(row, top, until)
         if found:
@@ -352,11 +470,23 @@ def decide(goals: Sequence[Dict[str, Any]], tasks: Sequence[Dict[str, Any]], now
                 'it moves' if len(counters) == 1 else 'they move'),
         })
 
-    headline = {
-        'crunch': '{} gets your time. It\'s {} away.'.format(top['title'], _days(top['days_left'] or 0)),
-        'push': '{} comes first this week.'.format(top['title']),
-        'balance': "Nothing is pressing, so {} gets the most time.".format(top['title']),
-    }[mode]
+    if lead:
+        if lead['days_left'] <= 0:
+            headline = '{} is {}today, so it comes first.'.format(lead['title'], 'due ' if lead['kind'] == 'task' else '')
+        else:
+            headline = '{} is {}, so it comes first today.'.format(lead['title'], capacity_rules.when_words(lead['days_left']))
+        if split:
+            headline += ' {} gets the rest.'.format(split[0][0]['title'])
+        elif ambition_top['id'] not in given:
+            headline += ' {} gets time again {}.'.format(ambition_top['title'], until)
+    else:
+        near = top['commitment'] if top['commitment'] and top['commitment']['days_left'] == soon else None
+        headline = {
+            'crunch': ('{} gets your time. {} is {}.'.format(top['title'], near['title'], capacity_rules.when_words(near['days_left']))
+                       if near else "{} gets your time. It's {} away.".format(top['title'], _days(soon or 0))),
+            'push': '{} comes first this week.'.format(top['title']),
+            'balance': "Nothing is pressing, so {} gets the most time.".format(top['title']),
+        }[mode]
     warning = None
     if (top['read'] or {}).get('out_of_reach'):
         warning = "Even two sessions a day won't get {} there at the pace it has moved. Think about moving the date.".format(top['title'])
@@ -374,30 +504,90 @@ def decide(goals: Sequence[Dict[str, Any]], tasks: Sequence[Dict[str, Any]], now
         'answers': answers,
         'not_now': leave,
         'counters': len(counters),
-        'goals': [_row_out(row, given) for row in ranked],
+        'goals': [_row_out(row, given, lead, until) for row in ranked],
+        'commitments': upcoming,
+        'lead': lead,
+        'ambition_top': {'goal_id': ambition_top['id'], 'title': ambition_top['title'],
+                         'priority': ambition_top['priority'], 'gets_time': ambition_top['id'] in given},
+        'capacity': capacity,
         # For `arrange`, on the server only. api/next.py takes it off before replying.
         'stakes': [row for row, _ in split] + also,
     }
 
 
-def _matters(top: Dict[str, Any], live: List[Dict[str, Any]]) -> Dict[str, str]:
-    text = '{}: priority {:g} of 10.'.format(top['title'], top['priority'])
-    higher = next((row for row in live[1:] if row['priority'] > top['priority']), None)
-    if higher:
-        text += " {} ranks higher, but {}.".format(
-            higher['title'], 'it has no date' if higher['days_left'] is None
-            else 'it has {}'.format(_days(higher['days_left'])))
-    if top['why']:
-        text += ' You said: "{}"'.format(top['why'])
-    return {'key': 'matters', 'question': 'What matters most?', 'answer': text}
+def _why_first(top: Dict[str, Any], lead: Optional[Dict[str, Any]]) -> str:
+    """Why today's first thing is first, in a clause."""
+    if lead:
+        return '{} is {}'.format(lead['title'], capacity_rules.when_words(lead['days_left']))
+    near = top['commitment']
+    if near and (top['days_left'] is None or near['days_left'] < top['days_left']):
+        return '{} is {}'.format(near['title'], capacity_rules.when_words(near['days_left']))
+    if top['days_left'] is not None:
+        return '{} is {} away'.format(top['title'], _days(top['days_left']))
+    return '{} is further behind'.format(top['title'])
 
 
-def _time_sensitive(top: Dict[str, Any], live: List[Dict[str, Any]]) -> Dict[str, str]:
-    if top['days_left'] is None and not any(row['days_left'] is not None for row in live):
+def _matters(ambition_top: Dict[str, Any], top: Dict[str, Any], live: List[Dict[str, Any]],
+             lead: Optional[Dict[str, Any]], given: set, until: str) -> Dict[str, str]:
+    """Ambition: what matters most overall, and whether that's today's first thing."""
+    text = '{}: ambition {:g} of 10.'.format(ambition_top['title'], ambition_top['priority'])
+    if lead or ambition_top is not top:
+        if ambition_top['id'] in given:
+            text += " It isn't first today, because {}, but it still gets time.".format(_why_first(top, lead))
+        else:
+            text += " It isn't first today, because {}. It gets time again {}.".format(_why_first(top, lead), until)
+    else:
+        higher = next((row for row in live[1:] if row['priority'] > top['priority']), None)
+        if higher:
+            text += " {} ranks higher, but {}.".format(
+                higher['title'], 'it has no date' if higher['days_left'] is None
+                else 'it has {}'.format(_days(higher['days_left'])))
+    if ambition_top['why']:
+        text += ' You said: "{}"'.format(ambition_top['why'])
+    return {'key': 'matters', 'question': 'What matters most to you?', 'answer': text}
+
+
+def _time_sensitive(top: Dict[str, Any], live: List[Dict[str, Any]], lead: Optional[Dict[str, Any]],
+                    upcoming: Sequence[Dict[str, Any]]) -> Dict[str, str]:
+    """Priority right now: the nearest date that needs you, and what else is coming."""
+    if lead:
+        text = '{}: {}.'.format(lead['title'], capacity_rules.when_words(lead['days_left']))
+        if lead['kind'] == 'task':
+            text += " It's due, and no goal covers it, so it takes the first block."
+        else:
+            text += " It's on your calendar, and no goal covers it, so it takes the first block."
+    elif top['days_left'] is None and not any(row['days_left'] is not None for row in live) and not top['commitment']:
         text = 'Nothing. None of your goals has a date yet.'
     else:
         text = '{}: {}'.format(top['title'], _standing(top))
-    return {'key': 'urgent', 'question': "What's time-sensitive?", 'answer': text}
+        near = top['commitment']
+        if near and (top['days_left'] is None or near['days_left'] < top['days_left']):
+            text += ' {} is {}, and it\'s about this goal.'.format(near['title'], capacity_rules.when_words(near['days_left']))
+    shown = {lead['key']} if lead else set()
+    if top['commitment']:
+        shown.add(top['commitment']['key'])
+    others = [one for one in upcoming if one['key'] not in shown][:3]
+    if others:
+        text += ' Also coming up: {}.'.format(', '.join(
+            '{} {}'.format(one['title'], capacity_rules.when_words(one['days_left'])) for one in others))
+    return {'key': 'urgent', 'question': 'What needs you right now?', 'answer': text}
+
+
+def _fits(capacity: Dict[str, Any], budget: int) -> Dict[str, str]:
+    """Capacity: how much fits today, and what to move when today asks for more."""
+    text = capacity['line']
+    if capacity.get('auto'):
+        text += " So today's plan is {}.".format(capacity_rules.clock(budget))
+    if capacity['over'] and capacity['move']:
+        names = ['"{}"'.format(one['title']) for one in capacity['move'][:2]]
+        text += ' Work due today comes to about {}, {} more than fits. Move {} to another day.'.format(
+            capacity_rules.clock(capacity['booked']), capacity_rules.clock(capacity['over']), ' and '.join(names))
+    elif capacity['over']:
+        text += ' Work due today comes to about {}, {} more than fits. Something has to wait.'.format(
+            capacity_rules.clock(capacity['booked']), capacity_rules.clock(capacity['over']))
+    elif capacity['usual'] is not None and capacity['left'] <= 0:
+        text += " You've done about your usual for today. Anything more is extra."
+    return {'key': 'capacity', 'question': 'How much fits today?', 'answer': text}
 
 
 def _returns(top: Dict[str, Any], best_use: Optional[Dict[str, Any]], also: List[Dict[str, Any]]) -> Dict[str, str]:
@@ -437,15 +627,34 @@ def _cost(live: List[Dict[str, Any]], given: set, same_work: set, capacity: floa
     return {'key': 'cost', 'question': 'What does it cost?', 'answer': ' '.join(parts)}
 
 
-def _row_out(row: Dict[str, Any], given: set) -> Dict[str, Any]:
+def _row_out(row: Dict[str, Any], given: set, lead: Optional[Dict[str, Any]] = None,
+            until: str = '') -> Dict[str, Any]:
+    """One goal as the page's table shows it: its ambition, what it needs right now, its pace."""
     read = row['read'] or {}
+    gets = row['id'] in given
+    if row['state'] == 'done':
+        now, now_why = 'Done', 'Nothing left to do.'
+    elif gets:
+        now, now_why = 'Today', 'Gets time in today\'s plan.'
+    elif row['state'] == 'on_track':
+        now, now_why = 'Can wait', "It's on track."
+    elif lead:
+        now, now_why = 'Waits', 'After {}.'.format(lead['title'])
+    elif row['days_left'] is None and not row['commitment']:
+        now, now_why = 'Can wait', 'No date on it.'
+    else:
+        now, now_why = 'Next', 'Comes {}.'.format(until or 'after this')
+    near = row['commitment']
     return {
         'goal_id': row['id'], 'title': row['title'], 'days_left': row['days_left'], 'state': row['state'],
-        'percent': row['percent'], 'priority': row['priority'], 'gets_time': row['id'] in given,
+        'percent': row['percent'], 'priority': row['priority'], 'gets_time': gets,
         'needs': read.get('need_per_week'), 'pace': read.get('per_week'),
         'gain': round(row['gain'], 1) if row['gain'] and evidence.speaks(row['return_read']) else None,
         'gain_evidence': row['return_read']['label'] if evidence.speaks(row['return_read']) else None,
-        'matters': 'High' if row['priority'] >= 8 else 'Medium' if row['priority'] >= 5 else 'Low',
+        'matters': _ambition_word(row['priority']),
+        'ambition': row['priority'], 'ambition_label': _ambition_word(row['priority']),
+        'now': now, 'now_why': now_why,
+        'commitment': {'title': near['title'], 'days_left': near['days_left']} if near else None,
     }
 
 
@@ -583,7 +792,11 @@ def arrange(decision: Dict[str, Any], candidates: List[Dict[str, Any]], tasks: S
         if row:
             lead.append(dict(row, minutes=allot['minutes']))
 
+    # A task that leads as a commitment is already the first row.
+    leading_task = (decision.get('lead') or {}).get('task_id')
     for item in candidates:
+        if leading_task and item.get('taskId') is not None and str(item['taskId']) == str(leading_task):
+            continue
         kind, goal_id = item['kind'], str(item.get('goalId')) if item.get('goalId') is not None else None
         if kind == 'deadline' and goal_id in allocated:
             continue  # Already leading, from `focus_rows`.

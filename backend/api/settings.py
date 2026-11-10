@@ -832,6 +832,10 @@ ACCOUNT_TABLES = (
     # Reviews marked on the review queue. The account's own record of what it
     # went back over.
     'review_marks',
+    # The patterns the account is working to stop, the sessions checked against
+    # them and the fixes tried (data/sql/behavior.sql). Its own words about
+    # itself, so they go out with an export and go with a reset.
+    'behaviors', 'behavior_checks', 'behavior_interventions',
 )
 
 #: What `progress` puts an account's counters back to. The XP ledger and the

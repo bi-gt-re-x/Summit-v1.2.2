@@ -603,7 +603,7 @@ export function NewGoalWizard({
                 Optional. With a date, Summit can tell you if you're on pace.
               </p>
 
-              <label htmlFor="gx-priority">How much does it matter? ({priority} / 10)</label>
+              <label htmlFor="gx-priority">Ambition: how much does it matter to you? ({priority} / 10)</label>
               <input
                 id="gx-priority"
                 type="range"
@@ -613,7 +613,8 @@ export function NewGoalWizard({
                 onChange={(event) => setPriority(Number(event.target.value))}
               />
               <p className="gx-hint">
-                Counts more toward the total at the top of the page.
+                How much it matters overall. It doesn&apos;t change day to day: what comes first today also
+                depends on dates and how much time you have, and the plan works that out.
               </p>
             </>
           )}

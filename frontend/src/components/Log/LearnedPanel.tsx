@@ -4,9 +4,14 @@
  *
  * Removing one takes it out of every prompt straight away
  * (backend/api/journal.py), and Summit won't learn it again.
+ *
+ * A recurring pattern can be tracked from here: "Track it" puts it on the Behavior
+ * page (pages/Behavior.tsx), where it's checked session by session until it stops.
  */
-import { X } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { Repeat, X } from 'lucide-react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { Link, useInRouterContext } from 'react-router-dom';
+import { behavior as behaviorService } from '@/services';
 import type { Insight, InsightKind } from '@/services/log';
 import { RULES } from '@/utils/sharedRules';
 import { entryDate } from './entry';
@@ -36,6 +41,22 @@ export function LearnedPanel({ insights, learning, waiting, onRemove, onClose }:
   const closeRef = useRef<HTMLButtonElement>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [showOld, setShowOld] = useState(false);
+  /* Patterns put on the Behavior page from here: 'busy', 'done', or why it couldn't be. */
+  const [tracking, setTracking] = useState<Record<string, string>>({});
+
+  const track = async (insight: Insight) => {
+    setTracking((was) => ({ ...was, [insight.id]: 'busy' }));
+    try {
+      const result = await behaviorService.add({
+        title: insight.text, source: 'log', source_ref: insight.id,
+        scope: TESTS.test(insight.text) ? 'tests' : 'study',
+      });
+      const said = result.success ? 'done' : result.message || "Couldn't track it.";
+      setTracking((was) => ({ ...was, [insight.id]: said === "You're already tracking that one." ? 'done' : said }));
+    } catch {
+      setTracking((was) => ({ ...was, [insight.id]: "Couldn't reach the server." }));
+    }
+  };
 
   useEffect(() => {
     closeRef.current?.focus();
@@ -67,6 +88,20 @@ export function LearnedPanel({ insights, learning, waiting, onRemove, onClose }:
             ? ` · fades ${entryDate(insight.expires_at)}`
             : ''}
         </small>
+        {insight.kind === 'pattern' && insight.status === 'active' && (
+          tracking[insight.id] === 'done' ? (
+            <span className="lg-track is-done">
+              Tracking it on <Go to="/behavior">your Behavior page</Go>
+            </span>
+          ) : (
+            <span className="lg-track">
+              <button type="button" className="lg-link" disabled={tracking[insight.id] === 'busy'} onClick={() => void track(insight)}>
+                <Repeat aria-hidden="true" /> Track it until it stops
+              </button>
+              {tracking[insight.id] && tracking[insight.id] !== 'busy' && <small role="alert">{tracking[insight.id]}</small>}
+            </span>
+          )
+        )}
       </div>
       <button
         type="button"
@@ -147,4 +182,12 @@ export function LearnedPanel({ insights, learning, waiting, onRemove, onClose }:
       </aside>
     </div>
   );
+}
+
+/** A test or contest in a pattern's words: tracked against tests rather than all study. */
+const TESTS = /\b(tests?|exams?|quiz(zes)?|contests?|competitions?|mocks?|amc|aime|mathcounts|olympiad)\b/i;
+
+/** A link in the app, or a plain one where there's no router. */
+function Go({ to, children }: { to: string; children: ReactNode }) {
+  return useInRouterContext() ? <Link to={to}>{children}</Link> : <a href={to}>{children}</a>;
 }

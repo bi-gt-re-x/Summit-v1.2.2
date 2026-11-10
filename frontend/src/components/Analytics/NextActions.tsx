@@ -74,6 +74,7 @@ const KIND_LABEL: Record<ActionKind, string> = {
   xp: 'XP',
   skill: 'Skill tree',
   check: 'Skill check',
+  commitment: 'Coming up',
 };
 
 const KIND_TONE: Record<ActionKind, string> = {
@@ -97,6 +98,7 @@ const KIND_TONE: Record<ActionKind, string> = {
   xp: 'blue',
   skill: 'green',
   check: 'green',
+  commitment: 'pink',
 };
 
 /**
@@ -326,6 +328,12 @@ export function NextActions({
   typicalSession,
 }: NextActionsProps) {
   const { actions, more, spare, budget, planned } = plan;
+  /* The plan's own length, sized to what fits today, when the reader hasn't picked one.
+     Shown as a button of its own when it isn't one of the usual lengths. */
+  const fitted = plan.auto_budget ? budget : null;
+  const lengths = fitted !== null && !BUDGETS.includes(fitted as (typeof BUDGETS)[number])
+    ? [...BUDGETS, fitted].sort((a, b) => a - b)
+    : [...BUDGETS];
   const { top, rest } = groupRows(actions, more);
   const restCount = rest.reduce((sum, row) => sum + (row.type === 'one' ? 1 : row.items.length), 0);
   const restMinutes = rest.flatMap((row) => (row.type === 'one' ? [row.item.minutes] : row.items.map((item) => item.minutes)));
@@ -344,21 +352,22 @@ export function NextActions({
          a plan they came here to read. It is in the footer note instead. */
       note={
         actions.length > 0
-          ? [`${planned} of ${budget} minutes planned`, usual].filter(Boolean).join(' · ')
+          ? [`${planned} of ${budget} minutes planned`, fitted !== null ? 'sized to what fits today' : null, usual].filter(Boolean).join(' · ')
           : undefined
       }
       className="ax-plan"
       aside={
         <div className="ax-plan-budget" role="group" aria-label="Time available">
-          {BUDGETS.map((minutes) => (
+          {lengths.map((minutes) => (
             <button
               key={minutes}
               type="button"
               className={`ax-plan-budget-btn${minutes === budget ? ' is-on' : ''}`}
               aria-pressed={minutes === budget}
+              title={minutes === fitted ? 'What fits today, from your usual day and your calendar' : undefined}
               onClick={() => onBudget(minutes)}
             >
-              {minutes}m
+              {minutes}m{minutes === fitted && <span className="ax-plan-budget-fit"> fits today</span>}
             </button>
           ))}
         </div>

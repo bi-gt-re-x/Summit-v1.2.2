@@ -18,6 +18,8 @@ from backend.config import subjects as catalogue
 from backend.database import connection as db
 from backend.goal_matcher import store as goal_store
 from backend.api.tasks import CreateTask, _create as create_task
+from backend.tracking import behavior as behavior_rules
+from backend.tracking import capacity
 from backend.tracking import growth
 from backend.tracking import next_actions, priority
 from backend.tracking import record
@@ -31,7 +33,7 @@ router = APIRouter(tags=['next'])
 #: of this endpoint's time.
 TASK_FIELDS = ('id', 'title', 'status', 'subject', 'priority', 'due_date', 'created_at',
                'completed_at', 'execution', 'difficulty', 'xp_value', 'completion_seconds',
-               'milestone_id', 'goal_id', 'reason', 'score_got', 'score_of')
+               'milestone_id', 'goal_id', 'reason', 'score_got', 'score_of', 'show_on_calendar')
 
 #: The two weeks the streak rule reads: today, and the run before it.
 # Four weeks, so this fortnight can be read against the one before it.
@@ -100,15 +102,23 @@ def _ready_checks(username):
     return sorted(ready, key=lambda one: one['last'], reverse=True)
 
 
+def today_capacity(tasks, sittings, calendar, now):
+    """How much fits today: what the reader usually does on this weekday and the time
+    today's calendar events leave (backend/tracking/capacity.py). Only the reader's own
+    events count as taken here; sessions a planner booked are work, not commitments."""
+    start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    events = session_plan.busy_spans([], calendar, start)
+    return capacity.read(tasks, sittings, events, now)
+
+
 @router.get('/api/next_actions')
-def get_next_actions(budget: int = next_actions.DEFAULT_BUDGET,
+def get_next_actions(budget: Optional[int] = None,
                      username: str = Depends(current_username)):
     """The plan for `budget` minutes, what did not fit, and the lens it was
-    read through."""
+    read through. With no budget, today's plan is as long as what fits today."""
     _, user = load_user((username or '').strip())
     if not user:
         return fail('Sign in to see what to do next.')
-    budget = max(5, min(240, int(budget or next_actions.DEFAULT_BUDGET)))
 
     tasks, goals = _record(username)
 
@@ -118,7 +128,15 @@ def get_next_actions(budget: int = next_actions.DEFAULT_BUDGET,
     now = datetime.now()
     name_of = _name_of(username)
     sittings = _sittings(username)
-    decision = priority.decide(goals, tasks, now, budget, sittings, name_of, db.topic_library_for(username)[0])
+    calendar = db.calendar_document(username)
+    fits = today_capacity(tasks, sittings, calendar, now)
+    auto = not budget or budget <= 0
+    if auto:
+        budget = capacity.budget_for(fits, next_actions.DEFAULT_BUDGET)
+    budget = max(5, min(240, int(budget)))
+    fits['auto'] = auto
+    decision = priority.decide(goals, tasks, now, budget, sittings, name_of, db.topic_library_for(username)[0],
+                               commitments=capacity.commitments(calendar, tasks, now), capacity=fits)
     # The goal that's getting the time is the one to read the page through.
     leading = next((goal for goal in goals if decision['focus']
                     and str(goal.get('id')) == decision['focus']['goal_id']), None)
@@ -129,6 +147,10 @@ def get_next_actions(budget: int = next_actions.DEFAULT_BUDGET,
                                    daily_goal=user.get('daily_goal'), best_streak=user.get('best_streak'),
                                    sittings=sittings, review=review, skills=skills,
                                    checks=_ready_checks(username), decision=decision)
+    plan['auto_budget'] = auto
+    # The fixes worth having in mind before today's sessions (backend/tracking/behavior.py).
+    plan['behavior'] = behavior_rules.reminders(
+        db.rows_for('behaviors', username), db.rows_for('behavior_interventions', username), tasks, now.date())
     return ok(plan=plan, lens=lens, budgets=list(next_actions.BUDGETS))
 
 

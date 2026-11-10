@@ -868,6 +868,7 @@ export default function Week() {
       {rating && (
         <RatePrompt
           taskName={rating.name}
+          taskId={rating.id}
           depth={ratingDepth}
           onSubmit={saveRating}
           onClose={closeRating}

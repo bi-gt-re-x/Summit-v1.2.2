@@ -53,7 +53,7 @@ export function RecommendationsTab({ model, data }: { model: AnalyticsModel } & 
           already decided the ranking is arbitrary. */}
       {plan.priority && (plan.priority.mode !== 'none' || plan.priority.note) ? (
         <section className="ax-section">
-          <PriorityPanel decision={plan.priority} />
+          <PriorityPanel decision={plan.priority} reminders={plan.behavior} />
         </section>
       ) : (lens || all.length > 0) && (
         <section className="ax-section">

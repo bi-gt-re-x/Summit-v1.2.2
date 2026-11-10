@@ -73,6 +73,7 @@ const PAGES = [
   'skilltree.css',
   'notes.css',
   'log.css',
+  'behavior.css',
   'records.css',
   'achievements.css',
   'settings.css',
@@ -82,7 +83,7 @@ const PAGES = [
 ];
 
 const LIGHT = 'html:not([data-skin]):not([data-theme="dark"])';
-const ON_PAGE = `${LIGHT}:has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page, .pom-page)`;
+const ON_PAGE = `${LIGHT}:has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page)`;
 
 // Colours that belong to what someone wrote rather than to the page: the nine
 // inks a note can be written in. A red note stays red in every look.

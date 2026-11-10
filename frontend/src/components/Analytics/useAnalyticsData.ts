@@ -18,7 +18,7 @@
  * read it moves is what keeps that pairing from drifting.
  */
 import { useCallback, useState } from 'react';
-import { DEFAULT_BUDGET, type NextResult } from '@/services/next';
+import { type NextResult } from '@/services/next';
 import { next as nextService } from '@/services';
 import { useApi, useStats } from '@/hooks';
 import * as backgroundService from '@/services/background';
@@ -211,7 +211,9 @@ export function useAnalyticsData() {
   // (backend/tracking/next_actions.py) — the same list the dashboard's top line
   // reads — and asked again when the budget changes or the plan's own refresh
   // is pressed, which re-reads it against the clock.
-  const [budget, setBudget] = useState<number>(DEFAULT_BUDGET);
+  // Null until the reader picks a length: the server then sizes today's plan to
+  // what fits today (backend/tracking/capacity.py).
+  const [budget, setBudget] = useState<number | null>(null);
   const [nudge, setNudge] = useState(0);
   const nextCall = useCallback(
     () =>

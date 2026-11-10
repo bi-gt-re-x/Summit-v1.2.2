@@ -74,7 +74,7 @@ const DAY = 86_400_000;
 /** Below this a goal is not "long term" — about a season. */
 const LONG_TERM_DAYS = 120;
 
-/** Priority at or above this wears the high-priority tag. */
+/** Ambition (the goal's 1-10, stored as `priority`) at or above this wears the "Main goal" tag. */
 const HIGH_PRIORITY = 7;
 
 /** Search results offered when linking an existing task. A shortlist, not a list. */
@@ -536,7 +536,7 @@ export function ActiveGoalCard({
           <ul className="ag-tags">
             <li>{longTerm ? 'Long term' : 'Short term'}</li>
             <li className={priority >= HIGH_PRIORITY ? 'is-hot' : ''}>
-              {priority >= HIGH_PRIORITY ? 'High' : priority >= 4 ? 'Medium' : 'Low'} Priority
+              {priority >= HIGH_PRIORITY ? 'High' : priority >= 4 ? 'Medium' : 'Low'} ambition
             </li>
             {overdue && <li className="is-late">Overdue</li>}
           </ul>

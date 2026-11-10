@@ -91,6 +91,13 @@ export const PLACES: Place[] = [
     keywords: 'journal diary reflect reflection thoughts feelings entries what summit has learned about me personalize',
   },
   {
+    id: 'behavior',
+    name: 'Behavior',
+    where: '',
+    to: '/behavior',
+    keywords: 'habits mistakes patterns weaknesses impulsive careless repeat again fix intervention change behaviour behavior track stop',
+  },
+  {
     id: 'achievements',
     name: 'Achievements',
     where: '',

@@ -861,6 +861,60 @@ ADDED_TABLES = ('''
         done_at     TEXT NOT NULL,
         PRIMARY KEY (user_id, week_start)
     )
+''', '''
+    -- Behavior: patterns a reader is working to stop, each session checked
+    -- against them, and the fixes tried. The DDL is data/sql/behavior.sql's;
+    -- see the note on ADDED_TABLES.
+    CREATE TABLE IF NOT EXISTS behaviors (
+        id             TEXT PRIMARY KEY,
+        user_id        TEXT NOT NULL REFERENCES users (username) ON DELETE CASCADE,
+        title          TEXT NOT NULL,
+        detail         TEXT NOT NULL DEFAULT '',
+        scope          TEXT NOT NULL DEFAULT 'study',
+        subject        TEXT NOT NULL DEFAULT '',
+        words          TEXT NOT NULL DEFAULT '',
+        source         TEXT NOT NULL DEFAULT 'own',
+        source_ref     TEXT NOT NULL DEFAULT '',
+        status         TEXT NOT NULL DEFAULT 'open',
+        identified_on  TEXT NOT NULL,
+        resolved_on    TEXT,
+        came_back      INTEGER NOT NULL DEFAULT 0,
+        created_at     TEXT NOT NULL,
+        updated_at     TEXT NOT NULL,
+        CHECK (status IN ('open', 'resolved', 'archived'))
+    )
+''', '''
+    CREATE INDEX IF NOT EXISTS behaviors_user_idx ON behaviors (user_id, status)
+''', '''
+    CREATE TABLE IF NOT EXISTS behavior_checks (
+        id               TEXT PRIMARY KEY,
+        user_id          TEXT NOT NULL REFERENCES users (username) ON DELETE CASCADE,
+        behavior_id      TEXT NOT NULL,
+        task_id          TEXT NOT NULL DEFAULT '',
+        day              TEXT NOT NULL,
+        times            INTEGER NOT NULL DEFAULT 0,
+        used             INTEGER,
+        intervention_id  TEXT NOT NULL DEFAULT '',
+        label            TEXT NOT NULL DEFAULT '',
+        note             TEXT NOT NULL DEFAULT '',
+        created_at       TEXT NOT NULL
+    )
+''', '''
+    CREATE INDEX IF NOT EXISTS behavior_checks_user_idx ON behavior_checks (user_id, behavior_id)
+''', '''
+    CREATE TABLE IF NOT EXISTS behavior_interventions (
+        id           TEXT PRIMARY KEY,
+        user_id      TEXT NOT NULL REFERENCES users (username) ON DELETE CASCADE,
+        behavior_id  TEXT NOT NULL,
+        title        TEXT NOT NULL,
+        how          TEXT NOT NULL DEFAULT '',
+        started_on   TEXT NOT NULL,
+        ended_on     TEXT,
+        outcome      TEXT NOT NULL DEFAULT '',
+        created_at   TEXT NOT NULL
+    )
+''', '''
+    CREATE INDEX IF NOT EXISTS behavior_interventions_user_idx ON behavior_interventions (user_id, behavior_id)
 ''')
 
 

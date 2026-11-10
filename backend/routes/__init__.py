@@ -51,6 +51,7 @@ API_MODULES = (
     'measures', 'subject_read', 'experiments',
     'review',
     'skill_plan',
+    'behavior',
 )
 
 SHARED_MODULES = (

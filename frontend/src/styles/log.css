@@ -447,6 +447,13 @@
     .lg-flag, .lg-chip, .lg-pin, .lg-row .lg-item { transition: none; }
 }
 
+/* "Track it until it stops" under a recurring pattern in the review drawer. */
+.lg-track { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin-top: var(--space-2); font-size: var(--text-xs); }
+.lg-track .lg-link { font-size: var(--text-xs); gap: 4px; }
+.lg-track .lg-link svg { width: 13px; height: 13px; }
+.lg-track.is-done { color: var(--color-ink-muted); }
+.lg-track small { color: #c2453d; }
+
 .lg-empty {
     margin: var(--space-10) auto;
     max-width: 28ch;
