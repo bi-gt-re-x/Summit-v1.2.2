@@ -250,17 +250,21 @@
     cursor: pointer;
     pointer-events: auto;
     transition-property: transform;
-    transition-timing-function: linear;
+    /* Eases into a walk and out of it, so it never starts or stops dead. */
+    transition-timing-function: cubic-bezier(.45, .05, .55, .95);
     filter: drop-shadow(0 3px 4px rgba(0, 0, 0, .18));
 }
 .mango-pet:focus-visible { outline: 2px solid var(--pref-accent, var(--color-accent)); outline-offset: 4px; border-radius: 50%; }
+/* Two layers: the outer one hops, stretches and spins, the inner one only
+   turns. Kept apart, a hop facing left can't snap Mango round to face right. */
+.mango-pet-move,
 .mango-pet-inner {
     display: block;
     width: 100%;
     height: 100%;
     transform-origin: 50% 100%;
-    transition: transform .3s ease;
 }
+.mango-pet-inner { transition: transform .34s cubic-bezier(.4, 0, .2, 1); }
 .mango-pet.is-left .mango-pet-inner { transform: scaleX(-1); }
 
 /* Sitting: the gentlest breathing. */
@@ -274,8 +278,7 @@
 .mango-pet.is-walk .tut-foot-r { animation: mpStep .42s ease-in-out .21s infinite; }
 .mango-pet.is-walk .tut-mango-body { animation: mpBob .42s ease-in-out infinite; }
 /* A hop. */
-.mango-pet.is-jump .mango-pet-inner { animation: mpJump .9s cubic-bezier(.45, 0, .25, 1); }
-.mango-pet.is-left.is-jump .mango-pet-inner { animation-name: mpJumpLeft; }
+.mango-pet.is-jump .mango-pet-move { animation: mpJump .9s cubic-bezier(.45, 0, .25, 1); }
 /* Napping: slow, deep breaths and three little z's. */
 .mango-pet.is-sleep .tut-mango-body {
     transform-origin: 50px 96px;
@@ -301,10 +304,9 @@
 /* Waving: the arm swings. */
 .mango-pet.is-wave .tut-mango-arm { animation: mpWave .5s ease-in-out infinite alternate; }
 /* A big stretch. */
-.mango-pet.is-stretch .mango-pet-inner { animation: mpStretch 1.6s ease-in-out; }
-.mango-pet.is-left.is-stretch .mango-pet-inner { animation-name: mpStretchLeft; }
+.mango-pet.is-stretch .mango-pet-move { animation: mpStretch 1.6s ease-in-out; }
 /* A little twirl. */
-.mango-pet.is-spin .mango-pet-inner { animation: mpSpin 1.1s cubic-bezier(.45, 0, .25, 1); }
+.mango-pet.is-spin .mango-pet-move { animation: mpSpin 1.1s cubic-bezier(.45, 0, .25, 1); }
 /* Blowing a bubble that drifts up and pops. */
 .mango-bubble {
     position: absolute;
@@ -362,21 +364,10 @@
     80%  { transform: translateY(0) scale(1.1, .9); }
     100% { transform: translateY(0) scale(1, 1); }
 }
-@keyframes mpJumpLeft {
-    0%   { transform: scaleX(-1) translateY(0); }
-    18%  { transform: scaleX(-1.1) scaleY(.86); }
-    50%  { transform: scaleX(-.94) scaleY(1.08) translateY(-14px); }
-    80%  { transform: scaleX(-1.1) scaleY(.9); }
-    100% { transform: scaleX(-1) translateY(0); }
-}
 @keyframes mpWave { from { transform: rotate(-80deg); } to { transform: rotate(-35deg); } }
 @keyframes mpStretch {
     0%, 100% { transform: scale(1, 1); }
     40%, 60% { transform: scale(.9, 1.16); }
-}
-@keyframes mpStretchLeft {
-    0%, 100% { transform: scale(-1, 1); }
-    40%, 60% { transform: scale(-.9, 1.16); }
 }
 @keyframes mpSpin {
     0%   { transform: translateY(0) rotate(0); }
@@ -442,7 +433,20 @@
 .mango-nudge-title { margin: 0; font-size: 14px; font-weight: 650; line-height: 1.35; }
 .mango-nudge-why { margin: 4px 0 0; font-size: 13px; line-height: 1.45; color: var(--color-ink-muted); }
 .mango-nudge-note { margin: 6px 0 0; font-size: 13px; font-weight: 600; line-height: 1.4; }
-.mango-nudge-acts { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.mango-nudge-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 10px; }
+/* Each tip fades in as the last one goes, so the loop reads as a new line. */
+.mango-nudge-body { animation: mpTip .22s ease-out; }
+/* Where you are in the loop: one dot a tip. */
+.mango-nudge-count { display: inline-flex; gap: 4px; margin-left: auto; }
+.mango-nudge-count i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-line);
+    transition: background .2s ease, transform .2s ease;
+}
+.mango-nudge-count i.is-on { background: var(--pref-accent, var(--color-accent)); transform: scale(1.2); }
+@keyframes mpTip { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
 .mango-nudge-go {
     display: inline-block;
     padding: 6px 12px;

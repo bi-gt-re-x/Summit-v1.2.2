@@ -7,7 +7,7 @@ import { renderWithProviders } from '@/test/render';
 import { bookSessions, nextActions, NO_PLAN, type NextAction } from '@/services/next';
 import { STATS_CHANGED } from '@/utils/statsBus';
 import { MangoPet } from './MangoPet';
-import { nudgeMove, pickNudge, shortWhy } from './MangoNudge';
+import { generalTips, MAX_TIPS, nudgeMove, pickNudge, pickTips, shortWhy } from './MangoNudge';
 
 vi.mock('@/services/next', async (original) => {
   const real = await original<typeof import('@/services/next')>();
@@ -68,6 +68,33 @@ describe('what Mango picks', () => {
   });
 });
 
+describe('the loop', () => {
+  it('puts the plan first, then fills with general tips', () => {
+    const top = action();
+    const goal = action({ id: 'goal', kind: 'goal', title: 'Work on Spanish' });
+    const tips = pickTips({ ...NO_PLAN, top, actions: [top, goal] });
+    expect(tips.map((tip) => tip.title).slice(0, 2)).toEqual(['Finish "Chapter 7"', 'Work on Spanish']);
+    expect(tips.length).toBeGreaterThanOrEqual(3);
+    expect(tips.length).toBeLessThanOrEqual(MAX_TIPS);
+    expect(new Set(tips.map((tip) => tip.id)).size).toBe(tips.length);
+  });
+
+  it('never runs past five, however long the plan', () => {
+    const rows = Array.from({ length: 9 }, (_, i) => action({ id: `r${i}`, title: `Task ${i}` }));
+    expect(pickTips({ ...NO_PLAN, top: rows[0]!, actions: rows })).toHaveLength(4);
+  });
+
+  it('has a few good tips with no plan at all, morning or night', () => {
+    for (const hour of [8, 14, 21]) {
+      const tips = pickTips(null, new Date(2026, 10, 10, hour));
+      expect(tips.length).toBeGreaterThanOrEqual(3);
+      for (const tip of tips) expect(`${tip.title} ${tip.why}`).not.toMatch(/[—“”‘’]/);
+    }
+    expect(pickTips(null, new Date(2026, 10, 10, 21)).map((tip) => tip.id)).toContain('tip-tomorrow');
+    expect(pickTips(null, new Date(2026, 10, 10, 8)).map((tip) => tip.id)).toContain('tip-hard-first');
+  });
+});
+
 describe('how it says it', () => {
   it('leaves a short reason alone', () => {
     expect(shortWhy('It was due 3 days ago.')).toBe('It was due 3 days ago.');
@@ -125,14 +152,36 @@ describe('Mango with something to say', () => {
     expect(await note()).toHaveTextContent('Chapter 7');
   });
 
-  it('stays quiet with nothing worth saying, and clicking just says hi', async () => {
+  it('stays quiet with nothing worth saying, but a click still gives a tip', async () => {
     serve(action({ kind: 'xp' }));
     show();
     await waitFor(() => expect(nextActions).toHaveBeenCalled(), { timeout: 3000 });
     await act(async () => { await Promise.resolve(); });
     expect(screen.queryByRole('status', { name: 'A note from Mango' })).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /Mango/ }));
-    expect(screen.queryByRole('status', { name: 'A note from Mango' })).not.toBeInTheDocument();
+    expect(await note()).toHaveTextContent(generalTips()[0]!.title);
+  });
+
+  it('loops through different tips, and holding still to say them', async () => {
+    serve(action());
+    show();
+    const card = await note();
+    expect(card).toHaveTextContent('Chapter 7');
+    const seen = new Set<string>();
+    const titleNow = () => screen.getByRole('status', { name: 'A note from Mango' }).querySelector('.mango-nudge-title')!.textContent!;
+    seen.add(titleNow());
+    const count = screen.getByLabelText(/Tip 1 of \d/).getAttribute('aria-label')!;
+    const total = Number(count.match(/of (\d)/)![1]);
+    expect(total).toBeGreaterThanOrEqual(3);
+    expect(total).toBeLessThanOrEqual(MAX_TIPS);
+    for (let i = 1; i < total; i += 1) {
+      fireEvent.click(screen.getByRole('button', { name: 'Next tip' }));
+      seen.add(titleNow());
+    }
+    expect(seen.size).toBe(total);
+    // Clicking Mango moves it on too, and it comes round to the start.
+    fireEvent.click(screen.getByRole('button', { name: /Mango/ }));
+    expect(titleNow()).toContain('Chapter 7');
   });
 
   it('books from the note, and says so', async () => {

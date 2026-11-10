@@ -4,15 +4,17 @@
  * It does small things on its own (looks around, walks along the edge, hops,
  * naps, waves, stretches, blows a bubble) and nothing that competes with the
  * page. Every action is slow and short, there are long pauses between them,
- * and it naps while you type. Its eyes follow the pointer. Click it and it
- * says something nice.
+ * and it naps while you type. Its eyes follow the pointer. Walks ease in and
+ * out, and it turns around before it sets off rather than sliding backwards.
  *
  * `energy` is the account's Mango setting: calm (the default) does something
  * every 9 to 16 seconds, lively every 4 to 8, still never moves on its own.
  * Reduced motion is treated as still.
  *
- * It also has a real job: the one thing that matters most today, as a short
- * note with a button (./MangoNudge). While the note is open it stays put.
+ * It also has a real job: a short loop of tips, the plan's most pressing rows
+ * first (./MangoNudge). Click it for the next one. While it's talking it holds
+ * completely still: no walking, hopping or waving, and a walk in progress
+ * stops where it is.
  *
  * Timers, not animation frames, drive the routine, so it costs nothing while
  * it sits, and CSS (styles/tutorial.css, "Mango at rest") does the moving.
@@ -29,16 +31,12 @@ const SIZE = 46;
 /** The note's width, for keeping it on the card. Matches `.mango-nudge`. */
 const NOTE_WIDTH = 320;
 
-const LINES = [
-  "Start with the smallest task.",
-  'One task at a time.',
-  'Water break?',
-  "Stand up and stretch.",
-  'Take a sip of water.',
-  'Ten minutes still counts.',
-  "Don't forget a break.",
-  'One task keeps your streak.',
-];
+/** How long it takes to turn around before a walk, in ms. Matches the flip
+ *  transition on `.mango-pet-inner`. */
+const TURN_MS = 360;
+/** Walking pace, in px a second, and the shortest walk. */
+const PACE = 30;
+const MIN_WALK_MS = 1200;
 
 /** How long each act lasts, in ms. Walk is worked out from the distance. */
 const LENGTH: Record<Exclude<Act, 'walk' | 'sit'>, number> = {
@@ -80,11 +78,15 @@ export function MangoPet({ anchor, energy, username = null, nudges = false }: Ma
     setXState(to);
   }, []);
   const [walkMs, setWalkMs] = useState(0);
-  const [facing, setFacing] = useState<1 | -1>(1);
+  const [facing, setFacingState] = useState<1 | -1>(1);
+  const facingNow = useRef<1 | -1>(1);
+  const setFacing = useCallback((to: 1 | -1) => {
+    facingNow.current = to;
+    setFacingState(to);
+  }, []);
   const [act, setAct] = useState<Act>('sit');
   const [blink, setBlink] = useState(false);
   const [look, setLook] = useState({ x: 0, y: 0.35 });
-  const [line, setLine] = useState<string | null>(null);
   const typedAt = useRef(0);
   const me = useRef<HTMLButtonElement | null>(null);
 
@@ -116,12 +118,30 @@ export function MangoPet({ anchor, energy, username = null, nudges = false }: Ma
 
   // Start near the right-hand end, out of the way of the greeting.
   const room = Math.max(0, (spot?.width ?? 0) - SIZE - 24);
+  const roomNow = useRef(room);
+  roomNow.current = room;
   const placed = useRef(false);
   useEffect(() => {
-    if (!spot || placed.current) return;
-    placed.current = true;
-    setX(Math.round(room * 0.82));
+    if (!spot) return;
+    if (!placed.current) {
+      placed.current = true;
+      setX(Math.round(room * 0.82));
+    } else if (xNow.current > room) {
+      // The card got narrower: step back onto it.
+      setX(room);
+    }
   }, [spot, room, setX]);
+
+  /** Stop a walk where it is right now, mid-stride, rather than at its end. */
+  const halt = useCallback(() => {
+    const el = me.current;
+    if (el && typeof DOMMatrixReadOnly !== 'undefined') {
+      const shown = getComputedStyle(el).transform;
+      if (shown && shown !== 'none') setX(Math.round(new DOMMatrixReadOnly(shown).m41));
+    }
+    setWalkMs(0);
+    setAct('sit');
+  }, [setX]);
 
   // ---- Eyes follow the pointer, gently -------------------------------------
   useEffect(() => {
@@ -160,26 +180,46 @@ export function MangoPet({ anchor, energy, username = null, nudges = false }: Ma
   }, []);
 
   // ---- The routine ----------------------------------------------------------
+  // Room is read from a ref so the card settling by a pixel doesn't restart
+  // the routine's clock.
+  const talking = nudge.open;
+  const ready = spot !== null;
   useEffect(() => {
-    if (still || !spot || nudge.open) return undefined;
+    if (still || !ready || talking) return undefined;
     let timer = 0;
     const rest = () => (energy === 'lively' ? between(4000, 8000) : between(9000, 16000));
+    const after = (ms: number, then: () => void) => { timer = window.setTimeout(then, ms); };
+    const settle = () => {
+      setAct('sit');
+      after(rest(), go);
+    };
+    const walk = () => {
+      const from = xNow.current;
+      const space = roomNow.current;
+      // Somewhere worth the trip: at least a third of the way along.
+      let to = Math.round(between(0, space));
+      if (Math.abs(to - from) < space / 3) to = from > space / 2 ? Math.round(between(0, space / 3)) : Math.round(between(space * 2 / 3, space));
+      const ms = Math.max(MIN_WALK_MS, (Math.abs(to - from) / PACE) * 1000);
+      const way: 1 | -1 = to >= from ? 1 : -1;
+      const start = () => {
+        setWalkMs(ms);
+        setAct('walk');
+        setX(to);
+        after(ms, settle);
+      };
+      if (way !== facingNow.current) {
+        setFacing(way);
+        after(TURN_MS, start);
+      } else {
+        start();
+      }
+    };
     const go = () => {
       // Someone is typing: nap instead of moving about.
       const busy = Date.now() - typedAt.current < 8000;
       const next: Exclude<Act, 'sit'> = busy ? 'sleep' : pick(energy === 'lively' ? LIVELY : CALM);
       if (next === 'walk') {
-        const from = xNow.current;
-        const to = Math.round(between(0, room));
-        const ms = Math.max(900, (Math.abs(to - from) / 38) * 1000);
-        setFacing(to >= from ? 1 : -1);
-        setWalkMs(ms);
-        setAct('walk');
-        setX(to);
-        timer = window.setTimeout(() => {
-          setAct('sit');
-          timer = window.setTimeout(go, rest());
-        }, ms);
+        walk();
         return;
       }
       setAct(next);
@@ -188,37 +228,23 @@ export function MangoPet({ anchor, energy, username = null, nudges = false }: Ma
         window.setTimeout(() => setLook({ x: 1, y: -0.2 }), 1100);
         window.setTimeout(() => setLook({ x: 0, y: 0.35 }), 2300);
       }
-      timer = window.setTimeout(() => {
-        setAct('sit');
-        timer = window.setTimeout(go, rest());
-      }, LENGTH[next]);
+      after(LENGTH[next], settle);
     };
-    timer = window.setTimeout(go, rest());
+    after(rest(), go);
     return () => window.clearTimeout(timer);
-  }, [still, spot, energy, room, setX, nudge.open]);
+  }, [still, ready, energy, setX, setFacing, talking]);
 
-  // ---- Speaking up -----------------------------------------------------------
-  useEffect(() => {
-    if (!nudge.open) return undefined;
-    setAct(still ? 'sit' : 'wave');
-    const timer = window.setTimeout(() => setAct('sit'), LENGTH.wave);
-    return () => window.clearTimeout(timer);
-  }, [nudge.open, still]);
+  // ---- Talking: hold still -------------------------------------------------
+  useLayoutEffect(() => {
+    if (talking) halt();
+  }, [talking, halt]);
 
   // ---- Clicking it -----------------------------------------------------------
+  // Opens the note, or moves it on to the next tip. No hop: it's about to talk.
   const poke = useCallback(() => {
-    const woke = act === 'sleep';
-    setAct(still ? 'sit' : 'jump');
-    window.setTimeout(() => setAct('sit'), LENGTH.jump);
-    // With something to say, that's what a click brings up.
-    if (nudge.item) {
-      if (nudge.open) nudge.hide();
-      else nudge.show();
-      return;
-    }
-    setLine(woke ? 'Huh? Oh, hi!' : pick(LINES));
-    window.setTimeout(() => setLine(null), 2600);
-  }, [act, still, nudge]);
+    if (nudge.open) nudge.next();
+    else nudge.show();
+  }, [nudge]);
 
   const sleeping = act === 'sleep';
   const arm = act === 'wave' ? -55 : null;
@@ -240,17 +266,19 @@ export function MangoPet({ anchor, energy, username = null, nudges = false }: Ma
           transform: `translateX(${x}px)`,
           transitionDuration: act === 'walk' ? `${walkMs}ms` : '0ms',
         }}
-        aria-label="Mango. Say hi"
+        aria-label={nudge.open ? 'Mango. Next tip' : 'Mango. Get a tip'}
         title="Mango"
         onClick={poke}
       >
-        <span className="mango-pet-inner">
-          <MangoFigure
-            look={sleeping ? undefined : look}
-            eyes={sleeping || blink ? 'closed' : 'open'}
-            arm={arm}
-            mouth={mouth}
-          />
+        <span className="mango-pet-move">
+          <span className="mango-pet-inner">
+            <MangoFigure
+              look={sleeping ? undefined : look}
+              eyes={sleeping || blink ? 'closed' : 'open'}
+              arm={arm}
+              mouth={mouth}
+            />
+          </span>
         </span>
         {sleeping && (
           <span className="mango-zz" aria-hidden="true">
@@ -258,14 +286,16 @@ export function MangoPet({ anchor, energy, username = null, nudges = false }: Ma
           </span>
         )}
         {act === 'bubble' && <span className="mango-bubble" aria-hidden="true" />}
-        {line && <span className={`mango-say${x < 200 ? ' is-right' : ''}`} role="status">{line}</span>}
       </button>
-      {nudge.open && nudge.item && (
+      {nudge.open && nudge.tip && (
         <NudgeCard
-          item={nudge.item}
+          tip={nudge.tip}
+          at={nudge.index}
+          of={nudge.tips.length}
           left={Math.max(0, Math.min(x + SIZE - NOTE_WIDTH, (spot?.width ?? 0) - NOTE_WIDTH))}
+          onNext={nudge.next}
           onClose={nudge.hide}
-          onDone={nudge.clear}
+          onDone={nudge.done}
         />
       )}
     </div>

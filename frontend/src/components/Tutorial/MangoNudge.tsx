@@ -1,15 +1,17 @@
 /**
- * Mango's note for the day: the one thing that matters most right now, and a
- * button to do something about it.
+ * Mango's note: a short loop of three to five tips. The plan's rows worth
+ * saying come first, each with a button to do something about it, then what
+ * to leave alone, then general tips (`GENERAL_TIPS`) to fill it out.
  *
- * It says what the plan says. The item comes from `/api/next_actions`
- * (backend/tracking/next_actions.py), so Mango and the Recommendations tab can
- * never disagree, and nothing here decides what's important. It only decides
- * whether something is worth interrupting for (`WORTH_SAYING`).
+ * Plan rows come from `/api/next_actions` (backend/tracking/next_actions.py),
+ * so Mango and the Recommendations tab can never disagree, and nothing here
+ * decides what's important. It only decides whether something is worth
+ * interrupting for (`WORTH_SAYING`).
  *
  * The note opens by itself once a day per account, in this browser, and never
- * while you're typing. With nothing worth saying, Mango stays quiet. Clicking
- * Mango brings the note back any time. Settings, Mango can turn it off.
+ * while you're typing, and only when the plan has something worth saying.
+ * Clicking Mango opens it any time, on the next tip each time. Settings,
+ * Mango can turn the plan part off; the general tips stay.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -94,34 +96,177 @@ function markSaid(username: string) {
   }
 }
 
+/** One thing Mango can say: a row from the plan, or a general tip. */
+export interface Tip {
+  id: string;
+  title: string;
+  why: string;
+  /** The plan row behind it. Only these get a button that does something. */
+  action?: NextAction;
+}
+
+/** How many tips Mango loops through, at most and at least. */
+export const MAX_TIPS = 5;
+const FILL_TO = 4;
+/** Plan rows go first, but leave room for one other thing. */
+const MAX_PLAN = 4;
+
+type General = { id: string; title: string; why: string; when?: 'morning' | 'evening' };
+
+/** Advice that holds for anyone, for when the plan has less to say. Short,
+ *  concrete, and something you can do in the next few minutes. */
+export const GENERAL_TIPS: General[] = [
+  {
+    id: 'start-small',
+    title: "Give the task you're avoiding 10 minutes.",
+    why: "Starting is the hard part. Set a timer for 10 and let yourself stop after. Most days you'll keep going.",
+  },
+  {
+    id: 'recall',
+    title: 'Quiz yourself before you reread.',
+    why: 'Pulling it from memory sticks better than reading it again. Cover your notes, try first, then check.',
+  },
+  {
+    id: 'next-step',
+    title: 'Write your next step before you stop.',
+    why: "One line is enough. Next time you'll know where to start and skip the warm up.",
+  },
+  {
+    id: 'phone',
+    title: 'Put your phone in another room.',
+    why: 'Even face down it pulls at you. Try one session without it and see how it goes.',
+  },
+  {
+    id: 'split',
+    title: 'Split anything over an hour.',
+    why: 'Big tasks are easy to put off. Break it into pieces you can finish in 20 to 30 minutes.',
+  },
+  {
+    id: 'spacing',
+    title: 'Spread a topic over a few days.',
+    why: 'Three short sessions on different days beat one long cram. Your memory needs the gaps.',
+  },
+  {
+    id: 'break',
+    title: 'Take a real break every 45 minutes.',
+    why: "Get up for 5. Walk, drink some water, look out a window. Scrolling doesn't count.",
+  },
+  {
+    id: 'hard-first',
+    title: 'Do the hardest thing first.',
+    why: "Your focus is best early on. Save the easy stuff for when you're tired.",
+    when: 'morning',
+  },
+  {
+    id: 'tomorrow',
+    title: "Pick tomorrow's first task tonight.",
+    why: 'Mornings go faster when the choice is already made. It takes a minute.',
+    when: 'evening',
+  },
+  {
+    id: 'mistakes',
+    title: 'Go back over what you got wrong.',
+    why: "Misses show you exactly what to work on. Redo one today while it's fresh.",
+  },
+];
+
+/** General tips for this time of day. The order turns over each day, so
+ *  Mango doesn't open with the same one every morning. */
+export function generalTips(now = new Date()): Tip[] {
+  const hour = now.getHours();
+  const fits = GENERAL_TIPS.filter((tip) =>
+    !tip.when || (tip.when === 'morning' ? hour < 12 : hour >= 18));
+  const day = Math.floor(new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / 86_400_000);
+  const shift = fits.length ? day % fits.length : 0;
+  // Time-of-day tips lead when they apply: they're the most "right now".
+  const timed = fits.filter((tip) => tip.when);
+  const rest = fits.filter((tip) => !tip.when);
+  const turned = [...rest.slice(shift % Math.max(1, rest.length)), ...rest.slice(0, shift % Math.max(1, rest.length))];
+  return [...timed, ...turned].map(({ id, title, why }) => ({ id: `tip-${id}`, title, why }));
+}
+
+/** The loop Mango works through: the plan's rows worth saying, what to leave
+ *  alone, then general tips until there are a few. Never more than five. */
+export function pickTips(plan: Plan | null, now = new Date()): Tip[] {
+  const tips: Tip[] = [];
+  const seen = new Set<string>();
+  const add = (tip: Tip) => {
+    const key = tip.title.trim().toLowerCase();
+    if (seen.has(tip.id) || seen.has(key) || tips.length >= MAX_TIPS) return;
+    seen.add(tip.id);
+    seen.add(key);
+    tips.push(tip);
+  };
+  if (plan) {
+    for (const item of [plan.top, ...plan.actions, ...plan.more]) {
+      if (tips.length >= MAX_PLAN) break;
+      if (!item || !WORTH_SAYING.includes(item.kind)) continue;
+      add({ id: item.id, title: plainQuotes(item.title), why: shortWhy(item.because), action: item });
+    }
+    const leave = plan.priority?.not_now?.[0];
+    if (leave?.why) add({ id: `leave-${leave.key}`, title: plainQuotes(`Leave ${leave.title} for now.`), why: shortWhy(leave.why) });
+  }
+  for (const tip of generalTips(now)) {
+    if (tips.length >= FILL_TO) break;
+    add(tip);
+  }
+  return tips;
+}
+
 export interface MangoNudgeState {
-  /** What Mango has to say, or null when there's nothing. */
-  item: NextAction | null;
+  /** Everything Mango has to say, in the order it says it. Always a few. */
+  tips: Tip[];
+  /** The one showing, or would show next. */
+  tip: Tip | null;
+  index: number;
   open: boolean;
+  /** Whether the plan has something worth bringing up unasked. */
+  urgent: boolean;
+  /** Open the note. If it's been open before, it moves on to the next tip. */
   show: () => void;
+  /** The next tip, looping back to the first. */
+  next: () => void;
   hide: () => void;
-  /** It's been dealt with, so there's nothing left to bring back. */
-  clear: () => void;
+  /** The tip's move worked, so it goes from the loop. */
+  done: () => void;
 }
 
 export function useMangoNudge(username: string | null, enabled: boolean): MangoNudgeState {
-  const [item, setItem] = useState<NextAction | null>(null);
+  const [tips, setTips] = useState<Tip[]>(() => pickTips(null));
+  const [index, setIndex] = useState(0);
   const [open, setOpen] = useState(false);
+  const shown = useRef(false);
   const typedAt = useRef(0);
+  const current = useRef<Tip | null>(null);
+  current.current = tips[index] ?? null;
+  const openNow = useRef(false);
+  openNow.current = open;
+
+  /** Swap in a new list. An open note stays on its tip if it's still there;
+   *  a closed one starts again from the top, the most pressing. */
+  const take = useCallback((list: Tip[]) => {
+    const was = openNow.current ? current.current : null;
+    const at = was ? list.findIndex((tip) => tip.id === was.id) : -1;
+    setTips(list);
+    if (at >= 0) {
+      setIndex(at);
+    } else {
+      setIndex(0);
+      // What it was talking about got done, so the note goes with it.
+      if (was?.action) setOpen(false);
+    }
+  }, []);
 
   const load = useCallback(async () => {
     const result = await nextActions().catch(() => null);
-    if (!result?.success) return null;
-    const found = pickNudge(result.plan);
-    setItem(found);
-    // What it was talking about got done, so the note goes with it.
-    if (!found) setOpen(false);
-    return found;
-  }, []);
+    if (!result?.success) return false;
+    take(pickTips(result.plan));
+    return pickNudge(result.plan) !== null;
+  }, [take]);
 
   useEffect(() => {
     if (!enabled || !username) {
-      setItem(null);
+      take(pickTips(null));
       setOpen(false);
       return undefined;
     }
@@ -134,9 +279,11 @@ export function useMangoNudge(username: string | null, enabled: boolean): MangoN
         timer = window.setTimeout(speak, RETRY_MS);
         return;
       }
-      void load().then((found) => {
-        if (!live || !found || saidToday(username)) return;
+      void load().then((urgent) => {
+        if (!live || !urgent || saidToday(username)) return;
         markSaid(username);
+        shown.current = true;
+        setIndex(0);
         setOpen(true);
       });
     };
@@ -150,32 +297,62 @@ export function useMangoNudge(username: string | null, enabled: boolean): MangoN
       window.removeEventListener('keydown', typed);
       window.removeEventListener(STATS_CHANGED, refresh);
     };
-  }, [enabled, load, username]);
+  }, [enabled, load, take, username]);
 
+  const count = tips.length;
+  const next = useCallback(() => setIndex((at) => (count ? (at + 1) % count : 0)), [count]);
+  const show = useCallback(() => {
+    if (shown.current) next();
+    shown.current = true;
+    setOpen(true);
+  }, [next]);
+
+  const tip = tips[index] ?? tips[0] ?? null;
   return {
-    item,
-    open: open && item !== null,
-    show: useCallback(() => setOpen(true), []),
+    tips,
+    tip,
+    index: tip ? tips.indexOf(tip) : 0,
+    open: open && tip !== null,
+    urgent: tips.some((item) => item.action),
+    show,
+    next,
     hide: useCallback(() => setOpen(false), []),
-    clear: useCallback(() => {
+    done: useCallback(() => {
       setOpen(false);
-      setItem(null);
+      setTips((list) => {
+        const was = current.current;
+        const left = list.filter((item) => item.id !== was?.id);
+        return left.length ? left : pickTips(null);
+      });
+      setIndex(0);
     }, []),
   };
 }
 
-export function NudgeCard({ item, left, onClose, onDone }: {
-  item: NextAction;
+export function NudgeCard({ tip, at, of, left, onNext, onClose, onDone }: {
+  tip: Tip;
+  /** Which tip this is in the loop, from 0, and how many there are. */
+  at: number;
+  of: number;
   /** Where it sits along the card Mango is on, in px. */
   left: number;
+  onNext: () => void;
   onClose: () => void;
-  /** The move worked, so there's nothing left to bring back. */
+  /** The move worked, so it goes from the loop. */
   onDone: () => void;
 }) {
-  const move = nudgeMove(item);
+  const item = tip.action ?? null;
+  const move = item ? nudgeMove(item) : null;
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState<string | null>(null);
   const [booked, setBooked] = useState(false);
+
+  // A new tip starts clean.
+  useEffect(() => {
+    setBusy(false);
+    setNote(null);
+    setBooked(false);
+  }, [tip.id]);
 
   const book = async (goalId: string) => {
     setBusy(true);
@@ -196,25 +373,41 @@ export function NudgeCard({ item, left, onClose, onDone }: {
     announceStatsChanged();
   };
 
+  const many = of > 1;
   return (
     <div className="mango-nudge" style={{ left }} role="status" aria-label="A note from Mango">
-      <p className="mango-nudge-title">{plainQuotes(item.title)}</p>
-      <p className="mango-nudge-why">{shortWhy(item.because)}</p>
+      <div key={tip.id} className="mango-nudge-body">
+        <p className="mango-nudge-title">{tip.title}</p>
+        <p className="mango-nudge-why">{tip.why}</p>
+      </div>
       {note && <p className="mango-nudge-note">{note}</p>}
       <div className="mango-nudge-acts">
         {booked ? (
           <button type="button" className="mango-nudge-go" onClick={onDone}>Nice</button>
         ) : (
           <>
-            {move.type === 'book' ? (
+            {move?.type === 'book' && (
               <button type="button" className="mango-nudge-go" disabled={busy} onClick={() => void book(move.goalId)}>
                 {busy ? 'Booking...' : move.label}
               </button>
-            ) : (
+            )}
+            {move?.type === 'link' && (
               <Link className="mango-nudge-go" to={move.to} onClick={onClose}>{move.label}</Link>
             )}
-            <button type="button" className="mango-nudge-later" onClick={onClose}>Later</button>
+            {many && (
+              <button type="button" className={move ? 'mango-nudge-later' : 'mango-nudge-go'} onClick={onNext}>
+                Next tip
+              </button>
+            )}
+            <button type="button" className="mango-nudge-later" onClick={onClose}>{move || many ? 'Later' : 'Thanks'}</button>
           </>
+        )}
+        {many && (
+          <span className="mango-nudge-count" aria-label={`Tip ${at + 1} of ${of}`}>
+            {Array.from({ length: of }, (_, i) => (
+              <i key={i} className={i === at ? 'is-on' : undefined} />
+            ))}
+          </span>
         )}
       </div>
     </div>
