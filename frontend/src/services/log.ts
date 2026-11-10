@@ -10,6 +10,9 @@ import type { ApiResult } from '@/types';
 
 export type InsightKind = 'goal' | 'pattern' | 'preference' | 'feeling';
 
+/** A tag an entry can carry: shared/rules.json `log.marks`. */
+export type MarkKey = 'milestone' | 'win' | 'lesson' | 'idea' | 'setback';
+
 export interface Entry {
   id: string;
   title: string;
@@ -19,6 +22,10 @@ export interface Entry {
   /** The check-in: mood 1-5 and energy 1-3, or null when skipped. */
   mood?: number | null;
   energy?: number | null;
+  /** Kept at the top of the list. */
+  pinned?: boolean;
+  /** Milestone, Win and the rest, in the rules' order. */
+  marks?: MarkKey[];
   created_at: string;
   updated_at: string;
 }
@@ -47,6 +54,9 @@ export interface EntryDraft {
   /** The check-in. 0 clears it; leaving it out leaves it alone. */
   mood?: number;
   energy?: number;
+  /** For a new entry only: an open one's go through `flag` the moment they're tapped. */
+  pinned?: boolean;
+  marks?: MarkKey[];
 }
 
 export function list(): Promise<ApiResult<{ entries: Entry[]; insights: Insight[]; learning: boolean }>> {
@@ -68,6 +78,11 @@ export function resume(): Promise<ApiResult<{ resumed: number }>> {
 
 export function remove(id: string): Promise<ApiResult<{ id: string; removed: number }>> {
   return post<{ id: string; removed: number }>('/api/log/delete', { id });
+}
+
+/** Pin or unpin an entry, or set its marks. Neither sends it to be read again. */
+export function flag(id: string, change: { pinned?: boolean; marks?: MarkKey[] }): Promise<ApiResult<{ entry: Entry }>> {
+  return post<{ entry: Entry }>('/api/log/flag', { id, ...change });
 }
 
 export function forget(id: string): Promise<ApiResult<{ id: string }>> {

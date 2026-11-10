@@ -56,6 +56,20 @@ INSIGHTS_MAX = RULE['insights_max']
 KINDS = tuple(entry['key'] for entry in RULE['kinds'])
 KIND_LABELS = {entry['key']: entry['label'] for entry in RULE['kinds']}
 TOPICS = tuple(entry['key'] for entry in RULE['topics'])
+MARKS = tuple(entry['key'] for entry in RULE['marks'])
+
+
+def clean_marks(raw) -> List[str]:
+    """An entry's marks: known keys only, each once, in the rules' order."""
+    if isinstance(raw, str):
+        raw = raw.split(',')
+    given = {str(one).strip() for one in raw} if isinstance(raw, (list, tuple, set)) else set()
+    return [key for key in MARKS if key in given]
+
+
+def public_entry(row: dict) -> dict:
+    """An entry as the page gets it: `pinned` a bool, `marks` a list."""
+    return {**row, 'pinned': bool(row.get('pinned')), 'marks': clean_marks(row.get('marks') or '')}
 
 #: The longest one insight may be. A line, not a paragraph.
 TEXT_MAX = 160

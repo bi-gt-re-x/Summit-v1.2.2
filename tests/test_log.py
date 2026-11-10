@@ -73,6 +73,42 @@ def test_entries_belong_to_their_account(client, stranger):
     assert db.find_row('log_entries', mine['id'], user_id='tester')['title'] == 'Mine'
 
 
+def test_an_entry_can_be_pinned_and_marked_without_being_read_again(client):
+    entry = _save(client, title='Made the team', body='Finally')
+    assert entry['pinned'] is False and entry['marks'] == []
+    db.update_row('log_entries', entry['id'], {'learn_state': 'done'}, user_id='tester')
+    before = db.find_row('log_entries', entry['id'], user_id='tester')['updated_at']
+
+    reply = client.post('/api/log/flag', json={'id': entry['id'], 'pinned': True,
+                                               'marks': ['win', 'nonsense', 'milestone', 'win']}).json()
+    assert reply['success'], reply
+    # Known marks only, once each, in the rules' order.
+    assert reply['entry']['pinned'] is True and reply['entry']['marks'] == ['milestone', 'win']
+
+    row = db.find_row('log_entries', entry['id'], user_id='tester')
+    assert row['learn_state'] == 'done' and row['updated_at'] == before
+    listed = client.get('/api/log').json()['entries'][0]
+    assert listed['pinned'] is True and listed['marks'] == ['milestone', 'win']
+
+    # Leaving one out leaves it alone; an empty list clears the marks.
+    reply = client.post('/api/log/flag', json={'id': entry['id'], 'marks': []}).json()
+    assert reply['entry']['pinned'] is True and reply['entry']['marks'] == []
+    reply = client.post('/api/log/flag', json={'id': entry['id'], 'pinned': False}).json()
+    assert reply['entry']['pinned'] is False
+
+
+def test_a_new_entry_can_start_pinned_and_marked(client):
+    entry = _save(client, title='Idea', body='Try mornings', pinned=True, marks=['idea'])
+    assert entry['pinned'] is True and entry['marks'] == ['idea']
+
+
+def test_only_your_own_entries_can_be_flagged(client, stranger):
+    entry = _save(client)
+    reply = stranger.post('/api/log/flag', json={'id': entry['id'], 'pinned': True}).json()
+    assert not reply['success']
+    assert client.get('/api/log').json()['entries'][0]['pinned'] is False
+
+
 def test_signed_out_gets_nothing(anon):
     assert anon.get('/api/log').status_code == 401
 

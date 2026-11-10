@@ -26,6 +26,11 @@ CREATE TABLE IF NOT EXISTS log_entries (
     -- is "not said", never a middling day (backend/tracking/mood.py).
     mood        INTEGER,
     energy      INTEGER,
+    -- Pinned to the top of the list (1) or not, and the marks it carries
+    -- (Milestone, Win...): comma-separated keys from shared/rules.json
+    -- `log.marks`. Setting either never sends the entry to be read again.
+    pinned      INTEGER NOT NULL DEFAULT 0,
+    marks       TEXT NOT NULL DEFAULT '',
     created_at  TEXT NOT NULL,
     updated_at  TEXT NOT NULL,
     CHECK (learn_state IN ('waiting', 'done', 'failed', 'off'))

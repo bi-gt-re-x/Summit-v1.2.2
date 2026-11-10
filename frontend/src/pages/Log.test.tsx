@@ -38,6 +38,7 @@ const service = vi.hoisted(() => ({
   remove: vi.fn(),
   forget: vi.fn(),
   resume: vi.fn(),
+  flag: vi.fn(),
 }));
 
 vi.mock('@/services', async (original) => {
@@ -46,6 +47,9 @@ vi.mock('@/services', async (original) => {
 });
 
 import Log from './Log';
+
+/** The entries in the list, without each one's pin button. */
+const items = (list: HTMLElement) => within(list).getAllByRole('button').filter((button) => button.classList.contains('lg-item'));
 import { Journal } from '@/components/Log/Journal';
 
 beforeEach(() => {
@@ -63,6 +67,8 @@ beforeEach(() => {
   service.remove.mockResolvedValue({ success: true, id: 'e2', removed: 1 });
   service.forget.mockResolvedValue({ success: true, id: 'i1' });
   service.resume.mockResolvedValue({ success: true, resumed: 0 });
+  service.flag.mockImplementation((id: string, change: object) =>
+    Promise.resolve({ success: true, entry: { ...ENTRIES.find((entry) => entry.id === id), ...change } }));
 });
 
 afterEach(() => {
@@ -86,7 +92,7 @@ describe('the log page', () => {
   it('lists entries newest first, with a plain preview and a date', async () => {
     renderWithProviders(<Log />);
     const list = await screen.findByRole('list', { name: 'Your entries' });
-    const rows = within(list).getAllByRole('button');
+    const rows = items(list);
     expect(rows[0]).toHaveTextContent('Violin practice');
     expect(rows[0]).toHaveTextContent('Bow control and intonation.');
     expect(rows[0]).toHaveTextContent('Oct 10, 2026');
@@ -99,10 +105,10 @@ describe('the log page', () => {
     const list = await screen.findByRole('list', { name: 'Your entries' });
 
     await user.selectOptions(screen.getByLabelText('Sort entries'), 'oldest');
-    expect(within(list).getAllByRole('button')[0]).toHaveTextContent('Big goals');
+    expect(items(list)[0]).toHaveTextContent('Big goals');
 
     await user.type(screen.getByLabelText('Search entries'), 'bow');
-    const shown = within(screen.getByRole('list', { name: 'Your entries' })).getAllByRole('button');
+    const shown = items(screen.getByRole('list', { name: 'Your entries' }));
     expect(shown).toHaveLength(1);
     expect(shown[0]).toHaveTextContent('Violin practice');
   });
@@ -110,10 +116,10 @@ describe('the log page', () => {
   it('opens an entry into the editor and marks it in the list', async () => {
     const user = userEvent.setup();
     renderWithProviders(<Log />);
-    await user.click(await screen.findByRole('button', { name: /Big goals/ }));
+    await user.click(await screen.findByRole('button', { name: /^Big goals/ }));
     expect(screen.getByLabelText('Entry title')).toHaveValue('Big goals');
     await waitFor(() => expect(screen.getByRole('textbox', { name: 'Entry' })).toHaveTextContent('AIME 4 by 9th grade.'));
-    expect(screen.getByRole('button', { name: /Big goals/ })).toHaveAttribute('aria-current', 'true');
+    expect(screen.getByRole('button', { name: /^Big goals/ })).toHaveAttribute('aria-current', 'true');
   });
 
   it('saves on its own once the typing stops, and says so', async () => {
@@ -155,7 +161,7 @@ describe('the log page', () => {
   it('asks before deleting, and says what goes with the entry', async () => {
     const user = userEvent.setup();
     renderWithProviders(<Log />);
-    await user.click(await screen.findByRole('button', { name: /Big goals/ }));
+    await user.click(await screen.findByRole('button', { name: /^Big goals/ }));
     await user.click(screen.getByRole('button', { name: /Delete/ }));
 
     const dialog = screen.getByRole('alertdialog', { name: 'Delete this entry?' });
@@ -164,13 +170,13 @@ describe('the log page', () => {
 
     await user.click(within(dialog).getByRole('button', { name: 'Delete entry' }));
     await waitFor(() => expect(service.remove).toHaveBeenCalledWith('e2'));
-    await waitFor(() => expect(screen.queryByRole('button', { name: /Big goals/ })).not.toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByRole('button', { name: /^Big goals/ })).not.toBeInTheDocument());
   });
 
   it('can cancel a delete', async () => {
     const user = userEvent.setup();
     renderWithProviders(<Log />);
-    await user.click(await screen.findByRole('button', { name: /Violin practice/ }));
+    await user.click(await screen.findByRole('button', { name: /^Violin practice/ }));
     await user.click(screen.getByRole('button', { name: /Delete/ }));
     expect(screen.getByRole('alertdialog')).toHaveTextContent('Nothing Summit learned comes only from it');
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
@@ -240,7 +246,7 @@ describe('as a block on a space', () => {
     const title = await screen.findByLabelText('Entry title');
     expect(screen.queryByRole('heading', { level: 1 })).toBeNull();
     expect(title).not.toHaveFocus();
-    expect(screen.getByRole('button', { name: /Big goals/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^Big goals/ })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /See what Summit has learned/ })).toBeInTheDocument();
     expect(screen.getByText("How's today?")).toBeInTheDocument();
   });
@@ -249,7 +255,7 @@ describe('as a block on a space', () => {
     renderWithProviders(<Journal embedded slot="space-b1" show={{ checkin: false, entries: false, learned: false }} />);
     expect(await screen.findByLabelText('Entry title')).toBeInTheDocument();
     expect(screen.queryByText("How's today?")).toBeNull();
-    expect(screen.queryByRole('button', { name: /Big goals/ })).toBeNull();
+    expect(screen.queryByRole('button', { name: /^Big goals/ })).toBeNull();
     expect(screen.queryByRole('button', { name: /See what Summit has learned/ })).toBeNull();
   });
 
@@ -280,10 +286,146 @@ describe('as a block on a space', () => {
   it('opens the delete box over the whole window', async () => {
     const user = userEvent.setup();
     const { container } = renderWithProviders(<Journal embedded slot="space-b1" show={parts} />);
-    await user.click(await screen.findByRole('button', { name: /Big goals/ }));
+    await user.click(await screen.findByRole('button', { name: /^Big goals/ }));
     await user.click(screen.getByRole('button', { name: /Delete/ }));
     const dialog = screen.getByRole('alertdialog', { name: 'Delete this entry?' });
     expect(container.contains(dialog)).toBe(false);
     expect(document.body.contains(dialog)).toBe(true);
+  });
+});
+
+describe('pins, marks and search', () => {
+  it('pins an entry from the list at once and moves it to the top', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Log />);
+    const list = await screen.findByRole('list', { name: 'Your entries' });
+    expect(items(list)[0]).toHaveTextContent('Violin practice');
+
+    await user.click(screen.getByRole('button', { name: 'Pin Big goals' }));
+    expect(items(list)[0]).toHaveTextContent('Big goals');
+    expect(screen.getByRole('button', { name: 'Unpin Big goals' })).toHaveAttribute('aria-pressed', 'true');
+    expect(service.flag).toHaveBeenCalledWith('e2', { pinned: true });
+    // The chips now offer the pinned ones on their own.
+    expect(screen.getByRole('button', { name: 'Pinned, 1' })).toBeInTheDocument();
+  });
+
+  it('puts a pin back when the server says no', async () => {
+    service.flag.mockResolvedValue({ success: false, message: 'Nope' });
+    const user = userEvent.setup();
+    renderWithProviders(<Log />);
+    await user.click(await screen.findByRole('button', { name: 'Pin Big goals' }));
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Pin Big goals' })).toHaveAttribute('aria-pressed', 'false'));
+    expect(screen.getByText(/Couldn't save that change/)).toBeInTheDocument();
+  });
+
+  it('marks the open entry as a milestone, and the chip shows only milestones', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Log />);
+    await user.click(await screen.findByRole('button', { name: /^Big goals/ }));
+    const flags = screen.getByRole('group', { name: 'Pin and mark this entry' });
+    await user.click(within(flags).getByRole('button', { name: 'Milestone' }));
+    expect(within(flags).getByRole('button', { name: 'Milestone' })).toHaveAttribute('aria-pressed', 'true');
+    expect(service.flag).toHaveBeenCalledWith('e2', { marks: ['milestone'] });
+
+    const list = screen.getByRole('list', { name: 'Your entries' });
+    expect(within(list).getByText('Milestone')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Milestones, 1' }));
+    expect(items(screen.getByRole('list', { name: 'Your entries' }))).toHaveLength(1);
+    expect(screen.getByText('Showing 1 of 2')).toBeInTheDocument();
+  });
+
+  it('finds entries by a mark, by a date, and marks the words it found', async () => {
+    service.list.mockResolvedValue({
+      success: true, insights: INSIGHTS, learning: true,
+      entries: [{ ...ENTRIES[0], marks: ['win'] }, ENTRIES[1]],
+    });
+    const user = userEvent.setup();
+    renderWithProviders(<Log />);
+    const search = await screen.findByLabelText('Search entries');
+
+    await user.type(search, 'win');
+    expect(items(screen.getByRole('list', { name: 'Your entries' })).map((row) => row.textContent)).toEqual([
+      expect.stringContaining('Violin practice'),
+    ]);
+
+    await user.clear(search);
+    await user.type(search, 'oct 5');
+    const found = items(screen.getByRole('list', { name: 'Your entries' }));
+    expect(found).toHaveLength(1);
+    expect(found[0]).toHaveTextContent('Big goals');
+
+    await user.clear(search);
+    await user.type(search, 'intonation');
+    expect(document.querySelector('mark.lg-hit')).toHaveTextContent('intonation');
+
+    // Escape clears it, and / comes back to it.
+    await user.keyboard('{Escape}');
+    expect(search).toHaveValue('');
+    search.blur();
+    fireEvent.keyDown(document.body, { key: '/' });
+    expect(search).toHaveFocus();
+  });
+
+  it('starts a new entry pinned and marked when they were tapped before its first save', async () => {
+    const user = userEvent.setup();
+    renderWithProviders(<Log />);
+    await screen.findByLabelText('Entry title');
+    const flags = screen.getByRole('group', { name: 'Pin and mark this entry' });
+    await user.click(within(flags).getByRole('button', { name: 'Pin' }));
+    await user.click(within(flags).getByRole('button', { name: 'Idea' }));
+    expect(service.flag).not.toHaveBeenCalled();
+    await user.type(screen.getByLabelText('Entry title'), 'Mornings');
+    await user.click(screen.getByRole('button', { name: 'Save entry' }));
+    await waitFor(() => expect(service.save).toHaveBeenCalledWith(expect.objectContaining({
+      title: 'Mornings', pinned: true, marks: ['idea'],
+    })));
+  });
+});
+
+describe('nothing waits on the server', () => {
+  it('opens another entry at once while the one before saves in the background', async () => {
+    let finish: (value: unknown) => void = () => {};
+    service.save.mockImplementation(() => new Promise((resolve) => {
+      finish = resolve;
+    }));
+    const user = userEvent.setup();
+    renderWithProviders(<Log />);
+    await user.click(await screen.findByRole('button', { name: /^Big goals/ }));
+    await user.clear(screen.getByLabelText('Entry title'));
+    await user.type(screen.getByLabelText('Entry title'), 'Bigger goals');
+
+    await user.click(screen.getByRole('button', { name: /^Violin practice/ }));
+    // The editor didn't wait, and the list already has the new title.
+    expect(screen.getByLabelText('Entry title')).toHaveValue('Violin practice');
+    expect(screen.getByRole('button', { name: /^Bigger goals/ })).toBeInTheDocument();
+    expect(service.save).toHaveBeenCalledWith(expect.objectContaining({ id: 'e2', title: 'Bigger goals' }));
+    finish({ success: true, entry: { ...ENTRIES[1], title: 'Bigger goals' } });
+    await waitFor(() => expect(screen.getByLabelText('Entry title')).toHaveValue('Violin practice'));
+  });
+
+  it('keeps words whose save failed after they were closed, and opens them again', async () => {
+    service.save.mockResolvedValue({ success: false, message: 'Server trouble.' });
+    const user = userEvent.setup();
+    renderWithProviders(<Log />);
+    await user.type(await screen.findByLabelText('Entry title'), 'Half a thought');
+    await user.click(screen.getByRole('button', { name: /^Big goals/ }));
+    expect(await screen.findByText(/Couldn't save "Half a thought"/)).toBeInTheDocument();
+    expect(JSON.parse(localStorage.getItem('summit:log-draft:myles:held') ?? '{}')).toMatchObject({ title: 'Half a thought' });
+
+    await user.click(screen.getByRole('button', { name: 'Open it again' }));
+    expect(screen.getByLabelText('Entry title')).toHaveValue('Half a thought');
+    expect(localStorage.getItem('summit:log-draft:myles:held')).toBeNull();
+  });
+
+  it('takes a deleted entry out at once, and puts it back if the server says no', async () => {
+    service.remove.mockResolvedValue({ success: false, message: 'Nope' });
+    const user = userEvent.setup();
+    renderWithProviders(<Log />);
+    await user.click(await screen.findByRole('button', { name: /^Big goals/ }));
+    await user.click(screen.getByRole('button', { name: /Delete/ }));
+    await user.click(within(screen.getByRole('alertdialog')).getByRole('button', { name: 'Delete entry' }));
+    expect(screen.queryByRole('alertdialog')).toBeNull();
+    expect(await screen.findByText(/Couldn't delete "Big goals", so it's back in your list/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^Big goals/ })).toBeInTheDocument();
   });
 });

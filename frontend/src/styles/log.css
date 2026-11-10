@@ -267,6 +267,22 @@
     font-size: var(--text-sm);
     outline: none;
 }
+.lg-search input::-webkit-search-cancel-button { display: none; }
+.lg-search-clear {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--color-ink-faint);
+    cursor: pointer;
+}
+.lg-search-clear:hover { background: var(--color-surface-2); color: var(--color-ink); }
+.lg-search-clear svg { width: 14px; height: 14px; }
 .lg-order {
     padding: 0 var(--space-3);
     border: 1px solid var(--color-line);
@@ -319,12 +335,118 @@
 .lg-chev {
     position: absolute;
     right: var(--space-3);
-    top: 50%;
+    bottom: var(--space-4);
     width: 16px;
     height: 16px;
-    transform: translateY(-50%);
     color: var(--color-ink-faint);
 }
+/* ---------- Pins, marks, filters and search hits ----------------------------
+   Each mark has one hue, the same on the editor's button, the list's tag and
+   the filter chip, so a milestone reads as a milestone everywhere. */
+.lg-flag.is-milestone, .lg-tag.is-milestone, .lg-chip.is-milestone { --lg-hue: #7c5cd6; }
+.lg-flag.is-win, .lg-tag.is-win, .lg-chip.is-win { --lg-hue: #2f9e6a; }
+.lg-flag.is-lesson, .lg-tag.is-lesson, .lg-chip.is-lesson { --lg-hue: #2f6fd0; }
+.lg-flag.is-idea, .lg-tag.is-idea, .lg-chip.is-idea { --lg-hue: #c98a12; }
+.lg-flag.is-setback, .lg-tag.is-setback, .lg-chip.is-setback { --lg-hue: #c2453d; }
+.lg-flag.is-pin, .lg-chip.is-pinned, .lg-chip.is-all { --lg-hue: var(--color-accent); }
+
+.lg-flags { display: flex; flex-wrap: wrap; gap: 6px; }
+.lg-flag,
+.lg-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-height: 28px;
+    padding: 0 var(--space-3);
+    border: 1px solid var(--color-line);
+    border-radius: 999px;
+    background: var(--color-surface);
+    color: var(--color-ink-muted);
+    font: inherit;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+}
+.lg-flag svg,
+.lg-chip svg { width: 13px; height: 13px; }
+.lg-flag:hover,
+.lg-chip:hover { border-color: var(--lg-hue); color: var(--color-ink); }
+.lg-flag.is-on,
+.lg-chip.is-on {
+    border-color: var(--lg-hue);
+    background: color-mix(in srgb, var(--lg-hue) 14%, var(--color-surface));
+    color: color-mix(in srgb, var(--lg-hue) 70%, var(--color-ink));
+}
+.lg-flag.is-pin.is-on svg { fill: currentColor; }
+
+.lg-filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.lg-chip-count { color: var(--color-ink-faint); font-weight: 500; }
+.lg-found { margin: calc(var(--space-2) * -1) 0 0; color: var(--color-ink-faint); font-size: var(--text-xs); }
+
+.lg-row { position: relative; }
+.lg-row .lg-item { padding-right: var(--space-10); transition: background-color .15s ease; }
+.lg-pin {
+    position: absolute;
+    top: var(--space-3);
+    right: 6px;
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-sm, 6px);
+    background: transparent;
+    color: var(--color-ink-faint);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity .15s ease, background-color .15s ease, color .15s ease;
+}
+.lg-pin svg { width: 15px; height: 15px; }
+.lg-row:hover .lg-pin,
+.lg-pin:focus-visible,
+.lg-pin.is-on { opacity: 1; }
+.lg-pin:hover { background: var(--color-surface-2); color: var(--color-ink); }
+.lg-pin.is-on { color: var(--color-accent); }
+.lg-pin.is-on svg { fill: currentColor; }
+@media (hover: none) {
+    .lg-pin { opacity: .6; }
+    .lg-pin.is-on { opacity: 1; }
+}
+/* Room for the pin beside the date. */
+.lg-row .lg-item-top { padding-right: var(--space-6); }
+
+.lg-item-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.lg-tag {
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--lg-hue) 13%, var(--color-surface));
+    color: color-mix(in srgb, var(--lg-hue) 75%, var(--color-ink));
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.6;
+}
+
+.lg-hit {
+    padding: 0 1px;
+    border-radius: 3px;
+    background: color-mix(in srgb, #f5c542 45%, transparent);
+    color: inherit;
+}
+.lg-empty-reset { display: block; margin: var(--space-3) auto 0; }
+
+/* Switching entries: the new one settles in rather than snapping. */
+.lg-body > .nt-rich { animation: lg-swap .18s ease-out; }
+@keyframes lg-swap {
+    from { opacity: .35; transform: translateY(3px); }
+    to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .lg-body > .nt-rich { animation: none; }
+    .lg-flag, .lg-chip, .lg-pin, .lg-row .lg-item { transition: none; }
+}
+
 .lg-empty {
     margin: var(--space-10) auto;
     max-width: 28ch;

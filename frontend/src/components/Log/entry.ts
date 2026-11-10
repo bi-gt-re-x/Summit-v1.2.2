@@ -3,7 +3,8 @@
  * the plain-text preview an entry shows in the list, its date, search, and the
  * draft kept on this device so nothing typed is lost.
  */
-import type { Entry, Insight } from '@/services/log';
+import type { Entry, Insight, MarkKey } from '@/services/log';
+import { RULES } from '@/utils/sharedRules';
 
 /** An entry's body without its Markdown, for the two-line preview and search. */
 export function plainText(body: string): string {
@@ -38,17 +39,84 @@ export function clock(at: number): string {
   return TIME.format(new Date(at));
 }
 
-/** The entries a search keeps, in the chosen order. */
-export function findEntries(entries: Entry[], query: string, order: 'newest' | 'oldest'): Entry[] {
-  const words = query.toLowerCase().split(/\s+/).filter(Boolean);
-  const kept = words.length === 0
-    ? entries
-    : entries.filter((entry) => {
-        const text = `${entry.title} ${plainText(entry.body)}`.toLowerCase();
-        return words.every((word) => text.includes(word));
-      });
+/** The tags an entry can carry, in order: shared/rules.json `log.marks`. */
+export const MARKS = RULES.log.marks as Array<{ key: MarkKey; label: string }>;
+const MARK_LABEL = new Map(MARKS.map((mark) => [mark.key, mark.label]));
+export const markLabel = (key: MarkKey): string => MARK_LABEL.get(key) ?? key;
+
+/** What the list shows: everything, the pinned ones, or one mark. */
+export type EntryFilter = 'all' | 'pinned' | MarkKey;
+
+/** Lowercase words of a search, ready to match. */
+export const searchWords = (query: string): string[] => query.toLowerCase().split(/\s+/).filter(Boolean);
+
+/**
+ * Everything a search can find an entry by: its title and words, its marks
+ * ("milestone" finds every milestone), "pinned", and its date written out
+ * ("oct 10", "2026").
+ */
+function findable(entry: Entry): string {
+  const marks = (entry.marks ?? []).map(markLabel).join(' ');
+  return `${entry.title} ${plainText(entry.body)} ${marks} ${entry.pinned ? 'pinned' : ''} ${entryDate(entry.created_at)}`.toLowerCase();
+}
+
+/**
+ * The entries a search and a filter keep, in the chosen order, with the
+ * pinned ones first. Every word has to be found somewhere in the entry.
+ */
+export function findEntries(
+  entries: Entry[],
+  query: string,
+  order: 'newest' | 'oldest',
+  filter: EntryFilter = 'all',
+): Entry[] {
+  const words = searchWords(query);
+  const kept = entries.filter((entry) => {
+    if (filter === 'pinned' && !entry.pinned) return false;
+    if (filter !== 'all' && filter !== 'pinned' && !(entry.marks ?? []).includes(filter)) return false;
+    if (words.length === 0) return true;
+    const text = findable(entry);
+    return words.every((word) => text.includes(word));
+  });
   const sorted = [...kept].sort((a, b) => (a.created_at < b.created_at ? 1 : a.created_at > b.created_at ? -1 : 0));
-  return order === 'newest' ? sorted : sorted.reverse();
+  const ordered = order === 'newest' ? sorted : sorted.reverse();
+  return [...ordered.filter((entry) => entry.pinned), ...ordered.filter((entry) => !entry.pinned)];
+}
+
+/** How many entries each filter would show, for the chips. */
+export function filterCounts(entries: Entry[]): Record<EntryFilter, number> {
+  const counts = { all: entries.length, pinned: 0 } as Record<EntryFilter, number>;
+  for (const mark of MARKS) counts[mark.key] = 0;
+  for (const entry of entries) {
+    if (entry.pinned) counts.pinned += 1;
+    for (const mark of entry.marks ?? []) counts[mark] = (counts[mark] ?? 0) + 1;
+  }
+  return counts;
+}
+
+/** Text cut into plain and found pieces, so a search's words can be marked where they are. */
+export function highlight(text: string, query: string): Array<{ text: string; hit: boolean }> {
+  const words = searchWords(query).map((word) => word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  if (words.length === 0 || !text) return [{ text, hit: false }];
+  const pattern = new RegExp(`(${words.sort((a, b) => b.length - a.length).join('|')})`, 'gi');
+  return text
+    .split(pattern)
+    .filter((piece) => piece !== '')
+    .map((piece) => ({ text: piece, hit: words.some((word) => new RegExp(`^${word}$`, 'i').test(piece)) }));
+}
+
+/**
+ * The bit of an entry's words to preview: the start, or, when a search word
+ * is further in, the stretch around the first one found, so you can see why
+ * it matched.
+ */
+export function previewOf(text: string, query: string, room = 140): string {
+  const words = searchWords(query);
+  const lower = text.toLowerCase();
+  const at = words.map((word) => lower.indexOf(word)).filter((found) => found >= 0).sort((a, b) => a - b)[0];
+  if (at === undefined || at < room - 40) return text;
+  const start = text.lastIndexOf(' ', Math.max(0, at - 40)) + 1;
+  return `…${text.slice(start)}`;
 }
 
 /** The insights that came from this entry and nothing else: what deleting it takes. */

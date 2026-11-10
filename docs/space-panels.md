@@ -183,7 +183,7 @@ twice.
 
 | Block kind | What it is | Settings |
 | --- | --- | --- |
-| `log` | The whole Log page (`components/Log/Journal`, which `/log` draws too): title, check-in, the rich editor and its toolbar, autosave, Save entry and ⌘S, Delete with its warning, past entries with search and sort, and "What Summit has learned" with Remove | which parts show: the check-in, past entries, the learned note |
+| `log` | The whole Log page (`components/Log/Journal`, which `/log` draws too): title, check-in, the rich editor and its toolbar, autosave, Save entry and ⌘S, Delete with its warning, past entries with search and sort, pins and marks, and "What Summit has learned" with Remove | which parts show: the check-in, past entries, the learned note; which entries the list opens on: all, pinned, or one mark (Milestones, Wins, Lessons, Ideas, Setbacks) |
 
 The block leaves out the page heading and doesn't take the caret on load. ⌘S
 saves only from inside it, and ⌘Z there stays with the Log rather than undoing

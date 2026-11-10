@@ -8,7 +8,7 @@ Saving an entry never waits on a model. The save writes the row and returns,
 and backend/tracking/journal.py reads it in the background: after a quiet
 spell for an autosave, straight away when the person pressed Save (`final`).
 """
-from typing import Optional
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
@@ -35,6 +35,28 @@ class SaveEntry(BaseModel):
     #: check-in row. Left out means leave it; 0 means clear it.
     mood: Optional[int] = None
     energy: Optional[int] = None
+    #: Pinned and marks, for an entry that's new: an open entry's are set
+    #: through /api/log/flag the moment they're tapped. Left out means leave.
+    pinned: Optional[bool] = None
+    marks: Optional[List[str]] = None
+
+
+class Flag(BaseModel):
+    """Pin an entry, or change its marks. Either may be left out."""
+
+    id: Optional[str] = None
+    pinned: Optional[bool] = None
+    marks: Optional[List[str]] = None
+
+
+def _flags(pinned, marks) -> dict:
+    """The columns a pin or marks change writes. Nothing for what's left out."""
+    out = {}
+    if isinstance(pinned, bool):
+        out['pinned'] = 1 if pinned else 0
+    if marks is not None:
+        out['marks'] = ','.join(journal.clean_marks(marks))
+    return out
 
 
 def _scale(value, top):
@@ -54,7 +76,7 @@ def _entries(username):
     """Newest first. The page offers the other order itself."""
     rows = db.rows_for('log_entries', username)
     rows.sort(key=lambda row: (row.get('created_at') or '', str(row.get('id'))), reverse=True)
-    return rows
+    return [journal.public_entry(row) for row in rows]
 
 
 def _insights(username):
@@ -107,6 +129,8 @@ def save_entry(body: SaveEntry, username: str = Depends(current_username)):
         # The check-in is the reader's own answer, not writing to learn from,
         # so changing it alone doesn't send the entry to be read again.
         moved = {key: value for key, value in checkin.items() if row.get(key) != value}
+        moved.update({key: value for key, value in _flags(body.pinned, body.marks).items()
+                      if row.get(key) != value})
         if moved:
             db.update_row('log_entries', row['id'], {**moved, 'updated_at': stamp}, user_id=username)
             row.update(moved)
@@ -116,6 +140,7 @@ def save_entry(body: SaveEntry, username: str = Depends(current_username)):
             'id': db.new_id('log_entries'), 'user_id': username, 'title': title,
             'body': text, 'learn_state': 'waiting' if changed else 'done',
             'created_at': stamp, 'updated_at': stamp, **checkin,
+            'pinned': 0, 'marks': '', **_flags(body.pinned, body.marks),
         })
 
     # Read it later, or now on a Save press. An unchanged entry that was
@@ -125,7 +150,21 @@ def save_entry(body: SaveEntry, username: str = Depends(current_username)):
                          FINAL_DELAY if body.final else journal.QUIET_SECONDS)
     # And any other entry a restart left waiting.
     journal.recover(username)
-    return ok(entry=row)
+    return ok(entry=journal.public_entry(row))
+
+
+@router.post('/api/log/flag')
+def flag_entry(body: Flag, username: str = Depends(current_username)):
+    """Pin or unpin an entry, or set its marks. Neither is writing, so the
+    entry isn't read again and its "updated" time stays put."""
+    row = db.find_row('log_entries', body.id, user_id=username) if body.id else None
+    if not row:
+        return fail("That entry doesn't exist.")
+    changes = _flags(body.pinned, body.marks)
+    if changes:
+        db.update_row('log_entries', row['id'], changes, user_id=username)
+        row.update(changes)
+    return ok(entry=journal.public_entry(row))
 
 
 @router.post('/api/log/resume')

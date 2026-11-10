@@ -235,7 +235,7 @@
         "core-hours": { "group": "growth", "name": "Core hours", "fields": { "window": {}, "subject": {} } },
         "years": { "group": "growth", "name": "Year by year", "fields": {} },
         "badges": { "group": "goals", "name": "Badges", "fields": { "category": {}, "which": {}, "limit": { "default": 6 } } },
-        "log": { "group": "log", "name": "Log", "fields": { "show": { "of": ["checkin", "entries", "learned"], "default": ["checkin", "entries", "learned"] } } }
+        "log": { "group": "log", "name": "Log", "fields": { "show": { "of": ["checkin", "entries", "learned"], "default": ["checkin", "entries", "learned"] }, "which": { "of": ["all", "pinned", "milestone", "win", "lesson", "idea", "setback"], "default": "all" } } }
       }
     }
   },
@@ -254,7 +254,7 @@
   },
 
   "log": {
-    "_about": "The Log page: a private journal Summit learns from. Each saved entry is read by a model in the background and turned into short insights, each tagged with a kind. A passing feeling fades after `feeling_days` days and never becomes a lasting fact. `quiet_seconds` is how long an entry has to sit unchanged after an autosave before it's read; pressing Save reads it straight away. backend/tracking/journal.py and frontend/src/pages/Log.tsx both read this.",
+    "_about": "The Log page: a private journal Summit learns from. Each saved entry is read by a model in the background and turned into short insights, each tagged with a kind. A passing feeling fades after `feeling_days` days and never becomes a lasting fact. `quiet_seconds` is how long an entry has to sit unchanged after an autosave before it's read; pressing Save reads it straight away. backend/tracking/journal.py and frontend/src/pages/Log.tsx both read this. `marks` are the tags an entry can carry (Milestone and the rest), set from the editor or the list; an entry can also be pinned to the top.",
     "title_max": 200,
     "body_max": 20000,
     "feeling_days": 7,
@@ -274,6 +274,13 @@
       { "key": "challenges", "label": "Challenges" },
       { "key": "preferences", "label": "Preferences" },
       { "key": "reflections", "label": "How you work" }
+    ],
+    "marks": [
+      { "key": "milestone", "label": "Milestone" },
+      { "key": "win", "label": "Win" },
+      { "key": "lesson", "label": "Lesson" },
+      { "key": "idea", "label": "Idea" },
+      { "key": "setback", "label": "Setback" }
     ]
   },
 

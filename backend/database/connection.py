@@ -229,6 +229,11 @@ ADDED_COLUMNS = (
     # never as a middling day. Ranges are enforced by backend/api/journal.py.
     ('log_entries', 'mood', 'INTEGER'),
     ('log_entries', 'energy', 'INTEGER'),
+    # Pinned to the top of the Log's list (1) or not (0 or NULL), and the
+    # marks it carries (Milestone, Win...), comma-separated keys from
+    # shared/rules.json `log.marks`. NULL on older rows reads as neither.
+    ('log_entries', 'pinned', 'INTEGER'),
+    ('log_entries', 'marks', 'TEXT'),
 
     # Which skill-tree node a task counts toward, when that was said rather
     # than read off its name: a task booked from the tree carries its node,

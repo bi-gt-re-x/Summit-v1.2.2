@@ -73,6 +73,7 @@ import { NextSessionsPanel } from '@/components/NextSessions/NextSessions';
 import { FollowupPanel } from '@/components/Recommendations';
 import { BadgeTile, pickBadges } from '@/components/Achievements/BadgeWall';
 import { Journal } from '@/components/Log/Journal';
+import type { EntryFilter } from '@/components/Log/entry';
 import { useApi, useAuth, useSkillAttempts } from '@/hooks';
 import { achievements as badgeService, analytics as analyticsService, next as nextService } from '@/services';
 import { NO_PLAN, type NextResult } from '@/services/next';
@@ -533,7 +534,7 @@ const SELF_VIEWS: Partial<Record<PanelKind, (props: Base) => ReactNode>> = {
   log: LogView,
 };
 
-/** The whole Log page, every part working: the block's `show` leaves parts out. */
+/** The whole Log page, every part working: `show` leaves parts out, `which` is the entries it opens on. */
 function LogView({ config, id }: Base) {
   const parts = list(config, 'show');
   return (
@@ -541,6 +542,7 @@ function LogView({ config, id }: Base) {
       embedded
       slot={`space-${id ?? 'block'}`}
       show={{ checkin: parts.includes('checkin'), entries: parts.includes('entries'), learned: parts.includes('learned') }}
+      filter={text(config, 'which') as EntryFilter}
     />
   );
 }

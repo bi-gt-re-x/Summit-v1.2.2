@@ -291,7 +291,10 @@ export const CHOICE_LABEL: Partial<Record<FieldName, Record<string, string>>> = 
   budget: { '15': '15m', '30': '30m', '45': '45m', '60': '1h', '90': '1.5h', '120': '2h' },
   style: { card: 'Full panel', line: 'One line' },
   category: { all: 'All' },
-  which: { earned: 'Earned', next: 'Up next', all: 'All' },
+  which: {
+    earned: 'Earned', next: 'Up next', all: 'All',
+    pinned: 'Pinned', milestone: 'Milestones', win: 'Wins', lesson: 'Lessons', idea: 'Ideas', setback: 'Setbacks',
+  },
   show: {
     productivity: 'Activity', consistency: 'Consistency', quality: 'Quality', tasks: 'Tasks', focus: 'Focus',
     xp: 'XP', streak: 'Streak', completion: 'Completion',
