@@ -54,6 +54,7 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useAuth, useMediaQuery, useSettings, useSpaces, useStats, useSubjectIndex } from '@/hooks';
+import { RailSpaces } from '@/components/Spaces/RailSpaces';
 import { analyticsHomePath, followedSubjects } from '@/utils/analyticsPrefs';
 import { format } from '@/utils';
 import { rankFor } from '@/utils/rank';
@@ -610,10 +611,10 @@ export function Rail() {
 
   // The three Personal spaces' names and the three Team ones, once there is
   // an account to ask about.
-  const { spaces } = useSpaces(status === 'signed-in');
-  const { spaces: teamSpaces } = useSpaces(status === 'signed-in', 'team');
+  const { spaces, folders } = useSpaces(status === 'signed-in');
+  const { spaces: teamSpaces, folders: teamFolders } = useSpaces(status === 'signed-in', 'team');
   /** The team space open now, so "Invite people" invites to that one. */
-  const teamHere = /^\/team\/([1-3])\b/.exec(pathname)?.[1];
+  const teamHere = /^\/team\/(\d+)\b/.exec(pathname)?.[1];
 
   /* The nametag — picture, title, name — shared with the top bar
      (hooks/useNametag). The title is the band the level has reached, the one
@@ -820,41 +821,20 @@ export function Rail() {
             {!spacesLocked && (
               <>
             <Section id="personal" label="Personal" open={isOpen('personal')} onFold={fold}>
-              {/* Three pages of the reader's own, renamed and written in on
-                  the space page itself. See pages/Space.tsx. */}
-              {spaces.map((space) => (
-                <NavLink
-                  key={space.id}
-                  to={`/spaces/${space.id}`}
-                  className={({ isActive }) => `rail-link${isActive ? ' active' : ''}`}
-                  title={space.name}
-                >
-                  {/* The page's own icon when it has one (pages/Space.tsx). */}
-                  {space.doc?.icon ? <i className="rail-emoji" aria-hidden="true">{space.doc.icon}</i> : SPACE_ICON}
-                  <span>{space.name}</span>
-                </NavLink>
-              ))}
+              {/* The reader's own pages, renamed and written in on the space
+                  page itself (pages/Space.tsx), added and filed in folders
+                  here. */}
+              <RailSpaces kind="personal" spaces={spaces} folders={folders} pageIcon={SPACE_ICON} />
             </Section>
 
             <Section id="team" label="Team" open={isOpen('team')} onFold={fold}>
               {/* The same three-space shape as Personal, each with a member
                   list on its page. Inviting is a placeholder: addresses are
                   kept as pending and nothing is sent (components/Spaces). */}
-              {teamSpaces.map((space) => (
-                <NavLink
-                  key={space.id}
-                  to={`/team/${space.id}`}
-                  className={({ isActive }) => `rail-link${isActive ? ' active' : ''}`}
-                  title={space.name}
-                >
-                  {/* The page's own icon when it has one (pages/Space.tsx). */}
-                  {space.doc?.icon ? <i className="rail-emoji" aria-hidden="true">{space.doc.icon}</i> : TEAM_ICON}
-                  <span>{space.name}</span>
-                </NavLink>
-              ))}
+              <RailSpaces kind="team" spaces={teamSpaces} folders={teamFolders} pageIcon={TEAM_ICON} />
               <Link
                 className="rail-link rail-invite"
-                to={`/team/${teamHere ?? 1}?invite=1`}
+                to={`/team/${teamHere ?? teamSpaces[0]?.id ?? 1}?invite=1`}
                 title="Invite people"
               >
                 {INVITE_ICON}

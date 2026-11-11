@@ -108,10 +108,21 @@ function clockLabel(hhmm: string): string {
   return hmText(hours, minutes);
 }
 
-/** "July 13 – July 19, 2026". */
-function weekTitle(opens: Date): string {
+/**
+ * "July 13 to 19, 2026", or "June 29 to July 5, 2026" across a month, or with
+ * both years when the week crosses into a new one. The month is said once when
+ * it's the same: the long form ran past the header's width and the year, the
+ * part that tells weeks apart, was what got cut.
+ */
+export function weekTitle(opens: Date): string {
   const closes = dates.addDays(opens, 6);
   const long = (date: Date) => dates.formatDate(date, { month: 'long', day: 'numeric' });
+  if (opens.getFullYear() !== closes.getFullYear()) {
+    return `${long(opens)}, ${opens.getFullYear()} to ${long(closes)}, ${closes.getFullYear()}`;
+  }
+  if (opens.getMonth() === closes.getMonth()) {
+    return `${long(opens)} to ${closes.getDate()}, ${closes.getFullYear()}`;
+  }
   return `${long(opens)} to ${long(closes)}, ${closes.getFullYear()}`;
 }
 

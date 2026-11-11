@@ -977,3 +977,123 @@ html[data-theme="dark"] .rail-rank-title { color: #F0F2F5; }
     font-style: normal;
     line-height: 1;
 }
+
+/* ---- Spaces: folders, and adding pages (components/Spaces/RailSpaces) ------ */
+.rail-folder { display: flex; flex-direction: column; gap: 2px; }
+.rail-folder-head { position: relative; display: flex; align-items: center; }
+.rail-folder-head .rail-folder-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 100%;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: var(--text-lg);
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+}
+.rail-folder-name span { overflow: hidden; text-overflow: ellipsis; }
+.rail-folder-count { margin-left: auto; color: #A3A7AD; font-size: var(--text-xs); font-weight: 600; }
+.rail-folder-tools { position: relative; flex: none; }
+.rail-folder-more {
+    width: 28px;
+    height: 28px;
+    margin-right: 4px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: none;
+    color: #9A9EA4;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0;
+}
+.rail-folder-head:hover .rail-folder-more,
+.rail-folder-more:focus-visible,
+.rail-folder-more[aria-expanded="true"] { opacity: 1; }
+.rail-folder-more:hover { background: #ECEFF2; color: #2C302E; }
+.rail-folder-menu {
+    position: absolute;
+    top: 30px;
+    right: 0;
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+    padding: 4px;
+    border: 1px solid #E3E6EA;
+    border-radius: var(--radius-md);
+    background: #fff;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, .12);
+}
+.rail-folder-menu button {
+    padding: 8px 10px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: none;
+    color: #2C302E;
+    font: inherit;
+    font-size: var(--text-sm);
+    text-align: left;
+    cursor: pointer;
+}
+.rail-folder-menu button:hover { background: #F4F6F8; }
+.rail-folder-body { display: flex; flex-direction: column; gap: 2px; }
+.rail-link.rail-nested { padding-left: calc(var(--space-4) + 18px); }
+.rail-folder-empty { margin: 0; padding: 4px var(--space-4) 6px calc(var(--space-4) + 18px); color: #A3A7AD; font-size: var(--text-xs); }
+.rail-folder-input {
+    margin: 2px var(--space-2);
+    padding: 8px 10px;
+    border: 1px solid #CDD2D8;
+    border-radius: var(--radius-md);
+    background: #fff;
+    color: #2C302E;
+    font: inherit;
+    font-size: var(--text-sm);
+}
+.rail-folder-input:focus { outline: none; border-color: #A38A70; }
+.rail-space-add { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); }
+.rail-space-add .rail-add {
+    flex: 1 1 auto;
+    border: 0;
+    background: none;
+    color: #8A8E95;
+    font: inherit;
+    font-size: var(--text-md);
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+}
+.rail-add-folder {
+    flex: none;
+    margin-right: var(--space-2);
+    padding: 4px 8px;
+    border: 0;
+    border-radius: var(--radius-sm);
+    background: none;
+    color: #9A9EA4;
+    font: inherit;
+    font-size: var(--text-xs);
+    font-weight: 600;
+    cursor: pointer;
+}
+.rail-add-folder:hover { background: #F4F6F8; color: #2C302E; }
+.rail-space-problem { margin: 0; padding: 0 var(--space-4); color: #C0392B; font-size: var(--text-xs); }
+
+/* Folded to icons: folders and pages keep their icons; the add rows, counts and menus go. */
+html.nav-collapsed .rail-folder-count,
+html.nav-collapsed .rail-folder-tools,
+html.nav-collapsed .rail-add-folder,
+html.nav-collapsed .rail-folder-empty,
+html.nav-collapsed .rail-space-problem { display: none; }
+html.nav-collapsed .rail-link.rail-nested { padding-left: 0; }
+html.nav-collapsed .rail-space-add { justify-content: center; }
+
+html[data-theme="dark"] .rail-folder-more:hover,
+html[data-theme="dark"] .rail-add-folder:hover,
+html[data-theme="dark"] .rail-folder-menu button:hover { background: #21262D; color: #F0F2F5; }
+html[data-theme="dark"] .rail-folder-menu { border-color: #30363D; background: #161B22; }
+html[data-theme="dark"] .rail-folder-menu button { color: #E6EDF3; }
+html[data-theme="dark"] .rail-folder-input { border-color: #30363D; background: #0D1117; color: #E6EDF3; }

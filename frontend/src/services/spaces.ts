@@ -1,5 +1,6 @@
 /**
- * The three Personal spaces and the three Team ones. Backend:
+ * The Personal spaces and the Team ones: three of each to start, more added
+ * from the rail, filed under folders if the reader wants. Backend:
  * backend/api/spaces.py.
  *
  * A name and a page of blocks each, and on a team space a list of pending
@@ -37,10 +38,20 @@ export interface Space {
   doc?: SpaceDoc;
   /** Team spaces only. */
   invites?: Invite[];
+  /** The folder it's filed under, by id, or '' for none. */
+  folder?: string;
 }
 
-/** How many of each; fixed. From shared/rules.json, as the server's is. */
+/** A folder in the rail. Pages name it; it holds nothing itself. */
+export interface Folder {
+  id: string;
+  name: string;
+}
+
+/** How many of each a new account starts with, and the most there can be. From shared/rules.json. */
 export const SPACE_COUNT: number = RULES.spaces.count;
+export const SPACE_MAX: number = RULES.spaces.max_count;
+export const FOLDERS_MAX: number = RULES.spaces.folders_max;
 
 const BASE: Record<SpaceKind, string> = { personal: '/api/spaces', team: '/api/team-spaces' };
 
@@ -51,7 +62,7 @@ export const SPACE_PATH: Record<SpaceKind, string> = { personal: '/spaces', team
 export const defaultName = (id: number, kind: SpaceKind = 'personal') =>
   kind === 'team' ? `Team Space ${id}` : `Space ${id}`;
 
-/** The three of a kind, as they are before anything is saved. */
+/** The starting three of a kind, as they are before anything is saved. */
 export const defaultSpaces = (kind: SpaceKind): Space[] =>
   Array.from({ length: SPACE_COUNT }, (_, at) => ({
     id: at + 1,
@@ -63,6 +74,14 @@ export const defaultSpaces = (kind: SpaceKind): Space[] =>
 export const DEFAULT_SPACES = defaultSpaces('personal');
 
 export const SPACES_CHANGED = 'summit:spaces-changed';
+
+/** A page added, deleted, filed or reordered, or a folder changed: the rail reads the list again. */
+export const SPACES_RELOAD = 'summit:spaces-reload';
+
+function reload<T>(kind: SpaceKind, result: ApiResult<T>): ApiResult<T> {
+  if (result.success) window.dispatchEvent(new CustomEvent<SpaceKind>(SPACES_RELOAD, { detail: kind }));
+  return result;
+}
 
 export interface SpacesChanged {
   kind: SpaceKind;
@@ -78,8 +97,40 @@ function announce(kind: SpaceKind, result: ApiResult<{ space: Space }>) {
   return result;
 }
 
-export function list(kind: SpaceKind = 'personal'): Promise<ApiResult<{ spaces: Space[] }>> {
-  return get<{ spaces: Space[] }>(BASE[kind]);
+export function list(kind: SpaceKind = 'personal'): Promise<ApiResult<{ spaces: Space[]; folders?: Folder[] }>> {
+  return get<{ spaces: Space[]; folders?: Folder[] }>(BASE[kind]);
+}
+
+/** A new page at the end, in a folder when one is given. */
+export async function create(kind: SpaceKind, change: { name?: string; folder?: string } = {}): Promise<ApiResult<{ space: Space }>> {
+  return reload(kind, await post<{ space: Space }>(`${BASE[kind]}/new`, change));
+}
+
+/** A page, its history and its chat. The last one of a kind can't go. */
+export async function remove(kind: SpaceKind, id: number): Promise<ApiResult<{ id: number }>> {
+  return reload(kind, await post<{ id: number }>(`${BASE[kind]}/${id}/delete`));
+}
+
+/** File a page under a folder, or '' to take it out of one. */
+export async function move(kind: SpaceKind, id: number, folder: string): Promise<ApiResult<{ space: Space }>> {
+  return reload(kind, await post<{ space: Space }>(`${BASE[kind]}/${id}/folder`, { folder }));
+}
+
+export async function reorder(kind: SpaceKind, ids: number[]): Promise<ApiResult<{ spaces: Space[] }>> {
+  return reload(kind, await post<{ spaces: Space[] }>(`${BASE[kind]}/order`, { ids }));
+}
+
+export async function addFolder(kind: SpaceKind, name: string): Promise<ApiResult<{ folder: Folder; folders: Folder[] }>> {
+  return reload(kind, await post<{ folder: Folder; folders: Folder[] }>(`${BASE[kind]}/folders`, { name }));
+}
+
+export async function renameFolder(kind: SpaceKind, id: string, name: string): Promise<ApiResult<{ folder: Folder }>> {
+  return reload(kind, await post<{ folder: Folder }>(`${BASE[kind]}/folders/${encodeURIComponent(id)}`, { name }));
+}
+
+/** The folder goes; its pages stay, out of any folder. */
+export async function removeFolder(kind: SpaceKind, id: string): Promise<ApiResult<{ folders: Folder[] }>> {
+  return reload(kind, await post<{ folders: Folder[] }>(`${BASE[kind]}/folders/${encodeURIComponent(id)}/delete`));
 }
 
 export async function save(

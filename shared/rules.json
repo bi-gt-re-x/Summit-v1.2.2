@@ -98,6 +98,8 @@
 
   "spaces": {
     "count": 3,
+      "max_count": 30,
+      "folders_max": 12,
     "name_max": 40,
     "body_max": 50000,
     "blocks_max": 1000,

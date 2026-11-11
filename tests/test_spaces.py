@@ -12,7 +12,7 @@ def test_a_space_can_be_renamed_and_written_in(client):
     client.post('/api/spaces/2', json={'name': '  Reading list  '})
     client.post('/api/spaces/2', json={'body': 'Godel, Escher, Bach'})
     spaces = client.get('/api/spaces').json()['spaces']
-    assert spaces[1] == {'id': 2, 'name': 'Reading list', 'body': 'Godel, Escher, Bach'}
+    assert spaces[1] == {'id': 2, 'name': 'Reading list', 'body': 'Godel, Escher, Bach', 'folder': ''}
     # The others are untouched.
     assert spaces[0]['name'] == 'Space 1' and spaces[2]['name'] == 'Space 3'
 
@@ -29,7 +29,7 @@ def test_names_and_text_are_bounded(client):
     assert len(reply['space']['body']) == 50_000
 
 
-def test_there_are_only_three(client):
+def test_a_page_that_was_never_made_cant_be_written(client):
     assert client.post('/api/spaces/4', json={'name': 'x'}).json()['success'] is False
     assert client.post('/api/spaces/0', json={'name': 'x'}).json()['success'] is False
 
@@ -37,7 +37,7 @@ def test_there_are_only_three(client):
 def test_spaces_are_per_account(client, stranger):
     client.post('/api/spaces/1', json={'name': 'Mine', 'body': 'private'})
     theirs = stranger.get('/api/spaces').json()['spaces'][0]
-    assert theirs == {'id': 1, 'name': 'Space 1', 'body': ''}
+    assert theirs == {'id': 1, 'name': 'Space 1', 'body': '', 'folder': ''}
 
 
 def test_signed_out_gets_nothing(anon):

@@ -162,6 +162,24 @@ html[data-theme="dark"]:not([data-skin]) .rail-rank-title {
         box-shadow: var(--shadow-lg)
     }
 }
+html[data-theme="dark"]:not([data-skin]) .rail-folder-more:hover,
+html[data-theme="dark"]:not([data-skin]) .rail-add-folder:hover,
+html[data-theme="dark"]:not([data-skin]) .rail-folder-menu button:hover {
+    background: #2B2B28;
+    color: #EEEDE9
+}
+html[data-theme="dark"]:not([data-skin]) .rail-folder-menu {
+    border-color: #3A3A37;
+    background: #21211E
+}
+html[data-theme="dark"]:not([data-skin]) .rail-folder-menu button {
+    color: #EAE9E5
+}
+html[data-theme="dark"]:not([data-skin]) .rail-folder-input {
+    border-color: #3A3A37;
+    background: #1C1C19;
+    color: #EAE9E5
+}
 
 /* ---- topbar.css's own dark rules, recoloured ---- */
 html[data-theme="dark"]:not([data-skin]) .topbar-title-pick {
@@ -2606,6 +2624,64 @@ html[data-theme="dark"]:not([data-skin]) .rail-foot-settings:focus-visible {
     html[data-theme="dark"]:not([data-skin]) .rail-sheet-link.active {
         background: rgba(156, 169, 153, 0.12)
     }
+}
+html[data-theme="dark"]:not([data-skin]) .rail-folder-head .rail-folder-name {
+    border: 0;
+    background: none
+}
+html[data-theme="dark"]:not([data-skin]) .rail-folder-count {
+    color: #737370
+}
+html[data-theme="dark"]:not([data-skin]) .rail-folder-more {
+    border: 0;
+    background: none;
+    color: #7B7B78
+}
+html[data-theme="dark"]:not([data-skin]) .rail-folder-more:hover {
+    background: #292926;
+    color: #EAE9E5
+}
+html[data-theme="dark"]:not([data-skin]) .rail-folder-menu {
+    border: 1px solid #353532;
+    background: #20201D;
+    box-shadow: 0 10px 24px rgba(163, 173, 194, 0.12)
+}
+html[data-theme="dark"]:not([data-skin]) .rail-folder-menu button {
+    border: 0;
+    background: none;
+    color: #EAE9E5
+}
+html[data-theme="dark"]:not([data-skin]) .rail-folder-menu button:hover {
+    background: #1E1E1B
+}
+html[data-theme="dark"]:not([data-skin]) .rail-folder-empty {
+    color: #737370
+}
+html[data-theme="dark"]:not([data-skin]) .rail-folder-input {
+    border: 1px solid #4C4C49;
+    background: #20201D;
+    color: #EAE9E5
+}
+html[data-theme="dark"]:not([data-skin]) .rail-folder-input:focus {
+    outline: none;
+    border-color: #9CA999
+}
+html[data-theme="dark"]:not([data-skin]) .rail-space-add .rail-add {
+    border: 0;
+    background: none;
+    color: #8B8A86
+}
+html[data-theme="dark"]:not([data-skin]) .rail-add-folder {
+    border: 0;
+    background: none;
+    color: #7B7B78
+}
+html[data-theme="dark"]:not([data-skin]) .rail-add-folder:hover {
+    background: #1E1E1B;
+    color: #EAE9E5
+}
+html[data-theme="dark"]:not([data-skin]) .rail-space-problem {
+    color: #AB716B
 }
 html[data-theme="dark"]:not([data-skin]) .topbar {
     background: var(--color-surface);

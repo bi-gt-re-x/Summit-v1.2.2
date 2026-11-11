@@ -45,10 +45,25 @@ accounts yet for it to send anybody into. The list exists so the page has the
 shape a team page will have, and so the addresses are already there when
 inviting is built.
 
-Kept in `user_settings`, one list per kind (KINDS), because three short
+Kept in `user_settings`, one list per kind (KINDS), because a few short
 records do not earn a table — the same choice the analytics baseline made.
 
-    GET  /api/spaces                     personal
+There are three of each to start, and a reader can add more (up to
+`max_count`), delete them, and file them under folders, which are their own
+short list per kind (`<key>_folders`). Each page keeps the `id` it was made
+with, so deleting one never renumbers the others: the address, the version
+history and the AI chat are all keyed by it. Pages saved before ids were
+stored read as 1, 2, 3 by position, which is what they always were.
+
+    GET  /api/spaces                     personal, and its folders
+    POST /api/spaces/new                 add a page (in a folder, optionally)
+    POST /api/spaces/<n>/delete          delete a page, its history and its chat
+    POST /api/spaces/<n>/folder          move a page into a folder, or out
+    POST /api/spaces/order               put the pages in a new order
+    POST /api/spaces/folders             add a folder
+    POST /api/spaces/folders/<f>         rename it
+    POST /api/spaces/folders/<f>/delete  delete it; its pages stay, out of any folder
+    (and the same under /api/team-spaces)
     POST /api/spaces/<n>                 rename / write
     GET  /api/team-spaces                team, with invites
     POST /api/team-spaces/<n>            rename / write
@@ -98,8 +113,10 @@ KINDS = {
     'team': {'key': 'team_spaces', 'name': 'Team Space {}'},
 }
 
-#: How many of each. Fixed, and the rail draws exactly this many.
+#: How many of each a new account starts with, and the most it can have.
 COUNT = RULES['spaces']['count']
+MAX_COUNT = RULES['spaces']['max_count']
+FOLDERS_MAX = RULES['spaces']['folders_max']
 
 #: A name is a rail row, not a sentence.
 NAME_MAX = RULES['spaces']['name_max']
@@ -394,17 +411,47 @@ def _doc_text(doc: dict) -> str:
     return '\n'.join(lines)
 
 
+def _folders(username: str, kind: str) -> List[dict]:
+    """A kind's folders, in order: `{id, name}` each."""
+    stored = db.user_setting(username, KINDS[kind]['key'] + '_folders')
+    out, seen = [], set()
+    for row in stored if isinstance(stored, list) else []:
+        if not isinstance(row, dict):
+            continue
+        ident = str(row.get('id') or '').strip()[:20]
+        name = str(row.get('name') or '').strip()[:NAME_MAX]
+        if ident and name and ident not in seen:
+            seen.add(ident)
+            out.append({'id': ident, 'name': name})
+    return out[:FOLDERS_MAX]
+
+
+def _store_folders(username: str, kind: str, folders: List[dict]) -> None:
+    db.set_user_setting(username, KINDS[kind]['key'] + '_folders', folders)
+
+
 def _spaces(username: str, kind: str) -> List[dict]:
-    """The three spaces of one kind, defaults filled in for any never saved."""
+    """A kind's spaces in their order, defaults filled in for any never saved.
+
+    Never saved at all is the starting three. A stored page without an id is
+    one from before pages could be added, and its place is its id."""
     stored = db.user_setting(username, KINDS[kind]['key'])
-    rows = stored if isinstance(stored, list) else []
-    out = []
-    for at in range(1, COUNT + 1):
-        row = rows[at - 1] if at - 1 < len(rows) and isinstance(rows[at - 1], dict) else {}
+    rows = stored if isinstance(stored, list) else [{} for _ in range(COUNT)]
+    folders = {folder['id'] for folder in _folders(username, kind)}
+    out, seen = [], set()
+    for at, row in enumerate(rows[:MAX_COUNT]):
+        row = row if isinstance(row, dict) else {}
+        ident = _whole(row.get('id'))
+        if ident is None or ident < 1 or ident in seen:
+            ident = at + 1
+            while ident in seen:
+                ident += 1
+        seen.add(ident)
         space = {
-            'id': at,
-            'name': str(row.get('name') or '').strip()[:NAME_MAX] or _default_name(kind, at),
+            'id': ident,
+            'name': str(row.get('name') or '').strip()[:NAME_MAX] or _default_name(kind, ident),
             'body': str(row.get('body') or '')[:BODY_MAX],
+            'folder': str(row.get('folder') or '') if str(row.get('folder') or '') in folders else '',
         }
         # Only once there is one: a page never opened in the block editor is
         # its `body` alone, and the editor reads that into blocks itself.
@@ -421,10 +468,16 @@ def _spaces(username: str, kind: str) -> List[dict]:
     return out
 
 
+def _find(spaces: List[dict], space_id: int) -> Optional[dict]:
+    return next((space for space in spaces if space['id'] == space_id), None)
+
+
+def _exists(username: str, kind: str, space_id: int) -> bool:
+    return _find(_spaces(username, kind), space_id) is not None
+
+
 def _store(username: str, kind: str, spaces: List[dict]) -> None:
-    db.set_user_setting(username, KINDS[kind]['key'],
-                        [{key: value for key, value in space.items() if key != 'id'}
-                         for space in spaces])
+    db.set_user_setting(username, KINDS[kind]['key'], [dict(space) for space in spaces])
 
 
 # ---- Version history -----------------------------------------------------------
@@ -481,7 +534,7 @@ def _preview(doc: dict) -> List[str]:
 
 
 def _history_reply(username: str, kind: str, space_id: int):
-    if not 1 <= space_id <= COUNT:
+    if not _exists(username, kind, space_id):
         return fail("There's no space {}.".format(space_id))
     rows = _history(username, kind, space_id)
     return ok(versions=[{'at': row['at'], 'words': row.get('words', 0), 'blocks': row.get('blocks', 0),
@@ -496,7 +549,7 @@ class Restore(BaseModel):
 
 def _restore(username: str, kind: str, space_id: int, body: Restore):
     """Put an older version back. What's on the page now is kept first, so it's undoable."""
-    if not 1 <= space_id <= COUNT:
+    if not _exists(username, kind, space_id):
         return fail("There's no space {}.".format(space_id))
     rows = _history(username, kind, space_id)
     if not 0 <= body.at < len(rows):
@@ -505,7 +558,7 @@ def _restore(username: str, kind: str, space_id: int, body: Restore):
     if not doc:
         return fail("That version can't be opened.")
     spaces = _spaces(username, kind)
-    space = spaces[space_id - 1]
+    space = _find(spaces, space_id)
     _remember(username, kind, space_id, space.get('doc'), 'restore')
     space['doc'] = doc
     space['body'] = _doc_text(doc)[:BODY_MAX]
@@ -516,10 +569,10 @@ def _restore(username: str, kind: str, space_id: int, body: Restore):
 def _save(username: str, kind: str, space_id: int, body: SaveSpace):
     """Rename a space, write in it, or both. A blank name goes back to the
     default rather than leaving a row with no label in the rail."""
-    if not 1 <= space_id <= COUNT:
+    if not _exists(username, kind, space_id):
         return fail("There's no space {}.".format(space_id))
     spaces = _spaces(username, kind)
-    space = spaces[space_id - 1]
+    space = _find(spaces, space_id)
     if body.name is not None:
         space['name'] = body.name.strip()[:NAME_MAX] or _default_name(kind, space_id)
     doc = _clean_doc(body.doc) if body.doc is not None else None
@@ -670,14 +723,14 @@ def _ask(username: str, kind: str, space_id: int, body: AskSpace):
     (backend/tracking/space_look.py) and any text the AI wrote that fails
     contrast is fixed before it's saved, and the reply says what was found.
     """
-    if not 1 <= space_id <= COUNT:
+    if not _exists(username, kind, space_id):
         return fail("There's no space {}.".format(space_id))
     prompt = (body.prompt or '').strip()[:2000]
     if not prompt:
         return fail('Say what you want on the page.')
 
     spaces = _spaces(username, kind)
-    space = spaces[space_id - 1]
+    space = _find(spaces, space_id)
     before = _clean_doc(body.doc) or space.get('doc') or {'icon': '', 'cover': '', 'blocks': []}
     turns = _chat(username, kind, space_id)
     stamp = datetime.now().isoformat(timespec='seconds')
@@ -754,7 +807,7 @@ def _look_notes(fixed: List[dict], checked: dict, written: set) -> List[str]:
 
 
 def _chat_reply(username: str, kind: str, space_id: int):
-    if not 1 <= space_id <= COUNT:
+    if not _exists(username, kind, space_id):
         return fail("There's no space {}.".format(space_id))
     return ok(chat=_public(_chat(username, kind, space_id)))
 
@@ -766,14 +819,14 @@ class ChatTurnRef(BaseModel):
 
 def _undo(username: str, kind: str, space_id: int, body: ChatTurnRef):
     """Put the page back as it was before one AI turn, and say so in the chat."""
-    if not 1 <= space_id <= COUNT:
+    if not _exists(username, kind, space_id):
         return fail("There's no space {}.".format(space_id))
     turns = _chat(username, kind, space_id)
     if not 0 <= body.at < len(turns) or turns[body.at].get('before') is None:
         return fail("That change can't be undone any more.")
     turn = turns[body.at]
     spaces = _spaces(username, kind)
-    space = spaces[space_id - 1]
+    space = _find(spaces, space_id)
     doc = _clean_doc(turn['before']) or {'icon': '', 'cover': '', 'blocks': []}
     space['doc'] = doc
     space['body'] = _doc_text(doc)[:BODY_MAX]
@@ -785,16 +838,168 @@ def _undo(username: str, kind: str, space_id: int, body: ChatTurnRef):
 
 
 def _clear_chat(username: str, kind: str, space_id: int):
-    if not 1 <= space_id <= COUNT:
+    if not _exists(username, kind, space_id):
         return fail("There's no space {}.".format(space_id))
     db.set_user_setting(username, _chat_key(kind, space_id), [])
     return ok(chat=[])
 
 
+# ---- Adding, deleting and filing pages ------------------------------------------
+class NewSpace(BaseModel):
+    name: str = ''
+    folder: str = ''
+
+
+class MoveSpace(BaseModel):
+    #: A folder's id, or '' for none.
+    folder: str = ''
+
+
+class SpaceOrder(BaseModel):
+    ids: List[int] = []
+
+
+class FolderName(BaseModel):
+    name: str = ''
+
+
+def _new(username: str, kind: str, body: NewSpace):
+    """A new page at the end, in a folder when one is named."""
+    spaces = _spaces(username, kind)
+    if len(spaces) >= MAX_COUNT:
+        return fail('That\'s {} pages, the most there can be. Delete one first.'.format(MAX_COUNT))
+    ident = max((space['id'] for space in spaces), default=0) + 1
+    folder = body.folder if body.folder in {row['id'] for row in _folders(username, kind)} else ''
+    space = {'id': ident, 'name': body.name.strip()[:NAME_MAX] or _default_name(kind, ident), 'body': '',
+             'folder': folder}
+    if kind == 'team':
+        space['invites'] = []
+    spaces.append(space)
+    _store(username, kind, spaces)
+    return ok(space=space)
+
+
+def _delete(username: str, kind: str, space_id: int):
+    """A page, its version history and its chat. One page always stays."""
+    spaces = _spaces(username, kind)
+    space = _find(spaces, space_id)
+    if space is None:
+        return fail("There's no space {}.".format(space_id))
+    if len(spaces) <= 1:
+        return fail('Keep at least one page. Clear this one instead.')
+    _store(username, kind, [row for row in spaces if row['id'] != space_id])
+    db.set_user_setting(username, _history_key(kind, space_id), [])
+    db.set_user_setting(username, _chat_key(kind, space_id), [])
+    return ok(id=space_id)
+
+
+def _move(username: str, kind: str, space_id: int, body: MoveSpace):
+    spaces = _spaces(username, kind)
+    space = _find(spaces, space_id)
+    if space is None:
+        return fail("There's no space {}.".format(space_id))
+    if body.folder and body.folder not in {row['id'] for row in _folders(username, kind)}:
+        return fail("That folder isn't there any more.")
+    space['folder'] = body.folder
+    _store(username, kind, spaces)
+    return ok(space=space)
+
+
+def _order(username: str, kind: str, body: SpaceOrder):
+    """The pages in the order given. Any left out keep their place after the rest."""
+    spaces = _spaces(username, kind)
+    by_id = {space['id']: space for space in spaces}
+    first = [by_id.pop(ident) for ident in dict.fromkeys(body.ids) if ident in by_id]
+    ordered = first + [space for space in spaces if space['id'] in by_id]
+    _store(username, kind, ordered)
+    return ok(spaces=ordered)
+
+
+def _add_folder(username: str, kind: str, body: FolderName):
+    name = body.name.strip()[:NAME_MAX]
+    if not name:
+        return fail('Give the folder a name.')
+    folders = _folders(username, kind)
+    if len(folders) >= FOLDERS_MAX:
+        return fail('That\'s {} folders, the most there can be.'.format(FOLDERS_MAX))
+    taken = {row['id'] for row in folders}
+    at = len(folders) + 1
+    while 'f{}'.format(at) in taken:
+        at += 1
+    folder = {'id': 'f{}'.format(at), 'name': name}
+    _store_folders(username, kind, folders + [folder])
+    return ok(folder=folder, folders=folders + [folder])
+
+
+def _rename_folder(username: str, kind: str, folder_id: str, body: FolderName):
+    name = body.name.strip()[:NAME_MAX]
+    if not name:
+        return fail('Give the folder a name.')
+    folders = _folders(username, kind)
+    folder = next((row for row in folders if row['id'] == folder_id), None)
+    if folder is None:
+        return fail("That folder isn't there any more.")
+    folder['name'] = name
+    _store_folders(username, kind, folders)
+    return ok(folder=folder, folders=folders)
+
+
+def _delete_folder(username: str, kind: str, folder_id: str):
+    """The folder goes; its pages stay, out of any folder."""
+    folders = _folders(username, kind)
+    if not any(row['id'] == folder_id for row in folders):
+        return fail("That folder isn't there any more.")
+    spaces = _spaces(username, kind)
+    for space in spaces:
+        if space['folder'] == folder_id:
+            space['folder'] = ''
+    _store(username, kind, spaces)
+    _store_folders(username, kind, [row for row in folders if row['id'] != folder_id])
+    return ok(folders=_folders(username, kind), spaces=_spaces(username, kind))
+
+
+def _routes(base: str, kind: str):
+    """The add / delete / file routes for one kind. Before the `<n>` routes,
+    so "new", "order" and "folders" are never read as a page's number."""
+    @router.post(base + '/new')
+    def new_space(body: NewSpace, username: str = Depends(current_username)):
+        return _new(username, kind, body)
+
+    @router.post(base + '/order')
+    def order_spaces(body: SpaceOrder, username: str = Depends(current_username)):
+        return _order(username, kind, body)
+
+    @router.post(base + '/folders')
+    def add_folder(body: FolderName, username: str = Depends(current_username)):
+        return _add_folder(username, kind, body)
+
+    @router.post(base + '/folders/{folder_id}')
+    def rename_folder(folder_id: str, body: FolderName, username: str = Depends(current_username)):
+        return _rename_folder(username, kind, folder_id, body)
+
+    @router.post(base + '/folders/{folder_id}/delete')
+    def delete_folder(folder_id: str, username: str = Depends(current_username)):
+        return _delete_folder(username, kind, folder_id)
+
+    @router.post(base + '/{space_id}/delete')
+    def delete_space(space_id: int, username: str = Depends(current_username)):
+        return _delete(username, kind, space_id)
+
+    @router.post(base + '/{space_id}/folder')
+    def move_space(space_id: int, body: MoveSpace, username: str = Depends(current_username)):
+        return _move(username, kind, space_id, body)
+
+    new_space.__name__ = '{}_new_space'.format(kind)
+
+
+_routes('/api/spaces', 'personal')
+_routes('/api/team-spaces', 'team')
+
+
 # ---- Personal --------------------------------------------------------------
 @router.get('/api/spaces')
 def list_spaces(username: str = Depends(current_username)):
-    return ok(spaces=_spaces(username, 'personal'))
+    return ok(spaces=_spaces(username, 'personal'), folders=_folders(username, 'personal'))
 
 
 @router.post('/api/spaces/{space_id}')
@@ -846,7 +1051,7 @@ def team_space_restore(space_id: int, body: Restore, username: str = Depends(cur
 
 @router.get('/api/team-spaces')
 def list_team_spaces(username: str = Depends(current_username)):
-    return ok(spaces=_spaces(username, 'team'))
+    return ok(spaces=_spaces(username, 'team'), folders=_folders(username, 'team'))
 
 
 @router.post('/api/team-spaces/{space_id}')
@@ -878,13 +1083,13 @@ def team_space_chat_clear(space_id: int, username: str = Depends(current_usernam
 @router.post('/api/team-spaces/{space_id}/invite')
 def invite(space_id: int, body: Invite, username: str = Depends(current_username)):
     """Add a pending invite. Placeholder: nothing is sent. See the module note."""
-    if not 1 <= space_id <= COUNT:
+    if not _exists(username, 'team', space_id):
         return fail("There's no space {}.".format(space_id))
     email = body.email.strip().lower()[:200]
     if not EMAIL.match(email):
         return fail("That doesn't look like an e-mail address.")
     spaces = _spaces(username, 'team')
-    space = spaces[space_id - 1]
+    space = _find(spaces, space_id)
     if any(item['email'] == email for item in space['invites']):
         return fail('{} is already invited.'.format(email))
     if len(space['invites']) >= INVITES_MAX:
@@ -896,11 +1101,11 @@ def invite(space_id: int, body: Invite, username: str = Depends(current_username
 
 @router.post('/api/team-spaces/{space_id}/uninvite')
 def uninvite(space_id: int, body: Invite, username: str = Depends(current_username)):
-    if not 1 <= space_id <= COUNT:
+    if not _exists(username, 'team', space_id):
         return fail("There's no space {}.".format(space_id))
     email = body.email.strip().lower()
     spaces = _spaces(username, 'team')
-    space = spaces[space_id - 1]
+    space = _find(spaces, space_id)
     space['invites'] = [item for item in space['invites'] if item['email'] != email]
     _store(username, 'team', spaces)
     return ok(space=space)

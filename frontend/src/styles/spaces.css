@@ -1964,3 +1964,9 @@ html[data-theme="dark"] .sp-item.is-lifted { box-shadow: 0 0 0 2px var(--pref-ac
     .sp-page { padding: 0 !important; }
     .sp-cell { min-width: 0; }
 }
+
+/* The Page menu: which folder a page is in, and deleting it (components/Spaces/PageTools). */
+.sp-page-folders { display: flex; flex-direction: column; gap: 2px; }
+.sp-page-folder { justify-content: flex-start; text-align: left; }
+.sp-page-folder.is-on { font-weight: 700; color: var(--color-ink); background: var(--color-surface-2); }
+.sp-page-delete { color: #c0392b; }

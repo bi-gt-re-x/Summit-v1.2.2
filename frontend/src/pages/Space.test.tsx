@@ -198,7 +198,11 @@ describe('a space', () => {
 
   it('sends a space that does not exist to the first one', async () => {
     open(9);
-    expect((await nameField()).value).toBe('Space 1');
+    await waitFor(() => {
+      const field = screen.getByRole('textbox', { name: 'Space name' }) as HTMLInputElement;
+      expect(field).not.toBeDisabled();
+      expect(field.value).toBe('Space 1');
+    });
   });
 });
 
@@ -269,7 +273,11 @@ describe('a team space', () => {
 
   it('sends a team space that does not exist to the first one', async () => {
     open(7, '/team/7');
-    expect((await nameField()).value).toBe('Study group');
+    await waitFor(() => {
+      const field = screen.getByRole('textbox', { name: 'Space name' }) as HTMLInputElement;
+      expect(field).not.toBeDisabled();
+      expect(field.value).toBe('Study group');
+    });
   });
 });
 

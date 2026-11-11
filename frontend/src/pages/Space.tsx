@@ -32,7 +32,7 @@
  * offers them up front), and export to Markdown or print.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Navigate, useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { useDocumentTitle, useSpaces } from '@/hooks';
 import { Members } from '@/components/Spaces/Members';
 import { SpaceChat } from '@/components/Spaces/SpaceChat';
@@ -45,9 +45,10 @@ import { downloadMarkdown } from '@/components/Spaces/exportDoc';
 import { normalise, wordCount, type SpaceDoc } from '@/components/Spaces/blocks';
 import { fillProps, isDark } from '@/components/Spaces/fill';
 import {
-  SPACE_COUNT,
   SPACE_PATH,
   defaultName as nameFor,
+  move as moveSpace,
+  remove as removeSpace,
   restore as restoreVersion,
   save as saveSpace,
   type SpaceKind,
@@ -81,8 +82,20 @@ export interface SpaceProps {
 export default function Space({ kind = 'personal' }: SpaceProps) {
   const { spaceId = '' } = useParams();
   const id = Number(spaceId);
-  const valid = Number.isInteger(id) && id >= 1 && id <= SPACE_COUNT;
-  const { spaces, ready } = useSpaces(valid, kind);
+  const valid = Number.isInteger(id) && id >= 1;
+  const { spaces, folders, ready, reload } = useSpaces(valid, kind);
+  const navigate = useNavigate();
+  /* A page the list doesn't have may be one just made from the rail, before
+     this page's copy of the list caught up: read it again once before
+     deciding it isn't there. */
+  const [askedFor, setAskedFor] = useState<number | null>(null);
+  const missing = ready && valid && !spaces.some((row) => row.id === id);
+  useEffect(() => {
+    if (missing && askedFor !== id) {
+      setAskedFor(id);
+      reload();
+    }
+  }, [askedFor, id, missing, reload]);
   const space = spaces.find((row) => row.id === id);
   const defaultName = (at: number) => nameFor(at, kind);
   const save = (at: number, changes: { name?: string; doc?: SpaceDoc }) =>
@@ -241,6 +254,21 @@ export default function Space({ kind = 'personal' }: SpaceProps) {
   };
 
   if (!valid) return <Navigate to={`${SPACE_PATH[kind]}/1`} replace />;
+  // A page that was deleted, or never made: the first one there is.
+  if (missing && askedFor === id && spaces.length) return <Navigate to={`${SPACE_PATH[kind]}/${spaces[0]!.id}`} replace />;
+
+  const fileUnder = async (folder: string) => {
+    const result = await moveSpace(kind, id, folder).catch(() => ({ success: false as const, message: '' }));
+    return result.success ? '' : result.message || "Couldn't move it.";
+  };
+  const deletePage = async () => {
+    await flush();
+    const result = await removeSpace(kind, id).catch(() => ({ success: false as const, message: '' }));
+    if (!result.success) return result.message || "Couldn't delete it.";
+    const next = spaces.find((row) => row.id !== id);
+    navigate(next ? `${SPACE_PATH[kind]}/${next.id}` : '/dashboard', { replace: true });
+    return '';
+  };
 
   const words = wordCount(doc.blocks);
   /* The page's own background, and which way its words go to stay readable
@@ -296,6 +324,11 @@ export default function Space({ kind = 'personal' }: SpaceProps) {
             onTemplate={pickTemplate}
             onMarkdown={() => downloadMarkdown(doc, name || defaultName(id))}
             onPrint={() => window.print()}
+            folders={folders}
+            folder={space?.folder ?? ''}
+            onMove={fileUnder}
+            onDelete={deletePage}
+            canDelete={spaces.length > 1}
           />
           <DressTools
             icon={doc.icon}

@@ -7,7 +7,7 @@
  * page wiped and saved can still be got back a day later.
  */
 import { useEffect, useState } from 'react';
-import { history as loadHistory, type SpaceKind, type SpaceVersion } from '@/services/spaces';
+import { history as loadHistory, type Folder, type SpaceKind, type SpaceVersion } from '@/services/spaces';
 import { useDismiss } from './useDismiss';
 import { TEMPLATES, type Template } from './templates';
 
@@ -172,6 +172,11 @@ export function PageTools({
   onTemplate,
   onMarkdown,
   onPrint,
+  folders = [],
+  folder = '',
+  onMove,
+  onDelete,
+  canDelete = true,
 }: {
   id: number;
   kind: SpaceKind;
@@ -185,8 +190,17 @@ export function PageTools({
   onTemplate: (template: Template) => void;
   onMarkdown: () => void;
   onPrint: () => void;
+  /** The kind's folders, and the one this page is filed under ('' for none). */
+  folders?: Folder[];
+  folder?: string;
+  /** File the page under a folder. Resolves to an error to show, or ''. */
+  onMove?: (folder: string) => Promise<string>;
+  /** Delete the page. Resolves to an error to show, or ''. */
+  onDelete?: () => Promise<string>;
+  /** False on the last page of a kind, which can't go. */
+  canDelete?: boolean;
 }) {
-  const [open, setOpen] = useState<'' | 'history' | 'templates' | 'export'>('');
+  const [open, setOpen] = useState<'' | 'history' | 'templates' | 'export' | 'page'>('');
   const toggle = (which: typeof open) => setOpen((was) => (was === which ? '' : which));
   return (
     <div className="sp-page-tools" role="toolbar" aria-label="Page tools">
@@ -214,6 +228,80 @@ export function PageTools({
         </button>
         {open === 'export' && <ExportPop onMarkdown={onMarkdown} onPrint={onPrint} onClose={() => setOpen('')} />}
       </span>
+      {(onMove || onDelete) && (
+        <span className="sp-tools-wrap">
+          <button type="button" className="sp-ghost" disabled={disabled} aria-expanded={open === 'page'} onClick={() => toggle('page')}>
+            Page
+          </button>
+          {open === 'page' && (
+            <PagePop folders={folders} folder={folder} onMove={onMove} onDelete={onDelete} canDelete={canDelete}
+              onClose={() => setOpen('')} />
+          )}
+        </span>
+      )}
+    </div>
+  );
+}
+
+/** The page itself: which folder it's in, and deleting it. */
+function PagePop({ folders, folder, onMove, onDelete, canDelete, onClose }: {
+  folders: Folder[];
+  folder: string;
+  onMove?: (folder: string) => Promise<string>;
+  onDelete?: () => Promise<string>;
+  canDelete: boolean;
+  onClose: () => void;
+}) {
+  const ref = useDismiss(true, onClose);
+  const [asking, setAsking] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const run = async (action: () => Promise<string>, close: boolean) => {
+    setBusy(true);
+    const problem = await action();
+    setBusy(false);
+    setError(problem);
+    if (!problem && close) onClose();
+  };
+  return (
+    <div className="sp-pop sp-tools-pop" role="dialog" aria-label="This page" ref={ref}>
+      {onMove && (
+        <>
+          <p className="sp-pop-head">Folder</p>
+          {folders.length === 0 ? (
+            <p className="sp-tools-note">No folders yet. Add one with "New folder" in the rail.</p>
+          ) : (
+            <div className="sp-page-folders" role="radiogroup" aria-label="Folder">
+              {[{ id: '', name: 'Not in a folder' }, ...folders].map((row) => (
+                <button key={row.id || 'none'} type="button" role="radio" aria-checked={folder === row.id}
+                  className={`sp-ghost sp-page-folder${folder === row.id ? ' is-on' : ''}`} disabled={busy}
+                  onClick={() => void run(() => onMove(row.id), true)}>
+                  {row.name}
+                </button>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+      {onDelete && (
+        <>
+          <p className="sp-pop-head">Delete</p>
+          {!canDelete ? (
+            <p className="sp-tools-note">This is the last page here, so it stays. Clear it instead.</p>
+          ) : asking ? (
+            <div className="sp-version-ask">
+              <span>The page, its versions and its chat go for good.</span>
+              <button type="button" className="sp-ghost is-strong" disabled={busy} onClick={() => void run(onDelete, false)}>
+                {busy ? 'Deleting…' : 'Yes, delete it'}
+              </button>
+              <button type="button" className="sp-ghost" onClick={() => setAsking(false)}>Cancel</button>
+            </div>
+          ) : (
+            <button type="button" className="sp-ghost sp-page-delete" onClick={() => setAsking(true)}>Delete this page</button>
+          )}
+        </>
+      )}
+      {error && <p className="sp-pop-error" role="alert">{error}</p>}
     </div>
   );
 }

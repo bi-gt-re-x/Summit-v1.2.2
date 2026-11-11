@@ -217,7 +217,7 @@ function PriorityChart({ priorities }: { priorities: PriorityRow[] }) {
     <section className="wk-panel">
       <h3 className="wk-panel-title">Tasks by priority</h3>
       {total === 0 ? (
-        <p className="wk-empty">Nothing scheduled this week.</p>
+        <p className="wk-empty">No tasks this week.</p>
       ) : (
         <>
           <div className="wk-break-total">
@@ -286,7 +286,7 @@ function sparkPoints(days: WeekDay[]): { x: number; y: number }[] {
  * ever says nice things is neither.
  */
 function rateLabel(rate: number, total: number): string {
-  if (total === 0) return 'Nothing on';
+  if (total === 0) return 'No tasks';
   if (rate >= 100) return 'All done';
   if (rate >= 60) return 'On track';
   if (rate >= 25) return 'Under way';
@@ -406,7 +406,7 @@ export function WeekSidebar({
                 ring cannot say on its own. */}
             <p className="wk-weekly-said">
               {total === 0
-                ? 'Nothing scheduled this week yet.'
+                ? 'No tasks scheduled this week yet. Events on the calendar don\'t count here.'
                 : `${done} of ${total} finished, ${xp.toLocaleString()} XP earned.`}
             </p>
           </div>

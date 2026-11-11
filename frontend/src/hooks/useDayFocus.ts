@@ -121,7 +121,25 @@ export function useDayFocus(username: string | null): UseDayFocus {
           /* private mode: the server copy is still the one that matters */
         }
       });
-      setNotes((current) => ({ ...fetched, ...current }));
+      // The server sends every note the account has, so a cached one it doesn't
+      // have was cleared somewhere else (another browser, a reset) and is stale.
+      // A note typed here since the page opened is the one exception: its save
+      // may still be on its way.
+      try {
+        const prefix = storageKey(username, '');
+        for (let at = localStorage.length - 1; at >= 0; at -= 1) {
+          const key = localStorage.key(at);
+          if (!key || !key.startsWith(prefix)) continue;
+          const iso = key.slice(prefix.length);
+          if (!(iso in fetched) && !(iso in timers.current)) localStorage.removeItem(key);
+        }
+      } catch {
+        /* private mode: nothing cached to clear */
+      }
+      setNotes((current) => {
+        const typed = Object.fromEntries(Object.entries(current).filter(([iso]) => iso in timers.current));
+        return { ...fetched, ...typed };
+      });
     });
 
     return () => {
