@@ -20,7 +20,7 @@ from backend.api.skillsteps import catalogue
 from backend.api.tasks import CreateTask, _create as create_task
 from backend.config import subjects as subject_catalogue
 from backend.database import connection as db
-from backend.tracking import session_plan, skill_plan, skillsteps
+from backend.tracking import session_plan, skill_plan, skill_progress, skillsteps
 from backend.tracking.auth import load_user
 from backend.tracking.plainwords import plain
 
@@ -62,6 +62,11 @@ def _known(username):
     return bool(user)
 
 
+def _skipped(username):
+    """The skills this account chose to skip (see backend/tracking/skill_progress.py)."""
+    return skill_progress.skipped_ids(db.user_setting(username, skill_progress.SKIP_KEY))
+
+
 def read_plan(username, tree_id, budget=skill_plan.DEFAULT_BUDGET, attempts=None, review=None, today=None):
     """One tree's suggestions, session and due reviews, or None for no such tree."""
     tree = trees().get(tree_id)
@@ -76,7 +81,8 @@ def read_plan(username, tree_id, budget=skill_plan.DEFAULT_BUDGET, attempts=None
     if review is None:
         review = read_queue(username, today=today, attempts=attempts)
     due = [item for item in review['due'] if item.get('node_id') in ids]
-    found, reads = skill_plan.suggestions(tree['nodes'], mine, library, today, due=due)
+    found, reads = skill_plan.suggestions(tree['nodes'], mine, library, today, due=due,
+                                          skipped=_skipped(username))
     plan = skill_plan.session(found, budget)
     return {
         'tree': tree_id, 'title': tree['title'], 'subject': subject_for(tree_id),

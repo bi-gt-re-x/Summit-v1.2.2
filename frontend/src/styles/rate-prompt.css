@@ -217,7 +217,7 @@ html[data-theme="dark"] .tk-rate-backdrop {
     outline-offset: 2px;
 }
 
-/* The patterns from the Behavior page this task could show: one line each,
+/* The patterns from Your patterns (Insights) this task could show: one line each,
    "No" / "Yes", and whether the fix was done when there is one. */
 .tk-rate-patterns { display: flex; flex-direction: column; gap: var(--space-3); }
 .tk-rate-pattern { display: flex; flex-direction: column; gap: var(--space-2); }

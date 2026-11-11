@@ -1,7 +1,7 @@
 -- behavior — the mistakes a reader already knows they make, tracked until they stop.
 --
 -- The rules are backend/tracking/behavior.py, the endpoints backend/api/behavior.py,
--- the page frontend/src/pages/Behavior.tsx.
+-- what draws it frontend/src/components/Analytics/YourPatterns.tsx (Insights tab).
 --
 -- `behaviors` is one pattern each: "Impulsive answers on tests". `scope` says where it
 -- can show up (all study work, tests and contests, one subject, or tasks named with a

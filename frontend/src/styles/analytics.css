@@ -9693,3 +9693,114 @@ g:hover > .ax-sv-time-bar { filter: brightness(.9); }
 .ax-evidence-row { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
 .ax-evidence-kind, .ax-change-claim { font-size: var(--text-xs); color: var(--ax-faint); }
 .ax-change-claim { margin-left: var(--space-2); }
+
+/* ---- One box deep -----------------------------------------------------------
+   A panel is the card. What sits inside one, or inside an open group, is not
+   another card: the measures, the three fit questions, the slump steps, the
+   plan rows, the review rows, the next sessions, the facts, the tips. They
+   were each a bordered, filled box inside a bordered, filled box, so a tab
+   read as a pile of frames. They're plain sections now, split by hairlines.
+
+   `.ax-page .ax-shell` and the doubled classes are specificity, not structure:
+   paper.css and the generated paper layers (scripts/paper_theme.mjs) style
+   some of these at five or six classes, and this has to win in every theme. */
+
+/* Panels inside an open group: the group is the card. */
+.ax-page .ax-shell .ax-group.is-open .ax-group-body .ax-panel.ax-panel {
+    padding: var(--space-4) 0 0;
+    border: 0;
+    border-top: 1px solid var(--ax-line);
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+}
+
+/* Cards inside a panel: no frame, no fill. */
+.ax-page .ax-shell .ax-mx-card.ax-mx-card,
+.ax-page .ax-shell .ax-moves-col.ax-moves-col,
+.ax-page .ax-shell .sg-fact.sg-fact,
+.ax-page .ax-shell .ax-plan-sub.ax-plan-sub {
+    border: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+}
+.ax-page .ax-shell .ax-mx-card.ax-mx-card,
+.ax-page .ax-shell .ax-moves-col.ax-moves-col { padding-inline: 0; }
+.ax-page .ax-shell .ax-plan-sub.ax-plan-sub { padding-inline: 0; }
+
+/* Side-by-side readings keep a thin rule on their left, so the columns still
+   read as columns. Over budget turns that rule red instead of the box. */
+.ax-page .ax-shell .ax-pri-three-card.ax-pri-three-card,
+.ax-page .ax-shell .sg-fact.sg-fact {
+    padding: 2px 0 2px var(--space-3);
+    border: 0;
+    border-left: 2px solid var(--ax-line);
+    border-radius: 0;
+    background: none;
+}
+.ax-page .ax-shell .ax-pri-three-card.ax-pri-three-card.is-over { border-left-color: var(--ax-bad); }
+
+/* Stacked rows: a hairline between, nothing around. */
+.ax-page .ax-shell .ax-slump-step.ax-slump-step,
+.ax-page .ax-shell .ax-said-tip.ax-said-tip,
+.ax-page .ax-shell .ax-plan-row.ax-plan-row,
+.ax-page .ax-shell .rq-row.rq-row {
+    padding-inline: 0;
+    border: 0;
+    border-top: 1px solid var(--ax-line-soft);
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+}
+.ax-page .ax-shell .ax-slump-step.ax-slump-step:first-child,
+.ax-page .ax-shell .ax-said-tip.ax-said-tip:first-child,
+.ax-page .ax-shell .ax-plan-row.ax-plan-row:first-child,
+.ax-page .ax-shell .rq-row.rq-row:first-child { border-top: 0; }
+.ax-page .ax-shell.ax-view-recommendations .ax-plan-list { gap: 0; }
+
+/* Next sessions: three columns split by rules, not three cards. */
+.ax-page .ax-shell .sx-step.sx-step {
+    padding: 0 0 0 var(--space-4);
+    border: 0;
+    border-left: 1px solid var(--ax-line);
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+}
+.ax-page .ax-shell .sx-step.sx-step:first-child { padding-left: 0; border-left: 0; }
+.ax-page .ax-shell .sx-step.sx-step:hover { border-color: var(--ax-line); box-shadow: none; }
+
+/* Number tiles inside an open group: a rule on the left, like the fit
+   questions, since the group around them is already the card. */
+.ax-page .ax-shell .ax-group.is-open .ax-tile.ax-tile {
+    padding: 2px 0 2px var(--space-3);
+    border: 0;
+    border-left: 2px solid var(--ax-line);
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+}
+.ax-page .ax-shell .gr-plot-empty.gr-plot-empty { border: 0; background: none; }
+
+/* The Subjects tab's facts keep their coloured edge and lose the box. */
+.ax-page .ax-shell .gr-fact.gr-fact {
+    padding: 2px 0 2px var(--space-3);
+    border: 0;
+    border-left: 3px solid var(--ink-faint);
+    border-radius: 0;
+    background: none;
+}
+.ax-page .ax-shell .gr-fact.gr-fact.is-up { border-left-color: var(--tone-green); }
+.ax-page .ax-shell .gr-fact.gr-fact.is-down { border-left-color: var(--tone-amber); }
+.ax-page .ax-shell .gr-fact.gr-fact.is-note { border-left-color: var(--accent); }
+
+@media (max-width: 720px) {
+    .ax-page .ax-shell .sx-step.sx-step,
+    .ax-page .ax-shell .sx-step.sx-step:first-child {
+        padding: var(--space-3) 0 0;
+        border-left: 0;
+        border-top: 1px solid var(--ax-line);
+    }
+    .ax-page .ax-shell .sx-step.sx-step:first-child { border-top: 0; padding-top: 0; }
+}

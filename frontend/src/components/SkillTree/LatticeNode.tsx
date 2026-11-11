@@ -128,7 +128,7 @@ export function LatticeNode({
       type="button"
       className={`stx-tile is-${node.status} tier-${node.difficulty}${nav ? ' is-nav' : ''}${
         selected ? ' is-selected' : ''
-      }${emphasis ? ` em-${emphasis}` : ''}${here ? ' is-here' : ''}`}
+      }${emphasis ? ` em-${emphasis}` : ''}${here ? ' is-here' : ''}${node.skipped ? ' is-skipped' : ''}`}
       style={style}
       aria-pressed={nav ? undefined : selected}
       aria-label={
@@ -137,6 +137,7 @@ export function LatticeNode({
           ? `. Locked, ${gate.met} of ${gate.need} prerequisites done`
           : '')
         + (optional ? '. Optional' : '')
+        + (node.skipped ? '. Skipped' : '')
         + (here ? '. You are here' : '')
       }
       /* The name, and nothing else, because the hover card below says the

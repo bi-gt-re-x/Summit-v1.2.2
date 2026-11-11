@@ -37,10 +37,13 @@ function stageWhy(one: Behavior): string {
   return "The fix is running. It's too early, or it isn't coming up less yet.";
 }
 
-export function PatternCard({ one, onChanged, subjects }: {
+export function PatternCard({ one, onChanged, subjects, bare = false }: {
   one: Behavior;
   onChanged: () => void;
   subjects: { id: string; name: string }[];
+  /** Drawn under a row that already names it (Analytics' Your patterns), so
+   *  the title isn't printed twice. */
+  bare?: boolean;
 }) {
   const [mode, setMode] = useState<Mode>(null);
   const [busy, setBusy] = useState(false);
@@ -71,7 +74,11 @@ export function PatternCard({ one, onChanged, subjects }: {
     <article className={`bh-card is-${one.status}`} aria-labelledby={`bh-title-${one.id}`}>
       <header className="bh-card-head">
         <div className="bh-card-name">
-          <h3 id={`bh-title-${one.id}`}>{one.title}</h3>
+          {bare ? (
+            <span id={`bh-title-${one.id}`} className="ax-sr">{one.title}</span>
+          ) : (
+            <h3 id={`bh-title-${one.id}`}>{one.title}</h3>
+          )}
           <p className="bh-card-meta">
             <span className="bh-chip">{one.scope_label}</span>
             <span>{one.source_label}</span>

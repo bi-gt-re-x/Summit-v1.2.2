@@ -12,6 +12,8 @@ import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { SkillReading } from '@/services/skillProgress';
 import { DEFAULT_TARGETS, applyReading, practicedFrom } from './skillProgress';
+import { nearestBlocker } from '@/skills/route';
+import { cleared } from './skillGraph';
 import type { GraphNode, SkillGraph } from './skillGraph';
 
 function node(id: string, over: Partial<GraphNode> = {}): GraphNode {
@@ -92,6 +94,18 @@ describe('applyReading', () => {
   it('keeps the doorways to other trees open', () => {
     const out = byId(applyReading(GRAPH, reading(), new Set(['door'])));
     expect(out.door!.status).toBe('available');
+  });
+
+  it('marks skipped skills, which then stop blocking what comes after them', () => {
+    const out = applyReading(
+      GRAPH,
+      reading({ status: { arith: 'available', order: 'available' }, skipped: ['arith'] }),
+    );
+    const nodes = byId(out);
+    expect(nodes.arith!).toMatchObject({ status: 'available', skipped: true });
+    expect(nodes.order!.skipped).toBe(false);
+    expect(cleared(nodes.arith)).toBe(true);
+    expect(nearestBlocker(out, nodes.fractions!)).toBeNull();
   });
 
   it('opens only the roots before the reading arrives, and finishes nothing', () => {

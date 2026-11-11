@@ -45,6 +45,13 @@ locked behind what comes before it, so any skill can be booked or checked out
 of order. It opens, and nothing more. Mastered still means passed, and the bars
 still fill only from real work, so the record stays what the reader did.
 
+## Skipping a skill
+
+A reader can skip a skill they already have or don't need. A skipped node
+counts as cleared for whatever comes after it, so it never blocks the path,
+but it is not mastered: the bars, counts and records only move from real
+work. Work on a skipped node still counts, and a pass still masters it.
+
 ## Nothing is stored
 
 Every figure is a function of tasks, sittings and checks, read fresh. A GET
@@ -85,6 +92,16 @@ UNFILED_SAMPLES = 3
 
 #: The user_settings key that opens every node: {"all": true}.
 OPEN_ALL_KEY = 'skill_tree_open'
+
+#: The user_settings key holding the skills the reader chose to skip:
+#: {"ids": [node id, ...]}.
+SKIP_KEY = 'skill_tree_skipped'
+
+
+def skipped_ids(stored: Any) -> List[str]:
+    """The node ids out of a stored SKIP_KEY value, whatever shape it's in."""
+    ids = stored.get('ids') if isinstance(stored, dict) else None
+    return [str(one) for one in ids] if isinstance(ids, list) else []
 
 
 # --------------------------------------------------------------------------
@@ -404,13 +421,15 @@ def _check_summary(rows: Sequence[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
 
 def read(tasks: Sequence[Dict[str, Any]], sittings: Sequence[Dict[str, Any]] = (),
          checks: Sequence[Dict[str, Any]] = (), checkable: Iterable[str] = (),
-         goals: Sequence[Dict[str, Any]] = (), open_all: bool = False) -> Dict[str, Any]:
+         goals: Sequence[Dict[str, Any]] = (), open_all: bool = False,
+         skipped: Iterable[str] = ()) -> Dict[str, Any]:
     """The whole account's standing, for the page.
 
     `tasks` are every task (done and open), `sittings` the focus sittings,
     `checks` the skill_checks rows, `checkable` the node ids that have a
     check, `goals` the active goals. `open_all` opens every node whatever
-    comes before it (the account's OPEN_ALL_KEY setting).
+    comes before it (the account's OPEN_ALL_KEY setting). `skipped` are the
+    node ids the reader chose to skip (SKIP_KEY).
 
     Answers with:
 
@@ -425,6 +444,8 @@ def read(tasks: Sequence[Dict[str, Any]], sittings: Sequence[Dict[str, Any]] = (
     - `goals`: goal id → title, for the goals the nodes name.
     - `checkable`: the node ids that have a check, sorted.
     - `targets`: TARGET, so the page can say "of 4" on a tile with no work.
+    - `skipped`: the skipped node ids that aren't mastered, sorted. Each is
+      open, and counts as cleared for the nodes after it.
     """
     nodes = catalog()
     checkable = set(checkable)
@@ -477,6 +498,8 @@ def read(tasks: Sequence[Dict[str, Any]], sittings: Sequence[Dict[str, Any]] = (
             'tasks': len(items),
         }
 
+    skip = {node_id for node_id in skipped if node_id in nodes and node_id not in complete}
+    cleared = set(complete) | skip
     status: Dict[str, str] = {}
     for node_id, node in nodes.items():
         if node_id in complete:
@@ -487,7 +510,7 @@ def read(tasks: Sequence[Dict[str, Any]], sittings: Sequence[Dict[str, Any]] = (
         gates = [gate for gate in node['requires'] if gate in nodes]
         if worked:
             status[node_id] = 'progress'
-        elif open_all or not gates or all(gate in complete for gate in gates):
+        elif node_id in skip or open_all or not gates or all(gate in cleared for gate in gates):
             status[node_id] = 'available'
 
     unfiled = {
@@ -503,6 +526,7 @@ def read(tasks: Sequence[Dict[str, Any]], sittings: Sequence[Dict[str, Any]] = (
         'goals': {goal_id: goal_titles[goal_id] for goal_id in sorted(named) if goal_id in goal_titles},
         'checkable': sorted(checkable & set(nodes)),
         'targets': dict(TARGET),
+        'skipped': sorted(skip),
     }
 
 

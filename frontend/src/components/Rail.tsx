@@ -301,21 +301,6 @@ const TABS: Tab[] = [
     ),
   },
   {
-    // The mistakes the reader already knows they make, tracked until they stop
-    // (pages/Behavior.tsx). Not gated, like the Log beside it: it's built from
-    // what the reader says about themselves.
-    to: '/behavior',
-    label: 'Behavior',
-    icon: (
-      <svg {...stroke}>
-        <path d="M17 2.5 20.5 6 17 9.5" />
-        <path d="M3.5 11.5V10a4 4 0 0 1 4-4h13" />
-        <path d="M7 21.5 3.5 18 7 14.5" />
-        <path d="M20.5 12.5V14a4 4 0 0 1-4 4h-13" />
-      </svg>
-    ),
-  },
-  {
     // The account looking back at itself: personal bests, growth over time,
     // Personal bests and the badge wall: /achievements and
     // /achievements/badges.

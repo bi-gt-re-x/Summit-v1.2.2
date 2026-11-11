@@ -34,7 +34,7 @@
  * where words are better than shades.
  */
 import { difficultyRank } from './types';
-import { unlockedBy, type GraphNode, type NodeStatus, type SkillGraph } from '@/utils/skillGraph';
+import { cleared, unlockedBy, type GraphNode, type NodeStatus, type SkillGraph } from '@/utils/skillGraph';
 
 /** How much weight a tile gets while a focus is on. */
 export type Emphasis = 'here' | 'near' | 'dim';
@@ -176,7 +176,7 @@ export function focusOn(graph: SkillGraph, id: string): FocusRead | null {
     here,
     route: routeTo(graph, id),
     requires,
-    met: requires.filter((node) => node.status === 'complete').length,
+    met: requires.filter((node) => cleared(node)).length,
     unlocks,
     suggests,
     next: nextAfter(graph, id),
@@ -245,7 +245,7 @@ export function gatesOf(graph: SkillGraph): Map<string, Gate> {
   for (const node of graph.nodes) {
     if (node.requires.length === 0) continue;
     gates.set(node.id, {
-      met: node.requires.filter((id) => byId.get(id)?.status === 'complete').length,
+      met: node.requires.filter((id) => cleared(byId.get(id))).length,
       need: node.requires.length,
     });
   }
@@ -267,7 +267,7 @@ export function nearestBlocker(graph: SkillGraph, node: GraphNode): GraphNode | 
   const byId = new Map(graph.nodes.map((one) => [one.id, one]));
   const blocking = node.requires
     .map((id) => byId.get(id))
-    .filter((one): one is GraphNode => one !== undefined && one.status !== 'complete');
+    .filter((one): one is GraphNode => one !== undefined && !cleared(one));
 
   const band = (one: GraphNode) =>
     one.status === 'progress' ? 0 : one.status === 'available' ? 1 : 2;
@@ -288,7 +288,7 @@ export function nearestBlocker(graph: SkillGraph, node: GraphNode): GraphNode | 
 /** How many of a node's prerequisites are still outstanding. */
 function blockersOf(graph: SkillGraph, node: GraphNode): number {
   const byId = new Map(graph.nodes.map((one) => [one.id, one]));
-  return node.requires.filter((id) => byId.get(id)?.status !== 'complete').length;
+  return node.requires.filter((id) => !cleared(byId.get(id))).length;
 }
 
 export interface Opportunity {
@@ -333,7 +333,7 @@ export function opportunities(
   skip: ReadonlySet<string> = new Set(),
 ): Opportunity[] {
   const rows = graph.nodes
-    .filter((node) => !skip.has(node.id) && node.status !== 'complete')
+    .filter((node) => !skip.has(node.id) && !cleared(node))
     .map((node) => {
       const blocked = blockersOf(graph, node);
       const opens = unlockedBy(graph, node.id).length;
@@ -486,7 +486,7 @@ export function pathOf(graph: SkillGraph, hereId: string | null): Set<string> {
   // unfinished is "locked behind two or more", which the note above leaves
   // out. Without this check every in-progress skill dragged in all of its
   // children, and the math path came out at 21 of 29 tiles.
-  const finished = (id: string) => byId.get(id)?.status === 'complete';
+  const finished = (id: string) => cleared(byId.get(id));
   const from = hereId ? [hereId, ...front] : front;
   for (const id of from) {
     for (const node of unlockedBy(graph, id)) {

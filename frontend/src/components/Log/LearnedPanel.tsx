@@ -5,8 +5,9 @@
  * Removing one takes it out of every prompt straight away
  * (backend/api/journal.py), and Summit won't learn it again.
  *
- * A recurring pattern can be tracked from here: "Track it" puts it on the Behavior
- * page (pages/Behavior.tsx), where it's checked session by session until it stops.
+ * A recurring pattern can be tracked from here: "Track it" puts it under Your
+ * patterns on Analytics' Insights tab (components/Analytics/YourPatterns), where
+ * it's checked session by session until it stops.
  */
 import { Repeat, X } from 'lucide-react';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
@@ -41,7 +42,7 @@ export function LearnedPanel({ insights, learning, waiting, onRemove, onClose }:
   const closeRef = useRef<HTMLButtonElement>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [showOld, setShowOld] = useState(false);
-  /* Patterns put on the Behavior page from here: 'busy', 'done', or why it couldn't be. */
+  /* Patterns put under Your patterns from here: 'busy', 'done', or why it couldn't be. */
   const [tracking, setTracking] = useState<Record<string, string>>({});
 
   const track = async (insight: Insight) => {
@@ -91,7 +92,7 @@ export function LearnedPanel({ insights, learning, waiting, onRemove, onClose }:
         {insight.kind === 'pattern' && insight.status === 'active' && (
           tracking[insight.id] === 'done' ? (
             <span className="lg-track is-done">
-              Tracking it on <Go to="/behavior">your Behavior page</Go>
+              Tracking it in <Go to="/insights#patterns">Your patterns</Go>
             </span>
           ) : (
             <span className="lg-track">

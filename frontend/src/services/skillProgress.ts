@@ -68,6 +68,9 @@ export interface SkillReading {
   goals: Record<string, string>;
   checkable: string[];
   targets: Record<string, number>;
+  /** Skills the reader chose to skip. Open, and cleared for what comes
+   *  after them, but not mastered. */
+  skipped?: string[];
 }
 
 export function reading(): Promise<ApiResult<SkillReading>> {
@@ -99,6 +102,15 @@ export function fileTask(
     task_id: taskId,
     node_id: nodeId,
     same_name: sameName,
+  });
+}
+
+/** Skip skills the reader already has or doesn't need, or (`skip` false)
+ *  bring them back. */
+export function skip(nodeIds: string[], skipIt = true): Promise<ApiResult<SkillReading & { changed: number }>> {
+  return post<SkillReading & { changed: number }>('/api/skill-progress/skip', {
+    node_ids: nodeIds,
+    skip: skipIt,
   });
 }
 

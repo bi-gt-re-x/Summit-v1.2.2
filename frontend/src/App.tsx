@@ -46,7 +46,6 @@ const Analytics = lazy(() => import('@/pages/Analytics'));
 const SubjectAnalytics = lazy(() => import('@/pages/SubjectAnalytics'));
 const SkillTrees = lazy(() => import('@/pages/SkillTrees'));
 const Log = lazy(() => import('@/pages/Log'));
-const Behavior = lazy(() => import('@/pages/Behavior'));
 const Space = lazy(() => import('@/pages/Space'));
 const Achievements = lazy(() => import('@/pages/Achievements'));
 const Settings = lazy(() => import('@/pages/Settings'));
@@ -385,9 +384,9 @@ export default function App() {
               <Route path="/skill-trees" element={<SkillTrees />} />
               <Route path="/notes" element={<Navigate to="/dashboard" replace />} />
               <Route path="/log" element={<Log />} />
-              {/* The patterns a reader is working to stop (pages/Behavior.tsx).
-                  Not gated, like the Log: it's built from what the reader says. */}
-              <Route path="/behavior" element={<Behavior />} />
+              {/* The Behavior page is the "Your patterns" group on Insights
+                  now (components/Analytics/YourPatterns). Old links land there. */}
+              <Route path="/behavior" element={<Navigate to="/insights#patterns" replace />} />
               {/* The three Personal spaces in the rail. An id outside 1-3
                   goes to the first. */}
               <Route path="/spaces/:spaceId" element={<Space key="personal" />} />

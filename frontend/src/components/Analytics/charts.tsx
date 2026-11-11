@@ -1118,18 +1118,23 @@ export function PanelGroup({
   title,
   note,
   defaultOpen = false,
+  id,
+  className,
   children,
 }: {
   title: string;
   /** One line saying what the group answers. Always visible. */
   note: string;
   defaultOpen?: boolean;
+  /** For a link that lands on the group (`#patterns`). */
+  id?: string;
+  className?: string;
   children: ReactNode;
 }) {
   const [open, setOpen] = useState(defaultOpen);
   const level = useContext(HeadingLevel);
   return (
-    <section className={`ax-group${open ? ' is-open' : ''}`}>
+    <section id={id} className={`ax-group${open ? ' is-open' : ''}${className ? ` ${className}` : ''}`}>
       {/* The button is *inside* the heading rather than around it: the group
           title is what a reader navigating by heading is looking for, and a
           heading wrapping the control is the shape that gives them both. */}

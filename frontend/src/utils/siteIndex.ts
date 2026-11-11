@@ -92,9 +92,9 @@ export const PLACES: Place[] = [
   },
   {
     id: 'behavior',
-    name: 'Behavior',
-    where: '',
-    to: '/behavior',
+    name: 'Your patterns',
+    where: 'Analytics, Insights',
+    to: '/insights#patterns',
     keywords: 'habits mistakes patterns weaknesses impulsive careless repeat again fix intervention change behaviour behavior track stop',
   },
   {

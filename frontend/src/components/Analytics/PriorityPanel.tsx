@@ -125,7 +125,7 @@ const STATE_WORD: Record<string, string> = {
 
 export function PriorityPanel({ decision, reminders = [] }: {
   decision: PriorityDecision;
-  /** Fixes from the Behavior page to have in mind before today's sessions. */
+  /** Fixes from Your patterns (Insights) to have in mind before today's sessions. */
   reminders?: BehaviorReminder[];
 }) {
   if (decision.mode === 'none') {
@@ -185,7 +185,7 @@ export function PriorityPanel({ decision, reminders = [] }: {
               </li>
             ))}
           </ul>
-          <Link to="/behavior">Your patterns</Link>
+          <Link to="/insights#patterns">Your patterns</Link>
         </div>
       )}
 

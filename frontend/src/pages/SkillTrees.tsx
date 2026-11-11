@@ -1020,6 +1020,21 @@ export default function SkillTrees() {
     [skill],
   );
 
+  /* Skip skills the reader already has or doesn't need, or bring them back.
+     Skipped ones stop blocking what comes after them (the server's rule, in
+     backend/tracking/skill_progress.py). */
+  const skipNodes = useCallback(
+    async (ids: string[], skipIt: boolean) => {
+      try {
+        const reply = await skillProgress.skip(ids, skipIt);
+        if (reply.success) skill.replace(readingOf(reply));
+      } catch {
+        /* Nothing changed on the server, so the tree as drawn is right. */
+      }
+    },
+    [skill],
+  );
+
   /* The node whose skill check is open, which takes the whole window. */
   const [checking, setChecking] = useState<GraphNode | null>(null);
   const openCheck = useCallback(
@@ -1386,6 +1401,7 @@ export default function SkillTrees() {
             booking={booking && selected && booking.id === selected.id ? booking : null}
             onCheck={username ? openCheck : undefined}
             onMoveOff={username ? moveOff : undefined}
+            onSkip={username ? skipNodes : undefined}
             steps={selected ? plans[selected.id] ?? null : null}
             written={selected ? written[selected.id] ?? null : null}
             onSteps={selected ? (plan) => writePlans(selected.id, plan) : undefined}

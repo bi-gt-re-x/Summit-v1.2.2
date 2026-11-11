@@ -78,7 +78,7 @@ export interface Plan {
   priority?: PriorityDecision;
   /** True when the reader didn't pick a length and the plan is sized to what fits today. */
   auto_budget?: boolean;
-  /** Fixes from the Behavior page to have in mind before today's sessions. */
+  /** Fixes from Your patterns (Insights) to have in mind before today's sessions. */
   behavior?: BehaviorReminder[];
 }
 

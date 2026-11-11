@@ -97,5 +97,6 @@ export function readingOf(reply: SkillReading): SkillReading {
     goals: reply.goals,
     checkable: reply.checkable,
     targets: reply.targets,
+    skipped: reply.skipped ?? [],
   };
 }

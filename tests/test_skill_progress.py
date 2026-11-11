@@ -178,6 +178,28 @@ def test_finishing_a_node_opens_what_needs_it():
     assert status['m.fractions'] == 'available'
 
 
+def test_skipping_a_skill_opens_what_needs_it_without_mastering_it():
+    reading = sp.read([], skipped=['m.arith'])
+    assert reading['status']['m.arith'] == 'available'
+    assert reading['status']['m.order'] == 'available'
+    assert reading['skipped'] == ['m.arith']
+    assert 'complete' not in reading['status'].values()
+
+
+def test_a_skipped_skill_that_gets_mastered_is_mastered_not_skipped():
+    reading = sp.read(_arithmetic(sp.target_for('m.arith')), skipped=['m.arith'])
+    assert reading['status']['m.arith'] == 'complete'
+    assert reading['skipped'] == []
+
+
+def test_skipping_and_bringing_back_through_the_api(client):
+    assert client.post('/api/skill-progress/skip', json={'node_ids': ['m.arith']}).json()['skipped'] == ['m.arith']
+    assert client.get('/api/skill-progress').json()['status']['m.order'] == 'available'
+    back = client.post('/api/skill-progress/skip', json={'node_ids': ['m.arith'], 'skip': False}).json()
+    assert back['skipped'] == [] and 'm.order' not in back['status']
+    assert client.post('/api/skill-progress/skip', json={'node_ids': ['nope']}).json()['success'] is False
+
+
 def test_work_on_a_locked_node_opens_it():
     """Derivatives homework is derivatives, whatever the tree says about limits."""
     status = sp.read([_task('1', 'Fractions worksheet', 'mathematics')])['status']

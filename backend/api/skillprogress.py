@@ -3,6 +3,7 @@
     GET  /api/skill-progress        where the account stands on every node
     POST /api/skill-progress/book   put a session for one node on the calendar
     POST /api/skill-progress/file   say which node a task counts toward
+    POST /api/skill-progress/skip   skip skills, or bring them back
 
 The rules are in backend/tracking/skill_progress.py; this is the account check,
 the reads and the plumbing. Both writes answer with the whole reading again, so
@@ -16,7 +17,7 @@ work: a task named for the step the reader is on, filed under the node, in the
 first free slot on the calendar. It carries its node in `tasks.skill_node`, so
 finishing it moves this tile however the title was edited in between.
 """
-from typing import Optional
+from typing import List, Optional
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
@@ -61,7 +62,12 @@ def reading(username):
     opened = db.user_setting(username, skill_progress.OPEN_ALL_KEY) or {}
     return skill_progress.read(tasks, sittings, checks,
                                db.checkable_nodes(skill_progress.CHECK_MIN), goals,
-                               open_all=isinstance(opened, dict) and bool(opened.get('all')))
+                               open_all=isinstance(opened, dict) and bool(opened.get('all')),
+                               skipped=_skipped(username))
+
+
+def _skipped(username):
+    return skill_progress.skipped_ids(db.user_setting(username, skill_progress.SKIP_KEY))
 
 
 @router.get('/api/skill-progress')
@@ -154,3 +160,27 @@ def file_task(body: File, username: str = Depends(current_username)):
     for task_id in ids:
         db.update_row('tasks', task_id, {'skill_node': node_id or None}, user_id=username)
     return ok(task_id=task['id'], node_id=node_id, moved=len(ids), **reading(username))
+
+
+class Skip(BaseModel):
+    node_ids: List[str] = []
+    #: False brings them back.
+    skip: bool = True
+
+
+@router.post('/api/skill-progress/skip')
+def skip(body: Skip, username: str = Depends(current_username)):
+    """Skip skills the reader already has or doesn't need, or bring them back."""
+    if not _known(username):
+        return fail('Sign in to change your skill tree.')
+    nodes = skill_progress.catalog()
+    picked = [one.strip() for one in body.node_ids if (one or '').strip() in nodes]
+    if not picked:
+        return fail("That's not a skill on any tree.")
+    now = [one for one in _skipped(username) if one in nodes]
+    if body.skip:
+        now += [one for one in picked if one not in now]
+    else:
+        now = [one for one in now if one not in picked]
+    db.set_user_setting(username, skill_progress.SKIP_KEY, {'ids': now})
+    return ok(changed=len(picked), **reading(username))

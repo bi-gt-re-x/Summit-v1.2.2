@@ -1,42 +1,21 @@
 /* ==========================================================================
-   behavior.css: the Behavior page (pages/Behavior.tsx, components/Behavior/).
+   behavior.css: Your patterns, the folded group on Analytics' Insights tab
+   (components/Analytics/YourPatterns.tsx, components/Behavior/). It was the
+   Behavior page.
 
-   Quiet like the Log: white cards on the app's backdrop, one accent for the
-   main buttons. Colour carries one meaning only: red where the pattern
-   happened, green where a session was clean or a fix is working.
+   It sits inside an Analytics group card, so nothing in it draws a second
+   card: rows are split by hairlines and the open pattern is plain sections.
+   Colour carries one meaning only: red where the pattern happened, green
+   where a session was clean or a fix is working.
    ========================================================================== */
-.bh-page {
+.bh-scope {
     --bh-hit: #d0564b;
     --bh-clean: #3f9a6a;
     --bh-flat: var(--color-ink-muted);
-
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
-    padding-block: var(--space-8) var(--space-10);
     color: var(--color-ink);
 }
-
-/* ---------- Heading -------------------------------------------------------- */
-.bh-head {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    gap: var(--space-4);
-    align-items: start;
-}
-.bh-mark {
-    display: grid;
-    place-items: center;
-    width: 44px;
-    height: 44px;
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-md);
-    background: var(--color-surface);
-}
-.bh-mark svg { width: 22px; height: 22px; }
-.bh-head h1 { margin: 2px 0 var(--space-2); font-size: var(--text-3xl); line-height: 1.1; }
-.bh-head p { margin: 0; max-width: 64ch; color: var(--color-ink-muted); font-size: var(--text-md); line-height: 1.6; }
-.bh-head-add { align-self: center; }
+.bh-body { display: flex; flex-direction: column; gap: var(--space-4); }
+.bh-body h3, .bh-body h4 { margin: 0; }
 
 /* ---------- Buttons and fields --------------------------------------------- */
 .bh-btn {
@@ -102,54 +81,35 @@
 .bh-hint { margin: 0; color: var(--color-ink-faint); font-size: var(--text-xs); line-height: 1.5; }
 .bh-problem { margin: 0; color: var(--bh-hit); font-size: var(--text-sm); }
 
-/* ---------- The summary ---------------------------------------------------- */
-.bh-summary,
-.bh-today,
-.bh-noticed,
-.bh-empty,
-.bh-card,
-.bh-adding {
-    padding: var(--space-5);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-lg);
-    background: var(--color-surface);
-    box-shadow: var(--shadow-sm);
-}
-.bh-summary { display: flex; flex-direction: column; gap: var(--space-3); }
-.bh-summary h2,
-.bh-today h2,
-.bh-noticed h2,
-.bh-empty h2 { margin: 0; font-size: var(--text-lg); line-height: 1.3; }
-.bh-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-3); }
-.bh-tiles > div {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    padding: var(--space-3) var(--space-4);
-    border-radius: var(--radius-md);
-    background: var(--color-surface-2);
-}
-.bh-tiles b { font-size: var(--text-xl); line-height: 1.2; }
-.bh-tiles span { color: var(--color-ink-muted); font-size: var(--text-xs); line-height: 1.4; }
-.bh-figures { margin: 0; color: var(--color-ink-muted); font-size: var(--text-sm); line-height: 1.6; }
+/* ---------- How it's going ------------------------------------------------ */
+.bh-lead { display: flex; flex-direction: column; gap: 6px; }
+.bh-lead-line { margin: 0; font-size: var(--text-md); font-weight: 600; line-height: 1.45; }
+.bh-facts { margin: 0; color: var(--color-ink-muted); font-size: var(--text-sm); }
 .bh-suggest {
     display: flex;
     gap: var(--space-2);
     margin: 0;
-    padding: var(--space-3) var(--space-4);
-    border-radius: var(--radius-md);
-    background: color-mix(in srgb, var(--color-accent) 7%, var(--color-surface));
+    color: var(--color-ink-muted);
     font-size: var(--text-sm);
     line-height: 1.55;
 }
 .bh-suggest svg { flex: none; width: 16px; height: 16px; margin-top: 2px; color: var(--color-accent); }
+.bh-subhead {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 var(--space-2);
+    color: var(--color-ink-faint);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+.bh-subhead svg { width: 14px; height: 14px; color: var(--color-accent); }
 
-/* ---------- Today, noticed, empty ------------------------------------------ */
-.bh-today { border-color: color-mix(in srgb, var(--color-accent) 35%, var(--color-line)); }
-.bh-today h2 { display: flex; align-items: center; gap: var(--space-2); }
-.bh-today h2 svg { width: 17px; height: 17px; color: var(--color-accent); }
+/* ---------- Today, noticed, starting --------------------------------------- */
 .bh-today ul,
-.bh-noticed ul { display: flex; flex-direction: column; gap: var(--space-3); margin: var(--space-3) 0 0; padding: 0; list-style: none; }
+.bh-noticed ul { display: flex; flex-direction: column; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
 .bh-today li { display: flex; flex-direction: column; gap: 2px; font-size: var(--text-sm); line-height: 1.55; }
 .bh-today li span { color: var(--color-ink-muted); }
 .bh-noticed li {
@@ -158,40 +118,42 @@
     justify-content: space-between;
     align-items: center;
     gap: var(--space-3);
-    padding-top: var(--space-3);
-    border-top: 1px solid var(--color-line-soft, var(--color-line));
+    font-size: var(--text-sm);
 }
-.bh-noticed li:first-child { padding-top: 0; border-top: 0; }
 .bh-noticed li > div:first-child { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 280px; }
-.bh-noticed li span { color: var(--color-ink-muted); font-size: var(--text-sm); line-height: 1.5; }
-.bh-empty { display: flex; flex-direction: column; gap: var(--space-3); }
-.bh-empty p { margin: 0; max-width: 64ch; color: var(--color-ink-muted); font-size: var(--text-sm); line-height: 1.6; }
+.bh-noticed li span { color: var(--color-ink-muted); line-height: 1.5; }
+.bh-start { display: flex; flex-direction: column; gap: var(--space-3); }
 .bh-starters { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.bh-foot { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-5); }
 
-/* ---------- Stage filter --------------------------------------------------- */
-.bh-filter { display: flex; flex-wrap: wrap; gap: 6px; }
-.bh-filter button {
-    display: inline-flex;
+/* ---------- The list: one row per pattern ---------------------------------- */
+.bh-rows { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--color-line); }
+.bh-item { border-bottom: 1px solid var(--color-line); }
+.bh-item-head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto 16px;
     align-items: center;
-    gap: 6px;
-    min-height: 30px;
-    padding: 0 var(--space-3);
-    border: 1px solid var(--color-line);
-    border-radius: 999px;
-    background: var(--color-surface);
-    color: var(--color-ink-muted);
+    gap: var(--space-3);
+    width: 100%;
+    padding: var(--space-3) 0;
+    border: 0;
+    background: none;
+    color: inherit;
     font: inherit;
-    font-size: var(--text-xs);
-    font-weight: 600;
+    text-align: left;
     cursor: pointer;
 }
-.bh-filter button span { color: var(--color-ink-faint); font-weight: 500; }
-.bh-filter button[aria-pressed="true"] {
-    border-color: var(--color-accent);
-    background: color-mix(in srgb, var(--color-accent) 10%, var(--color-surface));
-    color: var(--color-ink);
-}
-.bh-list { display: flex; flex-direction: column; gap: var(--space-4); }
+.bh-item-name { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.bh-item-name b { font-size: var(--text-sm); }
+.bh-item-name span { color: var(--color-ink-muted); font-size: var(--text-xs); line-height: 1.45; }
+.bh-item-head:hover .bh-item-name b { color: var(--color-accent); }
+.bh-item-chev { width: 16px; height: 16px; color: var(--color-ink-faint); transition: transform .18s ease; }
+.bh-item.is-open .bh-item-chev { transform: rotate(180deg); }
+.bh-item.is-open > .bh-card { padding: 0 0 var(--space-4); }
+.bh-item.is-resolved .bh-item-name { opacity: .7; }
+.bh-chip.is-improving, .bh-chip.is-resolved { background: color-mix(in srgb, var(--bh-clean) 13%, var(--color-surface)); color: var(--bh-clean); }
+.bh-chip.is-identified { background: color-mix(in srgb, var(--bh-hit) 10%, var(--color-surface)); color: var(--bh-hit); }
+.bh-chip { font-size: var(--text-xs); white-space: nowrap; }
 
 /* ---------- A pattern ------------------------------------------------------ */
 .bh-card { display: flex; flex-direction: column; gap: var(--space-4); }
@@ -253,9 +215,6 @@
     flex-direction: column;
     gap: 4px;
     min-width: 0;
-    padding: var(--space-3) var(--space-4);
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-md);
 }
 .bh-metrics dt { color: var(--color-ink-faint); font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
 .bh-metrics dd { display: flex; flex-direction: column; gap: 2px; margin: 0; min-width: 0; }
@@ -269,7 +228,6 @@
 .bh-block h4 { margin: 0; color: var(--color-ink-faint); font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
 .bh-line { margin: 0; font-size: var(--text-sm); line-height: 1.55; }
 .bh-note { margin: 0; color: var(--color-ink-muted); font-size: var(--text-sm); line-height: 1.55; }
-.bh-block .bh-suggest { background: var(--color-surface-2); }
 
 .bh-compare { display: flex; flex-direction: column; gap: 6px; max-width: 560px; }
 .bh-compare-row { display: grid; grid-template-columns: minmax(110px, 190px) minmax(0, 1fr) auto; gap: var(--space-3); align-items: center; font-size: var(--text-xs); }
@@ -330,6 +288,7 @@
     background: var(--color-surface-2);
 }
 .bh-adding .bh-form { padding: 0; background: transparent; }
+.bh-adding { display: flex; flex-direction: column; gap: var(--space-2); }
 .bh-form.is-compact { padding: 0; background: transparent; }
 .bh-form.is-danger { background: color-mix(in srgb, var(--bh-hit) 8%, var(--color-surface)); }
 .bh-form-lead { margin: 0; font-size: var(--text-sm); line-height: 1.55; }
@@ -377,19 +336,13 @@
 
 /* ---------- Narrow screens ------------------------------------------------- */
 @media (max-width: 900px) {
-    .bh-metrics, .bh-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .bh-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 600px) {
-    .bh-page { padding-block: var(--space-4) var(--space-8); gap: var(--space-4); }
-    .bh-head { grid-template-columns: minmax(0, 1fr); }
-    .bh-mark { display: none; }
-    .bh-head h1 { font-size: var(--text-2xl); }
-    .bh-head-add { justify-self: start; }
-    .bh-summary, .bh-today, .bh-noticed, .bh-empty, .bh-card, .bh-adding { padding: var(--space-4); }
     .bh-stages li { width: 64px; }
     .bh-compare-row { grid-template-columns: minmax(0, 1fr) auto; }
     .bh-compare-track { grid-column: 1 / -1; grid-row: 2; }
 }
 @media (prefers-reduced-motion: reduce) {
-    .bh-btn, .bh-compare-bar { transition: none; }
+    .bh-btn, .bh-compare-bar, .bh-item-chev { transition: none; }
 }

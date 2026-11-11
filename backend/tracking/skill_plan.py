@@ -161,8 +161,13 @@ def _and(names):
     return '{} and {}'.format(', '.join(names[:-1]), names[-1])
 
 
-def suggestions(nodes, attempts, library, today, now=None, due=()):
-    """Every suggestion this tree's evidence supports, strongest first."""
+def suggestions(nodes, attempts, library, today, now=None, due=(), skipped=()):
+    """Every suggestion this tree's evidence supports, strongest first.
+
+    `skipped` are the node ids the reader chose to skip (skill_progress.SKIP_KEY).
+    None of them is suggested as something new to start, and each counts as
+    done for whatever builds on it."""
+    skipped = set(skipped)
     now = now or datetime.combine(today, datetime.min.time()).replace(hour=12)
     nodes = _resolved(nodes)
     by_node = {}
@@ -285,24 +290,37 @@ def suggestions(nodes, attempts, library, today, now=None, due=()):
     for read in reads.values():
         node = read['node']
         needs = [one for one in node.get('requires') or [] if one in reads]
-        if read['started'] or not needs or not all(reads[one]['got'] for one in needs):
+        if read['started'] or node['id'] in skipped or not needs \
+                or not all(reads[one]['got'] or one in skipped for one in needs):
             continue
         ready.append((read, needs))
     # Core skills first, then the ones that build on most, then by name.
     ready.sort(key=lambda pair: (not pair[0]['node'].get('core'), -len(pair[1]), pair[0]['node']['name']))
     for read, needs in ready[:2]:
         first = read['steps'][0] if read['steps'] else None
+        have = [one for one in needs if reads[one]['got']]
+        passed = [one for one in needs if one not in have]
+        if not passed:
+            because = 'It builds on {}, and you\'ve got {}.'.format(
+                _and(name[one] for one in needs), 'both' if len(needs) == 2 else 'it' if len(needs) == 1 else 'all of them')
+        elif have:
+            because = "It builds on {}, which you've got, and {}, which you skipped.".format(
+                _and(name[one] for one in have), _and(name[one] for one in passed))
+        else:
+            because = "It builds on {}, which you skipped, so it's open now.".format(_and(name[one] for one in passed))
         out.append({
             'kind': 'ready', 'node_id': read['node']['id'], 'ordinal': first['ordinal'] if first else None,
             'weight': 'warmup',
             'title': "You're ready for {}".format(read['node']['name']),
-            'because': 'It builds on {}, and you\'ve got {}.'.format(
-                _and(name[one] for one in needs), 'both' if len(needs) == 2 else 'it' if len(needs) == 1 else 'all of them'),
+            'because': because,
             'minutes': _minutes_for(read, first['ordinal']) if first else 20})
 
     # ---- Nothing yet: where it starts ---------------------------------------
     if not any(read['started'] for read in reads.values()):
-        roots = sorted((read for read in reads.values() if not (read['node'].get('requires'))),
+        # A skipped root isn't where anyone starts. What it opened is offered
+        # as ready, above.
+        roots = sorted((read for read in reads.values()
+                        if not read['node'].get('requires') and read['node']['id'] not in skipped),
                        key=lambda read: (not read['node'].get('core'), read['node'].get('tier') != 'foundation',
                                          nodes.index(read['node'])))
         if roots:

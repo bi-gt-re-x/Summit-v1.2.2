@@ -67,6 +67,7 @@ export function applyReading(
   doors: ReadonlySet<string> = new Set(),
 ): SkillGraph {
   const inGraph = new Set(graph.nodes.map((node) => node.id));
+  const skipped = new Set(reading?.skipped ?? []);
   return {
     ...graph,
     nodes: graph.nodes.map((node) => {
@@ -90,6 +91,7 @@ export function applyReading(
         need: figure?.target ?? target,
         unit: 'sessions',
         on: figure?.on ?? '',
+        skipped: status !== 'complete' && skipped.has(node.id),
       };
     }),
   };

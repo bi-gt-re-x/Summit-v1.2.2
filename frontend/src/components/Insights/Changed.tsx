@@ -53,7 +53,7 @@ export function ChangedPanel({ changes, window: days }: ChangedPanelProps) {
           : undefined
       }
       className="ax-changed"
-      footer={
+      footer={changes.length > 0 && (
         <PanelNote label="Where these come from">
           <ul className="ax-tips">
             <li><b>Gains:</b> Your last {days} days vs. the {days} before.</li>
@@ -61,10 +61,10 @@ export function ChangedPanel({ changes, window: days }: ChangedPanelProps) {
             <li><b>Patterns:</b> Two groups of your tasks, side by side.</li>
           </ul>
         </PanelNote>
-      }
+      )}
     >
       {changes.length === 0 ? (
-        <p className="ax-empty">
+        <p className="ax-empty ax-empty-sm">
           Nothing has changed much yet. This fills in once you've got enough days to compare.
         </p>
       ) : (

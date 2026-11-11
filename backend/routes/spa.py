@@ -84,7 +84,8 @@ SPA_ROUTES = (
     '/notes',
     # The private journal Summit learns from. See backend/api/journal.py.
     '/log',
-    # The patterns a reader is working to stop. See src/pages/Behavior.tsx.
+    # The old Behavior page, now Your patterns on the Insights tab. Kept so an
+    # old link reaches the router, which redirects it (src/App.tsx).
     '/behavior',
     # The three Personal spaces in the rail — a name and a page of text each.
     '/spaces/{space_id}',

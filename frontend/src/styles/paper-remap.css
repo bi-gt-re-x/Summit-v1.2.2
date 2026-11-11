@@ -11593,6 +11593,93 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-change-claim {
     color: var(--ax-faint)
 }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .ax-group.is-open .ax-group-body .ax-panel.ax-panel {
+    border: 0;
+    border-top: 1px solid var(--ax-line);
+    background: none;
+    box-shadow: none
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .ax-mx-card.ax-mx-card,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .ax-moves-col.ax-moves-col,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .sg-fact.sg-fact,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .ax-plan-sub.ax-plan-sub {
+    border: 0;
+    background: none;
+    box-shadow: none
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .ax-pri-three-card.ax-pri-three-card,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .sg-fact.sg-fact {
+    border: 0;
+    border-left: 2px solid var(--ax-line);
+    background: none
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .ax-pri-three-card.ax-pri-three-card.is-over {
+    border-left-color: var(--ax-bad)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .ax-slump-step.ax-slump-step,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .ax-said-tip.ax-said-tip,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .ax-plan-row.ax-plan-row,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .rq-row.rq-row {
+    border: 0;
+    border-top: 1px solid var(--ax-line-soft);
+    background: none;
+    box-shadow: none
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .ax-slump-step.ax-slump-step:first-child,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .ax-said-tip.ax-said-tip:first-child,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .ax-plan-row.ax-plan-row:first-child,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .rq-row.rq-row:first-child {
+    border-top: 0
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .sx-step.sx-step {
+    border: 0;
+    border-left: 1px solid var(--ax-line);
+    background: none;
+    box-shadow: none
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .sx-step.sx-step:first-child {
+    border-left: 0
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .sx-step.sx-step:hover {
+    border-color: var(--ax-line);
+    box-shadow: none
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .ax-group.is-open .ax-tile.ax-tile {
+    border: 0;
+    border-left: 2px solid var(--ax-line);
+    background: none;
+    box-shadow: none
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .gr-plot-empty.gr-plot-empty {
+    border: 0;
+    background: none
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .gr-fact.gr-fact {
+    border: 0;
+    border-left: 3px solid var(--ink-faint);
+    background: none
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .gr-fact.gr-fact.is-up {
+    border-left-color: var(--tone-green)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .gr-fact.gr-fact.is-down {
+    border-left-color: var(--tone-amber)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .gr-fact.gr-fact.is-note {
+    border-left-color: var(--accent)
+}
+@media (max-width: 720px) {
+    html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .sx-step.sx-step,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .sx-step.sx-step:first-child {
+        border-left: 0;
+        border-top: 1px solid var(--ax-line)
+    }
+}
+@media (max-width: 720px) {
+    html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .ax-page .ax-shell .sx-step.sx-step:first-child {
+        border-top: 0
+    }
+}
 
 /* ---- growth.css (every paper page) ---- */
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .grade-card {
@@ -13717,6 +13804,9 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
     border-color: var(--tone);
     color: #FFFFFF
 }
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-tile.is-skipped .stx-tile-name {
+    text-decoration: line-through
+}
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-tile.is-progress .stx-tile-face {
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--state) 22%, transparent), var(--lat-shadow)
 }
@@ -13876,6 +13966,15 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-lp-cta.is-second:hover:not(:disabled) {
     background: var(--lat-violet-soft);
     filter: none
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-lp-skip-btn {
+    border: 0;
+    background: none;
+    color: var(--lat-muted);
+    text-decoration: underline
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-lp-skip-btn:hover {
+    color: var(--lat-text)
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .stx-lp-booked {
     color: var(--lat-muted)
@@ -16295,18 +16394,11 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
 }
 
 /* ---- behavior.css (every paper page) ---- */
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-page {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-scope {
     --bh-hit: #AA7873;
     --bh-clean: #5D8570;
     --bh-flat: var(--color-ink-muted);
     color: var(--color-ink)
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-mark {
-    border: 1px solid var(--color-line);
-    background: var(--color-surface)
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-head p {
-    color: var(--color-ink-muted)
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-btn {
     border: 1px solid var(--color-line);
@@ -16374,64 +16466,55 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-problem {
     color: var(--bh-hit)
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-summary,
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-today,
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-noticed,
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-empty,
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-card,
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-adding {
-    border: 1px solid var(--color-line);
-    background: var(--color-surface);
-    box-shadow: var(--shadow-sm)
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-tiles > div {
-    background: var(--color-surface-2)
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-tiles span {
-    color: var(--color-ink-muted)
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-figures {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-facts {
     color: var(--color-ink-muted)
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-suggest {
-    background: color-mix(in srgb, var(--color-accent) 7%, var(--color-surface))
+    color: var(--color-ink-muted)
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-suggest svg {
     color: var(--color-accent)
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-today {
-    border-color: color-mix(in srgb, var(--color-accent) 35%, var(--color-line))
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-subhead {
+    color: var(--color-ink-faint)
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-today h2 svg {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-subhead svg {
     color: var(--color-accent)
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-today li span {
     color: var(--color-ink-muted)
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-noticed li {
-    border-top: 1px solid var(--color-line-soft, var(--color-line))
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-noticed li:first-child {
-    border-top: 0
-}
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-noticed li span {
     color: var(--color-ink-muted)
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-empty p {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-rows {
+    border-top: 1px solid var(--color-line)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-item {
+    border-bottom: 1px solid var(--color-line)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-item-head {
+    border: 0;
+    background: none;
+    color: inherit
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-item-name span {
     color: var(--color-ink-muted)
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-filter button {
-    border: 1px solid var(--color-line);
-    background: var(--color-surface);
-    color: var(--color-ink-muted)
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-item-head:hover .bh-item-name b {
+    color: var(--color-accent)
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-filter button span {
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-item-chev {
     color: var(--color-ink-faint)
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-filter button[aria-pressed="true"] {
-    border-color: var(--color-accent);
-    background: color-mix(in srgb, var(--color-accent) 10%, var(--color-surface));
-    color: var(--color-ink)
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-chip.is-improving,
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-chip.is-resolved {
+    background: color-mix(in srgb, var(--bh-clean) 13%, var(--color-surface));
+    color: var(--bh-clean)
+}
+html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-chip.is-identified {
+    background: color-mix(in srgb, var(--bh-hit) 10%, var(--color-surface));
+    color: var(--bh-hit)
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-card-meta {
     color: var(--color-ink-faint)
@@ -16476,9 +16559,6 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
     background: var(--bh-clean);
     border-color: var(--bh-clean)
 }
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-metrics > div {
-    border: 1px solid var(--color-line)
-}
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-metrics dt {
     color: var(--color-ink-faint)
 }
@@ -16499,9 +16579,6 @@ html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-note {
     color: var(--color-ink-muted)
-}
-html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-block .bh-suggest {
-    background: var(--color-surface-2)
 }
 html:not([data-skin]):not([data-theme="dark"]):has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page) .bh-compare-label {
     color: var(--color-ink-muted)

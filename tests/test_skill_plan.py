@@ -53,6 +53,19 @@ def test_nothing_practiced_starts_at_the_base():
     assert item['title'] == 'Start with Arithmetic'
 
 
+def test_a_skipped_base_offers_what_comes_after_it():
+    found, _ = sp.suggestions(NODES, [], LIBRARY, TODAY, skipped=['t.a'])
+    assert 't.a' not in [item['node_id'] for item in found]
+    assert (found[0]['kind'], found[0]['node_id']) == ('ready', 't.b')
+    assert found[0]['because'] == "It builds on Arithmetic, which you skipped, so it's open now."
+
+
+def test_a_skipped_prerequisite_counts_as_done_and_is_never_suggested():
+    found, _ = sp.suggestions(NODES, got('t.a'), LIBRARY, TODAY, skipped=['t.b'])
+    ready = [item['node_id'] for item in found if item['kind'] == 'ready']
+    assert 't.c' in ready and 't.b' not in ready
+
+
 # ---- Going badly ------------------------------------------------------------------
 def test_a_shaky_base_means_step_back():
     attempts = rows('t.a', 'core', 3, 4, days_ago=10) + rows('t.b', 'warmup', 3, 5, ordinal=1)

@@ -49,6 +49,7 @@ const READING: SkillReading = {
   goals: {},
   checkable: ['m.arith'],
   targets: {},
+  skipped: [],
 };
 
 /** A fake server: grades numbers, reveals sentences, finishes on the last. */

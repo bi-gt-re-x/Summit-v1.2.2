@@ -37,7 +37,7 @@ const PHONE = '(max-width: 640px)';
 /** The four the phone bar keeps, in the order the rail lists them. */
 const PHONE_TABS = ['Dashboard', 'Calendar', 'Tasks', 'Goals'];
 /** The five behind More. Achievements and Settings are the two that used to fall off. */
-const SHEET_TABS = ['Analytics', 'Skill Tree', 'Log', 'Behavior', 'Achievements', 'Settings'];
+const SHEET_TABS = ['Analytics', 'Skill Tree', 'Log', 'Achievements', 'Settings'];
 
 /**
  * The catalogue the rail joins the account's picks against.
@@ -315,7 +315,6 @@ describe('on a phone', () => {
         '/goals',
         '/skill-trees',
         '/log',
-        '/behavior',
         '/achievements',
         '/settings',
       ]),

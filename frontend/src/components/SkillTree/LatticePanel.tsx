@@ -94,6 +94,7 @@ import { groupOf, iconUrl } from '@/skills/subjectTrees';
 import {
   DIFFICULTY_LABEL,
   STATUS_LABEL,
+  cleared,
   requirementsOf,
   unlockedBy,
   type GraphNode,
@@ -1010,6 +1011,12 @@ export interface LatticePanelProps {
   booking?: BookingState | null;
   /** Open the skill check. Absent hides it. */
   onCheck?: (node: GraphNode) => void;
+  /**
+   * Skip skills (`skip` true) or bring them back. The panel passes the node,
+   * and with "everything before it too" the unfinished skills leading up to
+   * it. Absent hides the control.
+   */
+  onSkip?: (ids: string[], skip: boolean) => void;
   /** Take a task off this node ("Not this skill"), with every task that
    *  shares its name. Absent hides it. */
   onMoveOff?: (taskId: string) => void;
@@ -1060,6 +1067,7 @@ export function LatticePanel({
   onBook,
   booking = null,
   onCheck,
+  onSkip,
   onMoveOff,
   steps = null,
   written = null,
@@ -1134,7 +1142,25 @@ export function LatticePanel({
   const needs = requirementsOf(graph, node);
   // What is actually in the way, which on a locked node is the only part of
   // `needs` worth naming — the rest are already done.
-  const blockers = needs.filter((entry) => entry.status !== 'complete');
+  const blockers = needs.filter((entry) => !cleared(entry));
+  /* Everything unfinished that leads up to this node, nearest first, for
+     "Skip everything before it". Someone who already knows derivatives
+     shouldn't have to skip limits, then functions, one tile at a time. */
+  const before: GraphNode[] = [];
+  {
+    const byId = new Map(graph.nodes.map((one) => [one.id, one]));
+    const seen = new Set<string>([node.id]);
+    const queue = [...node.requires];
+    while (queue.length) {
+      const id = queue.shift()!;
+      if (seen.has(id)) continue;
+      seen.add(id);
+      const one = byId.get(id);
+      if (!one || one.status === 'complete') continue;
+      if (!one.skipped) before.push(one);
+      queue.push(...one.requires);
+    }
+  }
   // Everything under "How to improve", in one call. The group decides which
   // verbs the derived half speaks in, and the graph's own id is the tree's.
   const plan = improvePlan(node, { opens, needs, blockers, group: groupOf(graph.id) });
@@ -1241,7 +1267,9 @@ export function LatticePanel({
    * is elsewhere, then the two kinds of part-done, then open.
    */
   const position =
-    node.status === 'complete'
+    node.skipped
+      ? "Skipped. It won't block anything after it, and work on it still counts."
+      : node.status === 'complete'
       ? `Mastered${node.on ? ` on ${shortDay(node.on)}` : ''}.${work?.check?.passed_on ? ' You passed the skill check.' : ''}`
       : node.status === 'locked' && blockers.length > 0
         ? `${blockers.length} ${blockers.length === 1 ? 'prerequisite' : 'prerequisites'} away. Finish ${blockers.length === 1 ? 'it' : 'them'} to open this.`
@@ -1625,7 +1653,7 @@ export function LatticePanel({
               <p className="stx-lp-why">{why}</p>
               <ul className="stx-lp-needs" aria-label="What you need first">
                 {needs.map((need) => {
-                  const done = need.status === 'complete';
+                  const done = cleared(need);
                   return (
                     <li key={need.id} className={done ? 'is-done' : undefined}>
                       <span className="stx-lp-need-mark" aria-hidden="true">
@@ -1634,7 +1662,7 @@ export function LatticePanel({
                       <button type="button" onClick={() => onSelect(need)}>
                         {need.name}
                       </button>
-                      {!done && <em>{STATUS_LABEL[need.status]}</em>}
+                      {need.skipped ? <em>Skipped</em> : !done && <em>{STATUS_LABEL[need.status]}</em>}
                     </li>
                   );
                 })}
@@ -1791,6 +1819,36 @@ export function LatticePanel({
               {checkButton}
             </>
           )
+        )}
+        {onSkip && node.status !== 'complete' && (
+          <div className="stx-lp-skip">
+            {node.skipped ? (
+              <button type="button" className="stx-lp-skip-btn" onClick={() => onSkip([node.id], false)}>
+                Bring this skill back
+              </button>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="stx-lp-skip-btn"
+                  title="For a skill you already have or don't need. It stops blocking what comes after it."
+                  onClick={() => onSkip([node.id], true)}
+                >
+                  Skip this skill
+                </button>
+                {before.length > 0 && (
+                  <button
+                    type="button"
+                    className="stx-lp-skip-btn"
+                    title={before.map((one) => one.name).join(', ')}
+                    onClick={() => onSkip([node.id, ...before.map((one) => one.id)], true)}
+                  >
+                    Skip it and the {before.length} before it
+                  </button>
+                )}
+              </>
+            )}
+          </div>
         )}
         {booking && (booking.task || booking.error) && node.status !== 'complete' && (
           <p className={`stx-lp-booked${booking.error ? ' is-error' : ''}`} role="status">

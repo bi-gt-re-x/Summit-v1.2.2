@@ -1199,6 +1199,12 @@ html[data-theme="dark"] .stx-page--lattice {
     color: #fff;
 }
 html[data-theme="dark"] .stx-tile.is-complete .stx-tile-face { color: #0d1117; }
+/* Skipped: the reader set it aside. Faded and struck through, so it reads as
+   "not doing this" rather than as locked or done. Opacity rather than colour,
+   so every theme and the paper look fade it the same way. */
+.stx-tile.is-skipped .stx-tile-face,
+.stx-tile.is-skipped .stx-tile-name { opacity: .45; }
+.stx-tile.is-skipped .stx-tile-name { text-decoration: line-through; }
 /* In progress keeps the outline but earns a ring in the status colour. */
 .stx-tile.is-progress .stx-tile-face {
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--state) 22%, transparent), var(--lat-shadow);
@@ -1493,6 +1499,21 @@ html[data-theme="dark"] .stx-tile-pct { color: #0d1117; }
     box-shadow: inset 0 0 0 1.5px var(--lat-violet);
 }
 .stx-lp-cta.is-second:hover:not(:disabled) { background: var(--lat-violet-soft); filter: none; }
+/* Skip this skill: small text links under the main buttons. A way out,
+   not a call to action. */
+.stx-lp-skip { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); }
+.stx-lp-skip-btn {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-size: var(--text-xs);
+    color: var(--lat-muted);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+}
+.stx-lp-skip-btn:hover { color: var(--lat-text); }
 .stx-lp-booked {
     margin: 0;
     font-size: var(--text-xs);

@@ -38,6 +38,7 @@ import type { AnalyticsData } from '../useAnalyticsData';
 import { SayVsDo, sayVsDoHasNews } from '../SayVsDo';
 import { LowTimesPanel } from '../LowTimes';
 import { FirstReads } from '../FirstReads';
+import { YourPatterns } from '../YourPatterns';
 import type { SubjectIndex } from '@/hooks/useSubjects';
 
 /** Habit cards drawn before "Show all". They're the tallest thing on the tab. */
@@ -265,6 +266,11 @@ export function InsightsTab({
             <SayVsDo mood={mood} said={said} reloadSaid={() => data.said?.reload()} />
           </PanelGroup>
         )}
+
+        {/* The mistakes you already know you make, and whether the fix is
+            working. Was the Behavior page; folded shut unless there's a fix
+            to remember today or a link landed on it. */}
+        {data && <YourPatterns />}
 
         {insightsReady && (
           <PanelGroup

@@ -232,7 +232,7 @@ function Patterns({
     <fieldset className="tk-rate-row tk-rate-patterns">
       <legend className="tk-rate-label">
         Did any of these happen?
-        <span>From your Behavior page. Clean sessions count too.</span>
+        <span>From Your patterns. Clean sessions count too.</span>
       </legend>
       {patterns.map((pattern) => {
         const answer = answers[pattern.id] ?? { times: null, used: null };

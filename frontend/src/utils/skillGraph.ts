@@ -117,6 +117,14 @@ export interface GraphNode {
    * move it down a rank, or a suggestion would silently become a rule.
    */
   recommends?: string[];
+  /** The reader chose to skip it. It stays open and stops blocking what
+   *  comes after it, without counting as mastered. */
+  skipped?: boolean;
+}
+
+/** Done with, as far as what comes after it cares: mastered or skipped. */
+export function cleared(node: Pick<GraphNode, 'status' | 'skipped'> | undefined): boolean {
+  return Boolean(node && (node.status === 'complete' || node.skipped));
 }
 
 export interface SkillGraph {
