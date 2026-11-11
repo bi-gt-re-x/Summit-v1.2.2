@@ -342,3 +342,17 @@ def test_tracking_a_suggestion_twice_is_refused(client):
     assert client.post('/api/behavior/add', json={'title': 'Ran out of time', 'source': 'reason', 'source_ref': 'no-time'}).json()['success']
     again = client.post('/api/behavior/add', json={'title': 'Ran out of time', 'source': 'reason', 'source_ref': 'no-time'}).json()
     assert not again['success']
+
+
+def test_fixes_too_new_to_judge_are_neither_working_nor_failing():
+    rows = [read(pattern(), [check(30, 1)], [fix(0)])]
+    found = behavior.summary(rows, TODAY)
+    assert found['fixes'] == {'working': 0, 'of': 0, 'waiting': 1}
+    assert 'One fix is too new to judge.' in found['figures']
+    assert 'working so far' not in found['figures']
+
+
+def test_only_log_challenges_are_offered_as_patterns_to_stop():
+    insights = [{'id': 'i1', 'kind': 'pattern', 'topic': 'preferences', 'status': 'active', 'text': 'Practices violin every day'},
+                {'id': 'i2', 'kind': 'pattern', 'topic': 'challenges', 'status': 'active', 'text': 'Rushes the last problems'}]
+    assert [one['source_ref'] for one in behavior.suggest([], insights, [], TODAY)] == ['i2']

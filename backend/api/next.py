@@ -102,12 +102,15 @@ def _ready_checks(username):
     return sorted(ready, key=lambda one: one['last'], reverse=True)
 
 
-def today_capacity(tasks, sittings, calendar, now):
+def today_capacity(tasks, sittings, calendar, now, goals=()):
     """How much fits today: what the reader usually does on this weekday and the time
     today's calendar events leave (backend/tracking/capacity.py). Only the reader's own
-    events count as taken here; sessions a planner booked are work, not commitments."""
+    events count as taken here; sessions a planner booked are work, not commitments,
+    and so are the reader's own work blocks ("Violin practice", a block named for a goal)."""
+    from backend.tracking import goal_why
     start = now.replace(hour=0, minute=0, second=0, microsecond=0)
-    events = session_plan.busy_spans([], calendar, start)
+    terms = [frozenset(goal_why.goal_terms(goal)['title']) for goal in goals if goal.get('status') == 'active']
+    events = session_plan.busy_spans([], capacity.work_free(calendar, terms), start)
     return capacity.read(tasks, sittings, events, now)
 
 
@@ -129,7 +132,7 @@ def get_next_actions(budget: Optional[int] = None,
     name_of = _name_of(username)
     sittings = _sittings(username)
     calendar = db.calendar_document(username)
-    fits = today_capacity(tasks, sittings, calendar, now)
+    fits = today_capacity(tasks, sittings, calendar, now, goals)
     auto = not budget or budget <= 0
     if auto:
         budget = capacity.budget_for(fits, next_actions.DEFAULT_BUDGET)

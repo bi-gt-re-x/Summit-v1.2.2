@@ -141,7 +141,11 @@ export default function Behavior() {
               <b>{summary.repeat ? `${summary.repeat.hits} of ${summary.repeat.of}` : 'Too new'}</b>
               <span>{summary.repeat ? 'came back after you named them' : 'to say whether they come back'}</span>
             </div>
-            <div><b>{summary.fixes.of ? `${summary.fixes.working} of ${summary.fixes.of}` : 'None'}</b><span>fixes working</span></div>
+            {summary.fixes.of || !summary.fixes.waiting ? (
+              <div><b>{summary.fixes.of ? `${summary.fixes.working} of ${summary.fixes.of}` : 'None'}</b><span>fixes working</span></div>
+            ) : (
+              <div><b>{summary.fixes.waiting} running</b><span>{summary.fixes.waiting === 1 ? 'fix, too new to judge' : 'fixes, too new to judge'}</span></div>
+            )}
             <div><b>{summary.counts.resolved}</b><span>resolved</span></div>
           </div>
           {summary.figures && <p className="bh-figures">{summary.figures}</p>}

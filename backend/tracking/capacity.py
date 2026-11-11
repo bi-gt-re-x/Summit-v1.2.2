@@ -37,7 +37,7 @@ from statistics import median
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 from backend.config.shared import RULES
-from backend.tracking import evidence, record, time_spent
+from backend.tracking import evidence, goal_why, record, time_spent
 from backend.tracking.measures import kind_of
 
 RULE = RULES['capacity']
@@ -56,6 +56,7 @@ LONGEST_SITTING = 6 * 60
 
 _PREP = re.compile(r'\b(?:{})\b'.format('|'.join(re.escape(word) for word in RULE['prep_words'])), re.I)
 _PREP_ACRONYM = re.compile(r'\b(?:{})\b'.format('|'.join(re.escape(word) for word in RULE['prep_acronyms'])))
+_WORK = re.compile(r'\b(?:{})\b'.format('|'.join(re.escape(word) for word in RULE['work_words'])), re.I)
 _DEADLINE = re.compile(r'\b(?:{})\b'.format('|'.join(re.escape(word) for word in RULE['deadline_words'])), re.I)
 
 WEEKDAYS = ('Mondays', 'Tuesdays', 'Wednesdays', 'Thursdays', 'Fridays', 'Saturdays', 'Sundays')
@@ -273,9 +274,33 @@ def _hour(hour: int) -> str:
 # ---------------------------------------------------------------------------
 # Commitments: dates that aren't goals
 # ---------------------------------------------------------------------------
+def is_work_block(name: str, work_terms: Sequence[frozenset] = ()) -> bool:
+    """Whether a calendar event is time set aside for the work itself ("Violin practice",
+    "USACO practice") rather than something that takes time from it (school, swimming).
+    Work blocks are where today's capacity gets spent, so they don't count as busy.
+    `work_terms` is each goal's title words: an event that names a goal is its work."""
+    text = str(name or '')
+    if _WORK.search(text):
+        return True
+    words = goal_why._terms(text)
+    return any(words & terms for terms in work_terms)
+
+
+def work_free(calendar: Dict[str, Any], work_terms: Sequence[frozenset] = ()) -> Dict[str, Any]:
+    """The calendar without its work blocks: what's left is what takes time away."""
+    out = {}
+    for key, entry in (calendar or {}).items():
+        blocks = [block for block in (entry or {}).get('timestamps') or []
+                  if not (isinstance(block, dict) and is_work_block(block.get('task') or '', work_terms))]
+        if blocks:
+            out[key] = dict(entry, timestamps=blocks)
+    return out
+
+
 def commitments(calendar: Dict[str, Any], tasks: Sequence[Dict[str, Any]], now: datetime) -> List[Dict[str, Any]]:
     """Dated things coming up that need preparing for: an audition or an exam on the
-    calendar within COMMIT_DAYS, and study tasks due within DUE_DAYS. Nearest first."""
+    calendar within COMMIT_DAYS, and study tasks due within DUE_DAYS. Nearest first.
+    A repeating block is routine and never counts."""
     today = now.date()
     out = []
     for key, entry in (calendar or {}).items():
@@ -289,6 +314,10 @@ def commitments(calendar: Dict[str, Any], tasks: Sequence[Dict[str, Any]], now: 
             continue
         for block in (entry or {}).get('timestamps') or []:
             if not isinstance(block, dict) or block.get('isDashboardTask'):
+                continue
+            # A block that repeats is routine ("Math: contest block" every
+            # weekday), not a date to get ready for.
+            if block.get('recurrence') in ('weekly', 'monthly'):
                 continue
             name = str(block.get('task') or '').strip()
             if name and needs_prep(name):

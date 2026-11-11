@@ -437,7 +437,7 @@ def decide(goals: Sequence[Dict[str, Any]], tasks: Sequence[Dict[str, Any]], now
         })
 
     # ---- the answers -------------------------------------------------------
-    answers = [_matters(ambition_top, top, live, lead, given, until),
+    answers = [_matters(ambition_top, top, live, lead, given, until, {row['id'] for row in also}),
                _time_sensitive(top, live, lead, upcoming),
                _returns(top, best_use, also)]
     weekly, weekly_read = _capacity(tasks, today)
@@ -528,11 +528,13 @@ def _why_first(top: Dict[str, Any], lead: Optional[Dict[str, Any]]) -> str:
 
 
 def _matters(ambition_top: Dict[str, Any], top: Dict[str, Any], live: List[Dict[str, Any]],
-             lead: Optional[Dict[str, Any]], given: set, until: str) -> Dict[str, str]:
+             lead: Optional[Dict[str, Any]], given: set, until: str, same_work: set = frozenset()) -> Dict[str, str]:
     """Ambition: what matters most overall, and whether that's today's first thing."""
     text = '{}: ambition {:g} of 10.'.format(ambition_top['title'], ambition_top['priority'])
     if lead or ambition_top is not top:
-        if ambition_top['id'] in given:
+        if ambition_top['id'] in same_work:
+            text += " {} comes first today, and that work moves this one too.".format(top['title'])
+        elif ambition_top['id'] in given:
             text += " It isn't first today, because {}, but it still gets time.".format(_why_first(top, lead))
         else:
             text += " It isn't first today, because {}. It gets time again {}.".format(_why_first(top, lead), until)

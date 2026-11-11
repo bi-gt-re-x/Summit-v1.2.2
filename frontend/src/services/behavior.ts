@@ -100,7 +100,8 @@ export interface BehaviorSummary {
   named: number;
   counts: Record<BehaviorStatus, number>;
   repeat: { hits: number; of: number; percent: number } | null;
-  fixes: { working: number; of: number };
+  /** `of` counts fixes far enough along to judge; `waiting` the ones too new to. */
+  fixes: { working: number; of: number; waiting?: number };
   headline: string | null;
   figures: string | null;
   suggests: string | null;

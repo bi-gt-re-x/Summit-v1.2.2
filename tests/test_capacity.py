@@ -222,3 +222,33 @@ def test_the_plan_endpoint_picks_its_own_length_and_says_so(client):
     assert reply['plan']['priority']['capacity'] is not None or reply['plan']['priority'].get('mode') == 'none'
     picked = client.get('/api/next_actions?budget=90').json()['plan']
     assert picked['budget'] == 90 and picked['auto_budget'] is False
+
+
+def test_a_repeating_block_is_routine_not_a_commitment():
+    found = capacity.commitments({'{}-{}-{}'.format(TODAY.year, TODAY.month, TODAY.day + 1): {'timestamps': [
+        {'task': 'Math: focused contest block', 'startTime': '16:10', 'endTime': '17:40', 'recurrence': 'weekly',
+         'recurrenceDays': [1, 2, 3, 4, 5]},
+        {'task': 'Violin audition', 'startTime': '10:00', 'endTime': '11:00'}]}}, [], NOW)
+    assert [one['title'] for one in found] == ['Violin audition']
+
+
+def test_work_blocks_dont_count_as_busy():
+    key = '{}-{}-{}'.format(TODAY.year, TODAY.month, TODAY.day)
+    calendar = {key: {'timestamps': [
+        {'task': 'School', 'startTime': '08:00', 'endTime': '15:00'},
+        {'task': 'Violin practice', 'startTime': '17:00', 'endTime': '18:00'},
+        {'task': 'USACO session', 'startTime': '19:00', 'endTime': '20:00'},
+        {'task': 'Nationals sprint', 'startTime': '20:00', 'endTime': '21:00'}]}}
+    kept = capacity.work_free(calendar, [frozenset({'national', 'mathcount'})])
+    assert [block['task'] for block in kept[key]['timestamps']] == ['School']
+
+
+def test_the_goal_that_matters_most_is_told_when_todays_work_moves_it_too():
+    nationals = goal('Qualify for MathCounts Nationals', 'mathematics', ahead(120), priority_=10)
+    chapter = goal('MathCounts chapter: top finish', 'mathematics', ahead(60), priority_=9)
+    decision = priority.decide([nationals, chapter], [], NOW, 45)
+    assert decision['focus']['title'] == 'MathCounts chapter: top finish'
+    assert decision['also'] == ['Qualify for MathCounts Nationals']
+    matters = next(row['answer'] for row in decision['answers'] if row['key'] == 'matters')
+    assert matters == ('Qualify for MathCounts Nationals: ambition 10 of 10. MathCounts chapter: top finish '
+                       'comes first today, and that work moves this one too.')

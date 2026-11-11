@@ -291,7 +291,7 @@
     ]
   },
   "capacity": {
-    "_about": "Ambition, priority and capacity, kept apart. Ambition is the goal's own priority (1-10): how much it matters overall, and it doesn't change day to day. Priority right now is worked out by backend/tracking/priority.py from dates, pace and dated commitments: an audition or an exam on the calendar, or a school deadline. Capacity is how much work fits today, from backend/tracking/capacity.py: the minutes the reader usually works on this weekday (the last `weeks` of them, median of the days they worked) and the free time left on today's calendar between `day_start` and `day_end`. A commitment is a calendar event within `commit_days` whose name has one of `prep_words`, or a study task due within `due_days` that's high priority or named like one of those or one of `deadline_words` (an essay, a project), since ordinary homework due tomorrow shouldn't push a main goal aside. `prep_acronyms` match in capitals only.",
+    "_about": "Ambition, priority and capacity, kept apart. Ambition is the goal's own priority (1-10): how much it matters overall, and it doesn't change day to day. Priority right now is worked out by backend/tracking/priority.py from dates, pace and dated commitments: an audition or an exam on the calendar, or a school deadline. Capacity is how much work fits today, from backend/tracking/capacity.py: the minutes the reader usually works on this weekday (the last `weeks` of them, median of the days they worked) and the free time left on today's calendar between `day_start` and `day_end`. A commitment is a calendar event within `commit_days` whose name has one of `prep_words`, or a study task due within `due_days` that's high priority or named like one of those or one of `deadline_words` (an essay, a project), since ordinary homework due tomorrow shouldn't push a main goal aside. `prep_acronyms` match in capitals only. A calendar block named with one of `work_words`, or with a goal's words, is time set aside for the work, so it doesn't count as busy, and a repeating block is never a commitment.",
     "weeks": 8,
     "min_days": 3,
     "day_start": 7,
@@ -302,6 +302,7 @@
     "lead_share": 0.5,
     "prep_words": ["audition", "auditions", "exam", "exams", "test", "quiz", "midterm", "final exam", "finals", "recital", "concert", "performance", "competition", "contest", "tournament", "olympiad", "interview", "presentation", "deadline", "due", "tryout", "tryouts", "amc", "aime", "mathcounts", "usaco"],
     "prep_acronyms": ["SAT", "PSAT", "ACT"],
+    "work_words": ["practice", "study", "homework", "review", "drill", "mock", "session", "build", "focus", "focused", "deep work", "problems", "problem set", "lesson prep"],
     "deadline_words": ["essay", "project", "report", "paper", "application", "presentation", "lab report", "portfolio", "submission", "submit", "assignment"]
   },
   "log": {

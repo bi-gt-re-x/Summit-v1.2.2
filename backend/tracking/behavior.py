@@ -598,13 +598,17 @@ def summary(read: Sequence[Dict[str, Any]], today: date) -> Dict[str, Any]:
     old = [one for one in live if (today - date.fromisoformat(one['identified_on'])).days >= REPEAT_MIN_DAYS
            and one['recurrence'] and one['recurrence']['of'] > 0]
     came_back = [one for one in old if one['recurrence']['hits'] > 0]
-    fixes = [one for one in live if one['effect']]
+    running = [one for one in live if one['effect']]
+    # A fix that can't be judged yet is neither working nor failing.
+    fixes = [one for one in running if one['effect']['verdict'] not in ('early', 'no_baseline', 'rare')]
     working = [one for one in fixes if one['effect']['verdict'] in ('working', 'leaning_better', 'clean')]
+    waiting = len(running) - len(fixes)
     failing = [one for one in fixes if one['effect']['verdict'] in ('no_change', 'worse', 'leaning_worse')]
     unfixed = [one for one in live if one['status'] == 'identified']
     out = {'named': len(live), 'counts': {key: counts.get(key, 0) for key in STATUSES},
            'repeat': {'hits': len(came_back), 'of': len(old), 'percent': _percent(len(came_back), len(old))} if old else None,
-           'fixes': {'working': len(working), 'of': len(fixes)}, 'headline': None, 'figures': None, 'suggests': None}
+           'fixes': {'working': len(working), 'of': len(fixes), 'waiting': waiting},
+           'headline': None, 'figures': None, 'suggests': None}
     if not live:
         return out
     if old and len(came_back) * 2 >= len(old):
@@ -623,9 +627,11 @@ def summary(read: Sequence[Dict[str, Any]], today: date) -> Dict[str, Any]:
         parts.append('{} of the {} patterns you named at least a week ago came back afterward.'.format(
             len(came_back), len(old)))
     if len(fixes) == 1:
-        parts.append('Your one fix {} so far.'.format('is working' if working else "isn't working yet"))
+        parts.append('Your one judged fix {} so far.'.format('is working' if working else "isn't working yet"))
     elif fixes:
-        parts.append('{} of {} fixes are working so far.'.format(len(working), len(fixes)))
+        parts.append('{} of {} judged fixes are working so far.'.format(len(working), len(fixes)))
+    if waiting:
+        parts.append('One fix is too new to judge.' if waiting == 1 else '{} fixes are too new to judge.'.format(waiting))
     if counts.get('resolved'):
         parts.append('{} resolved.'.format(counts['resolved']))
     out['figures'] = ' '.join(parts) or '{} named, nothing checked yet.'.format(len(live))
@@ -669,7 +675,10 @@ def suggest(tasks: Sequence[Dict[str, Any]], insights: Sequence[Dict[str, Any]],
     out = []
 
     for insight in insights:
-        if insight.get('kind') != 'pattern' or insight.get('status') not in (None, 'active'):
+        # A pattern the Log filed as a challenge. "Practices violin every day" is a
+        # pattern too, but nothing to stop.
+        if (insight.get('kind') != 'pattern' or insight.get('topic') not in (None, '', 'challenges')
+                or insight.get('status') not in (None, 'active')):
             continue
         text = str(insight.get('text') or '').strip()
         if not text or ('log', str(insight.get('id'))) in taken or text.lower() in titles:
