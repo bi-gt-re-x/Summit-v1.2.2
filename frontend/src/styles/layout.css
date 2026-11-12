@@ -91,31 +91,6 @@ html[data-theme="dark"] * { scrollbar-color: #333b47 transparent; }
 html[data-theme="dark"] ::-webkit-scrollbar-thumb { background: #333b47; background-clip: padding-box; }
 html[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: #434c5a; background-clip: padding-box; }
 
-/* ---- The icon mask, shared by every page that draws one ------------------
- *
- * The 80 drawings in utils/icons/ (served at /static/icons/) are stroke SVGs,
- * so they are painted as a **mask** rather than loaded as images: the alpha is
- * the shape and `currentColor` is the paint, which is what lets one file sit
- * legibly on a pale calendar block, in a bronze pill on the dashboard and on
- * either theme without a second copy of the drawing.
- *
- * Structural, despite the `background`: `currentColor` is whatever the element
- * it is put inside has already decided, so this file still chooses no colours.
- *
- * It lived in the calendar's day.css while the calendar was the only thing
- * drawing icons. The dashboard's task rows draw the subject's icon now and do
- * not load that stylesheet, so the rule is here — where a mechanism used by
- * more than one page belongs. Callers set the URL: style={{ '--ico': url(…) }}.
- */
-.cal-ico {
-    display: block;
-    width: 15px;
-    height: 15px;
-    background: currentColor;
-    -webkit-mask: var(--ico) center / contain no-repeat;
-    mask: var(--ico) center / contain no-repeat;
-}
-
 /* iOS zooms the whole page in when a field under 16px is focused, and does
    not zoom back out — so on an iPhone every search box, task title and
    settings input here (most are 14px) left the reader looking at a page

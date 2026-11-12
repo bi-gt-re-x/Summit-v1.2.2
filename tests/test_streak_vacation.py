@@ -178,27 +178,10 @@ def _tester():
     return next(u for u in db.read_table('users') if u['username'] == 'tester')
 
 
-def test_planning_one_through_the_api_saves_it_and_answers_with_the_stats(client):
-    reply = client.post('/api/streak/vacation', json={'until': ahead(4)}).json()
-    assert reply['success'], reply
-    assert reply['stats']['vacation'] == {'start': ago(0), 'end': ahead(4), 'active': True}
-    assert _tester()['streak_vacations'] == [[ago(0), ahead(4)]]
-
-    settings = client.get('/api/settings').json()['settings']
-    assert settings['streak_vacation']['end'] == ahead(4)
-    assert settings['vacation_max_days'] == xp.VACATION_MAX_DAYS
 
 
-def test_a_bad_one_is_refused_with_a_reason(client):
-    reply = client.post('/api/streak/vacation', json={'until': ahead(90)}).json()
-    assert reply['success'] is False
-    assert 'at most' in reply['message']
 
 
-def test_ending_one_through_the_api(client):
-    client.post('/api/streak/vacation', json={'until': ahead(4)})
-    reply = client.post('/api/streak/vacation/end').json()
-    assert reply['success'] and reply['stats']['vacation'] is None
 
 
 def test_the_stats_read_says_where_the_grace_day_stands(client):

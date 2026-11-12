@@ -166,29 +166,5 @@ def test_unfiled_tasks_are_grouped_by_what_their_names_say():
     assert found['unfiled']['total'] == 4
 
 
-def test_filing_only_touches_unfiled_tasks(app):
-    from backend.database import connection as db
-    make_account('filer')
-    client = sign_in(app, 'filer')
-    for title, subject in (('Chemistry lab', ''), ('Chemistry quiz', 'physics')):
-        db.insert_row('tasks', {'id': db.new_id('tasks'), 'user_id': 'filer', 'title': title,
-                                'subject': subject, 'status': 'done',
-                                'completed_at': '2026-10-17T10:00:00', 'priority': 'medium'})
-    ids = [str(row['id']) for row in db.rows_for('tasks', 'filer')]
-
-    reply = client.post('/api/analytics/file_inferred',
-                        json={'subject': 'chemistry', 'ids': ids}).json()
-
-    assert reply['success'] and reply['filed'] == 1
-    subjects = sorted(row['subject'] for row in db.rows_for('tasks', 'filer'))
-    assert subjects == ['chemistry', 'physics']
-    assert not client.post('/api/analytics/file_inferred',
-                           json={'subject': 'not-a-subject', 'ids': ids}).json()['success']
 
 
-def test_the_page_reads_it(app):
-    make_account('reader2')
-    client = sign_in(app, 'reader2')
-    reply = client.get('/api/analytics/said').json()
-    assert reply['success']
-    assert set(reply) >= {'aims', 'activities', 'timing', 'topics', 'unfiled', 'days'}

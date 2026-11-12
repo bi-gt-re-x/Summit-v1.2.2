@@ -136,8 +136,7 @@ def _no_model_keys(monkeypatch):
 #: What cannot run against Postgres, because it is *about* SQLite: these open
 #: the database file with sqlite3 to look at raw rows, or read SQLite's query
 #: planner to prove an index is used. Everything else runs on both.
-SQLITE_ONLY_FILES = {'test_goal_matcher_store.py', 'test_plan_backfill.py',
-                     'test_planner_end_to_end.py'}
+SQLITE_ONLY_FILES: set = set()
 SQLITE_ONLY_TESTS = {'test_the_task_read_does_not_sort_every_row',
                      'test_the_stale_query_uses_its_index'}
 
@@ -189,19 +188,6 @@ def fresh_db(tmp_path, monkeypatch):
             wipe.execute('CREATE SCHEMA public')
     db._ensure_database()
     yield path
-
-    # The goal matcher's background work, finished while this database is
-    # still the one it was queued against. Creating or editing a goal queues a
-    # catch-up on worker threads (backend/goal_matcher/queue.py); those
-    # threads outlive the test, and the path below is about to be put back, so
-    # a job still running would write into the next test's database.
-    #
-    # Here rather than in an autouse fixture of its own: one depending on
-    # `fresh_db` would build a database for every test in the suite, including
-    # the ones that never touch it.
-    from backend.goal_matcher.queue import work
-    assert work.wait_idle(timeout=30), 'goal matcher jobs still running after the test'
-    work.clear()
 
     # Log entries waiting to be read (backend/tracking/journal.py) are timers,
     # not queue jobs. Dropped for the same reason: the database is going.

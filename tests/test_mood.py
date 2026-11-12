@@ -197,31 +197,5 @@ def test_brief_lines_skip_early_reads():
 
 
 # ---- the check-in on the Log page --------------------------------------------
-def test_a_checkin_saves_and_clears_without_rereading(app):
-    from backend.database import connection as db
-    make_account('feeler')
-    client = sign_in(app, 'feeler')
-
-    made = client.post('/api/log/save', json={'mood': 4, 'energy': 2}).json()
-    assert made['success'], made
-    entry = made['entry']
-    assert (entry['mood'], entry['energy'], entry['learn_state']) == (4, 2, 'done')
-
-    texted = client.post('/api/log/save', json={'id': entry['id'], 'title': 'Hi', 'body': 'tired'}).json()
-    assert texted['entry']['learn_state'] == 'waiting'
-    db.update_row('log_entries', entry['id'], {'learn_state': 'done'}, user_id='feeler')
-
-    moved = client.post('/api/log/save', json={'id': entry['id'], 'title': 'Hi', 'body': 'tired',
-                                               'mood': 0, 'energy': 3}).json()
-    assert (moved['entry']['mood'], moved['entry']['energy']) == (None, 3)
-    assert moved['entry']['learn_state'] == 'done'
-
-    assert not client.post('/api/log/save', json={'mood': 9}).json()['success']
 
 
-def test_the_page_reads_it(app):
-    make_account('moodreader')
-    client = sign_in(app, 'moodreader')
-    reply = client.get('/api/analytics/mood').json()
-    assert reply['success']
-    assert reply['logged_days'] == 0 and len(reply['series']) == mood.SERIES_DAYS

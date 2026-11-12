@@ -33,14 +33,10 @@ PUBLIC = {
     '/api/auth/complete_profile',    # reads `pending_user`, pre-sign-in
     '/api/avatar',                   # checks the session itself, returns 401
     '/api/set_theme',                # a visitor has a theme too
-    '/api/daily_quote',              # the same line for everybody
     # The skill library's written practice steps. The table they come from has
     # no user_id at all — it is the curriculum, the same rows for every reader
     # — so there is nothing here to protect and nobody to identify. A session
     # check would guard the syllabus of the app against the person running it.
-    # See the note at the top of backend/api/skillsteps.py.
-    '/api/skill-steps',
-    '/api/skill-steps/coverage',
 }
 
 
@@ -58,7 +54,7 @@ def account_routes(app):
 
 def test_there_are_account_routes_to_check(app):
     """Guards the guard: a walk that finds nothing would pass silently."""
-    assert len(account_routes(app)) > 40
+    assert len(account_routes(app)) > 20
 
 
 def test_every_account_endpoint_requires_a_session(app, anon):
@@ -76,64 +72,34 @@ def test_every_account_endpoint_requires_a_session(app, anon):
 
 
 def test_the_username_a_caller_sends_is_ignored(client, stranger):
-    """Naming another account returns your own rows, not theirs."""
-    client.post('/api/tasks', json={'name': 'mine', 'xp_reward': 1})
-    stranger.post('/api/tasks', json={'name': 'theirs', 'xp_reward': 1})
-
-    # Signed in as tester, asking for stranger's tasks by name.
-    tasks = client.get('/api/tasks', params={'username': 'stranger'}).json()['tasks']
-    assert [t['title'] for t in tasks] == ['mine']
-    assert {t['user_id'] for t in tasks} == {'tester'}
+    """`?username=` names somebody else; the session still decides."""
+    client.post('/api/amc/problems/step-10-02/attempt', json={'answer': 'A'})
+    theirs = stranger.get('/api/amc/review', params={'username': 'tester'}).json()
+    assert theirs['due'] == [] and theirs['upcoming'] == []
 
 
 def test_the_username_in_a_body_is_ignored(client, stranger):
-    """The same, for the POSTs that carry it in the body."""
-    client.post('/api/tasks', json={'name': 'filed under tester',
-                                    'username': 'stranger', 'xp_reward': 1})
-    assert [t['title'] for t in db.rows_for('tasks', 'stranger')] == []
-    assert [t['title'] for t in db.rows_for('tasks', 'tester')] == ['filed under tester']
+    """A body naming another account still writes to the caller's own."""
+    stranger.post('/api/amc/problems/step-10-02/attempt',
+                  json={'answer': 'A', 'username': 'tester'})
+    assert client.get('/api/amc/review').json()['upcoming'] == []
+    assert stranger.get('/api/amc/review').json()['upcoming'][0]['id'] == 'step-10-02'
 
 
-def test_a_task_cannot_be_deleted_by_another_account(client, stranger, task):
-    """`task` belongs to tester. stranger is signed in and knows its id."""
-    stranger.delete('/api/tasks/%s' % task)
-    assert db.find_row('tasks', task, user_id='tester') is not None
-
-
-@pytest.mark.parametrize('path, payload', [
-    ('/api/get_task_status', {'task_id': None}),
-    ('/api/timer_expired', {'task_id': None}),
-    ('/api/delete_task_no_tracking', {'id': None}),
-])
-def test_endpoints_keyed_by_id_check_the_owner(client, stranger, task, path, payload):
-    """These four found a row by id alone and never asked whose it was."""
-    body = {key: (task if value is None else value) for key, value in payload.items()}
-    reply = stranger.post(path, json=body).json()
-    assert reply['success'] is False
-    # Still tester's, untouched.
-    row = db.find_row('tasks', task, user_id='tester')
-    assert row is not None and row.get('status') == 'todo'
-
-
-def test_another_accounts_goal_cannot_be_advanced(client, stranger):
-    """`/api/update_goal_progress` moved any goal in the table by name."""
-    made = client.post('/api/add_goal', json={
-        'title': 'read more', 'goal_type': 'xp', 'target_xp': 500,
-    }).json()
-    assert made['success'], made
-    goal_id = db.rows_for('goals', 'tester')[0]['id']
-
-    reply = stranger.post('/api/update_goal_progress',
-                          json={'goal_id': goal_id, 'xp_to_add': 400}).json()
-    assert reply['success'] is False
-    assert (db.find_row('goals', goal_id, user_id='tester').get('current_xp') or 0) == 0
+def test_a_mock_cannot_be_read_or_deleted_by_another_account(client, stranger):
+    """Mock results are keyed by id; the id alone must not be enough."""
+    mock_id = client.post('/api/amc/contests/step-mock-aime/submit',
+                          json={'answers': {'1': '55'}}).json()['id']
+    assert not stranger.get('/api/amc/mocks/%s' % mock_id).json()['success']
+    stranger.delete('/api/amc/mocks/%s' % mock_id)
+    assert client.get('/api/amc/mocks/%s' % mock_id).json()['success']
 
 
 def test_a_signed_out_session_answers_401_not_an_error_page(anon):
-    """The client reads this status to sign out — see services/api.ts."""
-    reply = anon.get('/api/achievements')
+    """The client turns a 401 into a sign-in prompt; anything else is a bug."""
+    reply = anon.get('/api/amc/dashboard')
     assert reply.status_code == 401
-    assert reply.json() == {'success': False, 'message': 'Sign in to continue.'}
+    assert reply.json()['success'] is False
 
 
 def test_no_request_model_declares_a_username(app):

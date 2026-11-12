@@ -18,43 +18,19 @@ from importlib import import_module
 
 from backend.routes import assets, json_replies, spa
 
-# Imported by name so this list reads as the map of the app. The stubs in
-# backend/api/ (library, history, growthtree) are deliberately absent — they
-# carry no router yet.
+# Imported by name so this list reads as the map of the app. The productivity
+# app's routers (tasks, calendar, goals, analytics and the rest) went when
+# Summit became an AMC prep site.
 API_MODULES = (
-    'dashboard',
-    'tasks',
-    'calendar',
-    'goals',
-    'growth',
-    'analytics',
-    'subject_ai',
-    'focus',
-    'quote',
-    'subjects',
-    'notes',
-    'journal',
-    'spaces',
-    'records',
-    'settings',
-    'achievements',
-    'notifications',
-    'skillsteps',
-    'skillattempts',
-    'skillprogress',
-    'skillchecks',
-    'next',
-    'background',
-    'quests',
-    'topics',
-    'forecast',
-    'measures', 'subject_read', 'experiments',
-    'review',
-    'skill_plan',
-    'behavior',
     # The AMC prep site: dashboard, problems, review, topics, contests,
     # study plan and search. See backend/amc/.
     'amc',
+    # The account: preferences, export and reset; the sign-up questions; the
+    # bell; and `/api/stats`, the level and streak the nametag reads.
+    'settings',
+    'background',
+    'notifications',
+    'dashboard',
 )
 
 SHARED_MODULES = (

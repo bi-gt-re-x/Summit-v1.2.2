@@ -189,36 +189,8 @@ PAID_STEP = {'title': 'CLRS Ch.4 Exercises #1-10', 'focus': 'Algorithms', 'type'
                             'yours': False}]}
 
 
-def test_a_new_plan_is_saved_with_free_links_only(client, monkeypatch):
-    monkeypatch.setattr(subject_ai, 'configured', lambda: True)
-    seen = {}
-
-    def plan(state, *a, **k):
-        seen['free'] = state.get('free_resources')
-        return [dict(PAID_STEP)]
-
-    monkeypatch.setattr(subject_ai, 'plan', plan)
-    body = client.post('/api/subject_reading', json={
-        'subject': 'Computer Science', 'subject_id': 'computer_science', 'mode': 'fresh'}).json()
-    assert body['success'] is True
-    assert seen['free'] and seen['free'][0]['url'].startswith('https://')
-    links = body['reading']['next_steps'][0]['resources']
-    assert [link['url'] for link in links] == ['https://jeffe.cs.illinois.edu/teaching/algorithms/']
-    # And it's stored that way, sorted list included.
-    saved = client.get('/api/subject_reading_saved?subject=Computer Science').json()
-    assert saved['reading']['next_steps'][0]['resources'][0]['signup'] == 'none'
-    assert db.subject_resources_for('tester', 'computer_science')
 
 
-def test_a_plan_saved_before_the_check_is_served_free(client):
-    # Written straight into the table, the way older readings were stored.
-    db.insert_row('subject_readings', {
-        'id': 'srold', 'user_id': 'tester', 'subject': 'Computer Science', 'written_at': 'x',
-        'body': json.dumps({'next_steps': [dict(PAID_STEP, id='r1')]})})
-    saved = client.get('/api/subject_reading_saved?subject=Computer Science').json()
-    links = saved['reading']['next_steps'][0]['resources']
-    assert 'mitpress' not in links[0]['url']
-    assert links[0]['signup'] == 'none'
 
 
 # ---------------------------------------------------------------------------

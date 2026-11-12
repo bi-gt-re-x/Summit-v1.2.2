@@ -104,34 +104,9 @@ export function Landing() {
 }
 
 /**
- * The routes that fill the viewport rather than scrolling it.
- *
- * Everything else — the landing page, the written pages, and the stubs that
- * are not built yet — is a document and scrolls. That is the safe default:
- * a page wrongly pinned loses everything below the fold with no way to reach
- * it, while a page wrongly left scrolling just scrolls.
- *
- * The dashboard is deliberately not on this list. It is four rows tall now and
- * whether it fits depends on the screen, so pinning it would mean guessing a
- * viewport height to pin above — and a guess that is too low does not shorten
- * the page, it hides the bottom of it. Left alone, the browser answers exactly
- * the question that matters: taller than the window, it scrolls; shorter, no
- * scrollbar appears. Its task list still scrolls inside its own card, which is
- * what the pinning was really for — see .dash-main in styles/dashboard-home.css.
- *
- * Analytics came off with the redesign, and it is the clearest case. It was a
- * report card and a scoring panel side by side — one screen by construction. It
- * is seven tabs of panels down a scroll now, and the pinning was hiding
- * everything below the summary tiles. Growth had come off before it for the
- * same reason, back when it was a page of its own; its chapters are tabs of
- * Analytics now and inherit the ruling.
- *
- * Goals came off for the fourth time in the same story. It was a shell with a
- * list scrolling inside it; it is a ladder of goals, a stats row and a timeline
- * per goal now, which is taller than any screen on purpose. Pinned, the page
- * ended at whatever the first viewport could hold and the timelines could not
- * be reached at all — `body.pins-viewport` sets `overflow: hidden` on the
- * document, so there was no scrollbar to find them with.
+ * The routes that fill the viewport rather than scrolling it. None do now:
+ * every AMC page is a document and scrolls. Kept as the one place to add one,
+ * because a page wrongly pinned loses everything below the fold.
  */
 const PINNED: string[] = [];
 
@@ -145,8 +120,8 @@ function pinsViewport(pathname: string): boolean {
  * The landing page is not an app page and does not get the app's chrome.
  *
  * It is the one route a signed-out visitor is meant to read rather than work
- * in, and it carries its own header and its own Log In / Sign Up row — the ones
- * it had before React, which styles/homepage.css still dresses. The rail beside
+ * in, and it carries its own header and its own Log In / Sign Up row
+ * (pages/amc/Landing.tsx). The rail beside
  * that would be a second navigation for pages the reader cannot open yet.
  * The sign-in page (/login) is the same: a signed-out visitor's page, with the
  * mark in its own layout.
@@ -249,9 +224,9 @@ export default function App() {
       )}
       {/* Beside the rail rather than above it: the rail owns the full height
           and the bar starts at `--rail-w`. Outside the router with the rail,
-          so neither is torn down and rebuilt on every navigation. The account
-          read they both show is not theirs any more — it belongs to
-          UserDataProvider above them, and happens once for the session. */}
+          so neither is torn down and rebuilt on every navigation. The numbers
+          they both show come from hooks/useAmcSummary, one read for the
+          session, refreshed when an answer or a mock changes them. */}
       {!landing && (
         <div className="app-chrome">
           <Topbar />

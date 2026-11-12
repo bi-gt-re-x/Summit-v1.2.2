@@ -15,11 +15,9 @@
  *
  * - SHELL sheets get `html:not([data-skin]):not([data-theme="dark"])`, so the
  *   rail and top bar are paper on every page.
- * - PAGE sheets also need `:has(.dash, .calendar-container, .gx-page,
- *   .tk-page, .ax-page, .stx-page, .lg-page, .nt-page, .rc-page, .st-page,
- *   .pom-page)`, so they only change while one of those pages is open. That includes the
- *   shared ones (ui.css, the task dialog, the tour) and the popups those pages
- *   portal into <body>.
+ * - PAGE sheets also need `:has(.st-page)`, so they only change while
+ *   Settings is open, the popups it portals into <body> included. The AMC
+ *   pages wear the palette through their own sheet (styles/amc.css).
  *
  * Every colour property of every rule is copied, literal or not, so states
  * keep their order: a hover written as var(--color-accent) still beats the
@@ -43,39 +41,8 @@ const SHELL = ['rail.css', 'topbar.css', 'nametag.css', 'search.css', 'notificat
 const PAGES = [
   'ui.css',
   'summit.css',
-  'dashboard.css',
-  'dashboard-home.css',
-  'catch-up.css',
-  'rate-prompt.css',
-  'day-complete.css',
-  'subject-picker.css',
-  'subject-state.css',
-  'next-sessions.css',
-  'starter.css',
   'page-state.css',
-  'refresh-button.css',
   'verify-banner.css',
-  'tutorial.css',
-  'goals.css',
-  'calendar/shell.css',
-  'calendar/dialogs.css',
-  'calendar/overview.css',
-  'calendar/day.css',
-  'calendar/week.css',
-  'calendar/month.css',
-  'calendar/palette.css',
-  'tasks.css',
-  'analytics.css',
-  'growth.css',
-  'subject.css',
-  'subject-objective.css',
-  'weekly-review.css',
-  'skilltree.css',
-  'notes.css',
-  'log.css',
-  'behavior.css',
-  'records.css',
-  'achievements.css',
   'settings.css',
   'themePicker.css',
   'about-you.css',
@@ -83,7 +50,7 @@ const PAGES = [
 ];
 
 const LIGHT = 'html:not([data-skin]):not([data-theme="dark"])';
-const ON_PAGE = `${LIGHT}:has(.dash, .calendar-container, .gx-page, .tk-page, .ax-page, .stx-page, .lg-page, .bh-page, .nt-page, .rc-page, .st-page, .pom-page)`;
+const ON_PAGE = `${LIGHT}:has(.st-page)`;
 
 // Colours that belong to what someone wrote rather than to the page: the nine
 // inks a note can be written in. A red note stays red in every look.

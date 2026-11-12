@@ -12,10 +12,8 @@
  */
 import { createContext } from 'react';
 import type { Theme, UserStats } from '@/types';
-import type { UseApiResult } from '@/hooks/useApi';
 import type { Prefs } from '@/services/settings';
 import type { Notification } from '@/services/notifications';
-import type { UserData } from '@/services/tasks';
 
 // --------------------------------------------------------------------------
 // Theme
@@ -106,40 +104,6 @@ export interface SettingsValue {
 export const SettingsContext = createContext<SettingsValue | null>(null);
 
 // --------------------------------------------------------------------------
-// The account's stats and tasks
-// --------------------------------------------------------------------------
-/**
- * One `/api/get_user_data` read, shared by everything that wants it.
- *
- * This is the app's biggest response and it was being asked for once per
- * caller: the dashboard, the top bar and the rail all mount together and all
- * called `useUserData`, so landing on a page fetched the same several
- * megabytes three times over. Nothing about the data is per-caller — it is the
- * account — so the read belongs above them all, exactly like the preferences
- * next door.
- *
- * The shape is `useApi`'s, unchanged, because that is what every call site
- * already destructures. What changes is who owns the state: `mutate` now moves
- * every reader at once, so a task completed on the dashboard updates the XP in
- * the top bar without a second request, and `reload` is one request rather
- * than one per mounted caller.
- */
-export interface UserDataValue extends UseApiResult<UserData> {
-  /** Who the data belongs to, or null when signed out. */
-  username: string | null;
-  /**
-   * Register that something on screen wants the task list.
-   *
-   * Called by `useUserData` on mount and by nothing else. The provider does
-   * not fetch until this has happened at least once, which is what stops the
-   * pages that never read a task from paying for one. See UserDataProvider.
-   */
-  want: () => void;
-}
-
-export const UserDataContext = createContext<UserDataValue | null>(null);
-
-// --------------------------------------------------------------------------
 // The account's numbers
 // --------------------------------------------------------------------------
 /**
@@ -150,7 +114,7 @@ export const UserDataContext = createContext<UserDataValue | null>(null);
  * shows the XP, and both mount on every screen behind the login, so every
  * screen paid megabytes for six numbers. `/api/stats` is those numbers alone.
  *
- * **This is the only stats state in the app.** `UserDataProvider` still reads
+ * **This is the only stats state in the app.** The task list used to read
  * `/api/get_user_data` for the pages whose subject is the task list, and that
  * response still carries a stats block — but the provider hands it here rather
  * than keeping a second copy. Two copies would be two answers, and the whole

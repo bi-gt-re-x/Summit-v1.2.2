@@ -43,17 +43,6 @@ def test_every_avatar_has_a_file_in_both_lists():
     assert missing('/static/images/avatars/{}.svg'.format(name) for name in listed) == []
 
 
-def test_every_calendar_icon_has_a_file():
-    with open(os.path.join(SRC, 'utils', 'calendarIcons.ts'), encoding='utf-8') as handle:
-        text = handle.read()
-    # What a keyword rule returns, every key in the dictionary, and the fallback.
-    keys = set(re.findall(r"\[/.*/[a-z]*,\s*'([a-z0-9_-]+)'\]", text))
-    keys |= set(re.findall(r"^\s*'?([a-z0-9_-]+)'?\s*:\s*\[", text, re.M))
-    keys.add('clock')
-    assert len(keys) > 50
-    assert missing('/static/icons/{}.svg'.format(key) for key in keys) == []
-
-
 def test_the_app_icons_are_there():
     with open(os.path.join(ROOT, 'frontend', 'index.html'), encoding='utf-8') as handle:
         page = re.findall(r'href="(/[^"]+\.(?:svg|png|ico|json))"', handle.read())

@@ -227,24 +227,8 @@ def _finish_one(client):
     return client.post('/api/complete_task', json={'task_id': task}).json()
 
 
-def test_a_completion_that_spends_grace_saves_the_day_it_covered(client):
-    """Without a page load in between, nothing else would write it down."""
-    db.update_row('users', 'tester', {'current_streak': 12, 'last_task_date': ago(2),
-                                      'streak_grace_day': None}, key='username')
-    reply = _finish_one(client)
-
-    assert reply['current_streak'] == 13
-    assert reply['last_task_date'] == date.today().isoformat()
-    assert reply['streak_grace_day'] == ago(1)
-    assert _tester()['streak_grace_day'] == ago(1)
 
 
-def test_a_completion_that_starts_a_new_run_clears_the_old_runs_grace(client):
-    """Left behind, it would hold the next run's grace back for a month."""
-    db.update_row('users', 'tester', {'current_streak': 0, 'last_task_date': ago(5),
-                                      'streak_grace_day': ago(8)}, key='username')
-    _finish_one(client)
-    assert _tester().get('streak_grace_day') is None
 
 
 def test_the_stats_read_carries_the_days_the_strip_is_drawn_from(client):

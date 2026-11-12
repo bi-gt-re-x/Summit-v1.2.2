@@ -164,3 +164,22 @@ def test_projection_rises_with_results():
                              for p in BY_ID])
     assert engine.projected(strong, 'AMC 10') > empty
     assert 0 < empty < 150
+
+
+def test_resetting_amc_progress_clears_only_amc_rows(client, today):
+    client.post('/api/amc/problems/step-10-02/attempt', json={'answer': 'A'})
+    client.put('/api/amc/plan', json={'target': 'AIME', 'exam_date': '2027-02-05',
+                                      'goal_score': 7, 'hours': 4})
+    assert not client.post('/api/settings/reset', json={'scope': 'amc'}).json()['success']
+    reply = client.post('/api/settings/reset', json={'scope': 'amc', 'confirm': 'tester'}).json()
+    assert reply['success'] and reply['removed']['amc_attempts'] == 1
+    assert client.get('/api/amc/review').json()['upcoming'] == []
+    assert client.get('/api/amc/plan').json()['plan'] is None
+    assert client.get('/api/settings').json()['success']
+
+
+def test_the_export_includes_amc_rows(client, today):
+    client.post('/api/amc/problems/step-10-01/attempt', json={'answer': 'D'})
+    body = client.get('/api/settings/export', params={'table': 'all', 'format': 'json'}).json()
+    rows = body['export']['tables']['amc_attempts']
+    assert rows and rows[0]['problem_id'] == 'step-10-01'

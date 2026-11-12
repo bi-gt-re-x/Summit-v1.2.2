@@ -206,44 +206,6 @@ def test_every_credential_endpoint_is_limited(app):
         'these accept credentials and have no rate limit: %s' % missing)
 
 
-def test_every_model_endpoint_is_limited(app):
-    """Every path that asks a model for something has a policy, and the right
-    shape of one.
-
-    This used to be two tests naming two paths, which is how
-    /api/suggest_subject_goal came to have no limit at all: it was written
-    later, it asks for Opus rather than Sonnet, and nothing here was looking
-    for it. So this walks the routes, like the credential test above.
-
-    The shape is asserted as well as the presence, because a policy with the
-    wrong one does not limit these:
-
-      * `charge=CALLS`, since their cost lands on success. Under the default
-        every working call clears the budget it just spent.
-      * `by_account`, since the account is what spends the money. Per address
-        alone meters a whole school as one reader.
-    """
-    spenders = []
-    for route in app.routes:
-        path = getattr(route, 'path', '')
-        methods = getattr(route, 'methods', set()) or set()
-        if 'POST' in methods and 'suggest' in path:
-            spenders.append(path)
-
-    assert spenders, 'no model endpoints found — have they been renamed?'
-
-    missing = [p for p in spenders if p not in limit.LIMITS]
-    assert missing == [], 'these spend money and have no rate limit: %s' % missing
-
-    for path in spenders:
-        policy = limit.LIMITS[path]
-        assert policy.charge == limit.CALLS, path
-        assert policy.by_account, path
-        # The address budget is a backstop, not the limit a shared network
-        # reaches first.
-        assert (policy.ip_limit or policy.limit) > policy.limit, path
-
-
 def test_a_paid_call_is_counted_even_when_it_works(app, monkeypatch):
     """The bug: success cleared the budget it had just spent.
 

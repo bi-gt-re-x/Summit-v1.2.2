@@ -836,7 +836,13 @@ ACCOUNT_TABLES = (
     # them and the fixes tried (data/sql/behavior.sql). Its own words about
     # itself, so they go out with an export and go with a reset.
     'behaviors', 'behavior_checks', 'behavior_interventions',
+    # The AMC prep record: every answer, the review log, mock sittings and
+    # logged scores, and the study plan (data/sql/amc.sql).
+    'amc_attempts', 'amc_reviews', 'amc_mocks', 'amc_plans',
 )
+
+#: The AMC tables, cleared together by the `amc` reset.
+AMC_TABLES = ('amc_attempts', 'amc_reviews', 'amc_mocks', 'amc_plans')
 
 #: What `progress` puts an account's counters back to. The XP ledger and the
 #: metric snapshots are cleared alongside these, because a level of 1 over a
@@ -1012,6 +1018,17 @@ def _reset_content(user):
     return counts
 
 
+def _reset_amc(user):
+    """Every answer, review, mock and the study plan. Nothing else."""
+    username = user['username']
+    counts = {}
+    for table in AMC_TABLES:
+        gone = _drop(table, lambda row: row.get('user_id') != username)
+        if gone:
+            counts[table] = gone
+    return counts
+
+
 def _reset_account(user):
     """The account itself. Nothing about it is left anywhere."""
     username = user['username']
@@ -1026,6 +1043,7 @@ def _reset_account(user):
 #: did. One entry per row in the danger zone on the settings page.
 RESETS = {
     'preferences': (_reset_preferences, 'Every preference is back to its default.'),
+    'amc': (_reset_amc, 'Your answers, review log, mock scores and study plan are cleared.'),
     'completed': (_reset_completed, 'Finished tasks removed.'),
     'tasks': (_reset_tasks, 'Every task removed.'),
     'progress': (_reset_progress, 'Level, XP and streak reset.'),
@@ -1037,7 +1055,7 @@ RESETS = {
 #: account's own username back, which is the server insisting rather than the
 #: dialog — an endpoint that deletes an account on an empty POST is one stray
 #: fetch away from doing it by accident.
-TYPED = ('tasks', 'progress', 'content', 'account')
+TYPED = ('amc', 'tasks', 'progress', 'content', 'account')
 
 
 class ResetRequest(BaseModel):

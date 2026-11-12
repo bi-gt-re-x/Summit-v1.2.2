@@ -1,69 +1,26 @@
-"""The dashboard — the account's live stats and its task list.
+"""`/api/stats`: the account's level, XP and streak.
 
-## The three reads, and which one costs anything
-
-`/api/stats` is six integers. `/api/alerts` is four numbers and two titles.
-`/api/get_user_data` is those six integers *plus every task the account owns*,
-which for the largest account in this database (9,547 tasks) is 2.9 MB of
-JSON. `/api/stats` is 0.1 KB — the same six numbers, twenty thousand times
-smaller.
-
-They used to be one endpoint, and every page paid the 2.9 MB. The rail wanted
-the XP for the level under the avatar; the top bar wanted counts for the bell
-and a title search; the analytics page wanted nothing from it at all but held a
-`useUserData()` for `username` and `reload`. None of those needed a task list,
-and between them they mount on every screen behind the login.
-
-So the split is by what the caller actually reads:
-
-  * `/api/stats` — the rail, the top bar, anything showing level or streak.
-  * `/api/alerts` — the top bar's bell. Aggregated in SQL (see
-    `db.task_alert_counts`) rather than by filtering a downloaded list.
-  * `/api/get_user_data` — the pages whose subject *is* the task list:
-    dashboard, tasks, calendar, goals, records.
+What remains of the productivity app's dashboard API. The nametag's title is
+read off the level (context/StatsProvider in the frontend), so these two routes
+stay while the task list, alerts and vacation endpoints went with the pages
+that read them.
 
 ## The streak decay lives on `POST /api/stats`
 
-Asking for the account decays a streak that went stale overnight, so a streak
-lost at midnight is gone the moment any page asks rather than whenever a task
-is next completed. **Exactly one endpoint may write that**, or two requests on
-one page race to write the same row.
-
-It is the POST to `/api/stats`, because that is the request every page makes:
-the rail mounts outside the router and never unmounts, so it is made once per
-session at exactly the moment `/api/get_user_data` used to be, and again after
-the numbers move. `GET /api/stats` gives the same decayed numbers and writes
-nothing — no GET in this app writes (tests/test_get_requests_do_not_write.py).
-
-`/api/get_user_data` therefore does *not* decay any more, and must not start
-again — a page that reads both would otherwise write the user row twice.
+Asking for the account decays a streak that went stale overnight. **Exactly one
+endpoint may write that**, or two requests on one page race to write the same
+row. `GET /api/stats` gives the same decayed numbers and writes nothing — no GET
+in this app writes (tests/test_get_requests_do_not_write.py).
 """
-from datetime import date
-from typing import Optional
-
 from fastapi import APIRouter, Depends
-from pydantic import BaseModel
 
-from backend.api import background as background_api
 from backend.api.guard import current_username
 from backend.api.reply import fail, ok
 from backend.database import connection as db
-from backend.goal_matcher import store as goal_store
 from backend.tracking import xp as xp_tracking
 from backend.tracking.auth import load_user
 
 router = APIRouter(tags=['dashboard'])
-
-
-class TrackDailyXp(BaseModel):
-    xp_earned: int = 0
-    tasks_completed: int = 0
-
-
-class UpdateStats(BaseModel):
-    level: Optional[int] = None
-    xp: Optional[int] = None
-    tasks_completed: Optional[int] = None
 
 
 def _stats_of(user):
@@ -78,10 +35,7 @@ def _stats_of(user):
         "level": user.get('level', 1),
         "xp": user.get('xp', 0),
         "tasks_completed": user.get('tasks_completed', 0),
-        # What unlocks pages for a new account (frontend/src/utils/starter.ts).
         "task_days": db.task_days(user.get('username')),
-        # Days off the wait for Analytics, from the About you answers.
-        "head_start": background_api.head_start(user.get('username')),
         "charge": user.get('charge', 0),
         **xp_tracking.streak_fields(user),
     }
@@ -122,105 +76,3 @@ def settle_stats(username: str = Depends(current_username)):
         db.save_user(user)
 
     return ok(stats=_stats_of(user))
-
-
-class PlanVacation(BaseModel):
-    #: The last day of the vacation, ISO, included. It always starts today.
-    until: str = ''
-
-
-@router.post('/api/streak/vacation')
-def plan_vacation(body: PlanVacation, username: str = Depends(current_username)):
-    """Pause the streak from today to `until`, or move the end of the one running.
-
-    Replies with the stats block, so the streak card and the settings row both
-    redraw from the answer rather than from what the page asked for. The rules
-    — one at a time, at most VACATION_MAX_DAYS, days already taken stay taken —
-    are `xp_tracking.plan_vacation`'s.
-    """
-    users, user = load_user(username)
-    if not user:
-        return fail('User not found')
-    problem = xp_tracking.plan_vacation(user, body.until)
-    if problem:
-        return fail(problem)
-    db.save_user(user)
-    return ok(stats=_stats_of(user))
-
-
-@router.post('/api/streak/vacation/end')
-def finish_vacation(username: str = Depends(current_username)):
-    """Back early: today counts again. Days already taken stay covered."""
-    users, user = load_user(username)
-    if not user:
-        return fail('User not found')
-    if xp_tracking.end_vacation(user):
-        db.save_user(user)
-    return ok(stats=_stats_of(user))
-
-
-def _iso_day(value):
-    """A caller-supplied `YYYY-MM-DD`, or the server's day if it is not one.
-
-    Validated rather than trusted because it goes into a date comparison: a
-    caller sending nonsense should get today's alerts, not an empty bell that
-    looks like good news.
-    """
-    text = (value or '').strip()[:10]
-    try:
-        return date.fromisoformat(text).isoformat()
-    except ValueError:
-        return date.today().isoformat()
-
-
-@router.get('/api/alerts')
-def get_alerts(day: str = '', username: str = Depends(current_username)):
-    """What the top bar's bell has to say, without sending it the task list.
-
-    `day` is the caller's local ISO day. It is a parameter rather than
-    something computed here because stored stamps carry no timezone (see
-    `backend/tracking/dates.py`), so the server's idea of today is only right
-    when the reader happens to share its clock. A missing or malformed value
-    falls back to the server's day, which is the old behaviour and is right for
-    everyone in this timezone.
-
-    `finished_today` is deliberately a boolean rather than a count: the panel
-    asks whether the streak is still at risk, and one finished task settles it.
-    """
-    return ok(alerts=db.task_alert_counts(username, _iso_day(day)))
-
-
-@router.get('/api/get_user_data')
-def get_user_data(username: str = Depends(current_username)):
-    """The stats block plus every task the account owns.
-
-    The expensive read, and now only for the pages whose subject is the task
-    list. It does **not** decay the streak; `/api/stats` does, and every page
-    that reaches this endpoint has already made that call through the rail.
-    """
-    users, user = load_user(username)
-    if not user:
-        return fail('User not found')
-
-    return ok(stats=_stats_of(user),
-              tasks=goal_store.with_goal_ids(username, db.tasks_for(username)))
-
-
-@router.post('/api/track_daily_xp')
-def track_daily_xp(body: TrackDailyXp, username: str = Depends(current_username)):
-    """Roll a batch of XP and completions into today's single ledger row."""
-
-    xp_tracking.track_daily(username, body.xp_earned, body.tasks_completed)
-    return ok(message='Daily XP tracked successfully')
-
-
-@router.post('/api/update_stats')
-def update_stats(body: UpdateStats, username: str = Depends(current_username)):
-    """Write back level / XP / task count the client has recalculated."""
-    users, user = load_user(username)
-    if user:
-        user['level'] = body.level
-        user['xp'] = body.xp
-        user['tasks_completed'] = body.tasks_completed
-        db.save_user(user)
-    return ok()

@@ -3,13 +3,13 @@
  *
  * The stylesheets imported here are the ones every page depends on:
  * `tokens.css` is the shared type scale, radii, shadows and colours, first so
- * every sheet after it can read them; `ui.css` dresses the building blocks in
- * components/ui (button, card, badge, figure, dialog);
+ * every sheet after it can read them; `ui.css` holds the shared button and
+ * card rules the account pages still use;
  * `grades.css` is the letter-grade palette every page that shows one reads,
  * `layout.css` is the shared responsive foundation (`.page-shell`, the
  * 1024/768/480 breakpoints), `page-enter.css` is the arrival cascade every
- * page shares (hooks/usePageEntrance), `summit.css` is the mountain hero every
- * page opens with (components/Hero.tsx), and `rail.css` dresses the side rail,
+ * page shares (hooks/usePageEntrance), `summit.css` is the mountain range
+ * behind the app (components/Range.tsx), and `rail.css` dresses the side rail,
  * which is rendered outside the router and so belongs to no page. Everything
  * else is imported by the page that needs it, so a route nobody visits costs
  * nothing.
@@ -29,7 +29,6 @@ import {
   SettingsProvider,
   StatsProvider,
   ThemeProvider,
-  UserDataProvider,
 } from '@/context';
 
 import '@/styles/tokens.css';
@@ -83,18 +82,9 @@ void start.then(() => createRoot(container).render(
         <ThemeProvider>
           <AuthProvider>
             <SettingsProvider>
-              {/* The account's six numbers, for the rail and the top bar,
-                  which mount on every screen behind the login. Above
-                  UserDataProvider because that one writes its stats here
-                  rather than keeping a second copy — one state, so the top bar
-                  and the dashboard cannot disagree about the XP. This is also
-                  the read that decays a stale streak. */}
+              {/* The account's level and XP, which the nametag's title is
+                  read from. */}
               <StatsProvider>
-                {/* The task list. Above App so it is read once for the session
-                    rather than once per caller, and demand-gated so a session
-                    that never opens a task page never reads it at all. See
-                    context/UserDataProvider. */}
-                <UserDataProvider>
                   {/* The bell. Inside the preferences, because which
                       notifications exist at all is decided by eight switches
                       on that page, and inside the stats for the same reason
@@ -105,7 +95,6 @@ void start.then(() => createRoot(container).render(
                   <NotificationsProvider>
                     <App />
                   </NotificationsProvider>
-                </UserDataProvider>
               </StatsProvider>
             </SettingsProvider>
           </AuthProvider>

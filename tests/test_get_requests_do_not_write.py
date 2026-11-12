@@ -18,29 +18,19 @@ from backend.database import connection as db
 #: GET routes whose path takes a parameter, with a value to call them with.
 #: Routes not listed here and not taking one are found from the app itself.
 WITH_PARAMS = {
-    '/api/subject_recommendations': '?subject=Algebra',
-    '/api/subject_reading_saved': '?subject=Algebra',
-    '/api/next_sessions': '',
     '/api/notifications': '?day={today}&at=09:00',
+    '/api/amc/search': '?q=circle',
 }
 
 
 def _account_with_every_old_write_due(client):
-    """Tasks, a finished and a deleted planned session, a stale streak, a
-    streak goal, notifications on."""
-    done = client.post('/api/tasks', json={'name': 'Proof set 1', 'priority': 'low',
-                                           'xp_reward': 20, 'subject': 'mathematics'}).json()['task_id']
-    client.post('/api/complete_task', json={'task_id': done})
-    gone = client.post('/api/tasks', json={'name': 'Sprint', 'priority': 'low', 'xp_reward': 20}).json()['task_id']
-    client.post('/api/tasks', json={'name': 'Open one', 'priority': 'low', 'xp_reward': 20})
-    for rec, task in (('rget1', done), ('rget2', gone)):
-        db.insert_row('subject_recommendations', {
-            'id': rec, 'user_id': 'tester', 'subject': 'Algebra', 'given_at': '2026-10-01T10:00:00',
-            'title': 'Sprint #1-10', 'focus': '', 'kind': 'targeted_practice', 'difficulty': 3,
-            'minutes': 40, 'reason': '', 'signal': '', 'task_id': task})
-    client.delete('/api/tasks/{}'.format(gone))
-    client.post('/api/add_goal', json={'title': 'Ten-day streak', 'goal_type': 'streak', 'target_streak': 10})
-
+    """Some AMC history (an answer, a miss in the review log, a mock and a
+    plan), a stale streak, and notifications on."""
+    client.post('/api/amc/problems/step-10-01/attempt', json={'answer': 'D'})
+    client.post('/api/amc/problems/step-10-02/attempt', json={'answer': 'A'})
+    client.post('/api/amc/contests/step-mock-aime/submit', json={'answers': {'1': '55'}})
+    client.put('/api/amc/plan', json={'target': 'AMC 10', 'goal_score': 105, 'hours': 5,
+                                      'exam_date': (date.today() + timedelta(days=90)).isoformat()})
     user = db.find_row('users', 'tester', key='username')
     stale = (date.today() - timedelta(days=5)).isoformat()
     db.update_row('users', user['id'], {'current_streak': 7, 'last_task_date': stale, 'day_state': 'oldday'})

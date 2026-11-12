@@ -24,13 +24,12 @@
  *
  * ## Every switch here does something
  *
- * That is the rule the page is held to, and it is why the list is the length it
- * is rather than longer. A preference exists here only once something reads it:
- * `week_starts_on` arrived with the calendar and the dashboard's week summary
- * both counting from it, `show_ambient` with the background layer that returns
- * nothing when it is off, the four `task_*` keys with the tasks page opening on
- * them. A control that stores a value nothing looks at is worse than no control
- * — it is a promise the app quietly breaks.
+ * That is the rule the page is held to. When Summit became an AMC prep site
+ * the productivity sections went with the pages that read them — start page,
+ * tasks, calendar, streaks, notifications, analytics, the guided tour — and
+ * what is left is the account, how the app looks, the export, and the danger
+ * zone. A control that stores a value nothing looks at is worse than no
+ * control: it is a promise the app quietly breaks.
  *
  * ## What is not here, and why
  *
@@ -47,29 +46,18 @@
  * destructive is ever the next row down from a harmless one.
  *
  * Each of them asks first, in a dialog that says what will go and what will
- * survive — and the four that cannot be undone ask for the account's username
- * to be typed out. That is not theatre. The server refuses those four without
+ * survive — and the ones that cannot be undone ask for the account's username
+ * to be typed out. That is not theatre. The server refuses those without
  * it (TYPED in backend/api/settings.py), so the typing is the confirmation
  * rather than a dialog's opinion of one, and a stray POST cannot delete an
  * account by arriving.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { AboutYouSettings } from '@/components/AboutYou';
 import { ArrowLeft } from 'lucide-react';
 import { ErrorState, Loading } from '@/components';
-import { GROUPS, SORTS } from '@/components/Tasks';
 import { useApi, useAuth, useDocumentTitle, usePageEntrance, useSettings, useTheme } from '@/hooks';
 import { settings as service } from '@/services';
-import {
-  DETAIL_HINT,
-  DETAIL_LABEL,
-  LOG_STYLE_HINT,
-  TONE_HINT,
-  TONE_LABEL,
-} from '@/utils/analyticsPrefs';
-import { VIEWS } from '@/components/Analytics';
-import type { NotificationChannel } from '@/services/notifications';
 import type {
   Accent,
   Prefs,
@@ -78,119 +66,11 @@ import type {
   ThemeMode,
   ThemeSkin,
 } from '@/services/settings';
-import type { Theme, UserStats } from '@/types';
-import { VacationMode } from '@/components/Settings/VacationMode';
+import type { Theme } from '@/types';
 import '@/styles/settings.css';
 import { announceStatsChanged } from '@/utils/statsBus';
 import { settingsExit } from '@/utils/settingsExit';
-import { useStarter } from '@/hooks/useStarter';
 import { THEMES, ThemeCard } from '@/components/Settings/ThemePicker';
-import { replayTutorial } from '@/components/Tutorial/Tutorial';
-import { FEATURES, daysOfTasks, isNewAccount } from '@/utils/starter';
-
-const GOAL_MIN = 10;
-const GOAL_MAX = 2000;
-
-/** The clock, shown rather than described — it is a format, so an example is
-    the whole explanation. */
-const CLOCK_EXAMPLE: Record<Prefs['clock_format'], string> = {
-  '12h': '6:40 PM',
-  '24h': '18:40',
-};
-const CLOCK_HINT: Record<Prefs['clock_format'], string> = {
-  '12h': 'Morning and afternoon, with AM and PM.',
-  '24h': "Hours go from 00 to 23. No AM or PM.",
-};
-
-/** The pages an account may open on, and what each one is for. */
-const HOME_PAGES: { key: Prefs['home_page']; label: string }[] = [
-  { key: 'dashboard', label: 'Dashboard' },
-  { key: 'tasks', label: 'Tasks' },
-  { key: 'calendar', label: 'Calendar' },
-  { key: 'goals', label: 'Goals' },
-  { key: 'analytics', label: 'Analytics' },
-];
-
-/** What each of the three levels actually does, said in full under the seg. */
-const RATING_DEPTHS: Record<Prefs['rating_depth'], string> = {
-  none: "No questions after a task. Quality just won't count toward your work score.",
-  ratings: 'Rate difficulty and how well it went after each task. Analytics uses these for '
-    + 'quality.',
-  reasons: 'Both ratings, plus what made the difference. This lets Analytics explain why a '
-    + 'period went well or badly.',
-};
-
-const RATING_DEPTH_NAMES: Record<Prefs['rating_depth'], string> = {
-  none: 'No questions',
-  ratings: 'Two questions',
-  reasons: 'Three questions',
-};
-
-/**
- * The six kinds of thing the app can tell you about, and what each one covers.
- *
- * Declared rather than written out nine times, because the rows differ only in
- * their words — and the words are the part that matters here. A reader turning
- * one off is entitled to know exactly what they will stop hearing, which is
- * why each hint lists the actual notifications rather than naming a category.
- *
- * `pref` is spelled as `notify_${channel}` rather than as a free string, so
- * the key and the preference cannot drift: `NotificationChannel` is the same
- * six as `CHANNELS` in backend/tracking/notify.py, and a channel added on one
- * side and not the other fails to compile here.
- */
-const NOTIFY_CHANNELS: {
-  key: NotificationChannel;
-  pref: `notify_${NotificationChannel}`;
-  label: string;
-  hint: string;
-}[] = [
-  {
-    key: 'tasks',
-    pref: 'notify_tasks',
-    label: 'Overdue and due tasks',
-    hint:
-      'Overdue work, work due today and work due tomorrow. One of each a day, updated as you '
-      + 'go.',
-  },
-  {
-    key: 'calendar',
-    pref: 'notify_calendar',
-    label: 'Calendar',
-    hint:
-      "What's on today's calendar, when it starts, and anything starting within the hour.",
-  },
-  {
-    key: 'analytics',
-    pref: 'notify_analytics',
-    label: 'Analytics',
-    hint:
-      'A weekly recap of what you finished and how it compares. Plus a heads-up after 4 quiet '
-      + 'days, and a cheer when you beat your best day.',
-  },
-  {
-    key: 'goals',
-    pref: 'notify_goals',
-    label: 'Goals',
-    hint:
-      'Goals that are overdue, due within a week, or done but still open.',
-  },
-  {
-    key: 'streak',
-    pref: 'notify_streak',
-    label: 'Streak',
-    hint:
-      "A heads-up when your streak has nothing on it today, plus streak milestones.",
-  },
-  {
-    key: 'progress',
-    pref: 'notify_progress',
-    label: 'Levels, badges and records',
-    hint:
-      'New levels, badges and records. Only new ones, never old ones you already passed.',
-  },
-];
-
 
 const ACCENTS: { key: Accent; label: string; swatch: string }[] = [
   { key: 'violet', label: 'Violet', swatch: '#6d5ae0' },
@@ -230,36 +110,6 @@ function joined(iso: string): string {
   return when.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
 }
 
-/** A segmented control. Two or three options, all visible. */
-function Seg<T extends string>({
-  value,
-  options,
-  onPick,
-  busy,
-}: {
-  value: T;
-  options: { key: T; label: string }[];
-  onPick: (next: T) => void;
-  busy: boolean;
-}) {
-  return (
-    <div className="st-seg" role="group">
-      {options.map((option) => (
-        <button
-          key={option.key}
-          type="button"
-          className={`st-pick${value === option.key ? ' is-on' : ''}`}
-          aria-pressed={value === option.key}
-          disabled={busy}
-          onClick={() => onPick(option.key)}
-        >
-          {option.label}
-        </button>
-      ))}
-    </div>
-  );
-}
-
 function Toggle({
   on,
   onFlip,
@@ -287,12 +137,9 @@ function Toggle({
 }
 
 /**
- * One of the six things the danger zone can do.
- *
- * `loses` and `keeps` are both required, and that is the point of the shape:
- * the six differ from each other mostly in what they leave behind, and a
- * dialog that only says what it destroys leaves the reader to guess whether
- * "reset progress" also means "lose my tasks". It does not, and it says so.
+ * One of the things the danger zone can do. `loses` and `keeps` are both
+ * required: a dialog that only says what it destroys leaves the reader to
+ * guess what survives.
  */
 interface Ask {
   scope: ResetScope;
@@ -315,46 +162,17 @@ const ASKS: Ask[] = [
     hint: 'Puts this page back to its defaults.',
     title: 'Reset every preference?',
     action: 'Reset preferences',
-    loses: 'Every setting on this page goes back to its default: theme, color, start pages, task view and focus goal.',
-    keeps: "Your work stays put. Tasks, goals, notes, records, progress and your profile picture don't change.",
+    loses: 'Every setting on this page goes back to its default: theme, color, motion and navigation.',
+    keeps: "Your answers, review log, mock scores, study plan and profile picture don't change.",
   },
   {
-    scope: 'completed',
-    label: 'Clear finished tasks',
-    hint: 'Removes tasks you already finished. You keep the XP.',
-    title: 'Clear finished tasks?',
-    action: 'Clear them',
-    loses: 'Every task marked done, and its place on the calendar.',
-    keeps: "The XP, level and streak they earned you. Those stay. So do open tasks.",
-  },
-  {
-    scope: 'tasks',
-    label: 'Delete every task',
-    hint: 'The whole list, open and finished alike.',
-    title: 'Delete every task?',
-    action: 'Delete all tasks',
-    loses: "Every task you have, open or done, and every calendar block made from one.",
-    keeps: "Goals, notes, records, level and XP. Analytics still counts your work but can't name the tasks.",
-    typed: true,
-  },
-  {
-    scope: 'progress',
-    label: 'Reset level and XP',
-    hint: 'Back to level 1. Your work stays.',
-    title: 'Reset your progress?',
+    scope: 'amc',
+    label: 'Reset your AMC progress',
+    hint: 'Every answer, the review log, mock scores and the study plan.',
+    title: 'Reset your AMC progress?',
     action: 'Reset progress',
-    loses: 'Your level, XP, streaks, XP history, analytics scores and badges.',
-    keeps: 'Every task, goal, note and record. Your work stays. Only the totals reset.',
-    typed: true,
-  },
-  {
-    scope: 'content',
-    label: "Erase everything you've made",
-    hint: 'Tasks, goals, notes, records, calendar and focus history. The account stays.',
-    title: "Erase everything you've made?",
-    action: 'Erase it all',
-    loses: 'Tasks, goals, notes, records, calendar entries, focus history, subjects and your whole progression.',
-    keeps: "Your account itself. You stay signed in and keep your settings. It's like day one, with your preferences.",
+    loses: 'Every answer you have given, your review log, every mock and logged score, and your study plan.',
+    keeps: 'Your account, profile and preferences. The problems are all still there to do again.',
     typed: true,
   },
   {
@@ -364,7 +182,7 @@ const ASKS: Ask[] = [
     title: 'Delete this account?',
     action: 'Delete my account',
     loses: 'Everything above, your settings and the account itself. Your username frees up and nothing can come back.',
-    keeps: 'Nothing. Export your data first if any of it matters. The export buttons are one section up.',
+    keeps: 'Nothing. Export your data first if any of it matters. The export button is one section up.',
     typed: true,
   },
 ];
@@ -484,7 +302,6 @@ export default function Settings() {
   // One `useAuth` for both. `username` came from `useUserData` and cost the
   // account's whole task list to read a string — see hooks/useUserData.
   const { username, signOut } = useAuth();
-  const starter = useStarter();
 
   const call = useCallback(
     () =>
@@ -560,7 +377,7 @@ export default function Settings() {
   );
 
   /**
-   * Running one of the six. See ASKS above for what each of them means.
+   * Running one of the danger zone's actions. See ASKS above.
    *
    * Everything the app is holding has to be told, and each in a different way:
    * the settings sheet on this page is re-read, the preferences the whole app
@@ -637,24 +454,6 @@ export default function Settings() {
       void savePref({ theme_skin: skin, theme_mode: base }, 'Theme');
     },
     [savePref, saveSheet, setTheme],
-  );
-
-  /**
-   * Vacation mode answered. The sheet holds its own copy of the window, and the
-   * rest of the app hears the way a completion is heard — the rail and the
-   * bell both re-read on it, and the bell is what stops warning about a
-   * streak that is on vacation.
-   */
-  const onVacation = useCallback(
-    (stats: UserStats, message: string) => {
-      mutate((current) => ({
-        ...current,
-        settings: { ...current.settings, streak_vacation: stats.vacation ?? null },
-      }));
-      announceStatsChanged();
-      flash(message);
-    },
-    [flash, mutate],
   );
 
   /** Whether a built palette is running, and which — the accent row's answer. */
@@ -850,773 +649,6 @@ export default function Settings() {
         ],
       },
       {
-        id: 'general',
-        label: 'Startup',
-        group: 'Account',
-        items: [
-          {
-            id: 'home',
-            label: 'Open on',
-            hint: "Where you land after signing in. Reloading a page keeps you on it.",
-            control: (
-              <select
-                className="st-input"
-                value={prefs.home_page}
-                disabled={busy}
-                onChange={(event) =>
-                  void savePref(
-                    { home_page: event.target.value as Prefs['home_page'] },
-                    'Start page',
-                  )
-                }
-              >
-                {HOME_PAGES.map((page) => (
-                  <option key={page.key} value={page.key}>
-                    {page.label}
-                  </option>
-                ))}
-              </select>
-            ),
-          },
-        ],
-      },
-      {
-        // About you: the last step of sign-up, editable. See components/AboutYou.
-        id: 'about',
-        label: 'About you',
-        group: 'Account',
-        items: [
-          {
-            id: 'about-you',
-            label: 'Who you are and where you want to go',
-            hint: 'Analytics, your study plans and your recommendations read this. More detail means better answers, and Analytics opens sooner.',
-            control: <AboutYouSettings />,
-            wide: true,
-          },
-        ],
-      },
-      {
-        // Getting started (utils/starter): which pages the sidebar lists while
-        // the account is new, and the way out of that early.
-        id: 'getting-started',
-        label: 'Getting started',
-        group: 'Account',
-        items: [
-          {
-            id: 'starter',
-            label: 'Unlocking pages',
-            hint: starter.next
-              ? `Pages open one at a time as you finish tasks on different days. Next up: ${
-                  starter.next.feature.name
-                }, after ${daysOfTasks(starter.next.days)}.`
-              : 'Every page is open.',
-            control:
-              starter.stage === 'open' ? (
-                isNewAccount(sheet.created_at) ? (
-                  <button
-                    type="button"
-                    className="st-btn"
-                    disabled={busy}
-                    onClick={() =>
-                      void savePref(
-                        { starter_done: false, features_open: [], welcome_seen: false, tours_seen: [] },
-                        'Beginner mode',
-                      )
-                    }
-                  >
-                    Start over as a beginner
-                  </button>
-                ) : (
-                  <span className="st-fixed">All open</span>
-                )
-              ) : (
-                <button
-                  type="button"
-                  className="st-btn"
-                  disabled={busy}
-                  onClick={() =>
-                    void savePref(
-                      { starter_done: true, features_open: FEATURES.map((feature) => feature.id) },
-                      'Unlocks',
-                    )
-                  }
-                >
-                  Unlock everything
-                </button>
-              ),
-          },
-        ],
-      },
-      {
-        // Mango, the guide (components/Tutorial). The main tutorial, the page
-        // guides and the Mango that rests on the dashboard between them.
-        id: 'mango',
-        label: 'Mango',
-        group: 'Personalization',
-        items: [
-          {
-            id: 'mango-rest',
-            label: 'Mango on the dashboard',
-            hint: 'Mango sits on top of your dashboard between tours. Click it to say hi.',
-            control: (
-              <Toggle
-                on={prefs.mango_rest}
-                busy={busy}
-                label="Mango on the dashboard"
-                onFlip={() => void savePref({ mango_rest: !prefs.mango_rest }, 'Mango')}
-              />
-            ),
-          },
-          {
-            id: 'mango-energy',
-            label: 'How lively',
-            hint: 'Calm does something every so often. Lively moves around more. Still just sits there.',
-            control: (
-              <select
-                className="st-input"
-                value={prefs.mango_energy}
-                disabled={busy || !prefs.mango_rest}
-                onChange={(event) =>
-                  void savePref({ mango_energy: event.target.value as Prefs['mango_energy'] }, 'Mango')
-                }
-              >
-                <option value="calm">Calm</option>
-                <option value="lively">Lively</option>
-                <option value="still">Still</option>
-              </select>
-            ),
-          },
-          {
-            id: 'mango-nudge',
-            label: 'Daily note',
-            hint: "Once a day, Mango tells you the one thing that matters most. Click Mango to see it again.",
-            control: (
-              <Toggle
-                on={prefs.mango_nudge}
-                busy={busy || !prefs.mango_rest}
-                label="Daily note"
-                onFlip={() => void savePref({ mango_nudge: !prefs.mango_nudge }, 'Daily note')}
-              />
-            ),
-          },
-          {
-            id: 'mango-tours',
-            label: 'Page guides',
-            hint: 'A short guide from Mango the first time you open each page.',
-            control: (
-              <Toggle
-                on={prefs.mango_tours}
-                busy={busy}
-                label="Page guides"
-                onFlip={() => void savePref({ mango_tours: !prefs.mango_tours }, 'Page guides')}
-              />
-            ),
-          },
-          {
-            id: 'mango-tours-again',
-            label: 'See the page guides again',
-            hint: prefs.tours_seen.length
-              ? `You've seen ${prefs.tours_seen.length} of them. Each page will show its guide again next time you open it.`
-              : "You haven't seen any yet. They show up the first time you open each page.",
-            control: (
-              <button
-                type="button"
-                className="st-btn"
-                disabled={busy || prefs.tours_seen.length === 0}
-                onClick={() => void savePref({ tours_seen: [], mango_tours: true }, 'Page guides')}
-              >
-                Show them again
-              </button>
-            ),
-          },
-          {
-            id: 'tour',
-            label: 'Tutorial',
-            hint: 'Mango shows you the Dashboard, Calendar and Log. Other pages open as you finish tasks.',
-            control: (
-              <button
-                type="button"
-                className="st-btn"
-                disabled={busy}
-                onClick={() => {
-                  replayTutorial(username);
-                  void savePref({ welcome_seen: false }, 'Tutorial').then(() => navigate('/dashboard'));
-                }}
-              >
-                Show it again
-              </button>
-            ),
-          },
-        ],
-      },
-      {
-        id: 'dashboard',
-        label: 'Dashboard',
-        group: 'Personalization',
-        items: [
-          {
-            id: 'goal',
-            label: 'Daily XP goal',
-            hint: `Your daily XP target. The dashboard shows today's total against it. ${GOAL_MIN} to ${GOAL_MAX}.`,
-            control: (
-              <input
-                className="st-input is-num"
-                type="number"
-                min={GOAL_MIN}
-                max={GOAL_MAX}
-                step={10}
-                defaultValue={sheet.daily_goal}
-                disabled={busy}
-                onBlur={(event) => {
-                  const next = Number(event.target.value);
-                  if (!Number.isFinite(next) || next === sheet.daily_goal) return;
-                  void saveSheet({ daily_goal: next }, 'Daily goal');
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter') event.currentTarget.blur();
-                }}
-              />
-            ),
-          },
-          {
-            id: 'stats',
-            label: 'Show the statistics row',
-            hint: 'The four numbers across the top of the dashboard.',
-            control: (
-              <Toggle
-                on={prefs.show_stats}
-                busy={busy}
-                label="Show the statistics row"
-                onFlip={() => void savePref({ show_stats: !prefs.show_stats }, 'Dashboard')}
-              />
-            ),
-          },
-          {
-            id: 'insights',
-            label: 'Show the insights panel',
-            hint: 'The cards under your task list.',
-            control: (
-              <Toggle
-                on={prefs.show_insights}
-                busy={busy}
-                label="Show the insights panel"
-                onFlip={() => void savePref({ show_insights: !prefs.show_insights }, 'Dashboard')}
-              />
-            ),
-          },
-          {
-            id: 'quote',
-            label: 'Show the daily quote',
-            hint: 'The quote at the bottom of the dashboard.',
-            control: (
-              <Toggle
-                on={prefs.show_quote}
-                busy={busy}
-                label="Show the daily quote"
-                onFlip={() => void savePref({ show_quote: !prefs.show_quote }, 'Dashboard')}
-              />
-            ),
-          },
-        ],
-      },
-      {
-        id: 'tasks',
-        label: 'Tasks',
-        group: 'Productivity',
-        items: [
-          {
-            id: 'priority',
-            label: 'Default priority',
-            hint: 'The starting priority for new tasks, until you change their XP.',
-            control: (
-              <Seg
-                value={prefs.default_priority}
-                busy={busy}
-                onPick={(next) => void savePref({ default_priority: next }, 'Default priority')}
-                options={[
-                  { key: 'low', label: 'Low' },
-                  { key: 'medium', label: 'Medium' },
-                  { key: 'high', label: 'High' },
-                ]}
-              />
-            ),
-          },
-          {
-            id: 'xp',
-            label: 'Default XP',
-            hint: 'What a new task is worth before you change it. Applies everywhere you add tasks.',
-            control: (
-              <input
-                className="st-input is-num"
-                type="number"
-                min={5}
-                max={500}
-                step={5}
-                defaultValue={prefs.default_xp}
-                disabled={busy}
-                onBlur={(event) => {
-                  const next = Number(event.target.value);
-                  if (!Number.isFinite(next) || next === prefs.default_xp) return;
-                  void savePref({ default_xp: next }, 'Default XP');
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter') event.currentTarget.blur();
-                }}
-              />
-            ),
-          },
-          {
-            id: 'rating',
-            label: 'Ask how it went',
-            hint:
-              "What the pop-up asks after you finish a task. More answers mean better quality scores in "
-              + "Analytics.",
-            control: (
-              <Seg
-                value={prefs.rating_depth}
-                busy={busy}
-                onPick={(next) => void savePref({ rating_depth: next }, 'Questions')}
-                options={[
-                  { key: 'none', label: 'Nothing' },
-                  { key: 'ratings', label: 'Ratings' },
-                  { key: 'reasons', label: '+ Reasons' },
-                ]}
-              />
-            ),
-          },
-          {
-            id: 'rating-what',
-            label: 'What each level asks',
-            hint: RATING_DEPTHS[prefs.rating_depth],
-            control: <span className="st-fixed">{RATING_DEPTH_NAMES[prefs.rating_depth]}</span>,
-          },
-          {
-            id: 'task-status',
-            label: 'Tasks page opens on',
-            hint: 'Which tasks show when you open the page. You can still change it there.',
-            control: (
-              <Seg
-                value={prefs.task_status}
-                busy={busy}
-                onPick={(next) => void savePref({ task_status: next }, 'Opening view')}
-                options={[
-                  { key: 'open', label: 'Open' },
-                  { key: 'done', label: 'Done' },
-                  { key: 'all', label: 'All' },
-                ]}
-              />
-            ),
-          },
-          {
-            id: 'task-horizon',
-            label: 'How far ahead it reaches',
-            hint: 'A week shows what you can act on now. Everything shows your whole list.',
-            control: (
-              <Seg
-                value={prefs.task_horizon}
-                busy={busy}
-                onPick={(next) => void savePref({ task_horizon: next }, 'Opening view')}
-                options={[
-                  { key: 'week', label: 'This week' },
-                  { key: 'all', label: 'Everything' },
-                ]}
-              />
-            ),
-          },
-          {
-            id: 'task-sort',
-            label: 'Default order',
-            hint: 'How the list inside each heading is sorted.',
-            control: (
-              <select
-                className="st-input"
-                value={prefs.task_sort}
-                disabled={busy}
-                onChange={(event) =>
-                  void savePref(
-                    { task_sort: event.target.value as Prefs['task_sort'] },
-                    'Default order',
-                  )
-                }
-              >
-                {SORTS.map((sort) => (
-                  <option key={sort.key} value={sort.key}>
-                    {sort.label}
-                  </option>
-                ))}
-              </select>
-            ),
-          },
-          {
-            id: 'task-group',
-            label: 'Default headings',
-            hint: 'How the list is grouped. No headings means one flat list.',
-            control: (
-              <select
-                className="st-input"
-                value={prefs.task_group}
-                disabled={busy}
-                onChange={(event) =>
-                  void savePref(
-                    { task_group: event.target.value as Prefs['task_group'] },
-                    'Default headings',
-                  )
-                }
-              >
-                {GROUPS.map((group) => (
-                  <option key={group.key} value={group.key}>
-                    {group.label}
-                  </option>
-                ))}
-              </select>
-            ),
-          },
-          {
-            id: 'confirm',
-            label: 'Confirm before deleting',
-            hint: 'Ask first when removing a task. Off means it goes immediately.',
-            control: (
-              <Toggle
-                on={prefs.confirm_delete}
-                busy={busy}
-                label="Confirm before deleting"
-                onFlip={() =>
-                  void savePref({ confirm_delete: !prefs.confirm_delete }, 'Confirmation')
-                }
-              />
-            ),
-            danger: true,
-          },
-        ],
-      },
-      {
-        id: 'calendar',
-        label: 'Calendar',
-        group: 'Productivity',
-        items: [
-          {
-            id: 'view',
-            label: 'Default view',
-            hint: 'Which one opens when you go to the calendar.',
-            control: (
-              <Seg
-                value={prefs.calendar_view}
-                busy={busy}
-                onPick={(next) => void savePref({ calendar_view: next }, 'Calendar view')}
-                options={[
-                  { key: 'day', label: 'Day' },
-                  { key: 'week', label: 'Week' },
-                  { key: 'month', label: 'Month' },
-                ]}
-              />
-            ),
-          },
-          {
-            id: 'week-start',
-            label: 'Weeks start on',
-            hint: 'The calendar grid, the month and the week your dashboard counts.',
-            control: (
-              <Seg
-                value={prefs.week_starts_on}
-                busy={busy}
-                onPick={(next) => void savePref({ week_starts_on: next }, 'Week start')}
-                options={[
-                  { key: 'monday', label: 'Monday' },
-                  { key: 'sunday', label: 'Sunday' },
-                ]}
-              />
-            ),
-          },
-          {
-            id: 'clock',
-            label: 'Clock',
-            hint: 'Every time in the app: the calendar, due times, blocks and the dashboard.',
-            control: (
-              <Seg
-                value={prefs.clock_format}
-                busy={busy}
-                onPick={(next) => void savePref({ clock_format: next }, 'Clock')}
-                options={[
-                  { key: '12h', label: '12-hour' },
-                  { key: '24h', label: '24-hour' },
-                ]}
-              />
-            ),
-          },
-          {
-            id: 'clock-what',
-            label: 'Time format',
-            hint: CLOCK_HINT[prefs.clock_format],
-            control: <span className="st-fixed">{CLOCK_EXAMPLE[prefs.clock_format]}</span>,
-          },
-        ],
-      },
-      {
-        id: 'records',
-        label: 'Personal bests',
-        group: 'Productivity',
-        items: [
-          {
-            id: 'records-sort',
-            label: 'History opens ordered by',
-            hint: 'The list under your personal bests. You can still change it there.',
-            control: (
-              <Seg
-                value={prefs.records_sort}
-                busy={busy}
-                onPick={(next) => void savePref({ records_sort: next }, 'Records order')}
-                options={[
-                  { key: 'newest', label: 'Newest' },
-                  { key: 'oldest', label: 'Oldest' },
-                  { key: 'improvement', label: 'Improvement' },
-                ]}
-              />
-            ),
-          },
-          {
-            id: 'records-sort-what',
-            label: 'How "most improved" is sorted',
-            hint: 'Most improved first. A score that went from 18 to 25 ranks above one that was always 400.',
-            control: <span className="st-fixed">Most improved</span>,
-          },
-        ],
-      },
-      {
-        id: 'streak',
-        label: 'Streak',
-        group: 'Productivity',
-        items: [
-          {
-            id: 'vacation',
-            label: 'Vacation mode',
-            hint:
-              `Pause your streak while you're away, for up to ${sheet.vacation_max_days ?? 30} days. Vacation days won't break it or use your grace day. They don't add to it either. Anything you finish while away still counts.`,
-            control: (
-              <VacationMode
-                vacation={sheet.streak_vacation ?? null}
-                maxDays={sheet.vacation_max_days ?? 30}
-                onChanged={onVacation}
-              />
-            ),
-          },
-        ],
-      },
-      {
-        id: 'notifications',
-        label: 'Notifications',
-        group: 'Notifications',
-        /* Nine switches, and every one of them is read by the server rather
-           than by the panel. A channel that is off is not swept at all — see
-           CHANNELS in backend/tracking/notify.py — so turning one off stops
-           the rows being written instead of writing them and hiding them, and
-           turning it back on starts from what is true then rather than
-           replaying two weeks of backlog. */
-        note:
-          "Nothing gets sent on a timer. The app checks your work when you open it. A quiet week "
-          + "means a quiet bell, and anything you delete stays gone.",
-        items: [
-          {
-            id: 'notify-master',
-            label: 'Notifications',
-            hint:
-              'The main switch. Off stops everything below: no new alerts and no pop-ups. Old ones are '
-              + 'saved and come back when you turn it on.',
-            control: (
-              <Toggle
-                on={prefs.notifications_enabled}
-                busy={busy}
-                label="Notifications"
-                onFlip={() =>
-                  void savePref(
-                    { notifications_enabled: !prefs.notifications_enabled },
-                    'Notifications',
-                  )
-                }
-              />
-            ),
-          },
-          {
-            id: 'notify-popups',
-            label: 'Show them on screen',
-            hint:
-              'New alerts pop up in the corner for a few seconds. Off means no pop-ups. Everything '
-              + 'still lands in the bell.',
-            control: (
-              <Toggle
-                on={prefs.notify_popups}
-                busy={busy || !prefs.notifications_enabled}
-                label="Show them on screen"
-                onFlip={() =>
-                  void savePref({ notify_popups: !prefs.notify_popups }, 'Pop-ups')
-                }
-              />
-            ),
-          },
-          ...NOTIFY_CHANNELS.map((channel) => ({
-            id: `notify-${channel.key}`,
-            label: channel.label,
-            hint: channel.hint,
-            control: (
-              <Toggle
-                on={prefs[channel.pref]}
-                busy={busy || !prefs.notifications_enabled}
-                label={channel.label}
-                onFlip={() =>
-                  void savePref(
-                    { [channel.pref]: !prefs[channel.pref] } as Partial<Prefs>,
-                    channel.label,
-                  )
-                }
-              />
-            ),
-          })),
-        ],
-      },
-      {
-        id: 'analytics',
-        label: 'Analytics',
-        group: 'Data',
-        /* The answers to the setup questions a new account is asked, plus the
-           two the wizard never puts (the period, and whether to be ranked
-           against strangers). Everything here is read by something on the
-           page — see utils/analyticsPrefs, which is where a stored word is
-           turned into a decision, and the header of
-           components/Analytics/Setup for why the questions exist at all. */
-        note:
-          'Your answers from when you first opened Analytics. They change what the page shows and '
-          + 'how it talks. Your numbers stay the same.',
-        items: [
-          {
-            id: 'window',
-            label: 'Default period',
-            hint: 'The range Analytics opens on. You can still change it there.',
-            control: (
-              <select
-                className="st-input"
-                value={prefs.analytics_window}
-                disabled={busy}
-                onChange={(event) =>
-                  void savePref(
-                    { analytics_window: event.target.value as Prefs['analytics_window'] },
-                    'Analytics period',
-                  )
-                }
-              >
-                <option value="7d">7 days</option>
-                <option value="30d">30 days</option>
-                <option value="90d">90 days</option>
-                <option value="1y">1 year</option>
-                <option value="2y">2 years</option>
-                <option value="all">All time</option>
-              </select>
-            ),
-          },
-          {
-            id: 'analytics-home',
-            label: 'Analytics opens on',
-            hint:
-              'Which tab you land on. Recommendations tells you what to do. Overview shows the big '
-              + 'picture.',
-            control: (
-              <select
-                className="st-input"
-                value={prefs.analytics_home_tab}
-                disabled={busy}
-                onChange={(event) =>
-                  void savePref(
-                    { analytics_home_tab: event.target.value as Prefs['analytics_home_tab'] },
-                    'Opening tab',
-                  )
-                }
-              >
-                {/* The same tabs the page's own tab bar draws, from the same
-                    list — a select here that had drifted from VIEWS would offer
-                    a tab that no longer exists. */}
-                {VIEWS.map((view) => (
-                  <option key={view.key} value={view.key}>
-                    {view.label}
-                  </option>
-                ))}
-              </select>
-            ),
-          },
-          {
-            id: 'analytics-log',
-            label: 'What you mostly record',
-            hint: LOG_STYLE_HINT[prefs.analytics_log_style],
-            control: (
-              <Seg
-                value={prefs.analytics_log_style}
-                busy={busy}
-                onPick={(next) => void savePref({ analytics_log_style: next }, 'What you record')}
-                options={[
-                  { key: 'tasks', label: 'Tasks' },
-                  { key: 'sessions', label: 'Sessions' },
-                  { key: 'both', label: 'Both' },
-                ]}
-              />
-            ),
-          },
-          {
-            id: 'analytics-tone',
-            label: 'How blunt Analytics is',
-            hint:
-              'Your numbers stay the same. This changes how strict the page is and how many problems it '
-              + 'shows at once.',
-            control: (
-              <Seg
-                value={prefs.analytics_tone}
-                busy={busy}
-                onPick={(next) => void savePref({ analytics_tone: next }, 'Tone')}
-                options={[
-                  { key: 'gentle', label: TONE_LABEL.gentle },
-                  { key: 'balanced', label: TONE_LABEL.balanced },
-                  { key: 'harsh', label: TONE_LABEL.harsh },
-                ]}
-              />
-            ),
-          },
-          {
-            id: 'analytics-tone-what',
-            label: 'What this changes',
-            hint: TONE_HINT[prefs.analytics_tone],
-            control: <span className="st-fixed">{TONE_LABEL[prefs.analytics_tone]}</span>,
-          },
-          {
-            id: 'analytics-detail',
-            label: 'How much Overview shows',
-            hint: DETAIL_HINT[prefs.analytics_detail],
-            control: (
-              <Seg
-                value={prefs.analytics_detail}
-                busy={busy}
-                onPick={(next) => void savePref({ analytics_detail: next }, 'Detail')}
-                options={[
-                  { key: 'essentials', label: DETAIL_LABEL.essentials },
-                  { key: 'standard', label: DETAIL_LABEL.standard },
-                  { key: 'everything', label: DETAIL_LABEL.everything },
-                ]}
-              />
-            ),
-          },
-          {
-            id: 'analytics-setup',
-            label: 'Answer the setup questions again',
-            hint:
-              'The same seven questions, with your answers filled in. Nothing gets cleared.',
-            /* A link rather than a switch, because there is no preference to
-               write: the questions are a screen on the analytics page and this
-               is the way to it. The page reads `?setup` and opens on the
-               wizard — see `askedSetup` in pages/Analytics. */
-            control: (
-              <Link className="st-btn" to="/analytics?setup=1">
-                Open the questions
-              </Link>
-            ),
-          },
-        ],
-      },
-      {
         id: 'data',
         label: 'Data & export',
         group: 'Data',
@@ -1624,14 +656,9 @@ export default function Settings() {
           {
             id: 'export-json',
             label: 'Export everything',
-            /* It said "Tasks, goals, records, notes and focus days", which was
-               five of the seventeen tables the account owns — the calendar,
-               the XP ledger, the goal checkpoints, the subjects and the badges
-               were all things this app would delete and could not give back.
-               The endpoint sends every one of them now, so the word in the
-               label is true and the hint says what it means. */
-            hint: 'All your data in one JSON file: tasks, calendar, goals, notes, records, subjects, badges '
-              + 'and XP history.',
+            /* Every table the account owns (ACCOUNT_TABLES in backend/api/settings.py). */
+            hint: 'All your data in one JSON file: every answer, your review log, mock scores, '
+              + 'your study plan and your settings.',
             control: (
               <a
                 className="st-btn"
@@ -1640,25 +667,6 @@ export default function Settings() {
               >
                 Download JSON
               </a>
-            ),
-          },
-          {
-            id: 'export-csv',
-            label: 'Export a table',
-            hint: "One table at a time, as a CSV you can open in a spreadsheet.",
-            control: (
-              <div className="st-links">
-                {['tasks', 'goals', 'records'].map((table) => (
-                  <a
-                    key={table}
-                    className="st-btn is-small"
-                    href={service.exportUrl(table, 'csv')}
-                    download
-                  >
-                    {table}
-                  </a>
-                ))}
-              </div>
             ),
           },
           {
@@ -1687,16 +695,6 @@ export default function Settings() {
             label: 'Version',
             hint: "The build you're running.",
             control: <span className="st-fixed">Summit 1.2.0</span>,
-          },
-          {
-            id: 'level',
-            label: 'Level and XP',
-            hint: "Based on everything you've finished.",
-            control: (
-              <span className="st-fixed">
-                Level {sheet.level} · {sheet.xp.toLocaleString()} XP
-              </span>
-            ),
           },
           {
             id: 'legal',
@@ -1746,7 +744,6 @@ export default function Settings() {
   }, [
     busy,
     name,
-    onVacation,
     pickTheme,
     pickThemeMode,
     prefs,
@@ -1755,8 +752,6 @@ export default function Settings() {
     sheet,
     skinLabel,
     skinned,
-    starter.next,
-    starter.stage,
     theme,
   ]);
 
@@ -1893,8 +888,8 @@ export default function Settings() {
         </div>
       </div>
 
-      {/* Over the page rather than in the row, because the six differ in what
-          they leave behind and a row has one line to say it in. */}
+      {/* Over the page rather than in the row, because each differs in what
+          it leaves behind and a row has one line to say it in. */}
       {ask && sheet && (
         <Confirm
           ask={ask}

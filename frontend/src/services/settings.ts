@@ -12,7 +12,7 @@
  * the accent cannot write back a stale copy of every other preference.
  */
 import { get, post } from './api';
-import type { ApiResult, UserStats, VacationWindow } from '@/types';
+import type { ApiResult, VacationWindow } from '@/types';
 
 export type ThemeMode = 'system' | 'light' | 'dark';
 export type Accent = 'graphite' | 'violet' | 'blue' | 'green' | 'amber' | 'rose' | 'slate';
@@ -371,6 +371,7 @@ export function saveSettings(
  */
 export type ResetScope =
   | 'preferences'
+  | 'amc'
   | 'completed'
   | 'tasks'
   | 'progress'
@@ -392,20 +393,6 @@ export function resetData(
   confirm?: string,
 ): Promise<ApiResult<ResetResult>> {
   return post<ResetResult>('/api/settings/reset', { scope, confirm });
-}
-
-/**
- * Pause the streak from today through `until` (an ISO day, included), or move
- * the end of the vacation already running. The reply is the account's stats,
- * so the caller redraws from what the server decided.
- */
-export function planVacation(until: string): Promise<ApiResult<{ stats: UserStats }>> {
-  return post<{ stats: UserStats }>('/api/streak/vacation', { until });
-}
-
-/** Back early. Days already taken stay covered; today counts again. */
-export function endVacation(): Promise<ApiResult<{ stats: UserStats }>> {
-  return post<{ stats: UserStats }>('/api/streak/vacation/end', {});
 }
 
 /** Where the browser should be pointed to download an export. */
