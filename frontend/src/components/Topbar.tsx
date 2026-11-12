@@ -46,12 +46,12 @@ import { NametagText, TitleSelect } from './Nametag';
 import { SearchField } from './Search';
 import type { SearchFieldHandle } from './Search';
 import { OPEN_SEARCH } from '@/utils/searchBus';
-import { useAuth, useNotifications, useSettings, useStats } from '@/hooks';
+import { useAuth, useNotifications, useSettings } from '@/hooks';
+import { useAmcSummary } from '@/hooks/useAmcSummary';
 import { earnedTitle } from '@/utils/easterEgg';
 import { useNametag } from '@/hooks/useNametag';
 import { AVATARS, avatarPath } from '@/services/avatars';
 import { auth } from '@/services';
-import { format } from '@/utils';
 import '@/styles/topbar.css';
 
 const stroke = {
@@ -106,9 +106,7 @@ export function Topbar() {
   // Shared with the rail, which shows the same level under the avatar. Six
   // integers, read once for the session — this used to be the account's whole
   // task list, twice, because the bar and the rail each asked for it.
-  const { stats } = useStats();
-
-  const level = stats ? format.levelForTotalXp(stats.xp) : null;
+  const summary = useAmcSummary();
   const tag = useNametag();
 
   const [open, setOpen] = useState<'search' | 'alerts' | 'account' | null>(null);
@@ -309,9 +307,9 @@ export function Topbar() {
                     above it, so an account that never set one does not read
                     its own username twice. */}
                 {displayName && displayName !== username && <span>@{username}</span>}
-                {level && (
+                {summary && (
                   <span>
-                    Level {level.level} · {format.number(stats?.xp ?? 0)} XP
+                    {summary.stats.solved} solved · {summary.stats.streak}-day streak · {summary.stats.due} due
                   </span>
                 )}
               </div>
@@ -344,6 +342,9 @@ export function Topbar() {
 
               <Link to="/dashboard" onClick={() => setOpen(null)}>
                 Dashboard
+              </Link>
+              <Link to="/study-plan" onClick={() => setOpen(null)}>
+                Study plan
               </Link>
               <Link to="/settings" onClick={() => setOpen(null)}>
                 Settings

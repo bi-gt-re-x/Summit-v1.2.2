@@ -47,10 +47,14 @@ GATED_PATHS = ('/dashboard', '/calendar', '/goals', '/growth', '/analytics',
                # The calendar's three views are three URLs now, and each of
                # them shows the account's own week as plainly as /calendar did.
                '/calendar/day', '/calendar/week', '/calendar/month',
-               '/tasks', '/analytics/goals', '/analytics/records')
+               '/tasks', '/analytics/goals', '/analytics/records',
+               # The AMC prep pages: every one of them reads the account's own
+               # answers, review log or plan.
+               '/problems', '/review', '/topics', '/contests', '/study-plan', '/search')
 
 #: Pages with an id in the path: one per subject, settings section and space.
-GATED_PREFIXES = ('/analytics/subject/', '/settings/', '/spaces/', '/team/')
+GATED_PREFIXES = ('/analytics/subject/', '/settings/', '/spaces/', '/team/',
+                  '/problems/', '/topics/', '/contests/', '/mocks/')
 
 
 def register(app):

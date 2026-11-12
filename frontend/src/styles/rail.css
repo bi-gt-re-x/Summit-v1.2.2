@@ -1097,3 +1097,41 @@ html[data-theme="dark"] .rail-folder-menu button:hover { background: #21262D; co
 html[data-theme="dark"] .rail-folder-menu { border-color: #30363D; background: #161B22; }
 html[data-theme="dark"] .rail-folder-menu button { color: #E6EDF3; }
 html[data-theme="dark"] .rail-folder-input { border-color: #30363D; background: #0D1117; color: #E6EDF3; }
+
+/* The count of reviews due today, on the Review entry. */
+.rail-link .rail-due {
+    margin-left: auto;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    display: inline-grid;
+    place-items: center;
+    border-radius: 999px;
+    background: #B8923F;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+}
+html.nav-collapsed .rail-link .rail-due {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    font-size: 10px;
+}
+@media (max-width: 640px) {
+    .rail-link { position: relative; }
+    .rail-link .rail-due {
+        position: absolute;
+        top: 2px;
+        left: calc(50% + 6px);
+        min-width: 16px;
+        height: 16px;
+        padding: 0 4px;
+        margin: 0;
+        font-size: 10px;
+    }
+}

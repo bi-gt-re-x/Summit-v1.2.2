@@ -2683,6 +2683,10 @@ html[data-theme="dark"]:not([data-skin]) .rail-add-folder:hover {
 html[data-theme="dark"]:not([data-skin]) .rail-space-problem {
     color: #AB716B
 }
+html[data-theme="dark"]:not([data-skin]) .rail-link .rail-due {
+    background: #A89978;
+    color: #252522
+}
 html[data-theme="dark"]:not([data-skin]) .topbar {
     background: var(--color-surface);
     border-bottom: 1px solid #2F2F2C

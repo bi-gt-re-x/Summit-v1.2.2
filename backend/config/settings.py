@@ -89,6 +89,7 @@ SCHEMA_FILES = [
     'achievements', 'history', 'library', 'notes', 'settings', 'subjects',
     'records', 'notifications', 'skillsteps', 'skillattempts', 'background',
     'log', 'quests', 'skillchecks', 'review', 'experiments', 'behavior',
+    'amc',
 ]
 
 # --- Behaviour -----------------------------------------------------------

@@ -101,6 +101,18 @@ SPA_ROUTES = (
     '/calendar/day',
     '/calendar/week',
     '/calendar/month',
+    # The AMC prep pages.
+    '/problems',
+    '/problems/{problem_id}',
+    '/review',
+    '/topics',
+    '/topics/{topic_id}',
+    '/contests',
+    '/contests/{contest_id}',
+    '/contests/{contest_id}/take',
+    '/mocks/{mock_id}',
+    '/study-plan',
+    '/search',
 )
 
 INDEX = os.path.join(DIST_DIR, 'index.html')

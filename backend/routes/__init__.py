@@ -52,6 +52,9 @@ API_MODULES = (
     'review',
     'skill_plan',
     'behavior',
+    # The AMC prep site: dashboard, problems, review, topics, contests,
+    # study plan and search. See backend/amc/.
+    'amc',
 )
 
 SHARED_MODULES = (

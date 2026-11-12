@@ -915,6 +915,65 @@ ADDED_TABLES = ('''
     )
 ''', '''
     CREATE INDEX IF NOT EXISTS behavior_interventions_user_idx ON behavior_interventions (user_id, behavior_id)
+''', '''
+    -- The AMC prep tables. The DDL is data/sql/amc.sql's; see the note on ADDED_TABLES.
+    CREATE TABLE IF NOT EXISTS amc_attempts (
+        id          TEXT PRIMARY KEY,
+        user_id     TEXT NOT NULL REFERENCES users (username) ON DELETE CASCADE,
+        problem_id  TEXT NOT NULL,
+        answer      TEXT DEFAULT '',
+        correct     INTEGER NOT NULL DEFAULT 0,
+        seconds     INTEGER DEFAULT 0,
+        source      TEXT NOT NULL DEFAULT 'practice',
+        at          TEXT NOT NULL,
+        CHECK (source IN ('practice', 'review', 'mock', 'reveal'))
+    )
+''', '''
+    CREATE INDEX IF NOT EXISTS amc_attempts_user_idx ON amc_attempts (user_id, problem_id)
+''', '''
+    CREATE TABLE IF NOT EXISTS amc_reviews (
+        user_id     TEXT NOT NULL REFERENCES users (username) ON DELETE CASCADE,
+        problem_id  TEXT NOT NULL,
+        stage       INTEGER NOT NULL DEFAULT 0,
+        due         TEXT NOT NULL,
+        status      TEXT NOT NULL DEFAULT 'active',
+        note        TEXT DEFAULT '',
+        misses      INTEGER NOT NULL DEFAULT 1,
+        added_at    TEXT NOT NULL,
+        updated_at  TEXT NOT NULL,
+        PRIMARY KEY (user_id, problem_id),
+        CHECK (status IN ('active', 'mastered'))
+    )
+''', '''
+    CREATE TABLE IF NOT EXISTS amc_mocks (
+        id          TEXT PRIMARY KEY,
+        user_id     TEXT NOT NULL REFERENCES users (username) ON DELETE CASCADE,
+        contest_id  TEXT NOT NULL,
+        kind        TEXT NOT NULL DEFAULT 'mock',
+        answers     TEXT DEFAULT '{}',
+        score       REAL NOT NULL DEFAULT 0,
+        correct     INTEGER DEFAULT 0,
+        wrong       INTEGER DEFAULT 0,
+        blank       INTEGER DEFAULT 0,
+        seconds     INTEGER DEFAULT 0,
+        note        TEXT DEFAULT '',
+        at          TEXT NOT NULL,
+        CHECK (kind IN ('mock', 'logged'))
+    )
+''', '''
+    CREATE INDEX IF NOT EXISTS amc_mocks_user_idx ON amc_mocks (user_id, contest_id)
+''', '''
+    CREATE TABLE IF NOT EXISTS amc_plans (
+        user_id     TEXT PRIMARY KEY REFERENCES users (username) ON DELETE CASCADE,
+        target      TEXT NOT NULL DEFAULT 'AMC 10',
+        exam_date   TEXT NOT NULL,
+        goal_score  REAL NOT NULL DEFAULT 105,
+        hours       INTEGER NOT NULL DEFAULT 5,
+        checks      TEXT DEFAULT '{}',
+        created_at  TEXT NOT NULL,
+        updated_at  TEXT NOT NULL,
+        CHECK (target IN ('AMC 10', 'AMC 12', 'AIME'))
+    )
 ''')
 
 

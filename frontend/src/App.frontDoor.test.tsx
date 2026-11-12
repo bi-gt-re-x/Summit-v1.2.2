@@ -1,59 +1,27 @@
 /**
- * The Startup setting: "Open on", in Settings → Account.
- *
- * It is one preference with one reader. The select writes `home_page`, and
- * `FrontDoor` — the element behind the `/` route — turns it into a redirect.
- * Everything between those two is the ordinary settings round trip, so the
- * thing worth pinning is the end of it: given a stored choice, does `/` go
- * there.
- *
- * The two waits are as much the feature as the redirect. A redirect cannot be
- * taken back, so answering before the session or the preferences have landed
- * means opening the dashboard and jumping — which is exactly what somebody who
- * chose Notes would report as "the setting does nothing", because the page
- * they asked for is the second one they see rather than the first.
- *
- * What this cannot pin, and what is worth knowing when the setting looks
- * broken: it only ever applies to `/`. A reader who reloads while sitting on
- * /dashboard, or who is bounced to /login from a gated page and comes back
- * through `next`, has not gone through the front door and will not be sent
- * anywhere. That is correct — a setting about where the app opens is not a
- * rule about where every URL leads — and it is the likeliest reason for the
- * setting to seem inert.
+ * Where the app opens: the dashboard for an account, the landing page for a
+ * visitor, nothing at all while the session check is in flight (a redirect
+ * cannot be taken back). And the productivity app's old pages, which land on
+ * the dashboard rather than on a blank screen.
  */
 import { Suspense } from 'react';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { MemoryRouter, Navigate, Route, Routes } from 'react-router-dom';
 import type { InitialEntry } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 import { AuthContext, SettingsContext } from '@/context/contexts';
 import { authValue, settingsValue } from '@/test/render';
-import { FrontDoor, Landing } from './App';
+import { FrontDoor, Landing, RETIRED_PATHS } from './App';
 import type { AuthValue } from '@/context/contexts';
-import type { Prefs } from '@/services/settings';
 
-/** Every page `home_page` can name, and the path each one has to land on. */
-const DESTINATIONS: [Prefs['home_page'], string][] = [
-  ['dashboard', '/dashboard'],
-  ['tasks', '/tasks'],
-  ['calendar', '/calendar'],
-  ['goals', '/goals'],
-  ['analytics', '/analytics'],
-];
-
-function draw(
-  prefs: Partial<Prefs>,
-  options: { auth?: Partial<AuthValue>; ready?: boolean } = {},
-) {
+function draw(auth: Partial<AuthValue> = {}) {
   return render(
     <MemoryRouter initialEntries={['/']}>
-      <AuthContext.Provider value={authValue(options.auth)}>
-        <SettingsContext.Provider
-          value={settingsValue({ prefs, ready: options.ready ?? true })}
-        >
+      <AuthContext.Provider value={authValue(auth)}>
+        <SettingsContext.Provider value={settingsValue({})}>
           <Routes>
             <Route path="/" element={<FrontDoor />} />
-            {[...DESTINATIONS.map(([, path]) => path), '/home'].map((path) => (
+            {['/dashboard', '/home'].map((path) => (
               <Route key={path} path={path} element={<span data-testid="at">{path}</span>} />
             ))}
           </Routes>
@@ -66,47 +34,42 @@ function draw(
 const landedOn = () => screen.getByTestId('at').textContent;
 
 describe('where the app opens', () => {
-  it.each(DESTINATIONS)('opens on %s', (page, path) => {
-    draw({ home_page: page });
-    expect(landedOn()).toBe(path);
-  });
-
-  it('opens on the dashboard for a stored value nothing answers to', () => {
-    // A preference written by a build whose list was longer, or edited by
-    // hand. A front door that renders nothing is worse than one that opens
-    // somewhere sensible.
-    draw({ home_page: 'growth' as Prefs['home_page'] });
+  it('opens on the dashboard for an account', () => {
+    draw();
     expect(landedOn()).toBe('/dashboard');
-  });
-
-  it('waits for the preferences rather than opening on the default', () => {
-    // The failure this guards is not a wrong page, it is a right page arrived
-    // at second: redirect on the default and correct a moment later, and
-    // somebody who chose Goals watches the dashboard load every morning and
-    // reports that the setting does nothing.
-    draw({ home_page: 'goals' }, { ready: false });
-    expect(screen.queryByTestId('at')).not.toBeInTheDocument();
   });
 
   it('waits for the session rather than assuming signed out', () => {
-    draw({ home_page: 'goals' }, { auth: { status: 'loading' }, ready: true });
+    draw({ status: 'loading' });
     expect(screen.queryByTestId('at')).not.toBeInTheDocument();
   });
 
-  it('sends an account that chose Notes, which is gone, to the dashboard', () => {
-    draw({ home_page: 'notes' });
-    expect(landedOn()).toBe('/dashboard');
-  });
-
   it('sends a visitor with no account to the landing page', () => {
-    draw({ home_page: 'goals' }, { auth: { status: 'signed-out', username: null } });
+    draw({ status: 'signed-out', username: null });
     expect(landedOn()).toBe('/home');
   });
 });
 
+describe('the retired productivity pages', () => {
+  it.each(['/tasks', '/calendar/week', '/goals', '/analytics/subject/math', '/spaces/2'])(
+    'send %s to the dashboard',
+    (path) => {
+      render(
+        <MemoryRouter initialEntries={[path]}>
+          <Routes>
+            {RETIRED_PATHS.map((p) => <Route key={p} path={p} element={<Navigate to="/dashboard" replace />} />)}
+            <Route path="/dashboard" element={<span data-testid="at">/dashboard</span>} />
+          </Routes>
+        </MemoryRouter>,
+      );
+      expect(landedOn()).toBe('/dashboard');
+    },
+  );
+});
+
 /* The landing page itself is a long page of motion and canvases, and none of
    it is what these tests are about. */
-vi.mock('@/pages/Homepage', () => ({
+vi.mock('@/pages/amc/Landing', () => ({
   default: () => <span data-testid="at">landing</span>,
 }));
 
@@ -120,7 +83,7 @@ function drawHome(entry: InitialEntry, auth: Partial<AuthValue> = {}) {
   return render(
     <MemoryRouter initialEntries={[entry]}>
       <AuthContext.Provider value={authValue(auth)}>
-        <SettingsContext.Provider value={settingsValue({ prefs: { home_page: 'dashboard' } })}>
+        <SettingsContext.Provider value={settingsValue({})}>
           <Suspense fallback={null}>
             <Routes>
               <Route path="/" element={<FrontDoor />} />

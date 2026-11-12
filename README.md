@@ -1,6 +1,39 @@
 # Summit
 
-## Overview
+## AMC 10, AMC 12 & AIME prep
+
+Summit is a study site for the American Mathematics Competitions, in the spirit
+of amcstep.com: tagged practice problems, a review log that brings mistakes back
+on a schedule, timed mock contests, a topic map, a catalogue of every official
+paper, a study plan to contest day, and search across all of it.
+
+| Page | Path | What it does |
+| --- | --- | --- |
+| Dashboard | `/dashboard` | Today's plan, the next problem, projected score vs goal, progress by category |
+| Review | `/review` | The error log: misses return after 3, 10 and 21 days until mastered |
+| Problems | `/problems`, `/problems/:id` | The bank, filtered by contest, category, topic, difficulty 1-5, technique and status; answer to unlock the solution, key insight and trap |
+| Topics | `/topics`, `/topics/:id` | 32 topics in 5 categories, each with key ideas, techniques and its problems |
+| Past Contests | `/contests`, `/contests/:id` | Timed Step Mocks graded 6 / 1.5 / 0 with a report; every official AMC 10/12 and AIME since 2000 linked to AoPS, with score logging |
+| Study Plan | `/study-plan` | Contest, date, goal and hours become a week-by-week plan (Foundations, Core, Contest mode, Taper) |
+| Search | `/search`, top bar / ⌘K | Problems, topics, contests and pages |
+
+The content lives in `backend/amc/` (`bank.py` is the problem bank, `catalog.py`
+the topics and contests, `engine.py` the rules), the API in
+`backend/api/amc.py`, the tables in `data/sql/amc.sql`, and the pages in
+`frontend/src/pages/amc/`. The Step Mock problems are original; official MAA
+problems are linked, not reproduced. `tests/test_amc_bank.py` recomputes every
+answer that can be brute-forced.
+
+For a local account with some history on it:
+
+    .venv-fastapi/bin/python scripts/seed_amc_demo.py
+
+The productivity app this grew out of is described below; its pages are no
+longer routed (their old URLs redirect to the dashboard).
+
+## The original productivity app
+
+### Overview
 
 Summit is a gamified productivity and self-improvement platform designed to help students and lifelong learners build consistent habits, track meaningful progress, and stay motivated over long periods of time. Instead of acting as a simple to-do list, Summit combines productivity, analytics, and progression systems into a unified dashboard that encourages continuous growth.
 

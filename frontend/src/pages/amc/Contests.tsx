@@ -1,0 +1,133 @@
+/**
+ * Past contests: the three Step Mocks this site can time and grade, and every
+ * real AMC 10, AMC 12 and AIME since 2000, linked to the official problems
+ * and answer keys on the AoPS wiki, with a place to log the score you got.
+ */
+import { useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { ErrorState, Loading } from '@/components';
+import { PageHeader } from '@/components/Amc/bits';
+import { useApi, useDocumentTitle } from '@/hooks';
+import { amc, shortDate, type Level } from '@/services/amc';
+import '@/styles/amc.css';
+
+const FILTERS: ('All' | Level)[] = ['All', 'AMC 10', 'AMC 12', 'AIME'];
+
+export default function Contests() {
+  useDocumentTitle('Past Contests');
+  const { data, error, loading, reload } = useApi(() => amc.contests(), []);
+  const [level, setLevel] = useState<(typeof FILTERS)[number]>('All');
+
+  const years = useMemo(() => {
+    if (!data) return [];
+    return data.years
+      .map((y) => ({ ...y, contests: y.contests.filter((c) => level === 'All' || c.level === level) }))
+      .filter((y) => y.contests.length);
+  }, [data, level]);
+
+  if (loading && !data) return <Loading label="Loading contests" />;
+  if (error || !data) return <ErrorState message={error ?? 'Could not load contests.'} onRetry={reload} />;
+
+  const total = data.years.reduce((n, y) => n + y.contests.length, 0);
+
+  return (
+    <div className="amc-page">
+      <PageHeader kicker="Contests" title="Past Contests">
+        <p>
+          Sit a full Step Mock under real timing and scoring, then study the report of what it cost you. For the{' '}
+          {total} official papers since 2000, open the problems on the AoPS wiki and log your score here.
+        </p>
+      </PageHeader>
+
+      <h2 className="am-h2" style={{ marginBottom: 12 }}>Timed mocks</h2>
+      <div className="am-grid am-grid-3" style={{ marginBottom: 32 }}>
+        {data.mocks.map((m) => (
+          <article key={m.id} className="am-mock">
+            <span className="am-kicker" style={{ margin: 0 }}>{m.level}</span>
+            <h3>{m.name}</h3>
+            <p>{m.blurb}</p>
+            <div className="am-mock-meta">
+              <span>{m.count} problems</span>
+              <span>{m.minutes} minutes</span>
+              <span>{m.scoring}</span>
+            </div>
+            <div className="am-mock-foot">
+              <span className="am-muted" style={{ fontSize: 13 }}>
+                {m.attempts ? `Best ${m.best} / ${m.max} · ${m.attempts} sitting${m.attempts === 1 ? '' : 's'}` : 'Not taken yet'}
+              </span>
+              <Link className="am-btn am-btn-primary am-btn-sm" to={`/contests/${m.id}`}>Open</Link>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div className="am-grid am-grid-main">
+        <section className="am-card">
+          <div className="am-card-head">
+            <h2>Official papers</h2>
+            <div className="am-seg" role="group" aria-label="Contest">
+              {FILTERS.map((f) => (
+                <button key={f} type="button" className={level === f ? 'is-on' : ''} onClick={() => setLevel(f)}>
+                  {f}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            {years.map((y) => (
+              <div key={y.year} className="am-year">
+                <h3>{y.year}</h3>
+                <div className="am-papers">
+                  {y.contests.map((c) => (
+                    <Link key={c.id} className="am-paper" to={`/contests/${c.id}`} title={c.name}>
+                      {c.season ? `${c.season} ` : ''}{c.level}{c.paper ? (c.level === 'AIME' ? ` ${c.paper}` : c.paper) : ''}
+                      {c.logged && <b>{c.logged.score}</b>}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <aside className="am-stack">
+          <section className="am-card">
+            <div className="am-card-head"><h2>Your scores</h2></div>
+            {data.history.length ? (
+              <table className="am-table">
+                <thead><tr><th>Contest</th><th className="num">Score</th><th className="num">Date</th></tr></thead>
+                <tbody>
+                  {data.history.map((h) => (
+                    <tr key={h.id}>
+                      <td>
+                        <Link to={h.kind === 'mock' ? `/mocks/${h.id}` : `/contests/${h.contest_id}`}>{h.name}</Link>
+                      </td>
+                      <td className="num">{h.score}</td>
+                      <td className="num am-muted">{shortDate(h.at)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p className="am-muted" style={{ margin: 0, fontSize: 13 }}>Mocks you sit and scores you log appear here.</p>
+            )}
+          </section>
+          <section className="am-card">
+            <div className="am-card-head"><h2>Formats</h2></div>
+            <dl className="am-kv">
+              {(Object.keys(data.formats) as Level[]).map((l) => (
+                <span key={l} style={{ display: 'contents' }}>
+                  <dt>{l}</dt>
+                  <dd>{data.formats[l].count} in {data.formats[l].minutes} min</dd>
+                </span>
+              ))}
+            </dl>
+            <p className="am-muted" style={{ fontSize: 12, lineHeight: 1.5, margin: '12px 0 0' }}>
+              AMC: 6 points per right answer, 1.5 per blank, 0 per wrong, out of 150. AIME: one point each, out of 15.
+            </p>
+          </section>
+        </aside>
+      </div>
+    </div>
+  );
+}

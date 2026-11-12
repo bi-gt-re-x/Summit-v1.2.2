@@ -1,124 +1,59 @@
 /**
- * The top bar's search: a real text field in the bar, with the matches in a
- * drop-down right under it.
+ * The top bar's search field and its drop-down.
  *
- * ## What it looks for
+ * Searches the AMC site through one request (GET /api/amc/search): pages,
+ * problems, topics and contests, each a group of up to five rows. The arrow
+ * keys move through every row as one list, Enter opens the highlighted one,
+ * and Enter with nothing highlighted — or the last row — opens the full
+ * results on /search. ⌘K / Ctrl+K focuses the field from anywhere (Topbar).
  *
- * **Pages** — the containers the app is made of: pages, the tabs inside them,
- * the sections of Settings. Matched locally against utils/siteIndex, which is
- * where the words a reader actually types are written down. Instant.
- *
- * **Tasks** — the account's own unfinished work, matched by the server
- * (`/api/tasks/search`) once the typing settles.
- *
- * ## It stays put while you type
- *
- * It used to take you to the closest match on every keystroke, from a second
- * box in a floating panel. That made the page behind it jump around while the
- * reader was still deciding. Now nothing moves until they choose: a click on a
- * row, or Enter on the highlighted one. Up and Down move the highlight.
- *
- * The drop-down hangs off the field with `position: absolute`, so it never
- * pushes the page. Pages are listed above tasks and the two groups never mix,
- * so the slower half arriving late adds rows under what is already there
- * instead of reshuffling it. While a new task search is in flight the last
- * answer stays on screen, and "Nothing matches" waits for that answer too.
- *
- * ## Keys
- *
- *   Down / Up   move the highlight
- *   Enter       go to the highlighted match
- *   Escape      clear the box and close the drop-down
- *
- * It is a combobox in the ARIA sense: focus stays in the field, a listbox sits
- * beneath it, and `aria-activedescendant` names the highlighted option.
- *
- * ## Where a task actually is
- *
- * A task the calendar knows about (`show_on_calendar` with a date on it) lives
- * on a day, so that is where the reader is taken: the Day view, opened on that
- * day, scrolled to the block. Everything else is a list item and lives on the
- * tasks page.
+ * Requests wait for typing to settle and a stale answer is dropped, so a fast
+ * typist sees results for what is in the box, not for what was in it.
  */
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { tasks as taskService } from '@/services';
-import { isCalendarPlaced } from '@/utils/calendarGrid';
-import { isoDate } from '@/utils/dates';
-import { findPlaces, placePoints, score } from '@/utils/siteIndex';
-import type { Place } from '@/utils/siteIndex';
-import type { Task } from '@/types';
+import { amc, type SearchResults } from '@/services/amc';
 import '@/styles/search.css';
 
-/** How many of each category the drop-down lists. Enough to choose from. */
-const PER_CATEGORY = 6;
-
-/** How long the typing has to settle before the server is asked. */
-const SETTLE_MS = 180;
-
+const PER_GROUP = 5;
+const SETTLE_MS = 160;
 const LIST_ID = 'sf-matches';
 const optionId = (hit: Hit) => `sf-option-${hit.key.replace(/[^\w-]/g, '-')}`;
 
 export interface Hit {
   key: string;
-  kind: 'component' | 'task';
+  kind: 'page' | 'problem' | 'topic' | 'contest' | 'all';
   name: string;
-  /** The line beside the name: where it lives. */
   meta: string;
-  /** Where going to it means going. */
   to: string;
-  points: number;
-}
-
-/**
- * Where a task is. A task the calendar draws sits on a day, and the Day view
- * opened on that day is where the reader means. The rest are list items, and
- * the tasks page is where they are. The id rides along either way so the page
- * can reveal the row or scroll to the block.
- */
-export function taskTo(task: Task): string {
-  const id = encodeURIComponent(task.id);
-  if (isCalendarPlaced(task) && task.due_date) {
-    const day = new Date(task.due_date);
-    if (!Number.isNaN(day.getTime())) {
-      return `/calendar/day?date=${isoDate(day)}&task=${id}`;
-    }
-  }
-  return `/tasks?task=${id}`;
-}
-
-function taskHit(needle: string, task: Task): Hit {
-  return {
-    key: `task:${task.id}`,
-    kind: 'task',
-    name: task.title,
-    meta: isCalendarPlaced(task) ? 'Calendar' : 'Tasks',
-    to: taskTo(task),
-    points: score(needle, task.title),
-  };
-}
-
-function placeHit(needle: string, place: Place): Hit {
-  return {
-    key: `place:${place.id}`,
-    kind: 'component',
-    name: place.name,
-    meta: place.where || 'Page',
-    to: place.to,
-    points: placePoints(needle, place),
-  };
 }
 
 export interface SearchFieldProps {
-  /** Whether the drop-down may show. The bar owns this so one panel is open at a time. */
   open: boolean;
   onOpen: () => void;
   onClose: () => void;
 }
 
-/** What the bar can ask of the field: ⌘K and the rail put the caret in it. */
 export interface SearchFieldHandle {
   focus: () => void;
+}
+
+function hitsFor(results: SearchResults): Record<'page' | 'problem' | 'topic' | 'contest', Hit[]> {
+  return {
+    page: results.pages.slice(0, PER_GROUP).map((p) => ({
+      key: `page:${p.to}`, kind: 'page', name: p.name, meta: 'Page', to: p.to,
+    })),
+    problem: results.problems.slice(0, PER_GROUP).map((p) => ({
+      key: `problem:${p.id}`, kind: 'problem', name: p.source, meta: p.topic_name, to: `/problems/${p.id}`,
+    })),
+    topic: results.topics.slice(0, PER_GROUP).map((t) => ({
+      key: `topic:${t.id}`, kind: 'topic', name: t.name, meta: t.category_name, to: `/topics/${t.id}`,
+    })),
+    contest: results.contests.slice(0, PER_GROUP).map((c) => ({
+      key: `contest:${c.id}`, kind: 'contest', name: c.name, meta: c.kind === 'mock' ? 'Mock' : c.level,
+      to: `/contests/${c.id}`,
+    })),
+  };
 }
 
 export const SearchField = forwardRef<SearchFieldHandle, SearchFieldProps>(function SearchField(
@@ -127,12 +62,9 @@ export const SearchField = forwardRef<SearchFieldHandle, SearchFieldProps>(funct
 ) {
   const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
-
   const [query, setQuery] = useState('');
-  const [found, setFound] = useState<Task[]>([]);
-  /** The text the task list in `found` answers, so we know when it's stale. */
-  const [answered, setAnswered] = useState('');
-  const [cursor, setCursor] = useState(0);
+  const [results, setResults] = useState<SearchResults | null>(null);
+  const [cursor, setCursor] = useState(-1);
 
   useImperativeHandle(ref, () => ({
     focus: () => {
@@ -142,75 +74,49 @@ export const SearchField = forwardRef<SearchFieldHandle, SearchFieldProps>(funct
   }));
 
   const needle = query.trim();
-
-  /*
-   * The task half, from the server. Debounced, and guarded by a ticket so a
-   * reply that arrives late for old text can't overwrite the current one.
-   * The previous answer stays up until the new one lands, so the list doesn't
-   * blink empty between keystrokes.
-   */
   const ticket = useRef(0);
   useEffect(() => {
     const mine = ++ticket.current;
     if (!needle) {
-      setFound([]);
-      setAnswered('');
-      return;
+      setResults(null);
+      return undefined;
     }
     const timer = window.setTimeout(() => {
-      void taskService.searchTasks(needle, true).then((result) => {
-        if (mine !== ticket.current) return;
-        // A routine is many tasks with one name, and six identical rows tell
-        // the reader nothing. Keep the first of each name.
-        const seen = new Set<string>();
-        const unique = (result.success ? result.tasks : []).filter((task) => {
-          const name = task.title.trim().toLowerCase();
-          if (seen.has(name)) return false;
-          seen.add(name);
-          return true;
-        });
-        setFound(unique.slice(0, PER_CATEGORY));
-        setAnswered(needle);
-      });
+      void amc
+        .search(needle, PER_GROUP)
+        .then((reply) => {
+          if (mine === ticket.current && reply.success) setResults(reply);
+        })
+        .catch(() => {});
     }, SETTLE_MS);
     return () => window.clearTimeout(timer);
   }, [needle]);
 
-  const components = useMemo(
-    () => (needle ? findPlaces(needle, PER_CATEGORY).map((place) => placeHit(needle, place)) : []),
-    [needle],
-  );
+  const groups = useMemo(() => (results ? hitsFor(results) : null), [results]);
+  const all = useMemo<Hit[]>(() => {
+    if (!groups || !needle) return [];
+    const rows = [...groups.page, ...groups.problem, ...groups.topic, ...groups.contest];
+    rows.push({ key: 'all', kind: 'all', name: `See all results for "${needle}"`, meta: '',
+                to: `/search?q=${encodeURIComponent(needle)}` });
+    return rows;
+  }, [groups, needle]);
 
-  const hits = useMemo(
-    () => found.map((task) => taskHit(needle, task)).sort((a, b) => b.points - a.points),
-    [found, needle],
-  );
-
-  /** Pages first, then tasks: the order they're drawn in, so the arrows walk down the screen. */
-  const all = useMemo(() => [...components, ...hits], [components, hits]);
-
-  // Back to the top whenever the text changes, and only then. Tasks landing
-  // under the pages must not move a highlight the reader already placed.
-  useEffect(() => {
-    setCursor(0);
-  }, [needle]);
-
-  const at = all.length ? Math.min(cursor, all.length - 1) : -1;
-  const current = at >= 0 ? all[at] : undefined;
-  const settled = answered === needle;
+  useEffect(() => setCursor(-1), [needle]);
+  const current = cursor >= 0 ? all[Math.min(cursor, all.length - 1)] : undefined;
+  const settled = results?.query === needle;
   const showing = open && needle.length > 0;
 
   const reset = useCallback(() => {
     setQuery('');
-    setCursor(0);
+    setCursor(-1);
   }, []);
 
   const go = useCallback(
-    (hit: Hit) => {
+    (to: string) => {
       reset();
       onClose();
       inputRef.current?.blur();
-      navigate(hit.to);
+      navigate(to);
     },
     [navigate, onClose, reset],
   );
@@ -227,34 +133,29 @@ export const SearchField = forwardRef<SearchFieldHandle, SearchFieldProps>(funct
       }
       if (event.key === 'Enter') {
         event.preventDefault();
-        if (current) go(current);
+        if (current) go(current.to);
+        else if (needle) go(`/search?q=${encodeURIComponent(needle)}`);
         return;
       }
       if (!all.length) return;
       if (event.key === 'ArrowDown') {
         event.preventDefault();
         if (!open) onOpen();
-        setCursor((c) => (Math.min(c, all.length - 1) + 1) % all.length);
+        setCursor((c) => (c + 1) % all.length);
       } else if (event.key === 'ArrowUp') {
         event.preventDefault();
-        setCursor((c) => (Math.min(c, all.length - 1) - 1 + all.length) % all.length);
+        setCursor((c) => (c <= 0 ? all.length - 1 : c - 1));
       }
     },
-    [all.length, current, go, onClose, onOpen, open, reset],
+    [all.length, current, go, needle, onClose, onOpen, open, reset],
   );
+
+  const empty = groups && !groups.page.length && !groups.problem.length && !groups.topic.length && !groups.contest.length;
 
   return (
     <div className="topbar-search-field">
-      <svg
-        className="topbar-search-icon"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
+      <svg className="topbar-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}
+           strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
         <circle cx="11" cy="11" r="7" />
         <path d="m20 20-3.5-3.5" />
       </svg>
@@ -262,8 +163,8 @@ export const SearchField = forwardRef<SearchFieldHandle, SearchFieldProps>(funct
         ref={inputRef}
         type="text"
         className="topbar-search-input"
-        placeholder="Search..."
-        aria-label="Search tasks and pages"
+        placeholder="Search problems, topics, contests…  ⌘K"
+        aria-label="Search problems, topics, contests and pages"
         role="combobox"
         aria-expanded={showing}
         aria-controls={LIST_ID}
@@ -282,12 +183,17 @@ export const SearchField = forwardRef<SearchFieldHandle, SearchFieldProps>(funct
 
       {showing && (
         <div className="topbar-panel topbar-search sf-panel">
-          {all.length === 0 ? (
-            <p className="sf-empty">{settled ? `Nothing matches "${needle}".` : 'Searching...'}</p>
+          {!groups || !settled ? (
+            <p className="sf-empty">Searching…</p>
+          ) : empty ? (
+            <p className="sf-empty">Nothing matches "{needle}". Try a topic like "circles" or a year like "2019 AIME".</p>
           ) : (
             <div id={LIST_ID} role="listbox" aria-label="Matches" className="sf-groups">
-              <Group label="Pages" rows={components} current={current} onGo={go} />
-              <Group label="Tasks" rows={hits} current={current} onGo={go} />
+              <Group label="Pages" rows={groups.page} current={current} onGo={go} />
+              <Group label="Problems" rows={groups.problem} current={current} onGo={go} />
+              <Group label="Topics" rows={groups.topic} current={current} onGo={go} />
+              <Group label="Contests" rows={groups.contest} current={current} onGo={go} />
+              <Group label="" rows={all.slice(-1)} current={current} onGo={go} />
             </div>
           )}
         </div>
@@ -305,15 +211,16 @@ function Group({
   label: string;
   rows: Hit[];
   current: Hit | undefined;
-  onGo: (hit: Hit) => void;
+  onGo: (to: string) => void;
 }) {
   if (!rows.length) return null;
-
   return (
     <div className="sf-group" role="presentation">
-      <div className="sf-group-head" role="presentation">
-        {label}
-      </div>
+      {label && (
+        <div className="sf-group-head" role="presentation">
+          {label}
+        </div>
+      )}
       <div className="sf-list" role="presentation">
         {rows.map((hit) => (
           <div
@@ -327,10 +234,11 @@ function Group({
             // outside-click listener can close the list before a click lands.
             onMouseDown={(event) => {
               event.preventDefault();
-              onGo(hit);
+              onGo(hit.to);
             }}
           >
-            <span className={`sf-mark is-${hit.kind}`} aria-hidden="true" />
+            <span className={`sf-mark is-${hit.kind === 'page' || hit.kind === 'all' ? 'component' : 'task'}`}
+                  aria-hidden="true" />
             <span className="sf-row-name">{hit.name}</span>
             <span className="sf-row-meta">{hit.meta}</span>
           </div>

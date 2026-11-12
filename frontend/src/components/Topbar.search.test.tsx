@@ -4,13 +4,23 @@
  * second box and no help text in the way.
  */
 import { act, fireEvent, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Topbar } from './Topbar';
 import { renderWithProviders } from '@/test/render';
 import { openSearch } from '@/utils/searchBus';
+import { amc } from '@/services/amc';
+
+beforeEach(() => {
+  vi.spyOn(amc, 'search').mockImplementation(async (q: string) => ({
+    success: true as const, query: q, problems: [], topics: [], contests: [],
+    pages: [{ name: 'Review', to: '/review' }],
+  }));
+  vi.spyOn(amc, 'dashboard').mockResolvedValue({ success: false, message: 'not in this test' });
+});
+afterEach(() => vi.restoreAllMocks());
 
 function field() {
-  return screen.getByRole('combobox', { name: 'Search tasks and pages' });
+  return screen.getByRole('combobox', { name: 'Search problems, topics, contests and pages' });
 }
 
 describe('the search field', () => {
@@ -36,14 +46,15 @@ describe('the search field', () => {
     expect(document.activeElement).not.toBe(field());
   });
 
-  it('shows page matches right under the field, in one box', () => {
+  it('shows page matches right under the field, in one box', async () => {
     renderWithProviders(<Topbar />);
     act(() => field().focus());
     expect(field()).toHaveAttribute('aria-expanded', 'false');
     expect(screen.queryByText(/Two things are searched/)).toBeNull();
 
-    fireEvent.change(field(), { target: { value: 'calendar' } });
+    fireEvent.change(field(), { target: { value: 'review' } });
     expect(field()).toHaveAttribute('aria-expanded', 'true');
+    expect(await screen.findByText('Review')).toBeInTheDocument();
     expect(screen.getAllByRole('option').length).toBeGreaterThan(0);
     expect(screen.getAllByRole('combobox')).toHaveLength(1);
   });
@@ -51,7 +62,7 @@ describe('the search field', () => {
   it('clears and closes on Escape', () => {
     renderWithProviders(<Topbar />);
     act(() => field().focus());
-    fireEvent.change(field(), { target: { value: 'calendar' } });
+    fireEvent.change(field(), { target: { value: 'review' } });
     fireEvent.keyDown(field(), { key: 'Escape' });
     expect(field()).toHaveValue('');
     expect(screen.queryByRole('listbox')).toBeNull();

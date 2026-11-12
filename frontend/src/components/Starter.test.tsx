@@ -3,10 +3,9 @@
  * joining it as days of tasks add up, and the note in front of a locked page.
  * The rule itself is tested in utils/starter.test.ts.
  */
-import { fireEvent, screen, within } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import { Route, Routes } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { Rail } from './Rail';
 import { FeatureGate } from './FeatureGate';
 import { renderWithProviders } from '@/test/render';
 import { setMatchMedia } from '@/test/media';
@@ -22,8 +21,6 @@ vi.mock('@/services/subjects', async (importOriginal) => ({
 const NOW = new Date('2026-12-01T12:00:00');
 /** An account made an hour ago, at level 1. */
 const justJoined = new Date(NOW.getTime() - 3600_000).toISOString();
-/** An account made a week ago, still level 1. */
-const lastWeek = new Date(NOW.getTime() - 7 * 24 * 3600_000).toISOString();
 
 beforeEach(() => {
   vi.useFakeTimers({ toFake: ['Date'] });
@@ -34,50 +31,6 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.useRealTimers();
-});
-
-const rail = (createdAt: string, prefs = {}, taskDays = 0) => {
-  renderWithProviders(<Rail />, {
-    settings: { createdAt, prefs },
-    stats: { stats: stats({ level: 1, task_days: taskDays }) },
-  });
-  return screen.getByRole('navigation', { name: 'Main' });
-};
-
-describe('the rail for a new account', () => {
-  it('lists the daily loop and names the next page, nothing more', () => {
-    const nav = rail(justJoined);
-    for (const label of ['Dashboard', 'Calendar', 'Log']) {
-      expect(within(nav).getByRole('link', { name: label })).toBeInTheDocument();
-    }
-    for (const label of ['Analytics', 'Tasks', 'Goals', 'Skill Tree', 'Achievements', 'Notes', 'Timer']) {
-      expect(within(nav).queryByRole('link', { name: label })).not.toBeInTheDocument();
-    }
-    expect(within(nav).getByText(/Next: Tasks/)).toBeInTheDocument();
-    expect(within(nav).getByText('After 2 more days of tasks')).toBeInTheDocument();
-    expect(within(nav).queryByText('Personal')).not.toBeInTheDocument();
-  });
-
-  it('adds pages as days of tasks add up', () => {
-    const nav = rail(lastWeek, {}, 3);
-    expect(within(nav).getByRole('link', { name: 'Tasks' })).toBeInTheDocument();
-    expect(within(nav).getByRole('link', { name: 'Goals' })).toBeInTheDocument();
-    expect(within(nav).queryByRole('link', { name: 'Analytics' })).not.toBeInTheDocument();
-    expect(within(nav).getByText(/Next: Skill Tree/)).toBeInTheDocument();
-  });
-
-  it('keeps a page it opened early in the list', () => {
-    const nav = rail(justJoined, { features_open: ['goals'] });
-    expect(within(nav).getByRole('link', { name: 'Goals' })).toBeInTheDocument();
-  });
-});
-
-describe('the rail once everything is open', () => {
-  it('lists every page and no next row', () => {
-    const nav = rail(lastWeek, {}, 10);
-    expect(within(nav).getByRole('link', { name: 'Analytics' })).toBeInTheDocument();
-    expect(within(nav).queryByText(/^Next:/)).not.toBeInTheDocument();
-  });
 });
 
 describe('the note in front of a locked page', () => {

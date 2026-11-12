@@ -16,18 +16,10 @@
  * That is why the redirect is tested here, beside the hook, rather than
  * wherever else routing might be checked. The two are one behaviour.
  */
-import { render, screen } from '@testing-library/react';
-import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
+import { render } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it } from 'vitest';
-import { CalendarHome } from '@/App';
 import { useVoid } from './useVoid';
-import { renderWithProviders } from '@/test/render';
-
-/** Prints the URL it was reached at, so a test can assert what survived. */
-function Landing() {
-  const { pathname, search, hash } = useLocation();
-  return <div data-testid="here">{pathname + search + hash}</div>;
-}
 
 function Void() {
   useVoid();
@@ -72,39 +64,3 @@ describe('arriving at #void', () => {
   });
 });
 
-describe('the /calendar redirect', () => {
-  it('carries the fragment to the view it lands on', () => {
-    // The regression: without this the pentagon's arrow arrives at a calendar
-    // with no #void on it, and the void closes as fast as it opened.
-    renderWithProviders(
-      <Routes>
-        <Route path="/calendar" element={<CalendarHome />} />
-        <Route path="/calendar/week" element={<Landing />} />
-      </Routes>,
-      { route: '/calendar#void' },
-    );
-    expect(screen.getByTestId('here')).toHaveTextContent('/calendar/week#void');
-  });
-
-  it('carries the query too, and to the account’s own view', () => {
-    renderWithProviders(
-      <Routes>
-        <Route path="/calendar" element={<CalendarHome />} />
-        <Route path="/calendar/month" element={<Landing />} />
-      </Routes>,
-      { route: '/calendar?day=2026-08-30', settings: { prefs: { calendar_view: 'month' } } },
-    );
-    expect(screen.getByTestId('here')).toHaveTextContent('/calendar/month?day=2026-08-30');
-  });
-
-  it('waits for the account rather than opening the wrong view first', () => {
-    renderWithProviders(
-      <Routes>
-        <Route path="/calendar" element={<CalendarHome />} />
-        <Route path="/calendar/week" element={<Landing />} />
-      </Routes>,
-      { route: '/calendar#void', settings: { ready: false } },
-    );
-    expect(screen.queryByTestId('here')).not.toBeInTheDocument();
-  });
-});

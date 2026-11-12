@@ -308,6 +308,10 @@ html:not([data-skin]):not([data-theme="dark"]) .rail-add-folder:hover {
 html:not([data-skin]):not([data-theme="dark"]) .rail-space-problem {
     color: #995F59
 }
+html:not([data-skin]):not([data-theme="dark"]) .rail-link .rail-due {
+    background: #988864;
+    color: #FFFFFF
+}
 
 /* ---- topbar.css (every page) ---- */
 html:not([data-skin]):not([data-theme="dark"]) .topbar {
