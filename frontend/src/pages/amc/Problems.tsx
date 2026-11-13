@@ -4,7 +4,7 @@
  * be bookmarked, shared, and linked to from the topic pages and the plan.
  */
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { ErrorState, Loading } from '@/components';
 import { Empty, PageHeader, ProblemRow } from '@/components/Amc/bits';
 import { useApi, useDocumentTitle } from '@/hooks';
@@ -18,7 +18,7 @@ const STATUSES: { id: Status; label: string }[] = [
   { id: 'missed', label: 'Missed' },
   { id: 'review', label: 'In review' },
 ];
-const KEYS: (keyof ProblemFilters)[] = ['level', 'category', 'topic', 'difficulty', 'status', 'technique', 'q', 'sort'];
+const KEYS: (keyof ProblemFilters)[] = ['source', 'level', 'category', 'topic', 'difficulty', 'status', 'technique', 'q', 'sort'];
 
 export default function Problems() {
   useDocumentTitle('Problems');
@@ -71,8 +71,8 @@ export default function Problems() {
         ) : undefined}
       >
         <p>
-          Every problem has a primary topic, a technique, a difficulty from 1 to 5, a full solution, the key insight
-          and the trap that costs points. Answer one to unlock its write-up.
+          Step problems come with a full solution, the key insight and the trap that costs points. Official problems
+          are the real contests you have imported, graded against the real answer key.
         </p>
       </PageHeader>
 
@@ -87,6 +87,23 @@ export default function Problems() {
             <option value="topic">By topic</option>
           </select>
         </div>
+        <div className="am-filters-row">
+          <label>Source</label>
+          <div className="am-chips">
+            <button type="button" className={`am-chip${!filters.source ? ' is-on' : ''}`} onClick={() => set('source', '')}>All</button>
+            <button type="button" className={`am-chip${filters.source === 'official' ? ' is-on' : ''}`}
+                    onClick={() => toggle('source', 'official')}>
+              Official contests {data && <small>{data.official}</small>}
+            </button>
+            <button type="button" className={`am-chip${filters.source === 'step' ? ' is-on' : ''}`}
+                    onClick={() => toggle('source', 'step')}>Step problems</button>
+          </div>
+        </div>
+        {data && data.official === 0 && filters.source === 'official' && (
+          <p className="am-muted" style={{ margin: 0, fontSize: 13 }}>
+            No official contests imported yet. Open any paper under <Link className="am-link" to="/contests">Past Contests</Link> to bring it in.
+          </p>
+        )}
         <div className="am-filters-row">
           <label>Contest</label>
           <div className="am-chips">
@@ -113,7 +130,9 @@ export default function Problems() {
                       onClick={() => toggleDiff(d)}>{d}</button>
             ))}
           </div>
-          <label style={{ marginLeft: 12 }}>Status</label>
+        </div>
+        <div className="am-filters-row">
+          <label>Status</label>
           <div className="am-chips">
             {STATUSES.map((s) => (
               <button key={s.id} type="button" className={`am-chip${filters.status === s.id ? ' is-on' : ''}`}
@@ -132,7 +151,9 @@ export default function Problems() {
               .filter((t) => !filters.category || t.category === filters.category)
               .map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
           </select>
-          <label style={{ marginLeft: 12 }}>Technique</label>
+        </div>
+        <div className="am-filters-row">
+          <label>Technique</label>
           <select className="am-select" aria-label="Technique" value={filters.technique ?? ''}
                   onChange={(e) => set('technique', e.target.value)}>
             <option value="">All techniques</option>

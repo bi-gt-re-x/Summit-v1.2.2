@@ -6,7 +6,7 @@ import re
 from datetime import date, timedelta
 
 from backend.amc import catalog
-from backend.amc.bank import BY_ID, PROBLEMS
+from backend.amc import problems as bank_of
 
 LETTERS = 'ABCDE'
 
@@ -21,6 +21,9 @@ DEFAULT_GOALS = {'AMC 10': 105, 'AMC 12': 90, 'AIME': 7}
 #: Chance of solving a problem of each difficulty with no history yet.
 PRIOR = {1: 0.9, 2: 0.75, 3: 0.55, 4: 0.35, 5: 0.15}
 PRIOR_WEIGHT = 3
+
+#: Problems answered before a projected score is shown at all.
+PROJECTION_MIN = 5
 
 
 # ---------------------------------------------------------------------------
@@ -95,6 +98,8 @@ def public(problem, reveal=False):
         'choices': problem['choices'],
         'format': 'choice' if problem['choices'] else 'integer',
         'sources': catalog.sources(problem['id']),
+        'official': bool(problem.get('official')),
+        'diagram': problem.get('diagram') or '',
     }
     if reveal:
         out.update(answer=problem['answer'], solution=problem['solution'],
@@ -148,7 +153,7 @@ def accuracy_by_difficulty(hist):
     an answer after seeing the solution says nothing about contest day."""
     seen = {d: [0, 0] for d in PRIOR}
     for pid, h in hist.items():
-        p = BY_ID.get(pid)
+        p = bank_of.get(pid)
         if not p:
             continue
         bucket = seen[p['difficulty']]
@@ -189,7 +194,7 @@ def topic_stats(hist, review_by_id):
     """Per topic: problems, attempted, solved, first-try accuracy, in review."""
     out = {t['id']: {'problems': 0, 'attempted': 0, 'solved': 0, 'first_right': 0, 'review': 0}
            for t in catalog.TOPICS}
-    for p in PROBLEMS:
+    for p in bank_of.all_problems():
         for tid in [p['topic']] + p['also']:
             row = out[tid]
             row['problems'] += 1
@@ -260,7 +265,7 @@ def score_mock(mock, answers):
     rows = []
     correct = wrong = blank = 0
     for number, pid in enumerate(mock['problems'], start=1):
-        problem = BY_ID[pid]
+        problem = bank_of.get(pid)
         given = normalize_answer(problem, answers.get(str(number), ''))
         if given == '':
             result = 'blank'
@@ -393,7 +398,7 @@ def today_items(settings, weeks, due_count, today, checks, practiced_today):
         items.append({'key': 'read', 'label': 'Read the key ideas for {}'.format(focus['name']),
                       'to': '/topics/' + focus['id'], 'auto': False})
         done = sum(1 for pid in practiced_today
-                   if pid in BY_ID and focus['id'] in [BY_ID[pid]['topic']] + BY_ID[pid]['also'])
+                   if bank_of.get(pid) and focus['id'] in [bank_of.get(pid)['topic']] + bank_of.get(pid)['also'])
         items.append({'key': 'practice', 'label': 'Solve {} problems in {}'.format(daily, focus['name']),
                       'to': '/problems?topic=' + focus['id'], 'auto': False,
                       'progress': min(done, daily), 'goal': daily})
@@ -449,7 +454,7 @@ def search(query, limit=20):
     if not toks:
         return {'problems': [], 'topics': [], 'contests': [], 'pages': []}
     problems = []
-    for p in PROBLEMS:
+    for p in bank_of.all_problems():
         topic = catalog.TOPIC_BY_ID[p['topic']]
         sources = catalog.sources(p['id'])
         hay = ' '.join([p['id'], p['level'], plain(p['statement']), topic['name'], p['topic'],

@@ -974,6 +974,20 @@ ADDED_TABLES = ('''
         updated_at  TEXT NOT NULL,
         CHECK (target IN ('AMC 10', 'AMC 12', 'AIME'))
     )
+''', '''
+    -- Official problems, pasted in. The DDL is data/sql/amc.sql's.
+    CREATE TABLE IF NOT EXISTS amc_official (
+        contest_id   TEXT NOT NULL,
+        number       INTEGER NOT NULL,
+        statement    TEXT NOT NULL,
+        choices      TEXT,
+        answer       TEXT NOT NULL,
+        diagram      TEXT DEFAULT '',
+        topic        TEXT DEFAULT '',
+        imported_by  TEXT DEFAULT '',
+        imported_at  TEXT NOT NULL,
+        PRIMARY KEY (contest_id, number)
+    )
 ''')
 
 

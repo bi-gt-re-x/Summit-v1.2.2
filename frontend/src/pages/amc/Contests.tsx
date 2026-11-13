@@ -34,8 +34,9 @@ export default function Contests() {
     <div className="amc-page">
       <PageHeader kicker="Contests" title="Past Contests">
         <p>
-          Sit a full Step Mock under real timing and scoring, then study the report of what it cost you. For the{' '}
-          {total} official papers since 2000, open the problems on the AoPS wiki and log your score here.
+          Sit a full Step Mock or a real past paper under contest timing and scoring, then study the report of what
+          it cost you. Any of the {total} official papers since 2000 can be imported once and then practised and
+          timed here; {data.imported} {data.imported === 1 ? 'is' : 'are'} in Summit so far (marked ●).
         </p>
       </PageHeader>
 
@@ -81,6 +82,7 @@ export default function Contests() {
                   {y.contests.map((c) => (
                     <Link key={c.id} className="am-paper" to={`/contests/${c.id}`} title={c.name}>
                       {c.season ? `${c.season} ` : ''}{c.level}{c.paper ? (c.level === 'AIME' ? ` ${c.paper}` : c.paper) : ''}
+                      {c.imported === c.count && <i className="am-paper-in" title="In Summit">●</i>}
                       {c.logged && <b>{c.logged.score}</b>}
                     </Link>
                   ))}

@@ -6,7 +6,8 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ErrorState, Loading } from '@/components';
-import { CategoryDot, Difficulty, PageHeader } from '@/components/Amc/bits';
+import { CategoryDot, Difficulty, PageHeader, StatusPill } from '@/components/Amc/bits';
+import { Importer } from '@/components/Amc/Importer';
 import { useApi, useDocumentTitle } from '@/hooks';
 import { amc, announceAmcChanged, shortDate, type MockBrief } from '@/services/amc';
 import '@/styles/amc.css';
@@ -70,80 +71,139 @@ export default function Contest() {
     reload();
   }
 
-  if (c.kind === 'past') {
+  const logCard = c.kind === 'past' && (
+    <section className="am-card">
+      <div className="am-card-head"><h2>Took it on paper?</h2></div>
+      <div className="am-form">
+        <label className="am-field">
+          <span>Score (out of {c.max})</span>
+          <input className="am-input" inputMode="decimal" value={score} onChange={(e) => setScore(e.target.value)}
+                 placeholder={c.level === 'AIME' ? 'e.g. 7' : 'e.g. 103.5'} />
+        </label>
+        <label className="am-field">
+          <span>Note</span>
+          <input className="am-input" value={note} onChange={(e) => setNote(e.target.value)}
+                 placeholder="Timed? Which ones cost you?" maxLength={300} />
+        </label>
+        <button type="button" className="am-btn" onClick={() => void log()}>Log score</button>
+      </div>
+      {message && <p className="am-error">{message}</p>}
+    </section>
+  );
+
+  async function unimport() {
+    if (!window.confirm('Remove this contest from Summit for every account? Answers already given are kept.')) return;
+    await amc.removeImport(contestId);
+    announceAmcChanged();
+    reload();
+  }
+
+  const back = (
+    <nav className="am-muted" style={{ fontSize: 13, marginBottom: 12 }}>
+      <Link to="/contests" className="am-link">← Past Contests</Link>
+    </nav>
+  );
+
+  // An official paper nobody has brought in yet: the importer, and a place to
+  // log a score taken elsewhere.
+  if (c.kind === 'past' && !c.imported) {
     return (
       <div className="amc-page">
-        <nav className="am-muted" style={{ fontSize: 13, marginBottom: 12 }}>
-          <Link to="/contests" className="am-link">← Past Contests</Link>
-        </nav>
-        <PageHeader kicker={`${c.year} · ${c.level}`} title={c.name}
-                    actions={
-                      <>
-                        <a className="am-btn" href={c.answers_url} target="_blank" rel="noreferrer">Answer key ↗</a>
-                        <a className="am-btn am-btn-primary" href={c.problems_url} target="_blank" rel="noreferrer">Open problems ↗</a>
-                      </>
-                    }>
+        {back}
+        <PageHeader kicker={`${c.year} · ${c.level}`} title={c.name}>
           <p>
-            {c.count} problems in {c.minutes} minutes · {c.scoring}. The problems and solutions are on the AoPS
-            wiki; take it under real timing, then log your score here to track it beside your mocks.
+            {c.count} problems in {c.minutes} minutes · {c.scoring}. Import it once and every problem can be solved,
+            graded, reviewed and timed right here.
           </p>
         </PageHeader>
-        <div className="am-grid am-grid-2">
-          <section className="am-card">
-            <div className="am-card-head"><h2>Log a score</h2></div>
-            <div className="am-form">
-              <label className="am-field">
-                <span>Score (out of {c.max})</span>
-                <input className="am-input" inputMode="decimal" value={score} onChange={(e) => setScore(e.target.value)}
-                       placeholder={c.level === 'AIME' ? 'e.g. 7' : 'e.g. 103.5'} />
-              </label>
-              <label className="am-field">
-                <span>Note</span>
-                <input className="am-input" value={note} onChange={(e) => setNote(e.target.value)}
-                       placeholder="Timed? Which ones cost you?" maxLength={300} />
-              </label>
-              <button type="button" className="am-btn am-btn-primary" onClick={() => void log()}>Save score</button>
-            </div>
-            {message && <p className="am-error">{message}</p>}
-          </section>
-          <section className="am-card">
-            <div className="am-card-head"><h2>Your scores</h2></div>
-            <History rows={data.history} onDelete={(id) => void remove(id)} />
-          </section>
+        <div className="am-grid am-grid-main">
+          <Importer contest={{ ...c, imported: 0 }} onSaved={reload} />
+          <aside className="am-stack">
+            {logCard}
+            <section className="am-card">
+              <div className="am-card-head"><h2>Your scores</h2></div>
+              <History rows={data.history} onDelete={(id) => void remove(id)} />
+            </section>
+          </aside>
         </div>
       </div>
     );
   }
 
-  const problems = data.problems ?? [];
+  const problems = data.problems;
+  const official = c.kind === 'past';
+  const firstOpen = problems.find((p) => p.status === 'new') ?? problems[0];
   return (
     <div className="amc-page">
-      <nav className="am-muted" style={{ fontSize: 13, marginBottom: 12 }}>
-        <Link to="/contests" className="am-link">← Past Contests</Link>
-      </nav>
-      <PageHeader kicker={`${c.level} · Step Mock`} title={c.name}
-                  actions={<Link className="am-btn am-btn-primary" to={`/contests/${c.id}/take`}>Start timed mock</Link>}>
-        <p>{c.blurb} {c.count} problems, {c.minutes} minutes, {c.scoring}.</p>
+      {back}
+      <PageHeader
+        kicker={official ? `${c.year} · ${c.level} · Official` : `${c.level} · Step Mock`}
+        title={c.name}
+        actions={
+          <>
+            {firstOpen && (
+              <Link className="am-btn" to={`/problems/${firstOpen.id}`}>Practise one by one</Link>
+            )}
+            <Link className="am-btn am-btn-primary" to={`/contests/${c.id}/take`}>
+              {official ? 'Start timed contest' : 'Start timed mock'}
+            </Link>
+          </>
+        }
+      >
+        <p>
+          {official ? 'The official paper, in Summit.' : c.blurb} {c.count} problems, {c.minutes} minutes, {c.scoring}.
+        </p>
       </PageHeader>
       <div className="am-grid am-grid-main">
         <section className="am-card">
           <div className="am-card-head">
-            <h2>What's on it</h2>
-            <span className="am-muted" style={{ fontSize: 13 }}>Statements stay hidden until you start</span>
+            <h2>{official ? 'Problems' : "What's on it"}</h2>
+            <span className="am-muted" style={{ fontSize: 13 }}>
+              {official ? 'Open one to practise it untimed' : 'Statements stay hidden until you start'}
+            </span>
           </div>
-          <table className="am-table">
-            <thead><tr><th>#</th><th>Topic</th><th>Technique</th><th className="num">Difficulty</th></tr></thead>
-            <tbody>
+          {official ? (
+            <div className="am-rows">
               {problems.map((p) => (
-                <tr key={p.number}>
-                  <td>{p.number}</td>
-                  <td><span style={{ display: 'inline-flex', gap: 8, alignItems: 'center' }}><CategoryDot category={p.category} />{p.topic_name}</span></td>
-                  <td className="am-muted">{p.technique_name}</td>
-                  <td className="num"><Difficulty value={p.difficulty} label={false} /></td>
-                </tr>
+                <Link key={p.number} to={`/problems/${p.id}`} className="am-row">
+                  <div className="am-row-main">
+                    <div className="am-row-head">
+                      <strong>#{p.number}</strong>
+                      <CategoryDot category={p.category} />
+                      <span className="am-muted">{p.topic_name}</span>
+                    </div>
+                  </div>
+                  <div className="am-row-side">
+                    <Difficulty value={p.difficulty} label={false} />
+                    <StatusPill status={p.status} />
+                  </div>
+                </Link>
               ))}
-            </tbody>
-          </table>
+            </div>
+          ) : (
+            <div className="am-table-wrap">
+              <table className="am-table">
+                <thead><tr><th>#</th><th>Topic</th><th>Technique</th><th className="num">Difficulty</th></tr></thead>
+                <tbody>
+                  {problems.map((p) => (
+                    <tr key={p.number}>
+                      <td>{p.number}</td>
+                      <td><span style={{ display: 'inline-flex', gap: 8, alignItems: 'center' }}><CategoryDot category={p.category} />{p.topic_name}</span></td>
+                      <td className="am-muted">{p.technique_name}</td>
+                      <td className="num"><Difficulty value={p.difficulty} label={false} /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+          {official && (
+            <p className="am-muted" style={{ fontSize: 12, margin: '12px 0 0' }}>
+              Topics are tagged automatically from each problem's wording, and difficulty from its position.
+              Problem text © the Mathematical Association of America.{' '}
+              <button type="button" className="am-link am-link-button" onClick={() => void unimport()}>Remove import</button>
+            </p>
+          )}
         </section>
         <aside className="am-stack">
           <section className="am-card">
@@ -155,6 +215,7 @@ export default function Contest() {
               <li>Wrong and blank answers go to your review log.</li>
             </ul>
           </section>
+          {logCard}
           <section className="am-card">
             <div className="am-card-head"><h2>Your sittings</h2></div>
             <History rows={data.history} onDelete={(id) => void remove(id)} />

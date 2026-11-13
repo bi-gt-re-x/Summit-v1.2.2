@@ -232,3 +232,23 @@ export function Solution({
     </div>
   );
 }
+
+/**
+ * An official problem's figure. Asymptote can't be drawn in the browser, so the
+ * page says so plainly and keeps the source a click away for anyone who reads
+ * Asymptote.
+ */
+export function DiagramNote({ diagram }: { diagram: string }) {
+  return (
+    <div className="am-callout am-callout-trap am-diagram">
+      <span>Figure</span>
+      <p>This problem comes with a diagram that Summit can't draw yet. Sketch it from the description.</p>
+      {diagram !== 'image' && (
+        <details>
+          <summary>Asymptote source</summary>
+          <pre>{diagram}</pre>
+        </details>
+      )}
+    </div>
+  );
+}

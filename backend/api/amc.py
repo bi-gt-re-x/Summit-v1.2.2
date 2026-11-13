@@ -12,7 +12,8 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
 from backend.amc import catalog, engine, store
-from backend.amc.bank import BY_ID, PROBLEMS
+from backend.amc import official
+from backend.amc import problems as pb
 from backend.api.guard import current_username
 from backend.api.reply import fail, ok
 
@@ -33,7 +34,7 @@ def _context(user):
 
 
 def _summary(_user, pid, hist, review_by_id):
-    p = BY_ID[pid]
+    p = pb.get(pid)
     topic = catalog.TOPIC_BY_ID[p['topic']]
     sources = catalog.sources(pid)
     h = hist.get(pid)
@@ -86,7 +87,7 @@ def dashboard(username: str = Depends(current_username)):
     weakest = sorted(relevant, key=lambda t: (tstats[t['id']]['mastery'], -t['weight']))
     next_problem = None
     for t in weakest:
-        pool = sorted((p for p in PROBLEMS if p['topic'] == t['id'] and p['id'] not in hist),
+        pool = sorted((p for p in pb.all_problems() if p['topic'] == t['id'] and p['id'] not in hist),
                       key=lambda p: p['difficulty'])
         if pool:
             next_problem = _summary(username, pool[0]['id'], hist, review_by_id)
@@ -94,17 +95,21 @@ def dashboard(username: str = Depends(current_username)):
 
     recent = []
     for row in reversed(attempts[-8:]):
-        if row['problem_id'] in BY_ID:
+        if pb.get(row['problem_id']):
             item = _summary(username, row['problem_id'], hist, review_by_id)
             item.update(correct=bool(row['correct']), at=row['at'], via=row['source'])
             recent.append(item)
 
-    projection = {lvl: engine.projected(hist, lvl) for lvl in ('AMC 10', 'AMC 12', 'AIME')}
+    # No number until there is something to base it on: with no answers the
+    # projection is only the prior, and a score on the dashboard reads as a fact.
+    enough = len(hist) >= engine.PROJECTION_MIN
+    projection = {lvl: engine.projected(hist, lvl) if enough else None
+                  for lvl in ('AMC 10', 'AMC 12', 'AIME')}
     return ok(
         stats={
             'solved': sum(1 for h in first if h['solved']),
             'attempted': len(first),
-            'total': len(PROBLEMS),
+            'total': len(pb.all_problems()),
             'accuracy': round(sum(1 for h in first if h['first_correct']) / len(first), 3) if first else None,
             'streak': engine.streak(attempts, today),
             'due': len(due),
@@ -116,6 +121,7 @@ def dashboard(username: str = Depends(current_username)):
         target=target,
         goal=plan['goal_score'] if plan else engine.DEFAULT_GOALS[target],
         projected=projection,
+        projection_min=engine.PROJECTION_MIN,
         categories=engine.category_stats(tstats),
         weakest=[{'id': t['id'], 'name': t['name'], 'mastery': tstats[t['id']]['mastery'],
                   'accuracy': tstats[t['id']]['accuracy']} for t in weakest[:4]],
@@ -140,12 +146,16 @@ def _mock_brief(row):
 @router.get('/api/amc/problems')
 def list_problems(level: str = '', category: str = '', topic: str = '', difficulty: str = '',
                   status: str = '', technique: str = '', q: str = '', sort: str = 'source',
-                  username: str = Depends(current_username)):
+                  source: str = '', username: str = Depends(current_username)):
     _, _, hist, review_by_id = _context(username)
     wanted_diff = {int(d) for d in difficulty.split(',') if d.strip().isdigit()}
     toks = engine._tokens(q)
     rows = []
-    for p in PROBLEMS:
+    for p in pb.all_problems():
+        if source == 'official' and not p.get('official'):
+            continue
+        if source == 'step' and p.get('official'):
+            continue
         tops = [p['topic']] + p['also']
         if level and p['level'] != level:
             continue
@@ -169,9 +179,10 @@ def list_problems(level: str = '', category: str = '', topic: str = '', difficul
     elif sort == 'topic':
         rows.sort(key=lambda r: (r['topic_name'], r['difficulty']))
     counts = {s: 0 for s in ('new', 'solved', 'missed', 'review')}
-    for p in PROBLEMS:
+    for p in pb.all_problems():
         counts[engine.status_of(p['id'], hist, review_by_id)] += 1
-    return ok(problems=rows, total=len(PROBLEMS), counts=counts,
+    return ok(problems=rows, total=len(pb.all_problems()), counts=counts,
+              official=sum(1 for p in pb.all_problems() if p.get('official')),
               topics=[{'id': t['id'], 'name': t['name'], 'category': t['category']} for t in catalog.TOPICS],
               categories=catalog.CATEGORIES,
               techniques=[{'id': t, 'name': catalog.technique_name(t)} for t in catalog.TECHNIQUES])
@@ -179,16 +190,22 @@ def list_problems(level: str = '', category: str = '', topic: str = '', difficul
 
 @router.get('/api/amc/problems/{problem_id}')
 def get_problem(problem_id: str, username: str = Depends(current_username)):
-    p = BY_ID.get(problem_id)
+    p = pb.get(problem_id)
     if not p:
         return fail('No such problem.')
     attempts, _, hist, review_by_id = _context(username)
     mine = sorted((a for a in attempts if a['problem_id'] == problem_id), key=lambda a: a['at'])
     revealed = bool(mine)
     rev = review_by_id.get(problem_id)
-    related = [_summary(username, q['id'], hist, review_by_id) for q in PROBLEMS
+    related = [_summary(username, q['id'], hist, review_by_id) for q in pb.all_problems()
                if q['id'] != problem_id and (q['topic'] == p['topic'] or p['topic'] in q['also'])][:5]
-    order = [q['id'] for q in PROBLEMS]
+    # Previous and next stay inside the same set: an official problem steps
+    # through its own contest, a bank problem through the bank.
+    if p.get('official'):
+        family = [q for q in pb.all_problems() if q.get('contest') == p['contest']]
+    else:
+        family = [q for q in pb.all_problems() if not q.get('official')]
+    order = [q['id'] for q in family]
     i = order.index(problem_id)
     return ok(problem=engine.public(p, reveal=revealed),
               status=engine.status_of(problem_id, hist, review_by_id),
@@ -208,7 +225,7 @@ class AttemptBody(BaseModel):
 
 @router.post('/api/amc/problems/{problem_id}/attempt')
 def attempt(problem_id: str, body: AttemptBody, username: str = Depends(current_username)):
-    p = BY_ID.get(problem_id)
+    p = pb.get(problem_id)
     if not p:
         return fail('No such problem.')
     given = engine.normalize_answer(p, body.answer)
@@ -233,7 +250,7 @@ def attempt(problem_id: str, body: AttemptBody, username: str = Depends(current_
 def reveal(problem_id: str, username: str = Depends(current_username)):
     """Show the solution without answering. Counts as a miss, so it comes
     back for review like any other."""
-    p = BY_ID.get(problem_id)
+    p = pb.get(problem_id)
     if not p:
         return fail('No such problem.')
     existing = store.review(username, problem_id)
@@ -250,7 +267,7 @@ def reveal(problem_id: str, username: str = Depends(current_username)):
 def review_queue(username: str = Depends(current_username)):
     today = _today()
     _, reviews, hist, review_by_id = _context(username)
-    views = [_review_view(r, hist, review_by_id, today) for r in reviews if r['problem_id'] in BY_ID]
+    views = [_review_view(r, hist, review_by_id, today) for r in reviews if pb.get(r['problem_id'])]
     due = sorted([v for v in views if v['review_status'] == 'active' and v['is_due']], key=lambda v: v['due'])
     upcoming = sorted([v for v in views if v['review_status'] == 'active' and not v['is_due']], key=lambda v: v['due'])
     mastered = sorted([v for v in views if v['review_status'] == 'mastered'], key=lambda v: v['id'])
@@ -270,7 +287,7 @@ def review_queue(username: str = Depends(current_username)):
 
 @router.post('/api/amc/review/{problem_id}')
 def add_review(problem_id: str, username: str = Depends(current_username)):
-    if problem_id not in BY_ID:
+    if not pb.get(problem_id):
         return fail('No such problem.')
     row = engine.after_answer(store.review(username, problem_id), problem_id, False, _today(), manual=True)
     if row:
@@ -317,13 +334,13 @@ def topic(topic_id: str, username: str = Depends(current_username)):
         return fail('No such topic.')
     _, _, hist, review_by_id = _context(username)
     tstats = engine.topic_stats(hist, review_by_id)
-    problems = [_summary(username, p['id'], hist, review_by_id) for p in PROBLEMS
+    problems = [_summary(username, p['id'], hist, review_by_id) for p in pb.all_problems()
                 if p['topic'] == topic_id or topic_id in p['also']]
     problems.sort(key=lambda r: (r['difficulty'], r['id']))
     siblings = [{'id': s['id'], 'name': s['name']} for s in catalog.TOPICS
                 if s['category'] == t['category'] and s['id'] != topic_id]
     techniques = {}
-    for p in PROBLEMS:
+    for p in pb.all_problems():
         if p['topic'] == topic_id or topic_id in p['also']:
             techniques[p['technique']] = techniques.get(p['technique'], 0) + 1
     return ok(topic={**t, **tstats[topic_id],
@@ -336,6 +353,20 @@ def topic(topic_id: str, username: str = Depends(current_username)):
 # ---------------------------------------------------------------------------
 # Contests
 # ---------------------------------------------------------------------------
+def _gradable(contest_id):
+    """A contest the site can time and grade: a Step Mock, or an official paper
+    whose every problem and answer has been imported. None otherwise."""
+    if contest_id in catalog.MOCK_BY_ID:
+        return catalog.MOCK_BY_ID[contest_id]
+    past = catalog.PAST_BY_ID.get(contest_id)
+    if not past:
+        return None
+    ids = [official.problem_id(contest_id, n) for n in range(1, past['count'] + 1)]
+    if not all(pb.get(pid) for pid in ids):
+        return None
+    return {'id': contest_id, 'name': past['name'], 'level': past['level'], 'problems': ids}
+
+
 @router.get('/api/amc/contests')
 def contests(username: str = Depends(current_username)):
     mocks = store.mocks(username)
@@ -347,14 +378,18 @@ def contests(username: str = Depends(current_username)):
         mine = by_contest.get(m['id'], [])
         mock_rows.append({**{k: v for k, v in m.items() if k != 'problems'}, **catalog.FORMATS[m['level']],
                           'attempts': len(mine), 'best': max((x['score'] for x in mine), default=None)})
+    imported = official.imported_contests()
     years = {}
     for c in catalog.PAST:
         mine = by_contest.get(c['id'], [])
-        years.setdefault(c['year'], []).append({**c, 'logged': mine[0] if mine else None})
+        years.setdefault(c['year'], []).append({**c, 'logged': mine[0] if mine else None,
+                                                'imported': imported.get(c['id'], 0)})
     return ok(mocks=mock_rows,
               years=[{'year': y, 'contests': rows} for y, rows in sorted(years.items(), reverse=True)],
               history=[_mock_brief(m) for m in mocks][:20],
-              formats=catalog.FORMATS)
+              formats=catalog.FORMATS,
+              imported=sum(1 for cid, n in imported.items()
+                           if n == catalog.PAST_BY_ID[cid]['count']))
 
 
 @router.get('/api/amc/contests/{contest_id}')
@@ -363,13 +398,68 @@ def contest(contest_id: str, username: str = Depends(current_username)):
     if not c:
         return fail('No such contest.')
     mine = [_mock_brief(m) for m in store.mocks(username) if m['contest_id'] == contest_id]
-    if c['kind'] == 'past':
-        return ok(contest=c, history=mine)
+    gradable = _gradable(contest_id)
+    if c['kind'] == 'past' and not gradable:
+        return ok(contest={**c, 'imported': False}, problems=[], history=mine)
+    _, _, hist, review_by_id = _context(username)
     problems = []
-    for number, pid in enumerate(c['problems'], start=1):
-        p = engine.public(BY_ID[pid])
-        problems.append({'number': number, **p})
-    return ok(contest={k: v for k, v in c.items() if k != 'problems'}, problems=problems, history=mine)
+    for number, pid in enumerate(gradable['problems'], start=1):
+        p = engine.public(pb.get(pid))
+        problems.append({'number': number, **p, 'status': engine.status_of(pid, hist, review_by_id)})
+    info = {k: v for k, v in c.items() if k != 'problems'}
+    if c['kind'] == 'past':
+        info['imported'] = True
+    return ok(contest=info, problems=problems, history=mine)
+
+
+class ImportBody(BaseModel):
+    problems: str = ''
+    key: str = ''
+    save: bool = False
+
+
+@router.post('/api/amc/contests/{contest_id}/import')
+def import_contest(contest_id: str, body: ImportBody, username: str = Depends(current_username)):
+    """Parse a pasted contest and its answer key. With `save`, store it.
+
+    Without `save` this is a preview: what was found, and what is missing, so
+    the page can show the reader the result before anything is written.
+    """
+    c = catalog.PAST_BY_ID.get(contest_id)
+    if not c:
+        return fail('No such contest.')
+    if len(body.problems) > 400_000 or len(body.key) > 20_000:
+        return fail('That is far longer than one contest.')
+    level, count = c['level'], c['count']
+    parsed = official.parse_contest(body.problems, level)
+    key = official.parse_key(body.key, level)
+    numbers = {p['number'] for p in parsed}
+    problems_missing = [n for n in range(1, count + 1) if n not in numbers]
+    no_choices = [p['number'] for p in parsed if level != 'AIME' and not p['choices']]
+    empty = [p['number'] for p in parsed if not p['statement']]
+    key_ok = len(key) == count
+    preview = [{'number': p['number'], 'statement': p['statement'], 'choices': p['choices'],
+                'diagram': bool(p['diagram']), 'topic': official.guess_topic(p['statement']),
+                'answer': key[p['number'] - 1] if key_ok else None} for p in parsed]
+    problems_text = ['Problems {} were not found.'.format(', '.join(map(str, problems_missing)))] if problems_missing else []
+    issues = problems_text + (
+        ['Problems {} have no answer choices.'.format(', '.join(map(str, no_choices)))] if no_choices else []) + (
+        ['Problems {} have no text.'.format(', '.join(map(str, empty)))] if empty else []) + (
+        [] if key_ok else ['The answer key has {} of {} answers.'.format(len(key), count)])
+    if body.save:
+        if problems_missing or empty or not key_ok:
+            return fail(' '.join(issues) or 'Nothing to import.', issues=issues, preview=preview)
+        official.save(contest_id, [p for p in parsed if 1 <= p['number'] <= count], key, username)
+    return ok(preview=preview, issues=issues, saved=bool(body.save), count=count,
+              diagrams=sum(1 for p in parsed if p['diagram']))
+
+
+@router.delete('/api/amc/contests/{contest_id}/import')
+def remove_import(contest_id: str, username: str = Depends(current_username)):
+    if contest_id not in catalog.PAST_BY_ID:
+        return fail('No such contest.')
+    official.remove(contest_id)
+    return ok()
 
 
 class SubmitBody(BaseModel):
@@ -379,9 +469,9 @@ class SubmitBody(BaseModel):
 
 @router.post('/api/amc/contests/{contest_id}/submit')
 def submit(contest_id: str, body: SubmitBody, username: str = Depends(current_username)):
-    mock = catalog.MOCK_BY_ID.get(contest_id)
+    mock = _gradable(contest_id)
     if not mock:
-        return fail('Only the Step Mock contests can be graded here. Log a past contest\'s score instead.')
+        return fail('Import this contest first, or log the score you got on it.')
     graded = engine.score_mock(mock, {k: ('' if v is None else str(v)) for k, v in body.answers.items()})
     today = _today()
     reviews = {r['problem_id']: r for r in store.reviews(username)}
@@ -389,19 +479,13 @@ def submit(contest_id: str, body: SubmitBody, username: str = Depends(current_us
     answers = {}
     for row in graded['rows']:
         answers[str(row['number'])] = row['given']
-        if row['result'] == 'blank':
-            continue
         correct = row['result'] == 'correct'
-        statements.append(store.attempt_rows(username, row['problem_id'], row['given'], correct, 0, 'mock'))
+        if row['result'] != 'blank':
+            statements.append(store.attempt_rows(username, row['problem_id'], row['given'], correct, 0, 'mock'))
+        # A blank is still a problem you could not do: it goes to review
+        # without counting as an attempt.
         new_review = engine.after_answer(reviews.get(row['problem_id']), row['problem_id'], correct, today)
         if new_review:
-            statements += store.review_upsert(username, new_review)
-            reviews[row['problem_id']] = new_review
-    # A blank on a mock is still a problem you could not do; it goes to review
-    # without counting as an attempt.
-    for row in graded['rows']:
-        if row['result'] == 'blank':
-            new_review = engine.after_answer(reviews.get(row['problem_id']), row['problem_id'], False, today)
             statements += store.review_upsert(username, new_review)
             reviews[row['problem_id']] = new_review
     mock_id, insert = store.mock_row(username, contest_id, 'mock', answers, graded['score'], graded['correct'],
@@ -416,20 +500,21 @@ def mock_result(mock_id: str, username: str = Depends(current_username)):
     row = store.mock(username, mock_id)
     if not row or row['kind'] != 'mock':
         return fail('No such mock.')
-    mock = catalog.MOCK_BY_ID.get(row['contest_id'])
+    mock = _gradable(row['contest_id'])
     if not mock:
         return fail('That contest is no longer available.')
     graded = engine.score_mock(mock, row['answers'])
     report = engine.mock_report(mock, graded)
     problems = []
     for r in graded['rows']:
-        p = BY_ID[r['problem_id']]
+        p = pb.get(r['problem_id'])
         problems.append({**r, 'statement': p['statement'], 'topic_name': catalog.TOPIC_BY_ID[p['topic']]['name'],
                          'solution': p['solution'], 'insight': p['insight'], 'trap': p['trap'],
-                         'choices': p['choices']})
+                         'choices': p['choices'], 'diagram': p.get('diagram') or ''})
     others = [m for m in store.mocks(username) if m['contest_id'] == row['contest_id'] and m['kind'] == 'mock']
     return ok(result={**_mock_brief(row), **catalog.FORMATS[mock['level']]},
-              contest={'id': mock['id'], 'name': mock['name'], 'level': mock['level']},
+              contest={'id': mock['id'], 'name': mock['name'], 'level': mock['level'],
+                       'official': mock['id'] in catalog.PAST_BY_ID},
               rows=problems, report=report,
               attempts=[_mock_brief(m) for m in others])
 
@@ -479,7 +564,7 @@ def _plan_payload(username):
     relevant = [t for t in catalog.TOPICS if plan['target'] in t['levels']]
     return ok(plan={**plan, 'days_left': (date.fromisoformat(plan['exam_date']) - today).days},
               weeks=weeks, today=items,
-              projected=engine.projected(hist, plan['target']),
+              projected=engine.projected(hist, plan['target']) if len(hist) >= engine.PROJECTION_MIN else None,
               coverage=[{'id': t['id'], 'name': t['name'], 'category': t['category'],
                          'mastery': tstats[t['id']]['mastery'], 'weight': t['weight']}
                         for t in sorted(relevant, key=lambda t: (t['category'], t['name']))],

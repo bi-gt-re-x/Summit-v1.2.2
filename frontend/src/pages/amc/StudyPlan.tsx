@@ -138,7 +138,7 @@ export default function StudyPlan() {
 
   const weeks = payload.weeks ?? [];
   const current = weeks.find((w) => w.current);
-  const projected = payload.projected ?? 0;
+  const projected = payload.projected ?? null;
 
   async function toggle(key: string, done: boolean) {
     const reply = await amc.check(key, done);
@@ -183,9 +183,9 @@ export default function StudyPlan() {
         </section>
         <section className="am-card">
           <span className="am-kicker">Projected vs goal</span>
-          <div className="am-countdown"><strong>{projected}</strong><span className="am-muted">/ goal {plan.goal_score}</span></div>
+          <div className="am-countdown"><strong>{projected ?? '—'}</strong><span className="am-muted">/ goal {plan.goal_score}</span></div>
           <div style={{ marginTop: 10 }}>
-            <Meter value={projected / plan.goal_score} tone={projected >= plan.goal_score ? 'good' : 'sage'} />
+            <Meter value={(projected ?? 0) / plan.goal_score} tone={projected != null && projected >= plan.goal_score ? 'good' : 'sage'} />
           </div>
         </section>
         <section className="am-card">

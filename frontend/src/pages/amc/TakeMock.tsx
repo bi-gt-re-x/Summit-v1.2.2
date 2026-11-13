@@ -8,7 +8,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ErrorState, Loading } from '@/components';
 import { MathText } from '@/components/Amc/MathText';
-import { AnswerInput, clock } from '@/components/Amc/bits';
+import { AnswerInput, DiagramNote, clock } from '@/components/Amc/bits';
 import { useApi, useDocumentTitle } from '@/hooks';
 import { amc, announceAmcChanged } from '@/services/amc';
 import '@/styles/amc.css';
@@ -112,10 +112,10 @@ export default function TakeMock() {
 
   if (loading && !data) return <Loading label="Setting out your paper" />;
   if (error || !data) return <ErrorState message={error ?? 'Could not load this contest.'} onRetry={reload} />;
-  if (data.contest.kind !== 'mock') {
+  if (!data.problems.length) {
     return (
       <div className="amc-page">
-        <p>Only the Step Mocks can be taken here. <Link className="am-link" to={`/contests/${contestId}`}>Back</Link></p>
+        <p>Import this contest before timing it. <Link className="am-link" to={`/contests/${contestId}`}>Back</Link></p>
       </div>
     );
   }
@@ -164,6 +164,7 @@ export default function TakeMock() {
           {p && (
             <>
               <MathText text={p.statement} as="p" className="am-statement" />
+              {p.diagram && <DiagramNote diagram={p.diagram} />}
               <AnswerInput choices={p.choices} value={sitting.answers[String(at)] ?? ''} onChange={setAnswer} />
             </>
           )}

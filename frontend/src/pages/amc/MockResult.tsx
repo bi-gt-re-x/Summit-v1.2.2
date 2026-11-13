@@ -5,7 +5,7 @@
 import { Link, useParams } from 'react-router-dom';
 import { ErrorState, Loading } from '@/components';
 import { MathText } from '@/components/Amc/MathText';
-import { Difficulty, Meter, PageHeader, Solution } from '@/components/Amc/bits';
+import { DiagramNote, Difficulty, Meter, PageHeader, Solution } from '@/components/Amc/bits';
 import { useApi, useDocumentTitle } from '@/hooks';
 import { amc, shortDate } from '@/services/amc';
 import { clock } from '@/components/Amc/bits';
@@ -88,10 +88,13 @@ export default function MockResult() {
                 <Difficulty value={r.difficulty} label={false} />
               </div>
               <MathText text={r.statement} as="p" className="am-statement" />
-              <details>
-                <summary>Solution</summary>
-                <Solution solution={r.solution} insight={r.insight} trap={r.trap} />
-              </details>
+              {r.diagram && <DiagramNote diagram={r.diagram} />}
+              {r.solution && (
+                <details>
+                  <summary>Solution</summary>
+                  <Solution solution={r.solution} insight={r.insight} trap={r.trap} />
+                </details>
+              )}
             </div>
             <div style={{ textAlign: 'right', display: 'grid', gap: 4, justifyItems: 'end' }}>
               <span className={`am-pill ${r.result === 'correct' ? 'am-pill-solved' : r.result === 'wrong' ? 'am-pill-missed' : ''}`}>

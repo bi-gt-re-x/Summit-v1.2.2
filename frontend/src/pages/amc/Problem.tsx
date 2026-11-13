@@ -12,6 +12,7 @@ import { MathText } from '@/components/Amc/MathText';
 import {
   AnswerInput,
   clock,
+  DiagramNote,
   Difficulty,
   ProblemRow,
   Solution,
@@ -151,10 +152,12 @@ export default function Problem() {
               <Link className="am-tag" to={`/topics/${p.topic}`}>{p.topic_name}</Link>
               {p.also.map((t) => <Link key={t.id} className="am-tag" to={`/topics/${t.id}`}>{t.name}</Link>)}
               <span className="am-tag"><Difficulty value={p.difficulty} /></span>
+              {p.official && <span className="am-tag">Official</span>}
               <StatusPill status={data.status} />
             </div>
 
             <MathText text={p.statement} as="p" className="am-statement" />
+            {p.diagram && <DiagramNote diagram={p.diagram} />}
 
             <AnswerInput
               choices={p.choices}
@@ -172,7 +175,7 @@ export default function Problem() {
                 <span className="am-timer" aria-label="Time on this problem">{clock(seconds)}</span>
                 <div style={{ display: 'flex', gap: 8 }}>
                   <button type="button" className="am-btn am-btn-ghost" disabled={busy} onClick={() => void reveal()}>
-                    Show solution
+                    {p.official ? 'Show answer' : 'Show solution'}
                   </button>
                   <button type="button" className="am-btn am-btn-primary" disabled={!answer || busy}
                           onClick={() => void submit()}>
@@ -214,7 +217,14 @@ export default function Problem() {
             )}
 
             {(result || revealed || seenBefore) && (
-              <Solution solution={p.solution} insight={p.insight} trap={p.trap} />
+              p.official ? (
+                <p className="am-muted" style={{ margin: '16px 0 0', fontSize: 13, lineHeight: 1.6 }}>
+                  This is an official problem, so Summit has its answer but no write-up of its own. If you missed it,
+                  it's in your review log and comes back in 3 days.
+                </p>
+              ) : (
+                <Solution solution={p.solution} insight={p.insight} trap={p.trap} />
+              )
             )}
 
             {reviewing && answered && (

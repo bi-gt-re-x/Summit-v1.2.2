@@ -816,3 +816,66 @@ mark.am-hl { background: var(--am-warn-soft); color: inherit; border-radius: 3px
 .am-bar-row .am-meter-bad i { background: var(--am-bad); }
 .am-bar-row .am-meter-good i { background: var(--am-good); }
 .am-field-wide { grid-column: 1 / -1; justify-items: start; }
+
+/* ---- Importing an official contest -------------------------------------- */
+.am-steps { margin: 0 0 var(--space-4); padding-left: 20px; display: grid; gap: 6px; color: var(--am-body); font-size: var(--text-sm); line-height: 1.5; }
+.am-import-fields { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: var(--space-3); }
+.am-import-text, .am-import-key { min-height: 220px; font-family: var(--font-mono); font-size: 12px; }
+.am-import-preview { margin-top: var(--space-4); display: grid; gap: var(--space-3); }
+.am-import-preview p { margin: 0; }
+.am-import-row { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; gap: var(--space-3); align-items: start;
+    padding: var(--space-3); border: 1px solid var(--am-line-soft); border-radius: 12px; background: var(--am-inset); }
+.am-import-row p { margin: 0 0 4px; line-height: 1.55; }
+.am-paper-in { font-style: normal; font-size: 9px; color: var(--am-sage); }
+.am-link-button { border: 0; background: none; padding: 0; font: inherit; cursor: pointer; }
+.am-diagram { margin: 0 0 var(--space-4); }
+.am-diagram details { margin-top: 6px; font-size: 12px; }
+.am-diagram pre { margin: 6px 0 0; max-height: 220px; overflow: auto; white-space: pre-wrap; font-size: 11px; }
+.am-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+@media (max-width: 640px) {
+    .am-import-fields { grid-template-columns: minmax(0, 1fr); }
+    .am-import-text { min-height: 160px; }
+    .am-import-key { min-height: 100px; }
+}
+
+/* ---- Small screens ------------------------------------------------------- */
+.am-card-head { flex-wrap: wrap; }
+.am-seg { max-width: 100%; overflow-x: auto; }
+@media (max-width: 640px) {
+    .am-card { padding: var(--space-4); }
+    .am-hero { margin-bottom: var(--space-4); }
+    .am-hero-actions { width: 100%; }
+    .am-hero-actions .am-btn { flex: 1 1 auto; }
+    .am-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
+    .am-stat { padding: var(--space-3); }
+    .am-stat .am-stat-value { font-size: 26px; }
+    .am-statement { font-size: 18px; }
+    .am-filters-row > label { min-width: 0; width: 100%; }
+    .am-filters-row .am-select, .am-filters .am-input { flex: 1 1 100%; }
+    .am-answer-bar > div { width: 100%; }
+    .am-answer-bar > div .am-btn { flex: 1 1 auto; }
+    .am-exam-top { top: 4px; padding: var(--space-2) var(--space-3); }
+    .am-exam-clock { font-size: 18px; }
+    .am-result-row { grid-template-columns: 28px minmax(0, 1fr); }
+    .am-result-row > :last-child { grid-column: 2; justify-items: start !important; text-align: left !important; }
+    .am-proj-score strong { font-size: 44px; }
+    .am-big { font-size: 48px; }
+    .am-nav-row { flex-wrap: wrap; }
+    .am-sheet { grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); }
+}
+/* Long display math scrolls inside its own line instead of widening the page. */
+.amc-page .katex-display { overflow-x: auto; overflow-y: hidden; padding-bottom: 2px; }
+@media (max-width: 640px) {
+    .am-stats > .am-stat:last-child:nth-child(odd) { grid-column: 1 / -1; }
+    /* Clear the bottom tab bar. */
+    .amc-page { padding-bottom: calc(var(--space-16) + 48px + env(safe-area-inset-bottom, 0px)); }
+}
+@media (max-width: 640px) {
+    .am-nav-row { flex-wrap: nowrap; gap: var(--space-2); }
+    .am-nav-row > .am-btn { flex: 1 1 0; padding: 0 var(--space-2); min-width: 0; }
+    .am-nav-row > span:empty { display: none; }
+}
+/* Wide monitors: use more of the width rather than a narrow column. */
+@media (min-width: 1600px) {
+    .amc-page { width: min(100%, 1400px); padding-inline: var(--space-8); }
+}

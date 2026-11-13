@@ -20,6 +20,7 @@ function summary(overrides: Partial<Dashboard['stats']> = {}): Dashboard {
     target: 'AMC 10',
     goal: 105,
     projected: { 'AMC 10': 96, 'AMC 12': 80, AIME: 4 },
+    projection_min: 5,
     categories: [],
     weakest: [],
     next_problem: null,

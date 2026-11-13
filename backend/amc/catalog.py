@@ -208,6 +208,8 @@ _TECHNIQUE_NAMES = {
 
 
 def technique_name(tech_id):
+    if tech_id == 'official':
+        return 'Official problem'
     return _TECHNIQUE_NAMES.get(tech_id) or tech_id.replace('-', ' ').capitalize()
 
 
@@ -294,6 +296,9 @@ def contest(contest_id):
 
 def sources(problem_id):
     """Where a problem appears: [{'contest': ..., 'name': ..., 'number': n}]."""
+    head, _, tail = problem_id.rpartition('-')
+    if head in PAST_BY_ID and tail.isdigit():
+        return [{'contest': head, 'name': PAST_BY_ID[head]['name'], 'number': int(tail)}]
     found = []
     for mock in MOCKS:
         if problem_id in mock['problems']:

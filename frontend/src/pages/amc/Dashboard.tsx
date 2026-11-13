@@ -82,11 +82,11 @@ function Projection({ data }: { data: DashboardData }) {
         </div>
       </div>
       <div className="am-proj-score">
-        <strong>{score}</strong>
+        <strong>{score ?? '—'}</strong>
         <span>/ {max} on the {level}</span>
       </div>
       <div className="am-proj-track" aria-hidden="true">
-        <i style={{ width: `${(score / max) * 100}%` }} />
+        <i style={{ width: `${((score ?? 0) / max) * 100}%` }} />
         {goal != null && <b style={{ left: `${(goal / max) * 100}%` }} title={`Goal ${goal}`} />}
       </div>
       <div className="am-proj-legend">
@@ -95,8 +95,10 @@ function Projection({ data }: { data: DashboardData }) {
         <span>{max}</span>
       </div>
       <p className="am-muted" style={{ margin: 0, fontSize: 13, lineHeight: 1.5 }}>
-        From your first-try accuracy at each difficulty, answering a problem only when you are likelier
-        right than not{level === 'AIME' ? '' : ' (a blank is worth 1.5)'}. It firms up as you solve more.
+        {score == null
+          ? `Answer ${data.projection_min} problems and this becomes a projected score, from your first-try accuracy at each difficulty.`
+          : <>From your first-try accuracy at each difficulty, answering a problem only when you are likelier
+            right than not{level === 'AIME' ? '' : ' (a blank is worth 1.5)'}. It firms up as you solve more.</>}
       </p>
     </section>
   );

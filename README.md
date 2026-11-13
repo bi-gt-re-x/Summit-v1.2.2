@@ -13,15 +13,16 @@ paper, a study plan to contest day, and search across all of it.
 | Review | `/review` | The error log: misses return after 3, 10 and 21 days until mastered |
 | Problems | `/problems`, `/problems/:id` | The bank, filtered by contest, category, topic, difficulty 1-5, technique and status; answer to unlock the solution, key insight and trap |
 | Topics | `/topics`, `/topics/:id` | 32 topics in 5 categories, each with key ideas, techniques and its problems |
-| Past Contests | `/contests`, `/contests/:id` | Timed Step Mocks graded 6 / 1.5 / 0 with a report; every official AMC 10/12 and AIME since 2000 linked to AoPS, with score logging |
+| Past Contests | `/contests`, `/contests/:id` | Timed Step Mocks graded 6 / 1.5 / 0 with a report; every official AMC 10/12 and AIME since 2000, which can be imported once (paste the AoPS page source and answer key) and then practised, graded and timed in-site |
 | Study Plan | `/study-plan` | Contest, date, goal and hours become a week-by-week plan (Foundations, Core, Contest mode, Taper) |
 | Search | `/search`, top bar / ⌘K | Problems, topics, contests and pages |
 
 The content lives in `backend/amc/` (`bank.py` is the problem bank, `catalog.py`
 the topics and contests, `engine.py` the rules), the API in
 `backend/api/amc.py`, the tables in `data/sql/amc.sql`, and the pages in
-`frontend/src/pages/amc/`. The Step Mock problems are original; official MAA
-problems are linked, not reproduced. `tests/test_amc_bank.py` recomputes every
+`frontend/src/pages/amc/`. The Step Mock problems are original. Official MAA
+problems are imported by pasting (`backend/amc/official.py` explains why the
+server can't fetch them) and live only in the install's database. `tests/test_amc_bank.py` recomputes every
 answer that can be brute-forced.
 
 For a local account with some history on it:

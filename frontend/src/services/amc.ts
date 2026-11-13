@@ -43,6 +43,10 @@ export interface Problem {
   choices: string[] | null;
   format: 'choice' | 'integer';
   sources: Source[];
+  /** An imported official problem: no write-up, maybe a diagram not drawn here. */
+  official?: boolean;
+  /** Asymptote source, 'image', or '' when there is no diagram. */
+  diagram?: string;
   answer?: string | number;
   solution?: string;
   insight?: string;
@@ -144,7 +148,9 @@ export interface Dashboard {
   };
   target: Level;
   goal: number;
-  projected: Record<Level, number>;
+  /** Null until `projection_min` problems have been answered. */
+  projected: Record<Level, number | null>;
+  projection_min: number;
   categories: Category[];
   weakest: { id: string; name: string; mastery: number; accuracy: number | null }[];
   next_problem: ProblemSummary | null;
@@ -169,12 +175,14 @@ export interface ProblemFilters {
   technique?: string;
   q?: string;
   sort?: string;
+  source?: string;
 }
 
 export interface ProblemList {
   problems: ProblemSummary[];
   total: number;
   counts: Record<Status, number>;
+  official: number;
   topics: { id: string; name: string; category: CategoryId }[];
   categories: Category[];
   techniques: { id: string; name: string }[];
@@ -233,6 +241,8 @@ export interface PastContest extends Format {
   problems_url: string;
   answers_url: string;
   logged?: MockBrief | null;
+  /** How many of its problems have been imported (count = all of them). */
+  imported?: number;
 }
 
 export interface ContestList {
@@ -240,11 +250,12 @@ export interface ContestList {
   years: { year: number; contests: PastContest[] }[];
   history: MockBrief[];
   formats: Record<Level, Format>;
+  imported: number;
 }
 
 export interface ContestDetail {
-  contest: (MockContest & { kind: 'mock' }) | (PastContest & { kind: 'past' });
-  problems?: (Problem & { number: number })[];
+  contest: (MockContest & { kind: 'mock' }) | (Omit<PastContest, 'imported'> & { kind: 'past'; imported: boolean });
+  problems: (Problem & { number: number; status: Status })[];
   history: MockBrief[];
 }
 
@@ -262,11 +273,12 @@ export interface MockRow {
   insight: string;
   trap: string;
   choices: string[] | null;
+  diagram: string;
 }
 
 export interface MockResult {
   result: MockBrief & Format;
-  contest: { id: string; name: string; level: Level };
+  contest: { id: string; name: string; level: Level; official: boolean };
   rows: MockRow[];
   report: {
     topics: { topic: string; name: string; total: number; correct: number; lost: number }[];
@@ -286,9 +298,24 @@ export interface PlanPayload {
   plan: null | (PlanSettings & { days_left: number; created_at: string; updated_at: string });
   weeks?: PlanWeek[];
   today?: TodayItem[];
-  projected?: number;
+  projected?: number | null;
   coverage?: { id: string; name: string; category: CategoryId; mastery: number; weight: number }[];
   defaults: { dates: Record<Level, string>; goals: Record<Level, number> };
+}
+
+export interface ImportPreview {
+  preview: {
+    number: number;
+    statement: string;
+    choices: string[] | null;
+    diagram: boolean;
+    topic: string;
+    answer: string | number | null;
+  }[];
+  issues: string[];
+  saved: boolean;
+  count: number;
+  diagrams: number;
 }
 
 export interface SearchResults {
@@ -324,6 +351,9 @@ export const amc = {
     post<{ id: string }>(`/api/amc/contests/${encodeURIComponent(id)}/submit`, { answers, seconds }),
   mock: (id: string) => get<MockResult>(`/api/amc/mocks/${encodeURIComponent(id)}`),
   deleteMock: (id: string) => del<object>(`/api/amc/mocks/${encodeURIComponent(id)}`),
+  importContest: (id: string, problems: string, key: string, save: boolean) =>
+    post<ImportPreview>(`/api/amc/contests/${encodeURIComponent(id)}/import`, { problems, key, save }),
+  removeImport: (id: string) => del<object>(`/api/amc/contests/${encodeURIComponent(id)}/import`),
   logScore: (id: string, score: number, note: string) =>
     post<object>(`/api/amc/contests/${encodeURIComponent(id)}/log`, { score, note }),
   plan: () => get<PlanPayload>('/api/amc/plan'),

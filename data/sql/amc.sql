@@ -75,3 +75,20 @@ CREATE TABLE IF NOT EXISTS amc_plans (
     updated_at  TEXT NOT NULL,
     CHECK (target IN ('AMC 10', 'AMC 12', 'AIME'))
 );
+
+-- Official contest problems, imported by pasting the AoPS page source and the
+-- answer key (backend/amc/official.py). Shared by every account on this
+-- install, so keyed by contest and number rather than by user. The text is the
+-- MAA's; it lives in this database, not in the repository.
+CREATE TABLE IF NOT EXISTS amc_official (
+    contest_id   TEXT NOT NULL,
+    number       INTEGER NOT NULL,
+    statement    TEXT NOT NULL,
+    choices      TEXT,
+    answer       TEXT NOT NULL,
+    diagram      TEXT DEFAULT '',
+    topic        TEXT DEFAULT '',
+    imported_by  TEXT DEFAULT '',
+    imported_at  TEXT NOT NULL,
+    PRIMARY KEY (contest_id, number)
+);
