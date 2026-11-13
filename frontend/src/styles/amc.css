@@ -997,3 +997,25 @@ mark.am-hl { background: var(--am-warn-soft); color: inherit; border-radius: 3px
     .am-topics-bar .am-input { max-width: none; flex-basis: 100%; }
     .am-pill-link { min-height: 32px; }
 }
+
+/* ---- Step-by-step solutions -------------------------------------------- */
+.am-steps-solution { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-3); counter-reset: none; }
+.am-steps-solution li {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: var(--space-3);
+    align-items: baseline;
+    padding: var(--space-3) var(--space-4);
+    border-radius: 12px;
+    background: var(--am-inset);
+    color: var(--am-body);
+    font-size: 15px;
+    line-height: 1.7;
+}
+.am-steps-solution li:last-child { background: var(--am-good-soft); color: var(--am-ink); }
+.am-step-num { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--am-sage); }
+@media (max-width: 640px) {
+    .am-steps-solution li { grid-template-columns: minmax(0, 1fr); gap: 2px; padding: var(--space-3); }
+}
+/* Text with line breaks in it (pasted official problems) keeps its paragraphs. */
+.am-statement, .am-solution-body p, .am-steps-solution li > div, .am-callout p { white-space: pre-line; }

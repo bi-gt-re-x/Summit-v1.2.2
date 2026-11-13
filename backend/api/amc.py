@@ -41,7 +41,7 @@ def _summary(_user, pid, hist, review_by_id):
     h = hist.get(pid)
     return {
         'id': pid, 'level': p['level'], 'topic': p['topic'], 'topic_name': topic['name'],
-        'category': topic['category'], 'difficulty': p['difficulty'],
+        'category': topic['category'], 'difficulty': p['difficulty'], 'rating': p.get('rating'),
         'technique_name': catalog.technique_name(p['technique']),
         'preview': engine.plain(p['statement'])[:160],
         'source': '{} #{}'.format(sources[0]['name'], sources[0]['number']) if sources else 'Drill',
@@ -57,7 +57,7 @@ def _pill(pid, hist, review_by_id):
     """The few fields a problem pill needs."""
     p = pb.get(pid)
     sources = catalog.sources(pid)
-    return {'id': pid, 'short': catalog.short_label(pid), 'difficulty': p['difficulty'],
+    return {'id': pid, 'short': catalog.short_label(pid), 'difficulty': p['difficulty'], 'rating': p.get('rating'),
             'status': engine.status_of(pid, hist, review_by_id),
             'title': '{} · {}'.format('{} #{}'.format(sources[0]['name'], sources[0]['number']) if sources else 'Drill',
                                       engine.plain(p['statement'])[:90])}
@@ -575,7 +575,7 @@ def mock_result(mock_id: str, username: str = Depends(current_username)):
     problems = []
     for r in graded['rows']:
         p = pb.get(r['problem_id'])
-        problems.append({**r, 'statement': p['statement'], 'topic_name': catalog.TOPIC_BY_ID[p['topic']]['name'],
+        problems.append({**r, 'rating': p.get('rating'), 'statement': p['statement'], 'topic_name': catalog.TOPIC_BY_ID[p['topic']]['name'],
                          'solution': p['solution'], 'insight': p['insight'], 'trap': p['trap'],
                          'choices': p['choices'], 'diagram': p.get('diagram') or ''})
     others = [m for m in store.mocks(username) if m['contest_id'] == row['contest_id'] and m['kind'] == 'mock']

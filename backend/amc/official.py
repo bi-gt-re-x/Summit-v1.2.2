@@ -256,11 +256,27 @@ def guess_topic(statement):
     return 'linear-equations'
 
 
+#: AoPS competition-scale bands by position (see backend/amc/solutions.py for
+#: where these come from): (last problem number in the band, rating).
+RATING_BANDS = {
+    'AMC 10': [(5, 1), (10, 1.5), (15, 2), (20, 2.5), (22, 3), (25, 3.5)],
+    'AMC 12': [(5, 1.5), (10, 2), (15, 2.5), (20, 3), (23, 3.5), (25, 4)],
+    'AIME': [(3, 2.5), (6, 3.5), (10, 4), (13, 5), (15, 6)],
+}
+
+
+def rating_at(level, number):
+    """The AoPS-scale rating for problem `number` of a `level` paper."""
+    for last, rating in RATING_BANDS[level]:
+        if number <= last:
+            return rating
+    return RATING_BANDS[level][-1][1]
+
+
 def difficulty_at(level, number):
-    """Difficulty from position: AMC 1-5 is a 1 and 21-25 a 5; AIME runs 2-5."""
-    if level == 'AIME':
-        return 2 if number <= 3 else 3 if number <= 7 else 4 if number <= 11 else 5
-    return min(5, (number - 1) // 5 + 1)
+    """The 1-5 difficulty, from the position's AoPS rating."""
+    from backend.amc.solutions import tier
+    return tier(rating_at(level, number))
 
 
 # ---------------------------------------------------------------------------
@@ -291,6 +307,7 @@ def _shape(row):
         'topic': row.get('topic') or guess_topic(row['statement']),
         'also': [],
         'technique': 'official',
+        'rating': rating_at(contest['level'], number),
         'difficulty': difficulty_at(contest['level'], number),
         'statement': row['statement'],
         'choices': choices,

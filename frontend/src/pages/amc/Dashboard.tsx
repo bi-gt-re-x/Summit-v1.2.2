@@ -212,7 +212,7 @@ export default function Dashboard() {
               <p style={{ margin: '0 0 12px', lineHeight: 1.6, color: 'var(--am-body)' }}>{data.next_problem.preview}</p>
               <div className="am-nav-row" style={{ marginTop: 0, alignItems: 'center' }}>
                 <span className="am-muted" style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 13 }}>
-                  {data.next_problem.source} <Difficulty value={data.next_problem.difficulty} />
+                  {data.next_problem.source} <Difficulty value={data.next_problem.difficulty} rating={data.next_problem.rating} />
                 </span>
                 <Link className="am-btn am-btn-sage" to={`/problems/${data.next_problem.id}`}>Solve it</Link>
               </div>

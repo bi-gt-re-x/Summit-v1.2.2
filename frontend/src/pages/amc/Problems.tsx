@@ -18,6 +18,8 @@ const STATUSES: { id: Status; label: string }[] = [
   { id: 'missed', label: 'Missed' },
   { id: 'review', label: 'In review' },
 ];
+/** The 1-5 difficulty filter, labelled with the AoPS ratings each step covers. */
+const DIFFICULTY_CHIPS: [string, string][] = [['1', '1'], ['2', '1.5'], ['3', '2'], ['4', '2.5–3'], ['5', '3.5+']];
 const KEYS: (keyof ProblemFilters)[] = ['source', 'level', 'category', 'topic', 'difficulty', 'status', 'technique', 'q', 'sort'];
 
 export default function Problems() {
@@ -123,11 +125,11 @@ export default function Problems() {
           </div>
         </div>
         <div className="am-filters-row">
-          <label>Difficulty</label>
+          <label>AoPS rating</label>
           <div className="am-chips">
-            {['1', '2', '3', '4', '5'].map((d) => (
+            {DIFFICULTY_CHIPS.map(([d, text]) => (
               <button key={d} type="button" className={`am-chip${diffs.has(d) ? ' is-on' : ''}`}
-                      onClick={() => toggleDiff(d)}>{d}</button>
+                      title={`Rated ${text} on the AoPS competition scale`} onClick={() => toggleDiff(d)}>{text}</button>
             ))}
           </div>
         </div>

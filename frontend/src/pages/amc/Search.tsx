@@ -97,7 +97,7 @@ export default function Search() {
                       </div>
                       <p className="am-row-preview"><Highlight text={p.preview} query={q} /></p>
                     </div>
-                    <div className="am-row-side"><Difficulty value={p.difficulty} label={false} /></div>
+                    <div className="am-row-side"><Difficulty value={p.difficulty} rating={p.rating} label={false} /></div>
                   </Link>
                 ))}
               </div>

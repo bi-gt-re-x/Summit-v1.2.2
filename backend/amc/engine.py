@@ -94,6 +94,7 @@ def public(problem, reveal=False):
         'technique': problem['technique'],
         'technique_name': catalog.technique_name(problem['technique']),
         'difficulty': problem['difficulty'],
+        'rating': problem.get('rating'),
         'statement': problem['statement'],
         'choices': problem['choices'],
         'format': 'choice' if problem['choices'] else 'integer',
@@ -471,7 +472,7 @@ def search(query, limit=20):
         pts = _score(toks, hay, p['id'])
         if pts:
             problems.append((pts, {'id': p['id'], 'level': p['level'], 'topic_name': topic['name'],
-                                   'difficulty': p['difficulty'], 'preview': plain(p['statement'])[:140],
+                                   'difficulty': p['difficulty'], 'rating': p.get('rating'), 'preview': plain(p['statement'])[:140],
                                    'source': '{} #{}'.format(sources[0]['name'], sources[0]['number']) if sources else 'Drill'}))
     topics = []
     for t in catalog.TOPICS:

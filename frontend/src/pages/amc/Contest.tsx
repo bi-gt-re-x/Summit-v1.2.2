@@ -174,7 +174,7 @@ export default function Contest() {
                     </div>
                   </div>
                   <div className="am-row-side">
-                    <Difficulty value={p.difficulty} label={false} />
+                    <Difficulty value={p.difficulty} rating={p.rating} label={false} />
                     <StatusPill status={p.status} />
                   </div>
                 </Link>
@@ -190,7 +190,7 @@ export default function Contest() {
                       <td>{p.number}</td>
                       <td><span style={{ display: 'inline-flex', gap: 8, alignItems: 'center' }}><CategoryDot category={p.category} />{p.topic_name}</span></td>
                       <td className="am-muted">{p.technique_name}</td>
-                      <td className="num"><Difficulty value={p.difficulty} label={false} /></td>
+                      <td className="num"><Difficulty value={p.difficulty} rating={p.rating} label={false} /></td>
                     </tr>
                   ))}
                 </tbody>

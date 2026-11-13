@@ -85,7 +85,7 @@ export default function MockResult() {
             <div style={{ minWidth: 0 }}>
               <div className="am-row-head" style={{ marginBottom: 6 }}>
                 <Link className="am-link" to={`/problems/${r.problem_id}`}>{r.topic_name}</Link>
-                <Difficulty value={r.difficulty} label={false} />
+                <Difficulty value={r.difficulty} rating={r.rating} />
               </div>
               <MathText text={r.statement} as="p" className="am-statement" />
               {r.diagram && <DiagramNote diagram={r.diagram} />}

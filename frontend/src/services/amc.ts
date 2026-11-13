@@ -15,6 +15,8 @@ export interface ProblemSummary {
   topic_name: string;
   category: CategoryId;
   difficulty: number;
+  /** AoPS competition-scale rating (1-10). */
+  rating?: number | null;
   technique_name: string;
   preview: string;
   source: string;
@@ -39,6 +41,7 @@ export interface Problem {
   technique: string;
   technique_name: string;
   difficulty: number;
+  rating?: number | null;
   statement: string;
   choices: string[] | null;
   format: 'choice' | 'integer';
@@ -48,9 +51,10 @@ export interface Problem {
   /** Asymptote source, 'image', or '' when there is no diagram. */
   diagram?: string;
   answer?: string | number;
-  solution?: string;
-  insight?: string;
-  trap?: string;
+  /** Numbered steps; null for official problems. */
+  solution?: string[] | null;
+  insight?: string | null;
+  trap?: string | null;
 }
 
 export interface ReviewItem extends ProblemSummary {
@@ -89,6 +93,7 @@ export interface Pill {
   id: string;
   short: string;
   difficulty: number;
+  rating?: number | null;
   status: Status;
   /** Full source and a preview, for the tooltip. */
   title: string;
@@ -296,10 +301,11 @@ export interface MockRow {
   topic: string;
   topic_name: string;
   difficulty: number;
+  rating?: number | null;
   statement: string;
-  solution: string;
-  insight: string;
-  trap: string;
+  solution: string[] | null;
+  insight: string | null;
+  trap: string | null;
   choices: string[] | null;
   diagram: string;
 }
@@ -381,7 +387,7 @@ export interface ImportPreview {
 
 export interface SearchResults {
   query: string;
-  problems: { id: string; level: Level; topic_name: string; difficulty: number; preview: string; source: string }[];
+  problems: { id: string; level: Level; topic_name: string; difficulty: number; rating?: number | null; preview: string; source: string }[];
   topics: { id: string; name: string; summary: string; category_name: string }[];
   contests: { id: string; name: string; level: Level; kind: 'mock' | 'past' }[];
   pages: { name: string; to: string }[];

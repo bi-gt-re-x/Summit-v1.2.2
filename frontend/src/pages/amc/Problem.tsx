@@ -151,7 +151,7 @@ export default function Problem() {
               <span className="am-tag">{source ? `${source.name} #${source.number}` : `${p.level} drill`}</span>
               <Link className="am-tag" to={`/topics/${p.topic}`}>{p.topic_name}</Link>
               {p.also.map((t) => <Link key={t.id} className="am-tag" to={`/topics/${t.id}`}>{t.name}</Link>)}
-              <span className="am-tag"><Difficulty value={p.difficulty} /></span>
+              <span className="am-tag"><Difficulty value={p.difficulty} rating={p.rating} /></span>
               {p.official && <span className="am-tag">Official</span>}
               <StatusPill status={data.status} />
             </div>
@@ -254,7 +254,7 @@ export default function Problem() {
               <dt>Contest</dt><dd>{p.level}</dd>
               <dt>Category</dt><dd>{p.category_name}</dd>
               <dt>Technique</dt><dd><Link className="am-link" to={`/problems?technique=${p.technique}`}>{p.technique_name}</Link></dd>
-              <dt>Difficulty</dt><dd>{p.difficulty} of 5</dd>
+              <dt>AoPS rating</dt><dd>{p.rating ?? '—'} <span className="am-muted">({p.difficulty} of 5)</span></dd>
               {p.sources.map((s) => (
                 <span key={s.contest} style={{ display: 'contents' }}>
                   <dt>Appears in</dt>

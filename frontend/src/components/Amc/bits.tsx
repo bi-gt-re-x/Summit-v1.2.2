@@ -7,13 +7,18 @@ import { Link } from 'react-router-dom';
 import { CATEGORY_TONE, type CategoryId, type Pill, type ProblemSummary, type Status } from '@/services/amc';
 import { MathText } from './MathText';
 
-export function Difficulty({ value, label = true }: { value: number; label?: boolean }) {
+/**
+ * Difficulty: five pips for where it would sit on a real AMC 10 (1 = #1-5,
+ * 5 = #21-25 and up), and the AoPS competition-scale rating beside them.
+ */
+export function Difficulty({ value, rating, label = true }: { value: number; rating?: number | null; label?: boolean }) {
+  const text = rating != null ? `AoPS rating ${rating} (difficulty ${value} of 5)` : `Difficulty ${value} of 5`;
   return (
-    <span className="am-diff" title={`Difficulty ${value} of 5`} aria-label={`Difficulty ${value} of 5`}>
+    <span className="am-diff" title={text} aria-label={text}>
       {[1, 2, 3, 4, 5].map((n) => (
         <i key={n} className={n <= value ? 'on' : ''} />
       ))}
-      {label && <span className="am-diff-num">{value}</span>}
+      {label && <span className="am-diff-num">{rating != null ? `AoPS ${rating}` : value}</span>}
     </span>
   );
 }
@@ -46,7 +51,7 @@ export function ProblemRow({ problem, extra }: { problem: ProblemSummary; extra?
       </div>
       <div className="am-row-side">
         {extra}
-        <Difficulty value={problem.difficulty} label={false} />
+        <Difficulty value={problem.difficulty} rating={problem.rating} label={false} />
         <StatusPill status={problem.status} />
       </div>
     </Link>
@@ -206,11 +211,12 @@ export function Solution({
   insight,
   trap,
 }: {
-  solution?: string;
-  insight?: string;
-  trap?: string;
+  solution?: string | string[] | null;
+  insight?: string | null;
+  trap?: string | null;
 }) {
-  if (!solution) return null;
+  if (!solution || (Array.isArray(solution) && !solution.length)) return null;
+  const steps = Array.isArray(solution) ? solution : [solution];
   return (
     <div className="am-solution">
       {insight && (
@@ -221,7 +227,18 @@ export function Solution({
       )}
       <div className="am-solution-body">
         <h3>Solution</h3>
-        <MathText text={solution} as="p" />
+        {steps.length === 1 ? (
+          <MathText text={steps[0] ?? ''} as="p" />
+        ) : (
+          <ol className="am-steps-solution">
+            {steps.map((step, i) => (
+              <li key={i}>
+                <span className="am-step-num">Step {i + 1}</span>
+                <MathText text={step} as="div" />
+              </li>
+            ))}
+          </ol>
+        )}
       </div>
       {trap && (
         <div className="am-callout am-callout-trap">
@@ -263,7 +280,7 @@ export function ProblemPills({ pills, empty = 'No problems yet.' }: { pills: Pil
     <div className="am-pills">
       {pills.map((p) => (
         <Link key={p.id} to={`/problems/${p.id}`} className={`am-pill-link is-${p.status}`}
-              title={`${p.title} — ${STATUS_LABEL[p.status]}, difficulty ${p.difficulty}`}>
+              title={`${p.title} — ${STATUS_LABEL[p.status]}, AoPS rating ${p.rating ?? p.difficulty}`}>
           <i className={`am-pill-diff d${p.difficulty}`} aria-hidden="true" />
           {p.short}
         </Link>

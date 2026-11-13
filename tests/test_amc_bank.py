@@ -127,3 +127,34 @@ def test_past_contests_cover_every_sitting():
     assert '2021 Fall AMC 12B' in names and '2021 Spring AMC 10A' in names
     assert '2025 AIME II' in names
     assert len({c['id'] for c in catalog.PAST}) == len(catalog.PAST)
+
+
+def test_every_problem_has_an_aops_rating_and_a_matching_tier():
+    from backend.amc.solutions import tier
+    for p in PROBLEMS:
+        assert 1 <= p['rating'] <= 6 and (p['rating'] * 2) == int(p['rating'] * 2), p['id']
+        assert p['difficulty'] == tier(p['rating'])
+
+
+def test_every_solution_is_steps_ending_on_the_answer():
+    for p in PROBLEMS:
+        steps = p['solution']
+        assert isinstance(steps, list) and len(steps) >= 2, p['id']
+        assert all(isinstance(s, str) and s.strip() for s in steps), p['id']
+        last = steps[-1]
+        if p['choices']:
+            assert '\\textbf{(%s)}' % p['answer'] in last, (p['id'], last)
+            # Only the right letter is announced.
+            others = [x for x in 'ABCDE' if x != p['answer'] and '\\textbf{(%s)}' % x in last]
+            assert not others, p['id']
+        else:
+            assert '\\boxed{%03d}' % p['answer'] in last, (p['id'], last)
+        for s in steps:
+            assert "\\'" not in s, p['id']
+            assert s.count('$') % 2 == 0 or '\\$' in s, (p['id'], s)
+
+
+def test_official_positions_follow_the_aops_bands():
+    from backend.amc import official
+    assert [official.rating_at('AMC 10', n) for n in (1, 6, 11, 16, 21, 25)] == [1, 1.5, 2, 2.5, 3, 3.5]
+    assert [official.rating_at('AIME', n) for n in (1, 4, 7, 11, 14)] == [2.5, 3.5, 4, 5, 6]
