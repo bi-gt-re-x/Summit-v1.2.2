@@ -93,6 +93,11 @@ _built = False
 # an older build against the same file. Anything of that kind is not a
 # migration this list can carry.
 ADDED_COLUMNS = (
+    # The study plan's intake details and the AI coach's plan (backend/amc/coach.py).
+    ('amc_plans', 'details', "TEXT DEFAULT '{}'"),
+    ('amc_plans', 'coach', "TEXT DEFAULT ''"),
+    ('amc_plans', 'coach_at', "TEXT DEFAULT ''"),
+    ('amc_plans', 'coach_by', "TEXT DEFAULT ''"),
     ('tasks', 'subject', 'TEXT'),
     # The third rating question's answer. Existing rows get NULL, which reads
     # as "not asked" — which is exactly what it was, since the question did not

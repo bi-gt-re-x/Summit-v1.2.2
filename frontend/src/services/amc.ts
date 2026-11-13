@@ -287,15 +287,48 @@ export interface MockResult {
   attempts: MockBrief[];
 }
 
+export interface PlanDetails {
+  experience?: 'first' | 'taken' | 'qualified';
+  last_score?: number;
+  days_per_week?: number;
+  strong?: string[];
+  weak?: string[];
+  resources?: string;
+  notes?: string;
+}
+
 export interface PlanSettings {
   target: Level;
   exam_date: string;
   goal_score: number;
   hours: number;
+  details?: PlanDetails;
+}
+
+/** The AI coach's plan (backend/amc/coach.py). */
+export interface CoachPlan {
+  summary: string;
+  starting_point: string;
+  phases: { name: string; weeks: string; goal: string; focus_topics: string[]; routine: string }[];
+  weekly_schedule: { day: string; task: string; minutes: number }[];
+  milestones: { week: number; target: string }[];
+  focus_order: string[];
+  tips: string[];
+  questions: string[];
 }
 
 export interface PlanPayload {
-  plan: null | (PlanSettings & { days_left: number; created_at: string; updated_at: string });
+  plan: null | (PlanSettings & {
+    days_left: number;
+    created_at: string;
+    updated_at: string;
+    details: PlanDetails;
+    coach: CoachPlan | null;
+    coach_at: string;
+    coach_by: string;
+  });
+  /** Whether an AI model is configured, and which one. */
+  ai: { available: boolean; label: string };
   weeks?: PlanWeek[];
   today?: TodayItem[];
   projected?: number | null;
@@ -360,6 +393,8 @@ export const amc = {
   savePlan: (settings: PlanSettings) => put<PlanPayload>('/api/amc/plan', settings),
   clearPlan: () => del<object>('/api/amc/plan'),
   check: (key: string, done: boolean) => post<PlanPayload>('/api/amc/plan/check', { key, done }),
+  coach: (answers: Record<string, string> = {}) =>
+    post<PlanPayload>('/api/amc/plan/coach', { answers }, undefined),
   search: (q: string, limit = 20) => get<SearchResults>('/api/amc/search', { q, limit }),
 };
 

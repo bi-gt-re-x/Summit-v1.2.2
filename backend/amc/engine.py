@@ -339,6 +339,13 @@ def plan_weeks(settings, tstats, mocks_taken, today):
         return t['weight'] * (1.05 - known)
 
     ranked = sorted(relevant, key=lambda t: (-priority(t), t['name']))
+    # The AI coach's order, when there is one, goes first: it has heard what
+    # the arithmetic cannot (backend/amc/coach.py). Topics it left out follow
+    # in the usual order.
+    coached = (settings.get('coach') or {}).get('focus_order') or []
+    if coached:
+        first = [t for tid in coached for t in relevant if t['id'] == tid]
+        ranked = first + [t for t in ranked if t not in first]
     foundations = max(1, round(count * 0.4)) if count >= 4 else 0
     core = max(1, round(count * 0.35)) if count >= 3 else 0
     per_week = max(5, int(settings['hours']) * 6)

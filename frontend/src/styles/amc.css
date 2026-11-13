@@ -876,6 +876,30 @@ mark.am-hl { background: var(--am-warn-soft); color: inherit; border-radius: 3px
     .am-nav-row > span:empty { display: none; }
 }
 /* Wide monitors: use more of the width rather than a narrow column. */
-@media (min-width: 1600px) {
-    .amc-page { width: min(100%, 1400px); padding-inline: var(--space-8); }
+@media (min-width: 1440px) {
+    .amc-page { width: min(100%, 2000px); padding-inline: var(--space-8); }
 }
+
+/* ---- Study plan: intake and the AI coach -------------------------------- */
+.am-form-sub { margin: var(--space-5) 0 var(--space-2); font-family: var(--am-serif); font-weight: 400; font-size: 19px; }
+.am-coach { display: grid; gap: var(--space-2); }
+.am-coach-summary { margin: 0; font-family: var(--am-serif); font-size: 19px; line-height: 1.55; color: var(--am-ink); }
+.am-coach-start { margin: 0; font-size: 14px; line-height: 1.6; }
+.am-coach-phases { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: var(--space-3); margin-top: var(--space-3); }
+.am-coach-phase { padding: var(--space-4); border: 1px solid var(--am-line); border-radius: 12px; background: var(--am-inset); display: grid; gap: 6px; align-content: start; }
+.am-coach-phase p { margin: 0; line-height: 1.5; font-size: 14px; }
+.am-coach-phase-head { display: flex; justify-content: space-between; gap: var(--space-2); font-size: 14px; flex-wrap: wrap; }
+.am-coach-week { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.am-coach-week li { display: grid; grid-template-columns: minmax(92px, max-content) minmax(0, 1fr) auto; gap: var(--space-3); align-items: baseline;
+    padding: var(--space-2) var(--space-3); border-radius: 10px; background: var(--am-inset); font-size: 14px; }
+.am-coach-week em { font-style: normal; color: var(--am-muted); font-size: 12px; white-space: nowrap; }
+.am-coach-tips { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14px; line-height: 1.5; color: var(--am-body); }
+.am-coach-questions { display: grid; gap: var(--space-3); padding: var(--space-4); margin-top: var(--space-3);
+    border: 1px dashed var(--am-sage); border-radius: 12px; background: var(--am-sage-soft); }
+.am-coach-questions .am-form-sub { margin-top: 0; }
+.am-coach code { font-size: 12px; background: var(--am-inset); padding: 1px 5px; border-radius: 5px; }
+@media (max-width: 640px) {
+    .am-coach-week li { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+    .am-coach-week em { grid-column: auto; }
+}
+.am-coach > .am-btn { justify-self: start; }

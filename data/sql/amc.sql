@@ -71,6 +71,12 @@ CREATE TABLE IF NOT EXISTS amc_plans (
     goal_score  REAL NOT NULL DEFAULT 105,
     hours       INTEGER NOT NULL DEFAULT 5,
     checks      TEXT DEFAULT '{}',
+    -- What the student told the coach (JSON) and the plan it wrote (JSON).
+    -- See backend/amc/coach.py.
+    details     TEXT DEFAULT '{}',
+    coach       TEXT DEFAULT '',
+    coach_at    TEXT DEFAULT '',
+    coach_by    TEXT DEFAULT '',
     created_at  TEXT NOT NULL,
     updated_at  TEXT NOT NULL,
     CHECK (target IN ('AMC 10', 'AMC 12', 'AIME'))

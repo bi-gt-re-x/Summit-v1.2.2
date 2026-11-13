@@ -11,11 +11,12 @@ from typing import Dict, Optional, Union
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
-from backend.amc import catalog, engine, store
+from backend.amc import catalog, coach, engine, store
 from backend.amc import official
 from backend.amc import problems as pb
 from backend.api.guard import current_username
 from backend.api.reply import fail, ok
+from backend.tracking import planner
 
 router = APIRouter(tags=['amc'])
 
@@ -551,7 +552,8 @@ def delete_mock(mock_id: str, username: str = Depends(current_username)):
 def _plan_payload(username):
     plan = store.plan(username)
     if not plan:
-        return ok(plan=None, defaults=_defaults())
+        return ok(plan=None, defaults=_defaults(),
+                  ai={'available': coach.available(), 'label': coach.provider_label()})
     today = _today()
     attempts, reviews, hist, review_by_id = _context(username)
     tstats = engine.topic_stats(hist, review_by_id)
@@ -563,6 +565,7 @@ def _plan_payload(username):
     items = engine.today_items(plan, weeks, due, today, plan['checks'], practiced)
     relevant = [t for t in catalog.TOPICS if plan['target'] in t['levels']]
     return ok(plan={**plan, 'days_left': (date.fromisoformat(plan['exam_date']) - today).days},
+              ai={'available': coach.available(), 'label': coach.provider_label()},
               weeks=weeks, today=items,
               projected=engine.projected(hist, plan['target']) if len(hist) >= engine.PROJECTION_MIN else None,
               coverage=[{'id': t['id'], 'name': t['name'], 'category': t['category'],
@@ -594,6 +597,35 @@ class PlanBody(BaseModel):
     exam_date: str
     goal_score: float
     hours: int
+    #: What the student tells the coach. See `_details`.
+    details: Optional[dict] = None
+
+
+def _details(raw):
+    """The intake answers, bounded: known keys only, lengths capped."""
+    raw = raw or {}
+    out = {}
+    if raw.get('experience') in coach.EXPERIENCE:
+        out['experience'] = raw['experience']
+    try:
+        if raw.get('last_score') not in (None, ''):
+            out['last_score'] = max(0.0, min(150.0, float(raw['last_score'])))
+    except (TypeError, ValueError):
+        pass
+    try:
+        if raw.get('days_per_week') not in (None, ''):
+            out['days_per_week'] = max(1, min(7, int(raw['days_per_week'])))
+    except (TypeError, ValueError):
+        pass
+    for key in ('strong', 'weak'):
+        ids = [t for t in (raw.get(key) or []) if isinstance(t, str) and t in catalog.TOPIC_BY_ID]
+        if ids:
+            out[key] = ids[:12]
+    for key, limit in (('resources', 300), ('notes', 1000)):
+        text = str(raw.get(key) or '').strip()
+        if text:
+            out[key] = text[:limit]
+    return out
 
 
 @router.put('/api/amc/plan')
@@ -614,7 +646,36 @@ def save_plan(body: PlanBody, username: str = Depends(current_username)):
     hours = max(1, min(40, int(body.hours)))
     existing = store.plan(username)
     store.save_plan(username, body.target, exam.isoformat(), body.goal_score, hours,
-                    existing['checks'] if existing else {})
+                    existing['checks'] if existing else {},
+                    _details(body.details) if body.details is not None else None)
+    return _plan_payload(username)
+
+
+class CoachBody(BaseModel):
+    #: Answers to the coach's follow-up questions: {question: answer}.
+    answers: Optional[Dict[str, str]] = None
+
+
+@router.post('/api/amc/plan/coach')
+def coach_plan(body: CoachBody, username: str = Depends(current_username)):
+    """Have the configured AI model write (or refine) the study plan."""
+    plan = store.plan(username)
+    if not plan:
+        return fail('Make a plan first.')
+    today = _today()
+    attempts, reviews, hist, review_by_id = _context(username)
+    tstats = engine.topic_stats(hist, review_by_id)
+    projected = engine.projected(hist, plan['target']) if len(hist) >= engine.PROJECTION_MIN else None
+    mocks = [_mock_brief(m) for m in store.mocks(username)]
+    counts = {'due': sum(1 for r in reviews if r['status'] == 'active' and r['due'] <= today.isoformat()),
+              'active': sum(1 for r in reviews if r['status'] == 'active'),
+              'mastered': sum(1 for r in reviews if r['status'] == 'mastered')}
+    answers = {str(q)[:300]: str(a)[:600] for q, a in (body.answers or {}).items()}
+    try:
+        written = coach.write_plan(plan, plan['details'], tstats, projected, mocks, counts, answers, today)
+    except planner.PlannerUnavailable as exc:
+        return fail(str(exc))
+    store.save_coach(username, written, coach.provider_label())
     return _plan_payload(username)
 
 

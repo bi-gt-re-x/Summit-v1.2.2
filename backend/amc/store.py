@@ -117,29 +117,49 @@ def mock_delete(user, mock_id):
 
 
 # -- Plan -------------------------------------------------------------------
+def _json(value, fallback):
+    try:
+        return json.loads(value) if value else fallback
+    except ValueError:
+        return fallback
+
+
 def plan(user):
-    rows = _read('SELECT target, exam_date, goal_score, hours, checks, created_at, updated_at '
-                 'FROM amc_plans WHERE user_id = ?', (user,))
+    rows = _read('SELECT target, exam_date, goal_score, hours, checks, details, coach, coach_at, coach_by, '
+                 'created_at, updated_at FROM amc_plans WHERE user_id = ?', (user,))
     if not rows:
         return None
     row = rows[0]
-    try:
-        row['checks'] = json.loads(row.get('checks') or '{}')
-    except ValueError:
-        row['checks'] = {}
+    row['checks'] = _json(row.get('checks'), {})
+    row['details'] = _json(row.get('details'), {})
+    row['coach'] = _json(row.get('coach'), None)
+    row['coach_at'] = row.get('coach_at') or ''
+    row['coach_by'] = row.get('coach_by') or ''
     return row
 
 
-def save_plan(user, target, exam_date, goal_score, hours, checks):
+def save_plan(user, target, exam_date, goal_score, hours, checks, details=None):
+    """Write the plan's settings. The coach's plan is kept unless the contest
+    changed, in which case it no longer fits and is dropped."""
     now = _now()
     existing = plan(user)
     created = existing['created_at'] if existing else now
+    if details is None:
+        details = existing['details'] if existing else {}
+    keep = existing and existing['target'] == target
+    coach = json.dumps(existing['coach']) if keep and existing['coach'] else ''
     _write([
         ('DELETE FROM amc_plans WHERE user_id = ?', (user,)),
-        ('INSERT INTO amc_plans (user_id, target, exam_date, goal_score, hours, checks, created_at, updated_at) '
-         'VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-         (user, target, exam_date, float(goal_score), int(hours), json.dumps(checks), created, now)),
+        ('INSERT INTO amc_plans (user_id, target, exam_date, goal_score, hours, checks, details, coach, '
+         'coach_at, coach_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+         (user, target, exam_date, float(goal_score), int(hours), json.dumps(checks), json.dumps(details),
+          coach, existing['coach_at'] if keep else '', existing['coach_by'] if keep else '', created, now)),
     ])
+
+
+def save_coach(user, coach, by):
+    _write([('UPDATE amc_plans SET coach = ?, coach_at = ?, coach_by = ?, updated_at = ? WHERE user_id = ?',
+             (json.dumps(coach), _now(), by, _now(), user))])
 
 
 def delete_plan(user):

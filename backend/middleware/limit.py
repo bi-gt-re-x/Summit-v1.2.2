@@ -193,7 +193,12 @@ LIMITS = {
     # them twice is still inside it.
     '/api/suggest_subject_goal': Policy(
         limit=30, seconds=3600, by_account=True, charge=CALLS, ip_limit=300,
-        message='Too many goals drafted for now. Try again in a little while.'),
+        message='Too many goals drafted for now. Try again in a little while.'),    # The study plan's AI coach (backend/amc/coach.py). One request writes a
+    # whole plan, so a dozen an hour is plenty for editing details and
+    # refining it, and stops a held-down button from billing the key.
+    '/api/amc/plan/coach': Policy(
+        limit=12, seconds=3600, by_account=True, charge=CALLS, ip_limit=120,
+        message='The coach has written a lot of plans this hour. Try again in a little while.'),
 }
 
 #: The per-account budget for login, which is looser than the per-IP one — see

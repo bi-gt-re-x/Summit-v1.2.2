@@ -14,7 +14,7 @@ paper, a study plan to contest day, and search across all of it.
 | Problems | `/problems`, `/problems/:id` | The bank, filtered by contest, category, topic, difficulty 1-5, technique and status; answer to unlock the solution, key insight and trap |
 | Topics | `/topics`, `/topics/:id` | 32 topics in 5 categories, each with key ideas, techniques and its problems |
 | Past Contests | `/contests`, `/contests/:id` | Timed Step Mocks graded 6 / 1.5 / 0 with a report; every official AMC 10/12 and AIME since 2000, which can be imported once (paste the AoPS page source and answer key) and then practised, graded and timed in-site |
-| Study Plan | `/study-plan` | Contest, date, goal and hours become a week-by-week plan (Foundations, Core, Contest mode, Taper) |
+| Study Plan | `/study-plan` | Contest, date, goal and hours become a week-by-week plan (Foundations, Core, Contest mode, Taper). Tell it more (experience, last score, strong/weak topics, resources, constraints) and the AI coach writes a personal plan; its follow-up questions refine it, and its topic order leads the weeks |
 | Search | `/search`, top bar / ⌘K | Problems, topics, contests and pages |
 
 The content lives in `backend/amc/` (`bank.py` is the problem bank, `catalog.py`
@@ -24,6 +24,12 @@ the topics and contests, `engine.py` the rules), the API in
 problems are imported by pasting (`backend/amc/official.py` explains why the
 server can't fetch them) and live only in the install's database. `tests/test_amc_bank.py` recomputes every
 answer that can be brute-forced.
+
+The AI coach (`backend/amc/coach.py`) uses whichever model key is in `.env`:
+`GROQ_API_KEY` (free, console.groq.com; model `GROQ_MODEL`, default
+`openai/gpt-oss-120b`), or xAI's Grok with `XAI_API_KEY` and
+`MILESTONE_PROVIDER=grok` (model `GROK_MODEL`). Without a key the plan still
+works; the coach card says what to add.
 
 For a local account with some history on it:
 
