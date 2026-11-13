@@ -45,9 +45,27 @@ def _summary(_user, pid, hist, review_by_id):
         'technique_name': catalog.technique_name(p['technique']),
         'preview': engine.plain(p['statement'])[:160],
         'source': '{} #{}'.format(sources[0]['name'], sources[0]['number']) if sources else 'Drill',
+        'short': catalog.short_label(pid),
+        'technique': p['technique'],
+        'official': bool(p.get('official')),
         'status': engine.status_of(pid, hist, review_by_id),
         'attempts': h['attempts'] if h else 0,
     }
+
+
+def _pill(pid, hist, review_by_id):
+    """The few fields a problem pill needs."""
+    p = pb.get(pid)
+    sources = catalog.sources(pid)
+    return {'id': pid, 'short': catalog.short_label(pid), 'difficulty': p['difficulty'],
+            'status': engine.status_of(pid, hist, review_by_id),
+            'title': '{} · {}'.format('{} #{}'.format(sources[0]['name'], sources[0]['number']) if sources else 'Drill',
+                                      engine.plain(p['statement'])[:90])}
+
+
+def _pill_order(p):
+    """Easiest first, then bank before official, then by label."""
+    return (p['difficulty'], p['short'].startswith("'"), p['short'])
 
 
 def _review_view(row, hist, review_by_id, today):
@@ -321,11 +339,48 @@ def note_review(problem_id: str, body: NoteBody, username: str = Depends(current
 def topics(username: str = Depends(current_username)):
     _, _, hist, review_by_id = _context(username)
     tstats = engine.topic_stats(hist, review_by_id)
+    everything = pb.all_problems()
+    pills = {t['id']: [] for t in catalog.TOPICS}
+    for p in everything:
+        for tid in [p['topic']] + p['also']:
+            pills[tid].append(_pill(p['id'], hist, review_by_id))
     cats = []
     for cat in engine.category_stats(tstats):
-        cats.append({**cat, 'topics': [{**t, **tstats[t['id']]} for t in catalog.TOPICS
-                                       if t['category'] == cat['id']]})
+        cats.append({**cat, 'topics': [{**t, **tstats[t['id']],
+                                        'pills': sorted(pills[t['id']], key=_pill_order)}
+                                       for t in catalog.TOPICS if t['category'] == cat['id']]})
     return ok(categories=cats)
+
+
+@router.get('/api/amc/strategies')
+def strategies(username: str = Depends(current_username)):
+    """The problems grouped by the technique that solves them, in families."""
+    _, _, hist, review_by_id = _context(username)
+    by_technique = {}
+    untagged = []
+    for p in pb.all_problems():
+        if p['technique'] in catalog.TECHNIQUE_FAMILY:
+            by_technique.setdefault(p['technique'], []).append(p)
+        else:
+            untagged.append(p['id'])
+    families = []
+    for fam in catalog.STRATEGY_FAMILIES:
+        techniques = []
+        for tid, idea in fam['techniques']:
+            probs = by_technique.get(tid, [])
+            pill_rows = sorted((_pill(p['id'], hist, review_by_id) for p in probs), key=_pill_order)
+            topics = sorted({p['topic'] for p in probs})
+            techniques.append({
+                'id': tid, 'name': catalog.technique_name(tid), 'idea': idea,
+                'pills': pill_rows,
+                'solved': sum(1 for x in pill_rows if x['status'] == 'solved'),
+                'topics': [{'id': t, 'name': catalog.TOPIC_BY_ID[t]['name']} for t in topics],
+            })
+        families.append({'id': fam['id'], 'name': fam['name'], 'color': fam['color'], 'blurb': fam['blurb'],
+                         'techniques': techniques,
+                         'problems': sum(len(t['pills']) for t in techniques),
+                         'solved': sum(t['solved'] for t in techniques)})
+    return ok(families=families, untagged=len(untagged))
 
 
 @router.get('/api/amc/topics/{topic_id}')
@@ -344,7 +399,18 @@ def topic(topic_id: str, username: str = Depends(current_username)):
     for p in pb.all_problems():
         if p['topic'] == topic_id or topic_id in p['also']:
             techniques[p['technique']] = techniques.get(p['technique'], 0) + 1
-    return ok(topic={**t, **tstats[topic_id],
+    groups = {}
+    for row in problems:
+        key = row['technique']
+        groups.setdefault(key, []).append(_pill(row['id'], hist, review_by_id))
+    family_order = {tid: i for i, (tid, _) in enumerate(
+        (pair for f in catalog.STRATEGY_FAMILIES for pair in f['techniques']))}
+    by_strategy = [{'id': k, 'name': 'Official problems' if k == 'official' else catalog.technique_name(k),
+                    'idea': catalog.TECHNIQUE_IDEA.get(k, 'Imported contest problems, not yet tagged by strategy.'),
+                    'pills': sorted(v, key=_pill_order)}
+                   for k, v in sorted(groups.items(), key=lambda kv: family_order.get(kv[0], 999))]
+    return ok(by_strategy=by_strategy,
+              topic={**t, **tstats[topic_id],
                      'category_name': catalog.CATEGORY_BY_ID[t['category']]['name']},
               problems=problems, siblings=siblings,
               techniques=[{'id': k, 'name': catalog.technique_name(k), 'count': n}

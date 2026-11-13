@@ -5,7 +5,7 @@
 import { Link, useParams } from 'react-router-dom';
 import { ErrorState, Loading } from '@/components';
 import { MathText } from '@/components/Amc/MathText';
-import { Empty, Meter, PageHeader, ProblemRow } from '@/components/Amc/bits';
+import { Empty, Meter, PageHeader, PillLegend, ProblemPills } from '@/components/Amc/bits';
 import { useApi, useDocumentTitle } from '@/hooks';
 import { amc, pct } from '@/services/amc';
 import '@/styles/amc.css';
@@ -44,13 +44,28 @@ export default function Topic() {
               {topic.ideas.map((idea) => <li key={idea}><MathText text={idea} /></li>)}
             </ol>
           </section>
-          <section>
-            <div className="am-card-head" style={{ marginBottom: 10 }}>
-              <h2>Problems</h2>
-              <Link to={`/problems?topic=${topic.id}`}>Open in Problems</Link>
+          <section className="am-card">
+            <div className="am-card-head">
+              <h2>Problems by strategy</h2>
+              <Link to={`/problems?topic=${topic.id}`}>Open as a list</Link>
             </div>
-            {problems.length ? (
-              <div className="am-rows">{problems.map((p) => <ProblemRow key={p.id} problem={p} />)}</div>
+            <PillLegend />
+            {data.by_strategy.length ? (
+              <div className="am-strategy-groups">
+                {data.by_strategy.map((g) => (
+                  <div key={g.id} className="am-strategy-group">
+                    <div className="am-strategy-group-head">
+                      {g.id === 'official' ? (
+                        <strong>{g.name}</strong>
+                      ) : (
+                        <Link className="am-link" to={`/topics?view=strategy#tech-${g.id}`}>{g.name}</Link>
+                      )}
+                      <span className="am-muted">{g.idea}</span>
+                    </div>
+                    <ProblemPills pills={g.pills} />
+                  </div>
+                ))}
+              </div>
             ) : (
               <Empty title="No problems yet" />
             )}

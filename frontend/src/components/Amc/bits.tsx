@@ -4,7 +4,7 @@
  */
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { CATEGORY_TONE, type CategoryId, type ProblemSummary, type Status } from '@/services/amc';
+import { CATEGORY_TONE, type CategoryId, type Pill, type ProblemSummary, type Status } from '@/services/amc';
 import { MathText } from './MathText';
 
 export function Difficulty({ value, label = true }: { value: number; label?: boolean }) {
@@ -249,6 +249,37 @@ export function DiagramNote({ diagram }: { diagram: string }) {
           <pre>{diagram}</pre>
         </details>
       )}
+    </div>
+  );
+}
+
+/**
+ * A topic's or a strategy's problems as wrapping rows of pills: the short
+ * label, coloured by status, easiest first. Each pill opens the problem.
+ */
+export function ProblemPills({ pills, empty = 'No problems yet.' }: { pills: Pill[]; empty?: string }) {
+  if (!pills.length) return <p className="am-muted am-pills-empty">{empty}</p>;
+  return (
+    <div className="am-pills">
+      {pills.map((p) => (
+        <Link key={p.id} to={`/problems/${p.id}`} className={`am-pill-link is-${p.status}`}
+              title={`${p.title} — ${STATUS_LABEL[p.status]}, difficulty ${p.difficulty}`}>
+          <i className={`am-pill-diff d${p.difficulty}`} aria-hidden="true" />
+          {p.short}
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+/** What the pill colours mean. */
+export function PillLegend() {
+  return (
+    <div className="am-pill-legend" aria-label="Pill colours">
+      {(['new', 'solved', 'missed', 'review'] as Status[]).map((s) => (
+        <span key={s}><i className={`am-pill-swatch is-${s}`} />{STATUS_LABEL[s]}</span>
+      ))}
+      <span className="am-muted">Bar = difficulty</span>
     </div>
   );
 }

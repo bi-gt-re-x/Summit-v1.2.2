@@ -84,6 +84,33 @@ export interface TopicStats {
   mastery: number;
 }
 
+/** One problem as a pill: a short label, coloured by status. */
+export interface Pill {
+  id: string;
+  short: string;
+  difficulty: number;
+  status: Status;
+  /** Full source and a preview, for the tooltip. */
+  title: string;
+}
+
+export interface StrategyGroup {
+  id: string;
+  name: string;
+  idea: string;
+  pills: Pill[];
+}
+
+export interface StrategyFamily {
+  id: string;
+  name: string;
+  color: string;
+  blurb: string;
+  problems: number;
+  solved: number;
+  techniques: (StrategyGroup & { solved: number; topics: { id: string; name: string }[] })[];
+}
+
 export interface Topic extends TopicStats {
   id: string;
   category: CategoryId;
@@ -92,6 +119,7 @@ export interface Topic extends TopicStats {
   levels: Level[];
   summary: string;
   ideas: string[];
+  pills?: Pill[];
 }
 
 export interface MockBrief {
@@ -377,7 +405,9 @@ export const amc = {
       problems: ProblemSummary[];
       siblings: { id: string; name: string }[];
       techniques: { id: string; name: string; count: number }[];
+      by_strategy: StrategyGroup[];
     }>(`/api/amc/topics/${encodeURIComponent(id)}`),
+  strategies: () => get<{ families: StrategyFamily[]; untagged: number }>('/api/amc/strategies'),
   contests: () => get<ContestList>('/api/amc/contests'),
   contest: (id: string) => get<ContestDetail>(`/api/amc/contests/${encodeURIComponent(id)}`),
   submit: (id: string, answers: Record<string, string>, seconds: number) =>

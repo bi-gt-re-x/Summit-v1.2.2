@@ -320,3 +320,98 @@ def _check():
 
 
 _check()
+
+
+# ---------------------------------------------------------------------------
+# Strategies: the techniques, grouped the way a contest solver thinks of them
+# ---------------------------------------------------------------------------
+#: Families in display order, each a list of (technique id, one-line idea).
+#: Every technique in the bank belongs to exactly one family (checked below).
+STRATEGY_FAMILIES = [
+    {'id': 'counting', 'name': 'Counting strategies', 'color': 'green',
+     'blurb': 'Ways to count without listing everything.',
+     'techniques': [
+         ('multiplication-principle', 'Multiply independent choices; fill the most restricted slot first.'),
+         ('casework', 'Split into disjoint cases that cover everything, then add.'),
+         ('complementary-counting', 'Count what you don’t want and subtract from the total.'),
+         ('inclusion-exclusion', 'Add the sets, subtract the overlaps, add back the triple overlaps.'),
+         ('stars-and-bars', 'Identical items into boxes: choose where the dividers go.'),
+         ('bijection', 'Match each object to something easier to count.'),
+         ('recursion', 'Build the count for n from smaller cases.'),
+         ('reflection', 'Count bad lattice paths by reflecting them across a line.'),
+         ('states', 'One equation per state for "until" processes.'),
+         ('linearity-of-expectation', 'Expected values add, even for dependent events.'),
+         ('geometric-probability', 'Probability as favourable area over total area.'),
+     ]},
+    {'id': 'algebraic', 'name': 'Algebraic strategies', 'color': 'blue',
+     'blurb': 'Moves that make an expression or equation give itself up.',
+     'techniques': [
+         ('set-up-equations', 'Name the unknown, translate the words, solve.'),
+         ('substitution', 'Swap in a new variable or a cleverly chosen value.'),
+         ('reciprocal-substitution', 'Flip x/(1+x)-style recursions into something linear.'),
+         ('vieta', 'Read sums and products of roots off the coefficients.'),
+         ('symmetric-sums', 'Rewrite symmetric expressions in terms of x+y and xy.'),
+         ('factoring-trick', 'Add a constant so xy + ax + by factors (Simon’s trick).'),
+         ('squaring', 'Square both sides to expose a cross term.'),
+         ('telescoping', 'Write terms as differences so the middle cancels.'),
+         ('am-gm', 'Split terms so their product is constant, then apply AM-GM.'),
+         ('repeated-squaring', 'Reach a high power through a few squarings.'),
+         ('roots-of-unity', 'Use the n-th roots of unity to filter or simplify.'),
+     ]},
+    {'id': 'number', 'name': 'Number theory strategies', 'color': 'amber',
+     'blurb': 'Tools for remainders, divisors and digits.',
+     'techniques': [
+         ('prime-factorization', 'Factor into primes; count divisors exponent by exponent.'),
+         ('residues', 'Only residues matter: check 0 to m-1.'),
+         ('cycles', 'Powers repeat mod m; find the period, reduce the exponent.'),
+         ('orders', 'The order of a mod n divides φ(n); test its divisors.'),
+         ('chinese-remainder', 'Split a modulus into coprime parts and recombine.'),
+         ('euler-phi', 'Count numbers coprime to n with Euler’s totient.'),
+         ('legendre', 'Count a prime’s power in n! with Legendre’s formula.'),
+     ]},
+    {'id': 'geometric', 'name': 'Geometric strategies', 'color': 'rose',
+     'blurb': 'Ways to see a figure so the answer is visible.',
+     'techniques': [
+         ('similarity-ratios', 'Find similar triangles; lengths scale by k, areas by k².'),
+         ('coordinates', 'Put the figure on axes and compute.'),
+         ('shoelace', 'Area of a polygon straight from its vertex coordinates.'),
+         ('decomposition', 'Cut the region into pieces you know, or subtract corners.'),
+         ('british-flag', 'For P in a rectangle, PA² + PC² = PB² + PD².'),
+     ]},
+    {'id': 'general', 'name': 'General problem solving', 'color': 'slate',
+     'blurb': 'Habits that crack problems in every topic.',
+     'techniques': [
+         ('small-cases', 'Try n = 1, 2, 3 and read off the pattern.'),
+         ('pairing', 'Pair terms that combine nicely (k with n-k, sin with cos).'),
+         ('rates', 'Rates add; times do not.'),
+         ('known-formula', 'Recognise the standard formula the problem is built on.'),
+         ('direct-computation', 'Sometimes the fastest path is to just compute carefully.'),
+     ]},
+]
+TECHNIQUE_FAMILY = {tid: f['id'] for f in STRATEGY_FAMILIES for tid, _ in f['techniques']}
+TECHNIQUE_IDEA = {tid: idea for f in STRATEGY_FAMILIES for tid, idea in f['techniques']}
+
+
+def short_label(problem_id):
+    """A pill's label: 'S10·7', 'S12·3', 'AIME·4', 'Drill·2', or "'23 10A·5"."""
+    head, _, tail = problem_id.rpartition('-')
+    if head in PAST_BY_ID and tail.isdigit():
+        c = PAST_BY_ID[head]
+        paper = c['level'].replace('AMC ', '') + c['paper'] if c['level'] != 'AIME' else 'AIME ' + c['paper']
+        year = str(c['year'])[2:] + (c['season'][:1] if c['season'] else '')
+        return "'{} {}·{}".format(year, paper, int(tail))
+    found = sources(problem_id)
+    if found:
+        abbr = {'step-mock-10': 'S10', 'step-mock-12': 'S12', 'step-mock-aime': 'AIME'}[found[0]['contest']]
+        return '{}·{}'.format(abbr, found[0]['number'])
+    if problem_id.startswith('step-drill-'):
+        return 'Drill·{}'.format(int(problem_id.rsplit('-', 1)[1]))
+    return problem_id
+
+
+def _check_strategies():
+    missing = [t for t in TECHNIQUES if t not in TECHNIQUE_FAMILY]
+    assert not missing, 'techniques with no strategy family: {}'.format(missing)
+
+
+_check_strategies()

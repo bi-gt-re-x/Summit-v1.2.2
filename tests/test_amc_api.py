@@ -183,3 +183,32 @@ def test_the_export_includes_amc_rows(client, today):
     body = client.get('/api/settings/export', params={'table': 'all', 'format': 'json'}).json()
     rows = body['export']['tables']['amc_attempts']
     assert rows and rows[0]['problem_id'] == 'step-10-01'
+
+
+def test_topics_carry_their_problems_as_pills(client, today):
+    client.post('/api/amc/problems/step-10-16/attempt', json={'answer': 'C'})
+    cats = client.get('/api/amc/topics').json()['categories']
+    circles = next(t for c in cats for t in c['topics'] if t['id'] == 'circles')
+    pill = next(p for p in circles['pills'] if p['id'] == 'step-10-16')
+    assert pill['short'] == 'S10·16' and pill['status'] == 'solved'
+    # Secondary topics list the problem too.
+    right = next(t for c in cats for t in c['topics'] if t['id'] == 'right-triangles')
+    assert any(p['id'] == 'step-10-16' for p in right['pills'])
+    assert [p['difficulty'] for p in circles['pills']] == sorted(p['difficulty'] for p in circles['pills'])
+
+
+def test_strategies_group_every_problem_by_technique(client, today):
+    body = client.get('/api/amc/strategies').json()
+    names = [f['name'] for f in body['families']]
+    assert names[0] == 'Counting strategies'
+    total = sum(len(t['pills']) for f in body['families'] for t in f['techniques'])
+    assert total == 60 and body['untagged'] == 0
+    vieta = next(t for f in body['families'] for t in f['techniques'] if t['id'] == 'vieta')
+    assert vieta['idea'] and {'step-10-11', 'step-12-04'} <= {p['id'] for p in vieta['pills']}
+
+
+def test_a_topic_groups_its_problems_by_strategy(client, today):
+    body = client.get('/api/amc/topics/probability').json()
+    groups = {g['id']: g for g in body['by_strategy']}
+    assert 'complementary-counting' in groups
+    assert groups['complementary-counting']['pills'][0]['id'] == 'step-10-10'
