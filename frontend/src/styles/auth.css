@@ -457,3 +457,13 @@ body:has(.auth-page) .app-main {
     .auth-heading { font-size: var(--text-xl); }
     .auth-step { gap: var(--space-3); }
 }
+
+/* ---- The AMC profile step: quick taps (components/Auth/AmcProfile) ---- */
+.auth-amc { display: grid; gap: 14px; }
+.auth-fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+.auth-fieldset .auth-label { margin-bottom: 6px; padding: 0; }
+.auth-choices.auth-choices-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+.auth-choices-wrap .auth-choice { flex: 1 1 auto; min-width: 64px; }
+.auth-amc .auth-label .auth-input { margin-top: 6px; }
+.auth-amc .auth-primary:disabled { opacity: .5; cursor: default; }
+.auth-skip { justify-self: center; }

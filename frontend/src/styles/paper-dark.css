@@ -537,9 +537,6 @@ html[data-theme="dark"]:not([data-skin]):has(.st-page) .st-vacation-problem {
 /* ---- themePicker.css's own dark rules, recoloured ---- */
 
 
-/* ---- about-you.css's own dark rules, recoloured ---- */
-
-
 /* ---- ambient.css's own dark rules, recoloured ---- */
 html[data-theme="dark"]:not([data-skin]):has(.st-page) .hm-grid {
     color: rgba(246, 245, 241, 0.045)
@@ -1693,75 +1690,6 @@ html[data-theme="dark"]:not([data-skin]):has(.st-page) .st-theme-name {
 html[data-theme="dark"]:not([data-skin]):has(.st-page) .st-theme-live {
     background: color-mix(in srgb, var(--st-violet, var(--pref-accent, var(--color-accent))) 14%, transparent);
     color: var(--st-violet, var(--pref-accent, var(--color-accent)))
-}
-html[data-theme="dark"]:not([data-skin]):has(.st-page) .ay-important {
-    border: 2px solid var(--color-accent);
-    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
-    color: var(--color-ink)
-}
-html[data-theme="dark"]:not([data-skin]):has(.st-page) .ay-why {
-    color: var(--color-ink-muted)
-}
-html[data-theme="dark"]:not([data-skin]):has(.st-page) .ay-label {
-    color: var(--color-ink)
-}
-html[data-theme="dark"]:not([data-skin]):has(.st-page) .ay-hint {
-    color: var(--color-ink-muted)
-}
-html[data-theme="dark"]:not([data-skin]):has(.st-page) .ay-input {
-    color: var(--color-ink);
-    background: var(--color-surface-2);
-    border: 1.5px solid var(--color-line);
-    outline: none
-}
-html[data-theme="dark"]:not([data-skin]):has(.st-page) .ay-input:focus {
-    border-color: var(--color-accent);
-    background: var(--color-surface)
-}
-html[data-theme="dark"]:not([data-skin]):has(.st-page) .ay-input::placeholder {
-    color: var(--color-ink-faint)
-}
-html[data-theme="dark"]:not([data-skin]):has(.st-page) .ay-meter {
-    border: 1px solid var(--color-line);
-    background: var(--color-surface-2)
-}
-html[data-theme="dark"]:not([data-skin]):has(.st-page) .ay-meter-bar i {
-    background: var(--color-line)
-}
-html[data-theme="dark"]:not([data-skin]):has(.st-page) .ay-meter-bar i.is-on {
-    background: var(--color-accent)
-}
-html[data-theme="dark"]:not([data-skin]):has(.st-page) .ay-meter.is-detailed .ay-meter-bar i.is-on {
-    background: var(--color-success, #7EB495)
-}
-html[data-theme="dark"]:not([data-skin]):has(.st-page) .ay-meter-text {
-    color: var(--color-ink)
-}
-html[data-theme="dark"]:not([data-skin]):has(.st-page) .ay-meter-next {
-    color: var(--color-ink-muted)
-}
-html[data-theme="dark"]:not([data-skin]):has(.st-page) .ay-error {
-    color: var(--color-danger, #AB716B)
-}
-html[data-theme="dark"]:not([data-skin]):has(.st-page) .ay-primary {
-    border: 1.5px solid var(--color-accent);
-    background: var(--color-accent);
-    color: #252522
-}
-html[data-theme="dark"]:not([data-skin]):has(.st-page) .ay-primary:hover {
-    background: color-mix(in srgb, var(--color-accent) 86%, #9DA79C)
-}
-html[data-theme="dark"]:not([data-skin]):has(.st-page) .ay-skip {
-    border: 0;
-    background: none;
-    color: var(--color-ink-muted)
-}
-html[data-theme="dark"]:not([data-skin]):has(.st-page) .ay-skip:hover {
-    color: var(--color-accent);
-    text-decoration: underline
-}
-html[data-theme="dark"]:not([data-skin]):has(.st-page) .ay-saved {
-    color: var(--color-ink-muted)
 }
 html[data-theme="dark"]:not([data-skin]):has(.st-page) .hm-grid {
     background-image: repeating-linear-gradient(to right, currentColor 0 1px, transparent 1px 80px),

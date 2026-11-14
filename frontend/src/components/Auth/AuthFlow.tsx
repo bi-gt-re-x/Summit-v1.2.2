@@ -37,33 +37,22 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth, useTheme } from '@/hooks';
 import { auth as authService } from '@/services';
-import type { Theme } from '@/types';
 import { Icon } from '@/components/Icon';
-import { AboutYou } from '@/components/AboutYou';
-import { ThemePicker } from '@/components/Settings/ThemePicker';
-import { settings as settingsService } from '@/services';
-import type { ThemeSkin } from '@/services/settings';
 import { passwordOk, passwordRules } from './passwordRules';
+import { AmcProfile } from './AmcProfile';
 
-export type AuthStep = 'choose' | 'login' | 'create' | 'inbox' | 'profile' | 'about';
+export type AuthStep = 'choose' | 'login' | 'create' | 'inbox' | 'profile';
 
 const COPY: Record<AuthStep, [string, string]> = {
   choose: ['Welcome', 'Log in or create an account to continue.'],
   login: ['Log in', 'Good to see you again.'],
   create: ['Create account', "Start with your email. It's free."],
   inbox: ['Check your inbox', "Click the link we sent and you're in."],
-  profile: ['Finish your profile', 'Three quick picks and one last step.'],
-  about: ['About you', 'Last step. Tell us where you are and where you want to go.'],
+  profile: ['Your contest', 'A few quick taps and your study plan is ready.'],
 };
 
 /** Good enough to catch a typo before asking the server. The server decides. */
 const EMAIL_SHAPE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-const GOALS = [
-  { value: 50, label: 'Light' },
-  { value: 100, label: 'Steady' },
-  { value: 200, label: 'Serious' },
-];
 
 interface Message {
   text: string;
@@ -118,10 +107,6 @@ export function AuthFlow({
   const [mailFailed, setMailFailed] = useState(false);
   /* Ticked before an account can be created — see the note by the box. */
   const [consented, setConsented] = useState(false);
-  const [chosenTheme, setChosenTheme] = useState<Theme>('light');
-  /** One of the four palettes, or '' for plain light or dark. */
-  const [chosenSkin, setChosenSkin] = useState<ThemeSkin>('');
-  const [chosenGoal, setChosenGoal] = useState(100);
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   /* Sign-up asks for one thing at a time: the email first, then a name and a
@@ -326,35 +311,6 @@ export function AuthFlow({
       setDevLink(result.success ? result.dev_link : null);
       setMailFailed(Boolean(result.success && result.mail_failed));
       say(result.message || '', result.success && !result.mail_failed ? 'info' : 'error');
-    } catch {
-      say("Couldn't reach the server.");
-    }
-  }
-
-  async function doProfile(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    const username = String(form.get('username') ?? '').trim();
-    say('Saving…', 'info');
-    try {
-      const result = await authService.completeProfile({
-        username: username || undefined,
-        theme: chosenTheme,
-        daily_goal: chosenGoal,
-      });
-      if (!result.success) {
-        say(result.message || "That didn't work.");
-        return;
-      }
-      // The palette, and `theme_mode` pinned to the base so the device's own
-      // light or dark doesn't take over on the next load. The same pair
-      // Settings writes when a theme card is picked.
-      await settingsService
-        .saveSettings({ values: { theme_skin: chosenSkin, theme_mode: chosenTheme } })
-        .catch(() => undefined);
-      /* One step left: About you. Its answers set up Analytics and the model
-         prompts, so it comes before the app rather than after it. */
-      go('about');
     } catch {
       say("Couldn't reach the server.");
     }
@@ -624,65 +580,10 @@ export function AuthFlow({
         </button>
       </section>
 
-      {/* Complete profile */}
+      {/* The last step: the student's contest, and their plan made from it.
+          See components/Auth/AmcProfile. */}
       <section className={`auth-step${step === 'profile' ? '' : ' hidden'}`} data-step="profile">
-        <form id="profileForm" noValidate onSubmit={(e) => void doProfile(e)}>
-          <label className="auth-label" htmlFor="profileUsername">
-            Choose a username <span className="auth-optional">(optional)</span>
-          </label>
-          <input
-            className="auth-input"
-            type="text"
-            id="profileUsername"
-            name="username"
-            autoComplete="username"
-            placeholder="Leave it blank to keep this one"
-          />
-
-          <label className="auth-label">Pick a theme</label>
-          <ThemePicker
-            skin={chosenSkin}
-            theme={chosenTheme}
-            onPick={(skin, base) => {
-              setChosenSkin(skin);
-              setChosenTheme(base);
-              // Show it right away. Seeing it is the point of picking it.
-              setTheme(base);
-              if (skin) document.documentElement.setAttribute('data-skin', skin);
-              else document.documentElement.removeAttribute('data-skin');
-            }}
-          />
-
-          <label className="auth-label">Choose a daily goal</label>
-          <div className="auth-choices" id="goalChoices">
-            {GOALS.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                className={`auth-choice${chosenGoal === option.value ? ' is-on' : ''}`}
-                onClick={() => setChosenGoal(option.value)}
-              >
-                {option.label}
-                <span>{option.value} XP</span>
-              </button>
-            ))}
-          </div>
-
-          <button type="submit" className="auth-primary">
-            Next
-          </button>
-        </form>
-      </section>
-
-      {/* About you — the last step. See components/AboutYou. */}
-      <section className={`auth-step${step === 'about' ? '' : ' hidden'}`} data-step="about">
-        {step === 'about' && (
-          <AboutYou
-            submitLabel="Save and go to Dashboard"
-            onDone={() => void finish()}
-            onSkip={() => void finish()}
-          />
-        )}
+        {step === 'profile' && <AmcProfile onDone={() => void finish()} say={say} />}
       </section>
 
       <p

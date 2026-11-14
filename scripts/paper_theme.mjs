@@ -45,7 +45,6 @@ const PAGES = [
   'verify-banner.css',
   'settings.css',
   'themePicker.css',
-  'about-you.css',
   'ambient.css',
 ];
 

@@ -673,6 +673,8 @@ def _details(raw):
     out = {}
     if raw.get('experience') in coach.EXPERIENCE:
         out['experience'] = raw['experience']
+    if str(raw.get('grade') or '') in ('6', '7', '8', '9', '10', '11', '12', 'Other'):
+        out['grade'] = str(raw['grade'])
     try:
         if raw.get('last_score') not in (None, ''):
             out['last_score'] = max(0.0, min(150.0, float(raw['last_score'])))

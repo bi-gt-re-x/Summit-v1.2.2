@@ -73,6 +73,7 @@ const SKIP_FILES = new Set(['scripts/check_docs.mjs']);
 const AMC = 'Removed when Summit became an AMC prep site.';
 
 const GONE = new Map([
+  ['frontend/src/components/AboutYou/AboutYou.tsx', 'Sign-up asks about the student\u2019s contest now (components/Auth/AmcProfile.tsx).'],
   ['backend/api/analytics.py', AMC],
   ['backend/api/behavior.py', AMC],
   ['backend/api/experiments.py', AMC],

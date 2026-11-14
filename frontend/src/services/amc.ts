@@ -323,6 +323,8 @@ export interface MockResult {
 
 export interface PlanDetails {
   experience?: 'first' | 'taken' | 'qualified';
+  /** School grade, '6'-'12' or 'Other'. */
+  grade?: string;
   last_score?: number;
   days_per_week?: number;
   strong?: string[];

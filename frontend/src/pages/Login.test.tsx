@@ -64,9 +64,9 @@ beforeEach(() => {
 });
 
 describe('the login page', () => {
-  it('keeps About you open for a signed-in account with a finished profile', () => {
-    open('/login?auth=about', { status: 'signed-in', profileComplete: true });
-    expect(heading()).toBe('About you');
+  it('keeps the contest step open for a signed-in account with a finished profile', () => {
+    open('/login?auth=profile', { status: 'signed-in', profileComplete: true });
+    expect(heading()).toBe('Your contest');
     expect(screen.queryByText('The dashboard')).not.toBeInTheDocument();
   });
 
@@ -75,15 +75,14 @@ describe('the login page', () => {
     expect(screen.getByText('The dashboard')).toBeInTheDocument();
   });
 
-  it('asks a signed-out visitor on About you or the profile panel to log in', () => {
-    open('/login?auth=about', { status: 'signed-out', profileComplete: false });
+  it('asks a signed-out visitor on the profile panel to log in', () => {
+    open('/login?auth=profile', { status: 'signed-out', profileComplete: false });
     expect(heading()).toBe('Log in');
   });
 
   it.each([
     ['create', 'Create account'],
-    ['profile', 'Finish your profile'],
-    ['about', 'About you'],
+    ['profile', 'Your contest'],
     ['inbox', 'Check your inbox'],
   ])('names the %s panel in the tab', (step, title) => {
     open(`/login?auth=${step}`, { status: 'signed-in', profileComplete: false });

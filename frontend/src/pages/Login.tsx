@@ -41,7 +41,7 @@ function safeNext(raw: string | null): string {
   return raw && raw.startsWith('/') && !raw.startsWith('//') ? raw : '/';
 }
 
-const STEPS: AuthStep[] = ['choose', 'login', 'create', 'inbox', 'profile', 'about'];
+const STEPS: AuthStep[] = ['choose', 'login', 'create', 'inbox', 'profile'];
 
 /** The tab's title on each panel, so it says where in the flow the reader is. */
 const TITLES: Record<AuthStep, string> = {
@@ -49,14 +49,13 @@ const TITLES: Record<AuthStep, string> = {
   login: 'Log in',
   create: 'Create account',
   inbox: 'Check your inbox',
-  profile: 'Finish your profile',
-  about: 'About you',
+  profile: 'Your contest',
 };
 
 const POINTS: [IconName, string][] = [
-  ['check', 'Tasks, calendar and goals in one app'],
-  ['flame', 'Earn XP and build a streak as you go'],
-  ['chart', 'A work score that shows you the math'],
+  ['target', 'Problems tagged by topic, strategy and AoPS difficulty'],
+  ['timer', 'Timed mock contests, scored like the real thing'],
+  ['sparkles', 'A study plan written around your goal and your misses'],
 ];
 
 export default function Login() {
@@ -70,10 +69,10 @@ export default function Login() {
   // Any panel the flow itself can move to, since it writes each one back here;
   // anything else — or nothing — is the log-in panel.
   const wanted = params.get('auth') as AuthStep | null;
-  /* The profile and About you panels save to the signed-in account, so a
+  /* The profile panel saves to the signed-in account, so a
      signed-out visitor who lands on one (an old tab, a shared link) is asked
      to log in first rather than shown a form that cannot save. */
-  const needsAccount = (wanted === 'profile' || wanted === 'about') && status === 'signed-out';
+  const needsAccount = wanted === 'profile' && status === 'signed-out';
   const step: AuthStep = wanted && STEPS.includes(wanted) && !needsAccount ? wanted : 'login';
   const next = safeNext(params.get('next'));
 
@@ -131,7 +130,7 @@ export default function Login() {
   // comes after the profile is complete, so it is left alone too: without
   // this, a reload (or anything refreshing the account) on that step skipped
   // it and dropped the reader on the dashboard.
-  if (status === 'signed-in' && profileComplete && step !== 'inbox' && step !== 'about') {
+  if (status === 'signed-in' && profileComplete && step !== 'inbox' && step !== 'profile') {
     return <Navigate to={next} replace />;
   }
 
@@ -148,10 +147,10 @@ export default function Login() {
         <Range variant="login" className="auth-range" />
         {home}
         <div className="auth-pitch">
-          <h1>A to-do list that keeps score.</h1>
+          <h1>Train for the AMC. Qualify for the AIME.</h1>
           <p>
-            Every task you finish counts toward your streak, your level and your growth
-            score.
+            Step-by-step solutions, a review log that brings every miss back until it sticks,
+            and a plan to contest day.
           </p>
           <ul className="auth-points">
             {POINTS.map(([icon, text]) => (

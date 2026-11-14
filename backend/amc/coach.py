@@ -151,6 +151,8 @@ def brief(plan, details, tstats, projected, mocks, review_counts, answers, today
         'Study time: about {} hours a week over {} days a week.'.format(
             plan['hours'], details.get('days_per_week') or 'unspecified'),
     ]
+    if details.get('grade'):
+        lines.append('School grade: {}.'.format(details['grade']))
     if details.get('experience') in EXPERIENCE:
         lines.append(EXPERIENCE[details['experience']])
     if details.get('last_score') not in (None, ''):
