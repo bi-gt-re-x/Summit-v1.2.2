@@ -45,7 +45,8 @@ def _summary(_user, pid, hist, review_by_id):
         'category': topic['category'], 'difficulty': p['difficulty'], 'rating': p.get('rating'),
         'technique_name': catalog.technique_name(p['technique']),
         'preview': engine.plain(p['statement'])[:160],
-        'source': '{} #{}'.format(sources[0]['name'], sources[0]['number']) if sources else 'Drill',
+        'source': '{} #{}'.format(sources[0]['name'], sources[0]['number']) if sources else (
+            'AI practice' if p.get('ai') else 'Drill'),
         'short': catalog.short_label(pid),
         'contest_id': sources[0]['contest'] if sources else None,
         'number': sources[0]['number'] if sources else None,
@@ -181,9 +182,11 @@ def _mock_brief(row):
 # Problems
 # ---------------------------------------------------------------------------
 def _kind(pid):
-    """'summit' (a Summit Mock set), 'step' (the original Step bank) or 'official'."""
+    """'summit' (a Summit Mock set), 'step' (the original Step bank), 'official' or 'ai'."""
     if official.split_id(pid):
         return 'official'
+    if pid.startswith('ai-'):
+        return 'ai'
     found = catalog.sources(pid)
     if found and catalog.MOCK_BY_ID.get(found[0]['contest'], {}).get('family') == 'summit':
         return 'summit'
@@ -248,7 +251,7 @@ def list_problems(level: str = '', category: str = '', topic: str = '', difficul
         counts[engine.status_of(p['id'], hist, review_by_id)] += 1
         rating_counts[str(min(10, max(1, int(p['rating']))))] += 1
     everything = pb.all_problems()
-    kinds = {'summit': 0, 'step': 0, 'official': 0}
+    kinds = {'summit': 0, 'step': 0, 'official': 0, 'ai': 0}
     years = {}
     for p in everything:
         kind = _kind(p['id'])

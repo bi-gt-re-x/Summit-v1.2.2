@@ -55,6 +55,8 @@ export interface Problem {
   diagram?: string;
   /** The problem's page on the AoPS wiki (official problems only). */
   aops_url?: string | null;
+  /** Written by the AI and kept after an independent second solve agreed. */
+  ai?: boolean;
   answer?: string | number;
   /** Numbered steps; null for official problems. */
   solution?: string[] | null;
@@ -331,7 +333,7 @@ export interface ProblemList {
   counts: Record<Status, number>;
   /** Problems in each whole rating step, "1" to "10". */
   rating_counts: Record<string, number>;
-  kinds: Record<'summit' | 'step' | 'official', number>;
+  kinds: Record<'summit' | 'step' | 'official' | 'ai', number>;
   mocks: { id: string; name: string; level: Level; family: 'summit' | 'step'; set: number | null }[];
   years: { year: number; count: number }[];
   families: { id: string; name: string; techniques: { id: string; name: string }[] }[];
@@ -499,6 +501,91 @@ export interface PlanPayload {
   defaults: { dates: Record<Level, string>; goals: Record<Level, number> };
 }
 
+// ---------------------------------------------------------------------------
+// Smart insights and the AI layer (backend/amc/smart.py, backend/api/amc_ai.py)
+// ---------------------------------------------------------------------------
+export interface AIStatus {
+  available: boolean;
+  provider: string;
+  label: string;
+  used_today: number;
+  limit: number;
+  setup: string;
+}
+
+export interface ContestForecast {
+  expected: number;
+  low: number;
+  high: number;
+  target: number | null;
+  chance: number | null;
+  reach: number;
+  count: number;
+}
+
+export interface TopicAbility {
+  id: string;
+  name: string;
+  category: CategoryId;
+  weight: number;
+  answered: number;
+  right: number;
+  theta: number | null;
+  se: number | null;
+  relevant: boolean;
+  priority: number;
+}
+
+export interface PatternRow {
+  kind: 'careless' | 'slow' | 'rushed' | 'revealed';
+  count: number;
+  text: string;
+  problems: { id: string; short: string; topic: string; rating: number }[];
+}
+
+export interface SmartStats {
+  level: Level;
+  goal: number;
+  answered: number;
+  confident: boolean;
+  theta: number;
+  se: number;
+  band: string;
+  contests: Record<Level, ContestForecast>;
+  topics: TopicAbility[];
+  techniques: { id: string; name: string; answered: number; theta: number }[];
+  focus: TopicAbility[];
+  strong: TopicAbility[];
+  patterns: PatternRow[];
+  trend: { week_end: string; answered: number; theta: number | null }[];
+  mocks: null | { taken: number; scores: { contest: string; score: number; at: string }[]; blank_rate: number | null; by_fifth: (number | null)[] };
+  next_problems: { id: string; short: string; topic: string; topic_name: string; rating: number; chance: number }[];
+  review_due: number;
+}
+
+export interface Diagnosis {
+  headline: string;
+  diagnosis: string;
+  strengths: string[];
+  weaknesses: string[];
+  this_week: { action: string; why: string; minutes: number; topic: string; topic_name: string }[];
+  contest_strategy: string;
+}
+
+export interface InsightsPayload {
+  stats: SmartStats;
+  ai: AIStatus;
+  diagnosis: Diagnosis | null;
+  diagnosis_at: string | null;
+}
+
+export interface Explanation {
+  likely_mistake: string;
+  habit: string;
+  right_approach: string;
+  given: string;
+}
+
 export interface ImportBatch {
   url: string;
   label: string;
@@ -545,6 +632,15 @@ export interface SearchResults {
 export const amc = {
   dashboard: () => get<Dashboard>('/api/amc/dashboard'),
   analytics: () => get<Analytics>('/api/amc/analytics'),
+  insights: () => get<InsightsPayload>('/api/amc/insights'),
+  diagnose: (refresh = false) =>
+    post<{ diagnosis: Diagnosis; at: string; cached: boolean }>('/api/amc/insights/ai', { refresh }),
+  aiStatus: () => get<AIStatus>('/api/amc/ai/status'),
+  hint: (id: string, level: number) =>
+    post<{ hint: string; level: number }>(`/api/amc/ai/hint/${encodeURIComponent(id)}`, { level }),
+  explain: (id: string) => post<Explanation>(`/api/amc/ai/explain/${encodeURIComponent(id)}`, {}),
+  createProblem: (body: { like?: string; level?: string; topic?: string; technique?: string; rating?: number }) =>
+    post<{ id: string }>('/api/amc/ai/create', body),
   problems: (filters: ProblemFilters) => get<ProblemList>('/api/amc/problems', { ...filters }),
   problem: (id: string) => get<ProblemDetail>(`/api/amc/problems/${encodeURIComponent(id)}`),
   attempt: (id: string, answer: string, seconds: number, source: 'practice' | 'review' = 'practice') =>

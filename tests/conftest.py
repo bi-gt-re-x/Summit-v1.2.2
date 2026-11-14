@@ -112,7 +112,7 @@ def _no_model_keys(monkeypatch):
     removed is a different state again, and no test should inherit it from
     whatever happens to be in the developer's .env.
     """
-    for name in ('GROQ_API_KEY', 'ANTHROPIC_API_KEY', 'ANTHROPIC_WORKSPACE_ID',
+    for name in ('GROQ_API_KEY', 'XAI_API_KEY', 'GROK_API_KEY', 'ANTHROPIC_API_KEY', 'ANTHROPIC_WORKSPACE_ID',
                  'HF_TOKEN', 'HUGGINGFACE_API_KEY', 'MILESTONE_PROVIDER'):
         monkeypatch.delenv(name, raising=False)
 

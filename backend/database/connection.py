@@ -993,6 +993,39 @@ ADDED_TABLES = ('''
         imported_at  TEXT NOT NULL,
         PRIMARY KEY (contest_id, number)
     )
+''', '''
+    -- The AI cache and log, and AI-written problems. DDL from data/sql/amc.sql.
+    CREATE TABLE IF NOT EXISTS amc_ai (
+        id          TEXT PRIMARY KEY,
+        user_id     TEXT DEFAULT '',
+        kind        TEXT NOT NULL,
+        cache_key   TEXT NOT NULL,
+        payload     TEXT NOT NULL,
+        provider    TEXT DEFAULT '',
+        at          TEXT NOT NULL
+    )
+''', '''
+    CREATE INDEX IF NOT EXISTS amc_ai_key_idx ON amc_ai (kind, cache_key)
+''', '''
+    CREATE INDEX IF NOT EXISTS amc_ai_user_idx ON amc_ai (user_id, at)
+''', '''
+    CREATE TABLE IF NOT EXISTS amc_generated (
+        id          TEXT PRIMARY KEY,
+        created_by  TEXT DEFAULT '',
+        level       TEXT NOT NULL,
+        topic       TEXT NOT NULL,
+        technique   TEXT NOT NULL,
+        rating      REAL NOT NULL,
+        statement   TEXT NOT NULL,
+        choices     TEXT,
+        answer      TEXT NOT NULL,
+        solution    TEXT NOT NULL,
+        insight     TEXT DEFAULT '',
+        trap        TEXT DEFAULT '',
+        based_on    TEXT DEFAULT '',
+        provider    TEXT DEFAULT '',
+        created_at  TEXT NOT NULL
+    )
 ''')
 
 

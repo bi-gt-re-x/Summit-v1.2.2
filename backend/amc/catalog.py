@@ -690,6 +690,8 @@ def short_label(problem_id):
         paper = c['level'].replace('AMC ', '') + c['paper'] if c['level'] != 'AIME' else 'AIME ' + c['paper']
         year = str(c['year'])[2:] + (c['season'][:1] if c['season'] else '')
         return "'{} {}·{}".format(year, paper, int(tail))
+    if problem_id.startswith('ai-'):
+        return 'AI·' + problem_id[3:7]
     found = sources(problem_id)
     if found:
         mock = MOCK_BY_ID[found[0]['contest']]

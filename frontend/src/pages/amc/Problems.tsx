@@ -23,10 +23,11 @@ const STATUSES: { id: Status; label: string }[] = [
 const RATING_STEPS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
 const KEYS: (keyof ProblemFilters)[] = ['source', 'level', 'mock', 'year', 'number', 'category', 'topic', 'rating',
   'difficulty', 'status', 'technique', 'q', 'sort'];
-const SOURCES: { id: string; label: string; kind: 'summit' | 'step' | 'official' }[] = [
+const SOURCES: { id: string; label: string; kind: 'summit' | 'step' | 'official' | 'ai' }[] = [
   { id: 'summit', label: 'Summit Mock sets', kind: 'summit' },
   { id: 'step', label: 'Step problems', kind: 'step' },
   { id: 'official', label: 'Official papers', kind: 'official' },
+  { id: 'ai', label: 'AI practice', kind: 'ai' },
 ];
 
 /** One group of the chooser: a heading and a list of choices. */

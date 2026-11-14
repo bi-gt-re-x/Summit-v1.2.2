@@ -1247,3 +1247,27 @@ html[data-theme="dark"] .am-choose-num.is-on { background: var(--am-sage); borde
     .am-browse-side { position: static; max-height: none; }
     .am-browse-fold > summary { display: block; cursor: pointer; padding: var(--space-3); font-weight: 600; }
 }
+
+/* Insights */
+.am-forecasts { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-3); }
+.am-forecast { display: grid; gap: 4px; padding: var(--space-3); border: 1px solid var(--am-line); border-radius: var(--am-radius); font-size: var(--text-sm); }
+.am-forecast.is-target { border-color: var(--am-sage); background: var(--am-sage-soft); }
+.am-forecast-score { font-family: var(--am-serif); font-weight: 400; font-size: var(--text-3xl); line-height: 1.1; }
+.am-forecast-score small { font-size: var(--text-md); color: var(--am-muted); }
+.am-ability { display: flex; justify-content: space-between; gap: var(--space-3); padding: 6px 0; border-bottom: 1px solid var(--am-line); font-size: var(--text-sm); flex-wrap: wrap; }
+.am-ability:last-child { border-bottom: 0; }
+.am-pattern { padding: var(--space-2) 0; border-bottom: 1px solid var(--am-line); font-size: var(--text-sm); }
+.am-pattern:last-child { border-bottom: 0; }
+.am-next li { font-size: var(--text-sm); }
+.am-coach-headline { font-family: var(--am-serif); font-size: var(--text-xl); margin: 0 0 var(--space-2); line-height: 1.3; }
+.am-coach-body p { line-height: 1.55; }
+.am-coach-week { padding-left: 1.2em; display: grid; gap: var(--space-2); margin: 0 0 var(--space-3); }
+.am-h3 { font-size: var(--text-sm); font-weight: 700; margin: var(--space-3) 0 var(--space-2); }
+
+/* AI help on a problem */
+.am-aihelp { margin-top: var(--space-4); }
+.am-aihelp-bar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.am-hints { margin: 0 0 var(--space-3); padding-left: 0; list-style: none; display: grid; gap: var(--space-2); font-size: var(--text-sm); line-height: 1.55; }
+.am-hints li { padding: var(--space-2) var(--space-3); border-left: 3px solid var(--am-sage); background: var(--am-sage-soft); border-radius: 0 8px 8px 0; }
+.am-explained { margin-bottom: var(--space-3); }
+.am-explained p { margin: var(--space-1) 0; }

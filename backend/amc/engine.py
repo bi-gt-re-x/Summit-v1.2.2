@@ -103,6 +103,7 @@ def public(problem, reveal=False):
         'official': bool(problem.get('official')),
         'diagram': problem.get('diagram') or '',
         'aops_url': problem.get('aops_url'),
+        'ai': bool(problem.get('ai')),
     }
     if reveal:
         out.update(answer=problem['answer'], solution=problem['solution'],

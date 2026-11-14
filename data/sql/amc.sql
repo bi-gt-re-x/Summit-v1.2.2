@@ -98,3 +98,42 @@ CREATE TABLE IF NOT EXISTS amc_official (
     imported_at  TEXT NOT NULL,
     PRIMARY KEY (contest_id, number)
 );
+
+-- What the AI layer (backend/amc/ai.py) has answered: a cache, so the same hint
+-- or the same day's analysis is asked for once, and a log the daily limit is
+-- counted from. `user_id` is '' for answers shared by every account (a hint
+-- for a problem). `payload` is the JSON the model returned, after checking.
+CREATE TABLE IF NOT EXISTS amc_ai (
+    id          TEXT PRIMARY KEY,
+    user_id     TEXT DEFAULT '',
+    kind        TEXT NOT NULL,
+    cache_key   TEXT NOT NULL,
+    payload     TEXT NOT NULL,
+    provider    TEXT DEFAULT '',
+    at          TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS amc_ai_key_idx ON amc_ai (kind, cache_key);
+CREATE INDEX IF NOT EXISTS amc_ai_user_idx ON amc_ai (user_id, at);
+
+-- Problems the AI wrote on request ("more like this", a practice set). Shared
+-- by every account, like amc_official. A problem is only stored after a second,
+-- independent solve agreed with its answer (backend/amc/create.py). `choices`
+-- and `solution` are JSON.
+CREATE TABLE IF NOT EXISTS amc_generated (
+    id          TEXT PRIMARY KEY,
+    created_by  TEXT DEFAULT '',
+    level       TEXT NOT NULL,
+    topic       TEXT NOT NULL,
+    technique   TEXT NOT NULL,
+    rating      REAL NOT NULL,
+    statement   TEXT NOT NULL,
+    choices     TEXT,
+    answer      TEXT NOT NULL,
+    solution    TEXT NOT NULL,
+    insight     TEXT DEFAULT '',
+    trap        TEXT DEFAULT '',
+    based_on    TEXT DEFAULT '',
+    provider    TEXT DEFAULT '',
+    created_at  TEXT NOT NULL
+);

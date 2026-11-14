@@ -8,6 +8,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ErrorState, Loading } from '@/components';
+import { AIHelp } from '@/components/Amc/AIHelp';
 import { MathText } from '@/components/Amc/MathText';
 import {
   AnswerInput,
@@ -148,11 +149,12 @@ export default function Problem() {
         <div className="am-stack">
           <article className="am-card" style={{ padding: 28 }}>
             <div className="am-problem-meta">
-              <span className="am-tag">{source ? `${source.name} #${source.number}` : `${p.level} drill`}</span>
+              <span className="am-tag">{source ? `${source.name} #${source.number}` : p.ai ? p.level : `${p.level} drill`}</span>
               <Link className="am-tag" to={`/topics/${p.topic}`}>{p.topic_name}</Link>
               {p.also.map((t) => <Link key={t.id} className="am-tag" to={`/topics/${t.id}`}>{t.name}</Link>)}
               <span className="am-tag"><Difficulty value={p.difficulty} rating={p.rating} /></span>
               {p.official && <span className="am-tag">Official</span>}
+              {p.ai && <span className="am-tag" title="Written by the AI; kept because an independent second solve agreed">AI practice</span>}
               <StatusPill status={data.status} />
             </div>
 
@@ -215,6 +217,9 @@ export default function Problem() {
                 </span>
               </div>
             )}
+
+            <AIHelp problemId={problemId} answered={Boolean(result || revealed || seenBefore)}
+                    wrong={Boolean((result && !result.correct) || (seenBefore && last && !last.correct))} />
 
             {(result || revealed || seenBefore) && (
               p.official ? (

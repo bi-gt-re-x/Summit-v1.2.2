@@ -1,5 +1,9 @@
 /**
- * Analytics, under Prep: three views of one question, how do I get my score?
+ * Analytics, under Prep: four views of one question, how do I get my score?
+ *
+ *   Insights     a model of you (components/Amc/Insights.tsx): your level on the
+ *                1-10 scale, predicted scores, patterns, what to do next, and
+ *                the AI coach.
  *
  *   Performance  how you are doing: accuracy by 1-10 rating and category, the
  *                weekly trend, mock scores, topics, and what happens to misses.
@@ -17,6 +21,7 @@ import { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ErrorState, Loading } from '@/components';
 import { Bars, Columns, Legend } from '@/components/Amc/Charts';
+import { Insights } from '@/components/Amc/Insights';
 import { CategoryDot, clock, Empty, Meter, PageHeader } from '@/components/Amc/bits';
 import { useApi, useDocumentTitle } from '@/hooks';
 import {
@@ -31,6 +36,7 @@ import {
 import '@/styles/amc.css';
 
 const VIEWS = [
+  { id: 'insights', label: 'Insights' },
   { id: 'performance', label: 'Performance' },
   { id: 'contests', label: 'The contest' },
   { id: 'prepare', label: 'Plan' },
@@ -392,7 +398,7 @@ function Prepare({ data }: { data: AnalyticsData }) {
 export default function Analytics() {
   useDocumentTitle('Analytics');
   const [params, setParams] = useSearchParams();
-  const view: View = (VIEWS.find((v) => v.id === params.get('view'))?.id) ?? 'performance';
+  const view: View = (VIEWS.find((v) => v.id === params.get('view'))?.id) ?? 'insights';
   const { data, error, loading, reload } = useApi(() => amc.analytics(), []);
 
   return (
@@ -404,12 +410,14 @@ export default function Analytics() {
         {VIEWS.map((v) => (
           <button key={v.id} type="button" role="tab" aria-selected={view === v.id}
                   className={`am-tab${view === v.id ? ' is-on' : ''}`}
-                  onClick={() => setParams(v.id === 'performance' ? {} : { view: v.id }, { replace: true })}>
+                  onClick={() => setParams(v.id === 'insights' ? {} : { view: v.id }, { replace: true })}>
             {v.label}
           </button>
         ))}
       </div>
-      {loading && !data ? (
+      {view === 'insights' ? (
+        <Insights />
+      ) : loading && !data ? (
         <Loading label="Reading your answers" />
       ) : error || !data ? (
         <ErrorState message={error ?? 'Could not load analytics.'} onRetry={reload} />

@@ -229,5 +229,5 @@ def test_problem_filters_by_mock_number_and_kind(client, today):
     # #7 of each AMC 10 and AIME set and of each AMC 12 set (none of the shared ones sit at #7).
     assert len(sevens['problems']) == 15
     body = client.get('/api/amc/problems').json()
-    assert body['kinds'] == {'summit': 285, 'step': 65, 'official': 0}
+    assert body['kinds'] == {'summit': 285, 'step': 65, 'official': 0, 'ai': 0}
     assert len(body['mocks']) == 18 and body['families'][0]['techniques']

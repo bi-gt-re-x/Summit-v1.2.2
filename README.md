@@ -29,11 +29,23 @@ server can't fetch them) and live only in the install's database. `tests/test_am
 answer that can be brute-forced, and `tests/test_amc_sets.py` recomputes every
 Summit Mock answer.
 
-The AI coach (`backend/amc/coach.py`) uses whichever model key is in `.env`:
-`GROQ_API_KEY` (free, console.groq.com; model `GROQ_MODEL`, default
-`openai/gpt-oss-120b`), or xAI's Grok with `XAI_API_KEY` and
-`MILESTONE_PROVIDER=grok` (model `GROK_MODEL`). Without a key the plan still
-works; the coach card says what to add.
+Analytics opens on **Insights** (`backend/amc/smart.py`), which needs no key:
+your level on the problems' own 1-10 scale (fitted from first tries, harder
+problems counting for more), predicted scores for all three contests with an
+80% range and your chance of reaching the goal or cutoff, how far into a paper
+you are usually right, topic and technique strengths, careless misses, time
+sinks and rushed answers, a weekly trend, and the exact problems to do next.
+
+The AI layer (`backend/amc/ai.py`, endpoints in `backend/api/amc_ai.py`) uses
+**Grok** whenever `XAI_API_KEY` is set (model `GROK_MODEL`, default
+`grok-4-fast`), and otherwise Groq with `GROQ_API_KEY` (model `GROQ_MODEL`). It
+powers the AI coach on Insights and the study plan, hints (three levels, never
+the answer), "Explain my mistake" after a wrong answer, and new problems:
+"More like this" or "Write me a new problem for my weakest topic"
+(`backend/amc/create.py`) has the model write a problem, then solve it again
+blind, and keeps it only if both answers agree. Answers are cached (table
+`amc_ai`) and each account gets `AI_DAILY_LIMIT` model calls a day (default
+80). Without a key every page still works, with the numbers.
 
 For a local account with some history on it:
 
