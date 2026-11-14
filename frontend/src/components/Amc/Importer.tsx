@@ -41,7 +41,9 @@ export function Importer({ contest, onSaved }: { contest: PastContest; onSaved: 
     }
   }
 
-  const ready = preview && preview.issues.length === 0;
+  // Saveable once every problem and answer is there. Choices that could not be
+  // split are a warning, not a blocker: the server stores the problem anyway.
+  const ready = !!preview && (preview.complete ?? preview.issues.length === 0);
 
   return (
     <section className="am-card am-importer">
@@ -88,7 +90,8 @@ export function Importer({ contest, onSaved }: { contest: PastContest; onSaved: 
       {message && <p className="am-error">{message}</p>}
       {preview && (
         <div className="am-import-preview">
-          <p className={preview.issues.length ? 'am-error' : 'am-muted'} style={{ fontSize: 13 }}>
+          <p className={ready ? 'am-muted' : 'am-error'} style={{ fontSize: 13 }}>
+            {preview.saved && 'Saved. '}
             {preview.issues.length
               ? preview.issues.join(' ')
               : `Found all ${preview.count} problems and answers${preview.diagrams ? `; ${preview.diagrams} have diagrams that can't be drawn here` : ''}.`}

@@ -3,7 +3,15 @@
 The fixtures are made-up problems laid out the way the AoPS wiki source and a
 PDF's text are laid out — the parsing is what is under test, not the content.
 """
+import pytest
+
 from backend.amc import official
+
+
+@pytest.fixture(autouse=True)
+def _tester_imports(monkeypatch):
+    """The tests import as `tester`; the real install allows only `temu`."""
+    monkeypatch.setenv('AMC_IMPORTERS', 'temu,tester')
 
 WIKI = r"""{{AMC10 Problems|year=2023|ab=A}}
 ==Problem 1==
@@ -197,3 +205,41 @@ def test_problem_list_runs_in_contest_order(client):
     hard = client.get('/api/amc/problems', params={'rating': '4'}).json()
     assert hard['problems'] and all(4 <= r['rating'] < 5 for r in hard['problems'])
     assert sum(hard['rating_counts'].values()) == hard['total']
+
+
+def test_only_temu_can_import(app, client, monkeypatch):
+    """Imports are shared by every account, so only the importer account
+    (temu, or AMC_IMPORTERS) may add or remove them."""
+    from tests.conftest import make_account, sign_in
+    body, key = _full_contest()
+    monkeypatch.delenv('AMC_IMPORTERS', raising=False)
+    refused = client.post('/api/amc/contests/2023-amc-10a/import', json={'problems': body, 'key': key, 'save': True})
+    assert refused.status_code == 403 and 'temu' in refused.json()['message']
+    assert client.post('/api/amc/official/import', json={'text': 'x', 'save': True}).status_code == 403
+    assert client.get('/api/amc/official/batches').status_code == 403
+    assert client.delete('/api/amc/contests/2023-amc-10a/import').status_code == 403
+    assert client.get('/api/amc/contests').json()['can_import'] is False
+    assert client.get('/api/amc/contests/2023-amc-10a').json()['contest']['imported'] is False
+
+    make_account('Temu')
+    temu = sign_in(app, 'Temu')
+    assert temu.get('/api/amc/contests').json()['can_import'] is True
+    saved = temu.post('/api/amc/contests/2023-amc-10a/import', json={'problems': body, 'key': key, 'save': True}).json()
+    assert saved['success'] and saved['saved'] and saved['complete']
+    # Everyone can then practise it, but still not remove it.
+    assert client.get('/api/amc/contests/2023-amc-10a').json()['contest']['imported'] is True
+    assert client.delete('/api/amc/contests/2023-amc-10a/import').status_code == 403
+
+
+def test_missing_choices_do_not_block_saving(app, monkeypatch):
+    from tests.conftest import make_account, sign_in
+    monkeypatch.setenv('AMC_IMPORTERS', 'boss')
+    make_account('boss')
+    boss = sign_in(app, 'boss')
+    body, key = _full_contest()
+    body = body.replace('==Problem 7==\nWhat is 7+0?\n\n<math>', '==Problem 7==\nWhat is 7+0?\n\n<math>\\text{no choices here}')
+    body = body.replace('\\textbf{(A) }7\\qquad', 'seven ', 1)
+    reply = boss.post('/api/amc/contests/2023-amc-10a/import', json={'problems': body, 'key': key}).json()
+    assert reply['complete'] and any('no answer choices' in i for i in reply['issues'])
+    assert boss.post('/api/amc/contests/2023-amc-10a/import',
+                     json={'problems': body, 'key': key, 'save': True}).json()['saved']

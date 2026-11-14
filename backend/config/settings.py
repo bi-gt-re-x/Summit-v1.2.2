@@ -81,6 +81,16 @@ def database_url():
     url = os.environ.get('DATABASE_URL', '').strip()
     return url if url.startswith(('postgres://', 'postgresql://')) else ''
 
+def amc_importers():
+    """The accounts allowed to bring official contests into the site (and
+    remove them), lower-cased. Imported papers are shared by every account on
+    the install, so this is an admin job: `temu` by default, or a comma
+    separated list in AMC_IMPORTERS. Read on each call so tests can change it.
+    """
+    raw = os.environ.get('AMC_IMPORTERS', '').strip() or 'temu'
+    return {name.strip().lower() for name in raw.split(',') if name.strip()}
+
+
 # The order data/sql/*.sql is executed in when building the database. It is
 # spelled out rather than sorted because a table has to exist before another
 # one can reference it: users first, then everything that hangs off a user.

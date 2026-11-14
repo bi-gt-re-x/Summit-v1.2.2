@@ -114,11 +114,22 @@ export default function Contest() {
         {back}
         <PageHeader kicker={`${c.year} · ${c.level}`} title={c.name}>
           <p>
-            {c.count} problems in {c.minutes} minutes. Import it once to practise it here.
+            {c.count} problems in {c.minutes} minutes.{data.can_import ? ' Import it once to practise it here.' : ''}
           </p>
         </PageHeader>
         <div className="am-grid am-grid-main">
-          <Importer contest={{ ...c, imported: 0 }} onSaved={reload} />
+          {data.can_import ? (
+            <Importer contest={{ ...c, imported: 0 }} onSaved={reload} />
+          ) : (
+            <section className="am-card">
+              <div className="am-card-head"><h2>Not in Summit yet</h2></div>
+              <p className="am-muted" style={{ margin: 0 }}>
+                This paper hasn't been brought in yet. Read it on the{' '}
+                <a className="am-link" href={c.problems_url} target="_blank" rel="noreferrer">AoPS wiki ↗</a>
+                {' '}and log your score here.
+              </p>
+            </section>
+          )}
           <aside className="am-stack">
             {logCard}
             <section className="am-card">
@@ -220,7 +231,9 @@ export default function Contest() {
           {official && (
             <p className="am-muted" style={{ fontSize: 12, margin: '12px 0 0' }}>
               Topics are guessed from the wording. Problems © MAA.{' '}
-              <button type="button" className="am-link am-link-button" onClick={() => void unimport()}>Remove import</button>
+              {data.can_import && (
+                <button type="button" className="am-link am-link-button" onClick={() => void unimport()}>Remove import</button>
+              )}
             </p>
           )}
         </section>

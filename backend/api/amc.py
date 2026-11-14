@@ -16,6 +16,7 @@ from backend.amc import official
 from backend.amc import problems as pb
 from backend.api.guard import current_username
 from backend.api.reply import fail, ok
+from backend.config.settings import amc_importers
 from backend.tracking import planner
 
 router = APIRouter(tags=['amc'])
@@ -446,6 +447,15 @@ def topic(topic_id: str, username: str = Depends(current_username)):
 # ---------------------------------------------------------------------------
 # Contests
 # ---------------------------------------------------------------------------
+def can_import(username):
+    """Only the importer accounts (`temu`) may add or remove official papers:
+    they are stored once and shared by every account on this install."""
+    return (username or '').strip().lower() in amc_importers()
+
+
+NOT_IMPORTER = 'Only the temu account can bring contests into Summit.'
+
+
 def _gradable(contest_id):
     """A contest the site can time and grade: a Step Mock, or an official paper
     whose every problem and answer has been imported. None otherwise."""
@@ -481,6 +491,7 @@ def contests(username: str = Depends(current_username)):
               years=[{'year': y, 'contests': rows} for y, rows in sorted(years.items(), reverse=True)],
               history=[_mock_brief(m) for m in mocks][:20],
               formats=catalog.FORMATS,
+              can_import=can_import(username),
               imported=sum(1 for cid, n in imported.items()
                            if n == catalog.PAST_BY_ID[cid]['count']))
 
@@ -493,7 +504,7 @@ def contest(contest_id: str, username: str = Depends(current_username)):
     mine = [_mock_brief(m) for m in store.mocks(username) if m['contest_id'] == contest_id]
     gradable = _gradable(contest_id)
     if c['kind'] == 'past' and not gradable:
-        return ok(contest={**c, 'imported': False}, problems=[], history=mine)
+        return ok(contest={**c, 'imported': False}, problems=[], history=mine, can_import=can_import(username))
     _, _, hist, review_by_id = _context(username)
     problems = []
     for number, pid in enumerate(gradable['problems'], start=1):
@@ -502,7 +513,7 @@ def contest(contest_id: str, username: str = Depends(current_username)):
     info = {k: v for k, v in c.items() if k != 'problems'}
     if c['kind'] == 'past':
         info['imported'] = True
-    return ok(contest=info, problems=problems, history=mine)
+    return ok(contest=info, problems=problems, history=mine, can_import=can_import(username))
 
 
 class ImportBody(BaseModel):
@@ -518,6 +529,8 @@ def import_contest(contest_id: str, body: ImportBody, username: str = Depends(cu
     Without `save` this is a preview: what was found, and what is missing, so
     the page can show the reader the result before anything is written.
     """
+    if not can_import(username):
+        return fail(NOT_IMPORTER, status=403)
     c = catalog.PAST_BY_ID.get(contest_id)
     if not c:
         return fail('No such contest.')
@@ -533,7 +546,7 @@ def import_contest(contest_id: str, body: ImportBody, username: str = Depends(cu
         if not complete:
             return fail(' '.join(issues) or 'Nothing to import.', issues=issues, preview=preview)
         official.save_contest(contest_id, parsed, key, username)
-    return ok(preview=preview, issues=issues, saved=bool(body.save), count=count,
+    return ok(preview=preview, issues=issues, saved=bool(body.save), count=count, complete=complete,
               diagrams=sum(1 for p in parsed if p['diagram']))
 
 
@@ -541,6 +554,8 @@ def import_contest(contest_id: str, body: ImportBody, username: str = Depends(cu
 def import_batches(username: str = Depends(current_username)):
     """Links that fetch the wiki source of every paper not yet imported, a
     batch of contests to a link, newest first."""
+    if not can_import(username):
+        return fail(NOT_IMPORTER, status=403)
     imported = official.imported_contests()
     missing = [c['id'] for c in catalog.PAST if imported.get(c['id'], 0) < c['count']]
     return ok(batches=official.batch_urls(missing), missing=len(missing), total=len(catalog.PAST))
@@ -554,6 +569,8 @@ class BundleBody(BaseModel):
 @router.post('/api/amc/official/import')
 def import_bundle(body: BundleBody, username: str = Depends(current_username)):
     """Check (and with `save`, store) every contest in pasted AoPS API pages."""
+    if not can_import(username):
+        return fail(NOT_IMPORTER, status=403)
     if len(body.text) > 40_000_000:
         return fail('That is more than this importer takes at once. Paste fewer batches.')
     rows = official.import_bundle(body.text, body.save, username)
@@ -564,6 +581,8 @@ def import_bundle(body: BundleBody, username: str = Depends(current_username)):
 
 @router.delete('/api/amc/contests/{contest_id}/import')
 def remove_import(contest_id: str, username: str = Depends(current_username)):
+    if not can_import(username):
+        return fail(NOT_IMPORTER, status=403)
     if contest_id not in catalog.PAST_BY_ID:
         return fail('No such contest.')
     official.remove(contest_id)

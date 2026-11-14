@@ -35,8 +35,8 @@ export default function Contests() {
     <div className="amc-page">
       <PageHeader title="Past Contests">
         <p>
-          Timed mocks and all {total} official papers since 2000. Import a paper once to practise it here
-          ({data.imported} so far, marked ●).
+          Timed mocks and all {total} official papers since 2000. Papers marked ● are in Summit
+          ({data.imported} so far) and can be practised and timed here.
         </p>
       </PageHeader>
 
@@ -88,7 +88,7 @@ export default function Contests() {
         </section>
 
         <aside className="am-stack">
-          <BulkImporter onSaved={reload} />
+          {data.can_import && <BulkImporter onSaved={reload} />}
           <section className="am-card">
             <div className="am-card-head"><h2>Your scores</h2></div>
             {data.history.length ? (

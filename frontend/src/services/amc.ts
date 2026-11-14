@@ -393,12 +393,16 @@ export interface ContestList {
   history: MockBrief[];
   formats: Record<Level, Format>;
   imported: number;
+  /** Whether this account may import papers (only `temu`). */
+  can_import: boolean;
 }
 
 export interface ContestDetail {
   contest: (MockContest & { kind: 'mock' }) | (Omit<PastContest, 'imported'> & { kind: 'past'; imported: boolean });
   problems: (Problem & { number: number; status: Status })[];
   history: MockBrief[];
+  /** Whether this account may import or remove the paper (only `temu`). */
+  can_import: boolean;
 }
 
 export interface MockRow {
@@ -512,6 +516,8 @@ export interface ImportPreview {
   saved: boolean;
   count: number;
   diagrams: number;
+  /** Every problem and answer found: it can be saved (missing choices are only a warning). */
+  complete?: boolean;
 }
 
 export interface SearchResults {
