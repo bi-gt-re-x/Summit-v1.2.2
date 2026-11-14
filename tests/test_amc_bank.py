@@ -196,5 +196,21 @@ def test_every_solution_is_steps_ending_on_the_answer():
 
 def test_official_positions_follow_the_aops_bands():
     from backend.amc import official
-    assert [official.rating_at('AMC 10', n) for n in (1, 6, 11, 16, 21, 25)] == [1, 1.5, 2, 2.5, 3, 3.5]
-    assert [official.rating_at('AIME', n) for n in (1, 4, 7, 11, 14)] == [2.5, 3.5, 4, 5, 6]
+    assert [official.rating_at('AMC 10', n) for n in (1, 6, 11, 16, 21, 25)] == [1, 1.5, 2, 2.5, 3, 4]
+    assert [official.rating_at('AMC 12', n) for n in (1, 10, 20, 25)] == [1, 2, 3.5, 4.5]
+    assert [official.rating_at('AIME', n) for n in (1, 4, 7, 11, 15)] == [2.5, 3.5, 4, 5, 6.5]
+    for level, table in official.RATING_BY_NUMBER.items():
+        assert len(table) == {'AIME': 15}.get(level, 25)
+        assert table == sorted(table), level            # never easier further in
+        assert all(1 <= r <= 10 and r * 2 == int(r * 2) for r in table)
+
+
+def test_every_rating_is_on_the_one_to_ten_scale():
+    for p in PROBLEMS:
+        assert 1 <= p['rating'] <= 10 and p['rating'] * 2 == int(p['rating'] * 2), p['id']
+
+
+def test_mocks_run_in_rating_order():
+    for mock in catalog.MOCKS:
+        ratings = [BY_ID[pid]['rating'] for pid in mock['problems']]
+        assert ratings == sorted(ratings), mock['id']

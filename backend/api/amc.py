@@ -63,9 +63,24 @@ def _pill(pid, hist, review_by_id):
                                       engine.plain(p['statement'])[:90])}
 
 
+def _source_rank(pid):
+    """Where a problem sits in contest order: the Step Mocks first, by mock and
+    problem number, then the official papers newest first, by number."""
+    found = catalog.sources(pid)
+    if not found:
+        return (2, 0, 0)
+    src = found[0]
+    if src['contest'] in catalog.MOCK_BY_ID:
+        return (0, [m['id'] for m in catalog.MOCKS].index(src['contest']), src['number'])
+    return (1, _PAST_ORDER.get(src['contest'], 10 ** 6), src['number'])
+
+
+_PAST_ORDER = {c['id']: i for i, c in enumerate(catalog.PAST)}
+
+
 def _pill_order(p):
-    """Easiest first, then bank before official, then by label."""
-    return (p['difficulty'], p['short'].startswith("'"), p['short'])
+    """Easiest first, then in contest order (S10·2 before S10·10)."""
+    return (p['rating'] if p.get('rating') is not None else p['difficulty'], _source_rank(p['id']))
 
 
 def _review_view(row, hist, review_by_id, today):
@@ -165,9 +180,11 @@ def _mock_brief(row):
 @router.get('/api/amc/problems')
 def list_problems(level: str = '', category: str = '', topic: str = '', difficulty: str = '',
                   status: str = '', technique: str = '', q: str = '', sort: str = 'source',
-                  source: str = '', username: str = Depends(current_username)):
+                  source: str = '', rating: str = '', username: str = Depends(current_username)):
     _, _, hist, review_by_id = _context(username)
     wanted_diff = {int(d) for d in difficulty.split(',') if d.strip().isdigit()}
+    # Ratings by whole step: "3" is everything rated 3 or 3.5.
+    wanted_rating = {int(r) for r in rating.split(',') if r.strip().isdigit()}
     toks = engine._tokens(q)
     rows = []
     for p in pb.all_problems():
@@ -184,6 +201,8 @@ def list_problems(level: str = '', category: str = '', topic: str = '', difficul
             continue
         if wanted_diff and p['difficulty'] not in wanted_diff:
             continue
+        if wanted_rating and int(p['rating']) not in wanted_rating:
+            continue
         if technique and p['technique'] != technique:
             continue
         summary = _summary(username, p['id'], hist, review_by_id)
@@ -194,17 +213,24 @@ def list_problems(level: str = '', category: str = '', topic: str = '', difficul
             continue
         rows.append(summary)
     if sort == 'difficulty':
-        rows.sort(key=lambda r: (r['difficulty'], r['id']))
+        rows.sort(key=lambda r: (r['rating'], _source_rank(r['id'])))
+    elif sort == 'hardest':
+        rows.sort(key=lambda r: (-r['rating'], _source_rank(r['id'])))
     elif sort == 'topic':
-        rows.sort(key=lambda r: (r['topic_name'], r['difficulty']))
+        rows.sort(key=lambda r: (r['topic_name'], r['rating'], _source_rank(r['id'])))
+    else:
+        rows.sort(key=lambda r: _source_rank(r['id']))
     counts = {s: 0 for s in ('new', 'solved', 'missed', 'review')}
+    rating_counts = {str(n): 0 for n in range(1, 11)}
     for p in pb.all_problems():
         counts[engine.status_of(p['id'], hist, review_by_id)] += 1
-    return ok(problems=rows, total=len(pb.all_problems()), counts=counts,
+        rating_counts[str(min(10, max(1, int(p['rating']))))] += 1
+    return ok(problems=rows, total=len(pb.all_problems()), counts=counts, rating_counts=rating_counts,
               official=sum(1 for p in pb.all_problems() if p.get('official')),
               topics=[{'id': t['id'], 'name': t['name'], 'category': t['category']} for t in catalog.TOPICS],
               categories=catalog.CATEGORIES,
-              techniques=[{'id': t, 'name': catalog.technique_name(t)} for t in catalog.TECHNIQUES])
+              techniques=[{'id': t, 'name': catalog.technique_name(t)}
+                          for f in catalog.STRATEGY_FAMILIES for t, _ in f['techniques']])
 
 
 @router.get('/api/amc/problems/{problem_id}')
@@ -223,7 +249,7 @@ def get_problem(problem_id: str, username: str = Depends(current_username)):
     if p.get('official'):
         family = [q for q in pb.all_problems() if q.get('contest') == p['contest']]
     else:
-        family = [q for q in pb.all_problems() if not q.get('official')]
+        family = sorted((q for q in pb.all_problems() if not q.get('official')), key=lambda q: _source_rank(q['id']))
     order = [q['id'] for q in family]
     i = order.index(problem_id)
     return ok(problem=engine.public(p, reveal=revealed),
@@ -392,7 +418,7 @@ def topic(topic_id: str, username: str = Depends(current_username)):
     tstats = engine.topic_stats(hist, review_by_id)
     problems = [_summary(username, p['id'], hist, review_by_id) for p in pb.all_problems()
                 if p['topic'] == topic_id or topic_id in p['also']]
-    problems.sort(key=lambda r: (r['difficulty'], r['id']))
+    problems.sort(key=lambda r: (r['rating'], _source_rank(r['id'])))
     siblings = [{'id': s['id'], 'name': s['name']} for s in catalog.TOPICS
                 if s['category'] == t['category'] and s['id'] != topic_id]
     techniques = {}
@@ -497,28 +523,43 @@ def import_contest(contest_id: str, body: ImportBody, username: str = Depends(cu
         return fail('No such contest.')
     if len(body.problems) > 400_000 or len(body.key) > 20_000:
         return fail('That is far longer than one contest.')
-    level, count = c['level'], c['count']
-    parsed = official.parse_contest(body.problems, level)
-    key = official.parse_key(body.key, level)
-    numbers = {p['number'] for p in parsed}
-    problems_missing = [n for n in range(1, count + 1) if n not in numbers]
-    no_choices = [p['number'] for p in parsed if level != 'AIME' and not p['choices']]
-    empty = [p['number'] for p in parsed if not p['statement']]
+    count = c['count']
+    parsed, key, issues, complete = official.check(contest_id, body.problems, body.key)
     key_ok = len(key) == count
     preview = [{'number': p['number'], 'statement': p['statement'], 'choices': p['choices'],
                 'diagram': bool(p['diagram']), 'topic': official.guess_topic(p['statement']),
                 'answer': key[p['number'] - 1] if key_ok else None} for p in parsed]
-    problems_text = ['Problems {} were not found.'.format(', '.join(map(str, problems_missing)))] if problems_missing else []
-    issues = problems_text + (
-        ['Problems {} have no answer choices.'.format(', '.join(map(str, no_choices)))] if no_choices else []) + (
-        ['Problems {} have no text.'.format(', '.join(map(str, empty)))] if empty else []) + (
-        [] if key_ok else ['The answer key has {} of {} answers.'.format(len(key), count)])
     if body.save:
-        if problems_missing or empty or not key_ok:
+        if not complete:
             return fail(' '.join(issues) or 'Nothing to import.', issues=issues, preview=preview)
-        official.save(contest_id, [p for p in parsed if 1 <= p['number'] <= count], key, username)
+        official.save_contest(contest_id, parsed, key, username)
     return ok(preview=preview, issues=issues, saved=bool(body.save), count=count,
               diagrams=sum(1 for p in parsed if p['diagram']))
+
+
+@router.get('/api/amc/official/batches')
+def import_batches(username: str = Depends(current_username)):
+    """Links that fetch the wiki source of every paper not yet imported, a
+    batch of contests to a link, newest first."""
+    imported = official.imported_contests()
+    missing = [c['id'] for c in catalog.PAST if imported.get(c['id'], 0) < c['count']]
+    return ok(batches=official.batch_urls(missing), missing=len(missing), total=len(catalog.PAST))
+
+
+class BundleBody(BaseModel):
+    text: str = ''
+    save: bool = False
+
+
+@router.post('/api/amc/official/import')
+def import_bundle(body: BundleBody, username: str = Depends(current_username)):
+    """Check (and with `save`, store) every contest in pasted AoPS API pages."""
+    if len(body.text) > 40_000_000:
+        return fail('That is more than this importer takes at once. Paste fewer batches.')
+    rows = official.import_bundle(body.text, body.save, username)
+    if not rows:
+        return fail('No contest pages were found in that. Paste the whole page the batch link opens.')
+    return ok(contests=rows, saved=sum(1 for r in rows if r['saved']))
 
 
 @router.delete('/api/amc/contests/{contest_id}/import')

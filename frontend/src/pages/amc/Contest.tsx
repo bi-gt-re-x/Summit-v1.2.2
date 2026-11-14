@@ -1,12 +1,14 @@
 /**
  * One contest. A Step Mock shows its format, your past sittings, and the
- * button that starts the clock. An official paper links to its problems and
- * answer key and takes the score you got.
+ * button that starts the clock. An imported official paper is shown whole, in
+ * problem order like its AoPS wiki page, each problem with its choices, topic,
+ * 1-10 rating and links to answer it here or read the AoPS solutions.
  */
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ErrorState, Loading } from '@/components';
-import { CategoryDot, Difficulty, PageHeader, StatusPill } from '@/components/Amc/bits';
+import { CategoryDot, DiagramNote, Difficulty, PageHeader, StatusPill } from '@/components/Amc/bits';
+import { MathText } from '@/components/Amc/MathText';
 import { Importer } from '@/components/Amc/Importer';
 import { useApi, useDocumentTitle } from '@/hooks';
 import { amc, announceAmcChanged, shortDate, type MockBrief } from '@/services/amc';
@@ -158,38 +160,57 @@ export default function Contest() {
           <div className="am-card-head">
             <h2>{official ? 'Problems' : "What's on it"}</h2>
             <span className="am-muted" style={{ fontSize: 13 }}>
-              {official ? 'Untimed practice' : 'Hidden until you start'}
+              {official ? (
+                <>
+                  <a className="am-link" href={c.problems_url} target="_blank" rel="noreferrer">AoPS page ↗</a>
+                  {' · '}
+                  <a className="am-link" href={c.answers_url} target="_blank" rel="noreferrer">Answer key ↗</a>
+                </>
+              ) : 'Hidden until you start'}
             </span>
           </div>
           {official ? (
-            <div className="am-rows">
+            <ol className="am-sheet">
               {problems.map((p) => (
-                <Link key={p.number} to={`/problems/${p.id}`} className="am-row">
-                  <div className="am-row-main">
-                    <div className="am-row-head">
-                      <strong>#{p.number}</strong>
+                <li key={p.number} id={`problem-${p.number}`} className="am-sheet-item">
+                  <div className="am-sheet-head">
+                    <h3><Link to={`/problems/${p.id}`}>Problem {p.number}</Link></h3>
+                    <span className="am-sheet-tags">
                       <CategoryDot category={p.category} />
-                      <span className="am-muted">{p.topic_name}</span>
-                    </div>
+                      <Link className="am-muted" to={`/topics/${p.topic}`}>{p.topic_name}</Link>
+                      <Difficulty value={p.difficulty} rating={p.rating} />
+                      <StatusPill status={p.status} />
+                    </span>
                   </div>
-                  <div className="am-row-side">
-                    <Difficulty value={p.difficulty} rating={p.rating} label={false} />
-                    <StatusPill status={p.status} />
-                  </div>
-                </Link>
+                  <MathText text={p.statement} as="p" className="am-statement" />
+                  {p.diagram && <DiagramNote diagram={p.diagram} href={p.aops_url} />}
+                  {p.choices && (
+                    <p className="am-sheet-choices">
+                      {p.choices.map((choice, i) => (
+                        <span key={i}><strong>({'ABCDE'.charAt(i)})</strong> <MathText text={choice} /></span>
+                      ))}
+                    </p>
+                  )}
+                  <p className="am-sheet-links">
+                    <Link className="am-link" to={`/problems/${p.id}`}>Answer it here</Link>
+                    {p.aops_url && (
+                      <a className="am-link" href={p.aops_url} target="_blank" rel="noreferrer">Solutions on AoPS ↗</a>
+                    )}
+                  </p>
+                </li>
               ))}
-            </div>
+            </ol>
           ) : (
             <div className="am-table-wrap">
               <table className="am-table">
-                <thead><tr><th>#</th><th>Topic</th><th>Technique</th><th className="num">Difficulty</th></tr></thead>
+                <thead><tr><th>#</th><th>Topic</th><th>Technique</th><th className="num">Rating</th></tr></thead>
                 <tbody>
                   {problems.map((p) => (
                     <tr key={p.number}>
                       <td>{p.number}</td>
                       <td><span style={{ display: 'inline-flex', gap: 8, alignItems: 'center' }}><CategoryDot category={p.category} />{p.topic_name}</span></td>
                       <td className="am-muted">{p.technique_name}</td>
-                      <td className="num"><Difficulty value={p.difficulty} rating={p.rating} label={false} /></td>
+                      <td className="num"><Difficulty value={p.difficulty} rating={p.rating} /></td>
                     </tr>
                   ))}
                 </tbody>

@@ -11,9 +11,9 @@ paper, a study plan to contest day, and search across all of it.
 | --- | --- | --- |
 | Dashboard | `/dashboard` | Today's plan, the next problem, projected score vs goal, progress by category |
 | Review | `/review` | The error log: misses return after 3, 10 and 21 days until mastered |
-| Problems | `/problems`, `/problems/:id` | The bank, filtered by contest, category, topic, difficulty 1-5, technique and status; answer to unlock the solution, key insight and trap |
-| Topics | `/topics`, `/topics/:id` | 32 topics in 5 categories, each with key ideas, techniques and its problems |
-| Past Contests | `/contests`, `/contests/:id` | Timed Step Mocks graded 6 / 1.5 / 0 with a report; every official AMC 10/12 and AIME since 2000, which can be imported once (paste the AoPS page source and answer key) and then practised, graded and timed in-site |
+| Problems | `/problems`, `/problems/:id` | The bank in contest order (mock #1 to #25), filtered by contest, category, topic, rating 1-10 (the AoPS competition scale), technique and status; answer to unlock the solution, key insight and trap |
+| Topics | `/topics`, `/topics/:id` | 63 topics in 5 categories and 92 techniques in 5 strategy families, each with key ideas and its problems |
+| Past Contests | `/contests`, `/contests/:id` | Timed Step Mocks graded 6 / 1.5 / 0 with a report; every official AMC 10/12 and AIME from 2000 to 2026, which can be imported one at a time (paste the AoPS page source and answer key) or many at once ("Import many papers": open a batch link, copy the page, paste) and then read whole like the AoPS problems page, practised, graded and timed in-site |
 | Study Plan | `/study-plan` | Contest, date, goal and hours become a week-by-week plan (Foundations, Core, Contest mode, Taper). Tell it more (experience, last score, strong/weak topics, resources, constraints) and the AI coach writes a personal plan; its follow-up questions refine it, and its topic order leads the weeks |
 | Search | `/search`, top bar / ⌘K | Problems, topics, contests and pages |
 

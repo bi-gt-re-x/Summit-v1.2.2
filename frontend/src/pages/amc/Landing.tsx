@@ -18,7 +18,7 @@ const SAMPLE = {
 };
 
 const FEATURES = [
-  ['Problems', 'Tagged by topic, method and AoPS difficulty, with step-by-step solutions.'],
+  ['Problems', 'Tagged by topic and method, rated 1-10 on the AoPS scale, with step-by-step solutions.'],
   ['Review', 'Problems you miss come back after 3, 10 and 21 days.'],
   ['Topics', '32 topics in algebra, number theory, counting, geometry and more.'],
   ['Past Contests', 'Timed mocks scored like the real thing, and every AMC 10, AMC 12 and AIME since 2000.'],
@@ -94,7 +94,7 @@ export default function Landing() {
               given={checked ? pick : undefined}
             />
             <div className="am-answer-bar">
-              <span className="am-muted" style={{ fontSize: 13 }}>AoPS rating 2 · Factors &amp; Divisors</span>
+              <span className="am-muted" style={{ fontSize: 13 }}>Rated 2/10 · Factors &amp; Divisors</span>
               {checked ? (
                 <button type="button" className="am-btn" onClick={() => { setPick(''); setChecked(false); }}>Reset</button>
               ) : (

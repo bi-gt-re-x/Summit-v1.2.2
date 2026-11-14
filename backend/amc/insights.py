@@ -12,10 +12,9 @@ from datetime import date, timedelta
 from backend.amc import catalog, engine
 from backend.amc import official
 from backend.amc import problems as pb
-from backend.amc.solutions import tier
 
 #: The AoPS-scale buckets the analytics page groups answers by.
-RATING_BUCKETS = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5]
+RATING_BUCKETS = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5]
 #: Seconds a problem may take at contest pace.
 PACE = {'AMC 10': 180, 'AMC 12': 180, 'AIME': 720}
 
@@ -114,13 +113,13 @@ GUIDE = {
                    'the 2019 10A and 108 on the 10B.',
         'shares': {'algebra': 30, 'geometry': 25, 'counting': 20, 'number-theory': 20, 'misc': 5},
         'sections': [
-            {'range': '1–10', 'rating': '1–1.5', 'minutes': 20,
+            {'range': '1–10', 'rating': '1–2', 'minutes': 20,
              'what': 'Arithmetic, percents, rates, short word problems, easy counting and area. Go fast and '
                      'don’t make careless mistakes.'},
-            {'range': '11–20', 'rating': '2–2.5', 'minutes': 35,
+            {'range': '11–20', 'rating': '2–3', 'minutes': 35,
              'what': 'Casework, similar triangles, remainders, systems of equations, simple probability. Most '
                      'qualifying scores are won or lost here.'},
-            {'range': '21–25', 'rating': '3–3.5', 'minutes': 20,
+            {'range': '21–25', 'rating': '3–4', 'minutes': 20,
              'what': 'Harder counting and probability, number theory, geometry that needs an extra line. Try the '
                      'one or two that look familiar.'},
         ],
@@ -133,12 +132,12 @@ GUIDE = {
                    '2019 12A and 94.5 on the 12B.',
         'shares': {'algebra': 35, 'geometry': 25, 'counting': 18, 'number-theory': 17, 'misc': 5},
         'sections': [
-            {'range': '1–10', 'rating': '1.5–2', 'minutes': 20,
+            {'range': '1–10', 'rating': '1–2', 'minutes': 20,
              'what': 'Like the middle of the AMC 10: word problems, quick counting, ratios, coordinates.'},
-            {'range': '11–20', 'rating': '2.5–3', 'minutes': 35,
+            {'range': '11–20', 'rating': '2–3.5', 'minutes': 35,
              'what': 'Logs, trig, complex numbers and sequences on top of the usual topics. Know the identities '
                      'well.'},
-            {'range': '21–25', 'rating': '3.5–4', 'minutes': 20,
+            {'range': '21–25', 'rating': '3.5–4.5', 'minutes': 20,
              'what': 'Polynomial roots, roots of unity, 3D and trig geometry, hard counting. About as hard as the '
                      'early AIME.'},
         ],
@@ -152,9 +151,9 @@ GUIDE = {
         'sections': [
             {'range': '1–5', 'rating': '2.5–3.5', 'minutes': 50,
              'what': 'Like the end of the AMC, with no answer choices: counting, digits, geometry.'},
-            {'range': '6–10', 'rating': '4', 'minutes': 70,
+            {'range': '6–10', 'rating': '4–5', 'minutes': 70,
              'what': 'Two or three steps each. Mods, recursion, coordinates or trig.'},
-            {'range': '11–15', 'rating': '5–6', 'minutes': 60,
+            {'range': '11–15', 'rating': '5–6.5', 'minutes': 60,
              'what': 'Very hard. Bijections, polynomials, complex numbers, hard geometry. Solving one is a good '
                      'result.'},
         ],
@@ -327,11 +326,11 @@ def prepare(level, goal, hours, days_left, projected, rating_rows, tstats, due, 
                       'body': 'Start with {}.'.format(', '.join(f['name'] for f in focus[:3])),
                       'to': '/topics/{}'.format(focus[0]['id'])})
     if need_rating is not None:
-        hi = official.difficulty_at(level, max(1, right))
-        lo = min(hi, tier(top + 0.5) if top is not None else official.difficulty_at(level, 1))
+        hi = int(need_rating)
+        lo = int(min(need_rating, top + 0.5 if top is not None else official.rating_at(level, 1)))
         steps.append({'title': 'Practise at your target level',
-                      'body': 'Problems up to AoPS {:g}, until you get 80% right first try.'.format(need_rating),
-                      'to': '/problems?level={}&difficulty={}'.format(
+                      'body': 'Problems rated up to {:g}/10, until you get 80% right first try.'.format(need_rating),
+                      'to': '/problems?level={}&rating={}'.format(
                           level.replace(' ', '+'), ','.join(str(d) for d in range(lo, hi + 1)))})
     if due:
         steps.append({'title': 'Clear Review',

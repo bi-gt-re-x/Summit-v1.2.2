@@ -7,6 +7,7 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ErrorState, Loading } from '@/components';
 import { PageHeader } from '@/components/Amc/bits';
+import { BulkImporter } from '@/components/Amc/BulkImporter';
 import { useApi, useDocumentTitle } from '@/hooks';
 import { amc, shortDate, type Level } from '@/services/amc';
 import '@/styles/amc.css';
@@ -87,6 +88,7 @@ export default function Contests() {
         </section>
 
         <aside className="am-stack">
+          <BulkImporter onSaved={reload} />
           <section className="am-card">
             <div className="am-card-head"><h2>Your scores</h2></div>
             {data.history.length ? (

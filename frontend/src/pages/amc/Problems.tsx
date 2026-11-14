@@ -1,5 +1,5 @@
 /**
- * The problem bank, filterable by contest, category, topic, difficulty,
+ * The problem bank, filterable by contest, category, topic, 1-10 rating,
  * technique and status. Every filter lives in the URL, so a filtered list can
  * be bookmarked, shared, and linked to from the topic pages and the plan.
  */
@@ -18,9 +18,9 @@ const STATUSES: { id: Status; label: string }[] = [
   { id: 'missed', label: 'Missed' },
   { id: 'review', label: 'In review' },
 ];
-/** The 1-5 difficulty filter, labelled with the AoPS ratings each step covers. */
-const DIFFICULTY_CHIPS: [string, string][] = [['1', '1'], ['2', '1.5'], ['3', '2'], ['4', '2.5–3'], ['5', '3.5+']];
-const KEYS: (keyof ProblemFilters)[] = ['source', 'level', 'category', 'topic', 'difficulty', 'status', 'technique', 'q', 'sort'];
+/** The rating filter: whole steps of the 1-10 AoPS scale ("3" is 3 and 3.5). */
+const RATING_STEPS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
+const KEYS: (keyof ProblemFilters)[] = ['source', 'level', 'category', 'topic', 'rating', 'difficulty', 'status', 'technique', 'q', 'sort'];
 
 export default function Problems() {
   useDocumentTitle('Problems');
@@ -52,12 +52,12 @@ export default function Problems() {
     setParams(next, { replace: true });
   }
   const toggle = (key: keyof ProblemFilters, value: string) => set(key, filters[key] === value ? '' : value);
-  const diffs = new Set((filters.difficulty ?? '').split(',').filter(Boolean));
-  const toggleDiff = (d: string) => {
-    const next = new Set(diffs);
-    if (next.has(d)) next.delete(d);
-    else next.add(d);
-    set('difficulty', [...next].sort().join(','));
+  const ratings = new Set((filters.rating ?? '').split(',').filter(Boolean));
+  const toggleRating = (r: string) => {
+    const next = new Set(ratings);
+    if (next.has(r)) next.delete(r);
+    else next.add(r);
+    set('rating', [...next].sort((a, b) => Number(a) - Number(b)).join(','));
   };
   const anyFilter = KEYS.some((k) => k !== 'sort' && filters[k]);
 
@@ -82,6 +82,7 @@ export default function Problems() {
                   onChange={(e) => set('sort', e.target.value === 'source' ? '' : e.target.value)}>
             <option value="source">Contest order</option>
             <option value="difficulty">Easiest first</option>
+            <option value="hardest">Hardest first</option>
             <option value="topic">By topic</option>
           </select>
         </div>
@@ -121,12 +122,19 @@ export default function Problems() {
           </div>
         </div>
         <div className="am-filters-row">
-          <label>AoPS rating</label>
+          <label>Rating (1–10)</label>
           <div className="am-chips">
-            {DIFFICULTY_CHIPS.map(([d, text]) => (
-              <button key={d} type="button" className={`am-chip${diffs.has(d) ? ' is-on' : ''}`}
-                      title={`Rated ${text} on the AoPS competition scale`} onClick={() => toggleDiff(d)}>{text}</button>
-            ))}
+            {RATING_STEPS.map((r) => {
+              const n = data?.rating_counts[r] ?? 0;
+              return (
+                <button key={r} type="button" className={`am-chip${ratings.has(r) ? ' is-on' : ''}`}
+                        disabled={!!data && n === 0 && !ratings.has(r)}
+                        title={`Rated ${r}${r === '10' ? '' : ` or ${r}.5`} on the 1-10 AoPS scale`}
+                        onClick={() => toggleRating(r)}>
+                  {r} {data && <small>{n}</small>}
+                </button>
+              );
+            })}
           </div>
         </div>
         <div className="am-filters-row">

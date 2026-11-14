@@ -3,16 +3,16 @@ r"""Difficulty ratings and step-by-step solutions for the problem bank.
 ## Ratings: the AoPS competition scale
 
 Every problem carries `rating`, on the 1-10 scale the AoPS wiki uses for
-contest problems (AoPS Wiki: Competition ratings). Its bands for the contests
-this site covers, which is how an official problem is rated from its position
-(backend/amc/official.py `rating_at`):
+contest problems (AoPS Wiki: Competition ratings), in half points. That is the
+one number the site shows ("3.5/10"). Where a problem number sits on a typical
+real paper (backend/amc/official.py `RATING_BY_NUMBER`, used for imported
+official problems):
 
-    AMC 10   #1-5: 1      #6-10: 1.5   #11-15: 2    #16-20: 2.5   #21-25: 3-3.5
-    AMC 12   #1-5: 1.5    #6-10: 2     #11-15: 2.5  #16-20: 3     #21-25: 3.5-4
-    AIME     #1-3: 2.5    #4-6: 3.5    #7-10: 4     #11-13: 5     #14-15: 6
+    AMC 10   #1-4: 1   #5-9: 1.5   #10-14: 2   #15-18: 2.5   #19-21: 3   #22-24: 3.5   #25: 4
+    AMC 12   #1-3: 1   #4-8: 1.5   #9-12: 2    #13-16: 2.5   #17-19: 3   #20-22: 3.5   #23-24: 4   #25: 4.5
+    AIME     #1: 2.5   #2-3: 3     #4-5: 3.5   #6-7: 4       #8-9: 4.5   #10-11: 5     #12-13: 5.5 #14: 6  #15: 6.5
 
-(The AIME bands are the ones Epoch AI uses with the same scale; the AMC
-placements follow the AoPS page's level descriptions.)
+7 and up is olympiad level, which none of these contests reach.
 
 The bank's problems are original, so nobody has rated them online. Each was
 rated by hand against those bands: "which stretch of a real paper would this
@@ -31,21 +31,21 @@ answer. tests/test_amc_bank.py checks that every solution ends on its answer.
 
 RATINGS = {
     'step-10-01': 1, 'step-10-03': 1, 'step-10-04': 1, 'step-10-05': 1,
-    'step-10-06': 1.5, 'step-10-08': 1, 'step-10-09': 1.5, 'step-10-10': 1.5,
+    'step-10-06': 1, 'step-10-08': 1, 'step-10-09': 1.5, 'step-10-10': 1.5,
     'step-10-11': 1.5, 'step-10-12': 1.5, 'step-10-13': 1.5, 'step-10-15': 1.5,
     'step-10-16': 1.5, 'step-10-17': 1.5, 'step-10-18': 1, 'step-10-19': 2, 'step-10-20': 1.5,
-    'step-10-21': 2, 'step-10-22': 1.5, 'step-10-23': 2.5, 'step-10-24': 2.5, 'step-10-25': 2,
-    'step-12-01': 1.5, 'step-12-02': 1.5, 'step-12-03': 1.5, 'step-12-04': 2, 'step-12-05': 1.5,
-    'step-12-06': 2, 'step-12-07': 2, 'step-12-08': 2.5, 'step-12-09': 2.5, 'step-12-10': 2.5,
-    'step-12-11': 3, 'step-12-12': 2,
-    'step-aime-01': 2,   'step-aime-04': 2, 'step-aime-05': 1.5,
+    'step-10-21': 2, 'step-10-22': 1.5, 'step-10-23': 2, 'step-10-24': 2.5, 'step-10-25': 2,
+    'step-12-01': 1, 'step-12-02': 1.5, 'step-12-03': 1.5, 'step-12-04': 2, 'step-12-05': 1.5,
+    'step-12-06': 2, 'step-12-07': 2, 'step-12-08': 2.5, 'step-12-09': 2, 'step-12-10': 2.5,
+    'step-12-11': 2.5, 'step-12-12': 2,
+    'step-aime-01': 2,   'step-aime-04': 2, 'step-aime-05': 2,
     'step-aime-06': 1.5, 'step-aime-08': 2, 'step-aime-09': 2, 'step-aime-10': 1.5,
     'step-aime-11': 2.5, 'step-aime-12': 3, 'step-aime-13': 3, 'step-aime-14': 3, 'step-aime-15': 3.5,
-    'step-10-26': 3, 'step-10-27': 3.5, 'step-10-28': 3,
-    'step-12-13': 3.5, 'step-12-14': 4, 'step-12-15': 3, 'step-12-16': 3.5, 'step-12-17': 1.5, 'step-12-18': 1.5,
-    'step-aime-16': 4, 'step-aime-17': 4.5, 'step-aime-18': 4,
+    'step-10-26': 2.5, 'step-10-27': 3.5, 'step-10-28': 2.5,
+    'step-12-13': 3, 'step-12-14': 4, 'step-12-15': 3, 'step-12-16': 3.5, 'step-12-17': 1.5, 'step-12-18': 1.5,
+    'step-aime-16': 3.5, 'step-aime-17': 4.5, 'step-aime-18': 3,
     'step-drill-01': 2, 'step-drill-02': 2, 'step-drill-03': 2.5, 'step-drill-04': 1.5,
-    'step-drill-05': 2, 'step-drill-06': 3, 'step-drill-08': 1.5,
+    'step-drill-05': 2.5, 'step-drill-06': 2.5, 'step-drill-08': 1.5,
 }
 
 

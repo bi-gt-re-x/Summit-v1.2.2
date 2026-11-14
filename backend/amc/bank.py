@@ -31,7 +31,7 @@ PROBLEMS = [
     # Step Mock AMC 10 — problems 1-25, rising difficulty
     # ------------------------------------------------------------------
     {
-        'id': 'step-10-01', 'level': 'AMC 10', 'topic': 'exponents', 'also': [],
+        'id': 'step-10-01', 'level': 'AMC 10', 'topic': 'exponents', 'also': ['arithmetic'],
         'technique': 'direct-computation',
         'statement': r'What is the value of $\dfrac{3^2+3^2+3^2}{3^{-1}+3^{-1}+3^{-1}}$?',
         'choices': ['$3$', '$9$', '$18$', '$27$', '$81$'],
@@ -49,7 +49,7 @@ PROBLEMS = [
         'trap': r'Subtracting the means: $12 - 10 = 2$.',
     },
     {
-        'id': 'step-10-04', 'level': 'AMC 10', 'topic': 'word-problems', 'also': [],
+        'id': 'step-10-04', 'level': 'AMC 10', 'topic': 'word-problems', 'also': ['arithmetic'],
         'technique': 'direct-computation',
         'statement': r'The price of a jacket is increased by $20\%$, and then the new price is decreased by $25\%$. The final price is what percent of the original price?',
         'choices': [r'$85\%$', r'$90\%$', r'$95\%$', r'$100\%$', r'$105\%$'],
@@ -166,7 +166,7 @@ PROBLEMS = [
         'trap': r'Solving for the common difference ($3$) and stopping there.',
     },
     {
-        'id': 'step-10-19', 'level': 'AMC 10', 'topic': 'factors-divisors', 'also': [],
+        'id': 'step-10-19', 'level': 'AMC 10', 'topic': 'factors-divisors', 'also': ['perfect-powers'],
         'technique': 'prime-factorization',
         'statement': r'How many positive divisors of $2^4\cdot 3^3\cdot 5^2$ are perfect squares?',
         'choices': ['$8$', '$10$', '$12$', '$16$', '$18$'],
@@ -175,7 +175,7 @@ PROBLEMS = [
         'trap': r'Forgetting the exponent $0$ and answering $2\cdot 1\cdot 1$ style counts.',
     },
     {
-        'id': 'step-10-20', 'level': 'AMC 10', 'topic': 'probability', 'also': ['circles'],
+        'id': 'step-10-20', 'level': 'AMC 10', 'topic': 'geometric-probability', 'also': ['probability', 'circles'],
         'technique': 'geometric-probability',
         'statement': r'A point is chosen uniformly at random inside a square of side length $2$. What is the probability that it lies within distance $1$ of at least one vertex of the square?',
         'choices': [r'$\frac{\pi}{8}$', r'$\frac{\pi}{6}$', r'$\frac{\pi}{4}$', r'$\frac{\pi}{3}$', r'$\frac{\pi}{2}$'],
@@ -184,7 +184,7 @@ PROBLEMS = [
         'trap': r'Treating the four regions as full circles and answering more than $1$, or double-counting overlaps that are not there.',
     },
     {
-        'id': 'step-10-21', 'level': 'AMC 10', 'topic': 'factors-divisors', 'also': ['linear-equations'],
+        'id': 'step-10-21', 'level': 'AMC 10', 'topic': 'diophantine', 'also': ['factors-divisors'],
         'technique': 'factoring-trick',
         'statement': r'How many ordered pairs of positive integers $(x, y)$ satisfy $\dfrac{1}{x} + \dfrac{1}{y} = \dfrac{1}{6}$?',
         'choices': ['$6$', '$8$', '$9$', '$10$', '$12$'],
@@ -324,7 +324,7 @@ PROBLEMS = [
         'trap': r'Applying two-term AM-GM directly, which gives a bound $2\sqrt{16x}$ that still depends on $x$.',
     },
     {
-        'id': 'step-12-11', 'level': 'AMC 12', 'topic': 'probability', 'also': ['permutations'],
+        'id': 'step-12-11', 'level': 'AMC 12', 'topic': 'probability', 'also': ['permutations', 'casework'],
         'technique': 'inclusion-exclusion',
         'statement': r'A permutation of $1, 2, 3, 4, 5, 6$ is chosen uniformly at random. What is the probability that no number is in its original position?',
         'choices': [r'$\frac{1}{3}$', r'$\frac{53}{144}$', r'$\frac{11}{30}$', r'$\frac{3}{8}$', r'$\frac{5}{12}$'],
@@ -362,7 +362,7 @@ PROBLEMS = [
         'trap': r'Trying to solve for $x$ and $y$ separately.',
     },
     {
-        'id': 'step-12-18', 'level': 'AMC 12', 'topic': 'combinations', 'also': ['basic-counting'],
+        'id': 'step-12-18', 'level': 'AMC 12', 'topic': 'combinations', 'also': ['lattice-paths'],
         'technique': 'bijection',
         'statement': r'A $6 \times 6$ grid is made of $36$ unit squares. How many rectangles (of any size, including squares) have sides along the grid lines?',
         'choices': ['$324$', '$361$', '$400$', '$441$', '$484$'], 'answer': 'D',
@@ -370,7 +370,7 @@ PROBLEMS = [
         'trap': r'Choosing from $6$ lines instead of $7$ and getting $225$.',
     },
     {
-        'id': 'step-aime-04', 'level': 'AIME', 'topic': 'factors-divisors', 'also': ['divisibility'],
+        'id': 'step-aime-04', 'level': 'AIME', 'topic': 'gcd-lcm', 'also': ['factors-divisors'],
         'technique': 'euler-phi',
         'statement': r'Find the number of ordered pairs of positive integers $(a, b)$ with $a + b = 100$ and $\gcd(a, b) = 1$.',
         'choices': None, 'answer': 40,
@@ -378,7 +378,7 @@ PROBLEMS = [
         'trap': r'Halving to count unordered pairs.',
     },
     {
-        'id': 'step-aime-05', 'level': 'AIME', 'topic': 'basic-counting', 'also': ['factors-divisors'],
+        'id': 'step-aime-05', 'level': 'AIME', 'topic': 'factorials', 'also': ['factors-divisors'],
         'technique': 'legendre',
         'statement': r'Find the number of zeros at the end of the decimal representation of $1000!$.',
         'choices': None, 'answer': 249,
@@ -402,7 +402,7 @@ PROBLEMS = [
         'trap': 'Not reducing the fraction to lowest terms.',
     },
     {
-        'id': 'step-aime-09', 'level': 'AIME', 'topic': 'logarithms', 'also': ['digits-bases'],
+        'id': 'step-aime-09', 'level': 'AIME', 'topic': 'logarithms', 'also': ['floor-ceiling', 'digits-bases'],
         'technique': 'casework',
         'statement': r'Find the number of positive integers $n < 1000$ for which $\lfloor \log_2 n \rfloor$ is even.',
         'choices': None, 'answer': 341,
@@ -426,7 +426,7 @@ PROBLEMS = [
         'trap': r'Reducing the exponent mod $1000$ or mod $400$ without justification.',
     },
     {
-        'id': 'step-aime-12', 'level': 'AIME', 'topic': 'triangles', 'also': ['circles'],
+        'id': 'step-aime-12', 'level': 'AIME', 'topic': 'triangle-centers', 'also': ['triangles', 'circles'],
         'technique': 'known-formula',
         'statement': r'Triangle $ABC$ has side lengths $13$, $14$ and $15$. Let $O$ and $I$ be its circumcenter and incenter. Then $OI^2 = \frac{m}{n}$ in lowest terms. Find $m + n$.',
         'choices': None, 'answer': 129,
@@ -442,7 +442,7 @@ PROBLEMS = [
         'trap': r'Using mean $3.5$ for the earlier rolls and getting $23.5$.',
     },
     {
-        'id': 'step-aime-14', 'level': 'AIME', 'topic': 'modular-arithmetic', 'also': [],
+        'id': 'step-aime-14', 'level': 'AIME', 'topic': 'modular-arithmetic', 'also': ['exponents'],
         'technique': 'orders',
         'statement': r'Find the least positive integer $n$ such that $2^n - 1$ is divisible by $125$.',
         'choices': None, 'answer': 100,
@@ -462,7 +462,7 @@ PROBLEMS = [
     # Extra drills: not on any mock, there so every topic has problems
     # ------------------------------------------------------------------
     {
-        'id': 'step-drill-01', 'level': 'AMC 10', 'topic': 'right-triangles', 'also': ['area'],
+        'id': 'step-drill-01', 'level': 'AMC 10', 'topic': 'right-triangles', 'also': ['quadrilaterals'],
         'technique': 'british-flag',
         'statement': r'Point $P$ lies inside rectangle $ABCD$ with $PA = 3$, $PB = 4$ and $PC = 5$. What is $PD$?',
         'choices': [r'$2\sqrt{3}$', r'$\sqrt{15}$', r'$3\sqrt{2}$', r'$2\sqrt{5}$', '$5$'],
@@ -507,7 +507,7 @@ PROBLEMS = [
         'trap': r'Solving only modulo $5$ (which gives $40$) or only modulo $13$.',
     },
     {
-        'id': 'step-drill-06', 'level': 'AMC 10', 'topic': 'combinations', 'also': ['recursion'],
+        'id': 'step-drill-06', 'level': 'AMC 10', 'topic': 'lattice-paths', 'also': ['combinations', 'recursion'],
         'technique': 'reflection',
         'statement': r'A lattice path from $(0,0)$ to $(6,6)$ uses unit steps right or up. How many such paths never pass above the line $y = x$?',
         'choices': ['$42$', '$132$', '$429$', '$462$', '$924$'],
@@ -556,7 +556,7 @@ PROBLEMS = [
         'trap': r'Using $\left(\frac{1}{2}\right)^k$ for one particular route instead of adding over all routes.',
     },
     {
-        'id': 'step-12-13', 'level': 'AMC 12', 'topic': 'trigonometry', 'also': ['functions'],
+        'id': 'step-12-13', 'level': 'AMC 12', 'topic': 'trigonometry', 'also': ['graphs-transformations', 'functions'],
         'technique': 'graphing',
         'statement': r'How many real numbers $x$ satisfy $\sin x = \dfrac{x}{30}$?',
         'choices': ['$17$', '$18$', '$19$', '$20$', '$21$'],

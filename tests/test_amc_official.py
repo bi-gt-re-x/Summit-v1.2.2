@@ -82,6 +82,11 @@ def test_topic_and_difficulty_guesses():
     assert official.guess_topic('What is the remainder when 7^5 is divided by 4?') == 'modular-arithmetic'
     assert official.difficulty_at('AMC 10', 1) == 1 and official.difficulty_at('AMC 10', 25) == 5
     assert official.difficulty_at('AIME', 15) == 5
+    assert official.guess_topics('How many ordered pairs of positive integers $(x, y)$ satisfy $xy = 12$?')[0] \
+        == 'diophantine'
+    assert official.guess_topics('In triangle $ABC$, the angle bisector from $A$ meets $BC$ at $D$.')[:2] \
+        == ['triangle-centers', 'angle-chasing']
+    assert official.guess_topics('A clock shows 3 p.m.')[0] == 'clocks-calendars'
 
 
 def _full_contest():
@@ -131,3 +136,64 @@ def test_an_incomplete_import_is_refused(client):
                         json={'problems': body, 'key': 'ABC', 'save': True}).json()
     assert not reply['success'] and '3 of 25' in reply['message']
     assert client.get('/api/amc/contests/2023-amc-10a').json()['contest']['imported'] is False
+
+
+def _api_page(pages, redirects=()):
+    """An AoPS API reply (formatversion 2) holding these {title: source} pages."""
+    import json
+    return json.dumps({'batchcomplete': True, 'query': {
+        'redirects': [{'from': a, 'to': b} for a, b in redirects],
+        'pages': [{'ns': 0, 'title': t, 'revisions': [{'slots': {'main': {'contentmodel': 'wikitext', 'content': c}}}]}
+                  for t, c in pages.items()]}})
+
+
+def test_batch_links_cover_problems_and_keys():
+    batches = official.batch_urls(['2023-amc-10a', '2024-aime-i'])
+    assert len(batches) == 1
+    url = batches[0]['url']
+    assert url.startswith(official.API) and '2023_AMC_10A_Problems' in url and '2024_AIME_I_Answer_Key' in url
+    many = official.batch_urls([c['id'] for c in official.catalog.PAST][:20])
+    assert [len(b['contests']) for b in many] == [8, 8, 4]
+
+
+def test_bundle_imports_every_complete_paper(client):
+    body, key = _full_contest()
+    first = _api_page({'2023 AMC 10A Problems': body, '2023 AMC 10A Answer Key': '\n'.join('# A' for _ in range(25)),
+                       '2023 AMC 10B Problems': body})
+    # A second batch pasted after the first, with the browser's chrome around it,
+    # and a key that reached the page through a redirect.
+    second = 'Pretty-print ' + _api_page({'2023 AMC 12A Answer Key (new)': key, '2023 AMC 12A Problems': body},
+                                         redirects=[('2023 AMC 12A Answer Key', '2023 AMC 12A Answer Key (new)')])
+    reply = client.post('/api/amc/official/import', json={'text': first + '\n' + second}).json()
+    assert reply['success'] and reply['saved'] == 0
+    rows = {r['id']: r for r in reply['contests']}
+    assert rows['2023-amc-10a']['complete'] and rows['2023-amc-12a']['complete']
+    assert not rows['2023-amc-10b']['complete'] and 'answer key was not' in rows['2023-amc-10b']['issues'][0]
+
+    saved = client.post('/api/amc/official/import', json={'text': first + second, 'save': True}).json()
+    assert saved['saved'] == 2
+    assert client.get('/api/amc/contests/2023-amc-12a').json()['contest']['imported']
+    left = client.get('/api/amc/official/batches').json()
+    assert left['missing'] == left['total'] - 2
+    assert not client.post('/api/amc/official/import', json={'text': 'nothing here'}).json()['success']
+
+
+def test_official_problems_are_shown_whole_in_order(client):
+    body, key = _full_contest()
+    client.post('/api/amc/contests/2023-amc-10a/import', json={'problems': body, 'key': key, 'save': True})
+    detail = client.get('/api/amc/contests/2023-amc-10a').json()
+    assert [p['number'] for p in detail['problems']] == list(range(1, 26))
+    first = detail['problems'][0]
+    assert first['statement'] == 'What is 1+0?' and first['choices'][0] == '$1$'
+    assert first['aops_url'].endswith('2023_AMC_10A_Problems/Problem_1')
+    assert [p['rating'] for p in detail['problems']] == sorted(p['rating'] for p in detail['problems'])
+
+
+def test_problem_list_runs_in_contest_order(client):
+    rows = client.get('/api/amc/problems', params={'source': 'step'}).json()['problems']
+    order = [(r['source'].rsplit(' #', 1)[0], int(r['source'].rsplit('#', 1)[1])) for r in rows]
+    mocks = [m['name'] for m in official.catalog.MOCKS]
+    assert order == sorted(order, key=lambda o: (mocks.index(o[0]), o[1]))
+    hard = client.get('/api/amc/problems', params={'rating': '4'}).json()
+    assert hard['problems'] and all(4 <= r['rating'] < 5 for r in hard['problems'])
+    assert sum(hard['rating_counts'].values()) == hard['total']

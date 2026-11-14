@@ -1,7 +1,7 @@
 /**
  * Analytics, under Prep: three views of one question, how do I get my score?
  *
- *   Performance  how you are doing: accuracy by AoPS rating and category, the
+ *   Performance  how you are doing: accuracy by 1-10 rating and category, the
  *                weekly trend, mock scores, topics, and what happens to misses.
  *   Contests     what appears on the AMC 10, AMC 12 and AIME: the format, the
  *                qualifying line, what each stretch of the paper tests, and the
@@ -84,7 +84,7 @@ function Performance({ data }: { data: AnalyticsData }) {
         <Stat label="First-try accuracy" value={pct(p.accuracy)} />
         <Stat label="Time per problem" value={p.avg_seconds ? clock(p.avg_seconds) : '—'}
               hint={`contest pace ${data.target === 'AIME' ? '12:00' : '3:00'}`} />
-        <Stat label="Reliable up to" value={p.ceiling != null ? `AoPS ${p.ceiling}` : '—'}
+        <Stat label="Reliable up to" value={p.ceiling != null ? `${p.ceiling}/10` : '—'}
               hint={p.ceiling != null ? '70%+ right' : 'answer more'} />
         <Stat label="Active days" value={String(p.active_days)} hint={`${p.minutes} min practised`} />
       </dl>
@@ -95,7 +95,7 @@ function Performance({ data }: { data: AnalyticsData }) {
           {tried.length ? (
             <Bars rows={tried.map((row) => ({
               key: String(row.rating),
-              label: `AoPS ${row.rating}`,
+              label: `${row.rating}/10`,
               value: row.accuracy == null ? null : row.accuracy * 100,
               hint: `${row.first_right} of ${row.attempted} right first time${row.avg_seconds ? ` · ${clock(row.avg_seconds)} each` : ''}`,
               tone: tone(row.accuracy),
@@ -257,7 +257,7 @@ function Contests({ data }: { data: AnalyticsData }) {
                 <li key={s.range}>
                   <div className="am-sections-head">
                     <strong>#{s.range}</strong>
-                    <span className="am-muted">AoPS {s.rating} · ~{s.minutes} min</span>
+                    <span className="am-muted">Rated {s.rating} · ~{s.minutes} min</span>
                   </div>
                   <p>{s.what}</p>
                 </li>
@@ -284,12 +284,12 @@ function Contests({ data }: { data: AnalyticsData }) {
           <section className="am-card">
             <div className="am-card-head"><h2>Difficulty</h2></div>
             <table className="am-table">
-              <thead><tr><th>Problems</th><th>AoPS rating</th></tr></thead>
+              <thead><tr><th>Problems</th><th>Rating (1–10)</th></tr></thead>
               <tbody>
                 {g.bands.map((b, i) => (
                   <tr key={b.last}>
                     <td>#{(g.bands[i - 1]?.last ?? 0) + 1}–{b.last}</td>
-                    <td>{b.rating}</td>
+                    <td>{b.rating}/10</td>
                   </tr>
                 ))}
               </tbody>

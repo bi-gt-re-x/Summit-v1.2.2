@@ -210,67 +210,278 @@ def parse_key(source, level):
     return found[:count] if len(found) >= count else found
 
 
+def check(contest_id, problems_source, key_source):
+    """Parse one contest's problems and key: (problems, key, issues, complete).
+
+    `complete` means it can be saved: every problem found with text, and a full
+    answer key. Missing answer choices are reported but do not block it.
+    """
+    c = catalog.PAST_BY_ID[contest_id]
+    level, count = c['level'], c['count']
+    parsed = [p for p in parse_contest(problems_source, level) if 1 <= p['number'] <= count]
+    key = parse_key(key_source, level)
+    numbers = {p['number'] for p in parsed}
+    missing = [n for n in range(1, count + 1) if n not in numbers]
+    no_choices = [p['number'] for p in parsed if level != 'AIME' and not p['choices']]
+    empty = [p['number'] for p in parsed if not p['statement']]
+    key_ok = len(key) == count
+    issues = []
+    if missing:
+        issues.append('Problems {} were not found.'.format(', '.join(map(str, missing))))
+    if no_choices:
+        issues.append('Problems {} have no answer choices.'.format(', '.join(map(str, no_choices))))
+    if empty:
+        issues.append('Problems {} have no text.'.format(', '.join(map(str, empty))))
+    if not key_ok:
+        issues.append('The answer key has {} of {} answers.'.format(len(key), count))
+    return parsed, key, issues, not (missing or empty or not key_ok)
+
+
+# ---------------------------------------------------------------------------
+# Many contests at once, from the AoPS wiki's API
+# ---------------------------------------------------------------------------
+API = 'https://artofproblemsolving.com/wiki/api.php'
+#: Contests per batch link: two pages each (problems and answer key), and a
+#: size the browser shows and copies without trouble (about 1 MB).
+BATCH = 8
+
+
+def _page_index():
+    """{'2023_AMC_10A_Problems': (contest_id, 'problems'), ...}."""
+    out = {}
+    for c in catalog.PAST:
+        out[c['problems_url'].rsplit('/', 1)[1]] = (c['id'], 'problems')
+        out[c['answers_url'].rsplit('/', 1)[1]] = (c['id'], 'key')
+    return out
+
+
+def batch_urls(contest_ids):
+    """Links to the AoPS API that return the wiki source of these contests'
+    problem pages and answer keys, BATCH contests to a link. Opened in a
+    browser, each is one page of JSON to copy and paste into the importer."""
+    from urllib.parse import urlencode
+    rows = [catalog.PAST_BY_ID[cid] for cid in contest_ids if cid in catalog.PAST_BY_ID]
+    out = []
+    for i in range(0, len(rows), BATCH):
+        chunk = rows[i:i + BATCH]
+        titles = []
+        for c in chunk:
+            titles += [c['problems_url'].rsplit('/', 1)[1], c['answers_url'].rsplit('/', 1)[1]]
+        query = urlencode({'action': 'query', 'prop': 'revisions', 'rvprop': 'content', 'rvslots': 'main',
+                           'format': 'json', 'formatversion': '2', 'redirects': '1', 'titles': '|'.join(titles)})
+        out.append({'url': API + '?' + query, 'contests': [c['id'] for c in chunk],
+                    'label': '{} – {}'.format(chunk[0]['name'], chunk[-1]['name']) if len(chunk) > 1 else chunk[0]['name']})
+    return out
+
+
+def _json_blobs(text):
+    """Every JSON object in the pasted text (one per batch page), skipping
+    whatever the browser put around them."""
+    decoder = json.JSONDecoder()
+    i, out = 0, []
+    while True:
+        i = text.find('{', i)
+        if i < 0:
+            return out
+        try:
+            obj, end = decoder.raw_decode(text, i)
+        except ValueError:
+            i += 1
+            continue
+        if isinstance(obj, dict):
+            out.append(obj)
+        i = end
+
+
+def _pages(blob):
+    """[(title, wiki source)] from one API reply, formatversion 1 or 2, with
+    each redirect's original title kept alongside its target."""
+    query = blob.get('query') or {}
+    pages = query.get('pages') or []
+    if isinstance(pages, dict):
+        pages = list(pages.values())
+    aliases = {}
+    for r in (query.get('normalized') or []) + (query.get('redirects') or []):
+        aliases.setdefault(r.get('to'), []).append(r.get('from'))
+    out = []
+    for page in pages:
+        revs = page.get('revisions') or []
+        if not revs:
+            continue
+        rev = revs[0]
+        content = (((rev.get('slots') or {}).get('main') or {}).get('content')
+                   or ((rev.get('slots') or {}).get('main') or {}).get('*') or rev.get('content') or rev.get('*'))
+        if not content:
+            continue
+        titles = [page.get('title', '')]
+        frontier = list(titles)
+        while frontier:
+            t = frontier.pop()
+            for older in aliases.get(t, []):
+                if older not in titles:
+                    titles.append(older)
+                    frontier.append(older)
+        out.append((titles, content))
+    return out
+
+
+def read_bundle(text):
+    """{contest_id: {'problems': source, 'key': source}} from pasted API JSON."""
+    index = _page_index()
+    found = {}
+    for blob in _json_blobs(text):
+        for titles, content in _pages(blob):
+            for title in titles:
+                hit = index.get((title or '').replace(' ', '_'))
+                if hit:
+                    found.setdefault(hit[0], {})[hit[1]] = content
+                    break
+    return found
+
+
+def import_bundle(text, save, username):
+    """Check every contest in the pasted batches; with `save`, store the
+    complete ones. One row per contest found, in catalogue order."""
+    found = read_bundle(text)
+    order = {c['id']: i for i, c in enumerate(catalog.PAST)}
+    rows = []
+    for cid in sorted(found, key=lambda x: order[x]):
+        pages = found[cid]
+        parsed, key, issues, complete = check(cid, pages.get('problems', ''), pages.get('key', ''))
+        if 'problems' not in pages:
+            issues = ['The problems page was not in the paste.'] + issues
+        if 'key' not in pages:
+            issues = ['The answer key was not in the paste.'] + [x for x in issues if not x.startswith('The answer key has')]
+        saved = False
+        if save and complete:
+            save_contest(cid, parsed, key, username)
+            saved = True
+        rows.append({'id': cid, 'name': catalog.PAST_BY_ID[cid]['name'], 'problems': len(parsed),
+                     'count': catalog.PAST_BY_ID[cid]['count'], 'answers': len(key), 'complete': complete,
+                     'diagrams': sum(1 for p in parsed if p['diagram']), 'issues': issues, 'saved': saved})
+    return rows
+
+
 # ---------------------------------------------------------------------------
 # Tagging: what topic and how hard
 # ---------------------------------------------------------------------------
-#: Keyword rules, first match wins. A guess, and the pages say so: amcstep's
-#: tags are a person's judgment and these are a regex's.
+#: Keyword rules, in priority order. The first match is the problem's topic and
+#: the next two distinct matches its secondary topics. A guess, and the pages
+#: say so: amcstep's tags are a person's judgment and these are a regex's.
 _TOPIC_RULES = [
-    ('probability', r'probabilit|at random|randomly|fair (?:coin|die|dice)|expected'),
-    ('expected-value', r'expected value'),
-    ('circles', r'circle|radius|diameter|tangent|chord|inscribed|circumscribed|arc\b'),
-    ('trigonometry', r'\\sin|\\cos|\\tan|sine|cosine'),
-    ('logarithms', r'\\log|logarithm'),
-    ('complex-numbers', r'complex number|\bi\^|\bz\^|imaginary'),
-    ('solid-geometry', r'cube|sphere|cylinder|cone|prism|pyramid|tetrahedr|volume'),
-    ('coordinate-geometry', r'coordinate|\bxy-plane|\(\s*-?\d+\s*,\s*-?\d+\s*\)|slope|parabola|graph of'),
+    ('expected-value', r'expected (?:value|number)'),
+    ('conditional-probability', r'given that|conditional'),
+    ('geometric-probability', r'(?:random|uniformly).{0,80}(?:interval|inside|interior|on the segment|in the square|in the region|real number)'),
+    ('probability', r'probabilit|at random|randomly|fair (?:coin|die|dice)'),
+    ('games-strategy', r'\bgame\b|takes turns|winning strategy|players? (?:alternate|take)|guarantee a win'),
+    ('clocks-calendars', r'clock|o\'clock|calendar|day of the week|monday|tuesday|wednesday|thursday|friday|saturday|sunday|a\.m\.|p\.m\.'),
+    ('data-graphs', r'bar graph|pie chart|the table|histogram|the graph shows|venn'),
+    ('conics', r'ellipse|hyperbola|parabola|focus|foci|directrix'),
+    ('cyclic-quadrilaterals', r'cyclic|inscribed (?:in|quadrilateral)[^.]{0,40}quadrilateral|quadrilateral[^.]{0,60}inscribed'),
+    ('trigonometry', r'\\sin|\\cos|\\tan|\\cot|\\sec|\\csc|sine|cosine|tangent of'),
+    ('logarithms', r'\\log|logarithm|\\ln'),
+    ('complex-numbers', r'complex number|\bi\^|\bz\^|imaginary|\\overline\{z\}|\bi\s*=\s*\\sqrt\{-1\}'),
+    ('solid-geometry', r'cube|sphere|cylinder|cone|prism|pyramid|tetrahedr|volume|octahedr|faces?\b'),
+    ('lattice-paths', r'lattice|grid|path[s]? from|unit steps|moves? (?:up|right)'),
+    ('triangle-centers', r'incenter|circumcenter|centroid|orthocenter|angle bisector|median|altitude|incircle|circumcircle'),
+    ('circles', r'circle|radius|radii|diameter|tangent|chord|inscribed|circumscribed|\barcs?\b|semicircle'),
+    ('area-ratios', r'ratio of the areas?|area of triangle [a-z]+ to|fraction of the area'),
+    ('coordinate-geometry', r'coordinate|\bxy-plane|cartesian|\(\s*-?\d+\s*,\s*-?\d+\s*\)|slope|\by\s*=\s*\d*x|line through'),
+    ('transformations', r'reflect|rotat|translat|symmetr'),
     ('similar-triangles', r'similar|parallel to'),
-    ('right-triangles', r'right triangle|hypotenuse|pythag'),
+    ('right-triangles', r'right triangle|hypotenuse|pythag|right angle|\\angle [a-z]+\s*=\s*90'),
+    ('angle-chasing', r'\\angle|degrees|\^\\circ|\bangles?\b'),
     ('triangles', r'triangle'),
-    ('polygons', r'hexagon|pentagon|octagon|polygon|regular'),
-    ('area', r'\barea\b|perimeter|square|rectangle|trapezoid|rhombus'),
-    ('modular-arithmetic', r'remainder|divided by|\\pmod|\bmod\b|last (?:two )?digits?|units digit'),
-    ('digits-bases', r'\bdigits?\b|base[- ]\d|palindrom'),
-    ('factors-divisors', r'divisors?|factors?|prime factor|\\gcd|greatest common|least common multiple|lcm'),
-    ('divisibility', r'divisible|prime|multiple of|integer'),
-    ('sequences-series', r'sequence|arithmetic progression|geometric|terms?\b|sum of the first'),
-    ('polynomials', r'polynomial|roots?\b|zeros? of'),
+    ('quadrilaterals', r'trapezoid|rhombus|parallelogram|kite|quadrilateral|rectangle'),
+    ('polygons', r'hexagon|pentagon|octagon|polygon|regular|decagon|dodecagon|-gon\b'),
+    ('area', r'\barea\b|perimeter|square'),
+    ('factorials', r'\d!|n!|factorial|trailing zeros|zeros at the end'),
+    ('decimals-fractions', r'repeating decimal|decimal (?:expansion|representation)|\\overline\{\d|terminating'),
+    ('gcd-lcm', r'\\gcd|\\operatorname\{lcm\}|\\text\{lcm\}|greatest common (?:divisor|factor)|least common multiple|relatively prime'),
+    ('modular-arithmetic', r'remainder|divided by|\\pmod|\\bmod|\bmod\b|last (?:two |three )?digits?|units digit|ones digit'),
+    ('digits-bases', r'\bdigits?\b|base[- ]\d|base \$|palindrom'),
+    ('perfect-powers', r'perfect (?:square|cube|power)|square of an integer|squares? of integers'),
+    ('factors-divisors', r'divisors?|factors?|prime factor'),
+    ('diophantine', r'ordered pairs? of (?:positive )?integers|integer solutions|in integers|ordered triples? of (?:positive )?integers'),
+    ('parity', r'\bodd\b|\beven\b'),
+    ('divisibility', r'divisible|prime|multiple of'),
+    ('floor-ceiling', r'\\lfloor|\\lceil|greatest integer|floor'),
+    ('absolute-value', r'\|x|\|\s*[a-z]\s*[-+]|absolute value|\\lvert'),
+    ('binomial-theorem', r'expansion of|coefficient of|\(\s*[a-z0-9]+\s*[+-]\s*[a-z0-9]+\s*\)\^\{?\d{2,}'),
+    ('binomial-coefficients', r'\\binom|pascal|\\choose'),
+    ('sequences-series', r'sequence|arithmetic progression|geometric (?:sequence|series|progression)|\ba_\{?n|sum of the first|\\sum'),
+    ('polynomials', r'polynomial|roots?\b|zeros? of|\bp\(x\)|cubic'),
     ('quadratics', r'x\^2|quadratic'),
-    ('functions', r'f\(|function'),
-    ('inequalities', r'minimum|maximum|least possible|greatest possible|inequalit|\\le|\\ge'),
-    ('statistics', r'mean|median|mode|average'),
-    ('permutations', r'arrange|permutation|order(?:ings?|ed)'),
+    ('functions', r'f\(|function|g\('),
+    ('graphs-transformations', r'graph'),
+    ('nonlinear-systems', r'xy\s*=|x\^2\s*\+\s*y\^2|system of equations'),
+    ('inequalities', r'minimum|maximum|least possible|greatest possible|largest possible|smallest possible|inequalit|\\le|\\ge'),
+    ('statistics', r'\bmean\b|median|\bmode\b|average|arithmetic mean'),
+    ('pigeonhole', r'guarantee|must be (?:at least|true)|at least two of'),
+    ('graph-theory', r'tournament|round[- ]robin|handshake|shook hands|edges?\b|vertices of a graph|friends?\b'),
+    ('symmetry-counting', r'rotations? (?:are|is) considered|indistinguishable|up to rotation|colou?r(?:ed|ings?)'),
+    ('invariants', r'repeatedly|operation|replaced? (?:by|with)|step(?:s)? (?:is|are) repeated|process'),
+    ('logic', r'truth|liar|knight|knave|always tells|statements?|exactly one of'),
+    ('permutations', r'arrange|permutation|orderings?\b|in what order|lineup|in a row|seat'),
     ('combinations', r'how many ways|choose|committee|subsets?|select'),
     ('basic-counting', r'how many'),
-    ('word-problems', r'percent|\\%|rate|speed|mph|miles|hours?|minutes|cost|dollars|\\\$|price|ratio'),
-    ('logic', r'truth|liar|knight|knave|always tells|statements?'),
+    ('word-problems', r'percent|\\%|\brate\b|speed|mph|miles|hours?|minutes|cost|dollars|\\\$|price|ratio'),
+    ('estimation', r'closest to|approximately|nearest'),
+    ('arithmetic', r'\\frac|\\cdot|\\times|value of'),
     ('linear-equations', r'.'),
 ]
 
 
-def guess_topic(statement):
+def guess_topics(statement):
+    """[primary, up to two secondary] topic ids for a problem's text."""
     low = statement.lower()
+    found = []
     for topic, pattern in _TOPIC_RULES:
-        if re.search(pattern, low):
-            return topic
-    return 'linear-equations'
+        if topic not in found and re.search(pattern, low):
+            found.append(topic)
+            if len(found) == 3:
+                break
+    if len(found) > 1 and found[-1] == 'linear-equations':
+        found.pop()
+    return found or ['linear-equations']
 
 
-#: AoPS competition-scale bands by position (see backend/amc/solutions.py for
-#: where these come from): (last problem number in the band, rating).
-RATING_BANDS = {
-    'AMC 10': [(5, 1), (10, 1.5), (15, 2), (20, 2.5), (22, 3), (25, 3.5)],
-    'AMC 12': [(5, 1.5), (10, 2), (15, 2.5), (20, 3), (23, 3.5), (25, 4)],
-    'AIME': [(3, 2.5), (6, 3.5), (10, 4), (13, 5), (15, 6)],
+def guess_topic(statement):
+    return guess_topics(statement)[0]
+
+
+#: AoPS competition-scale rating (1-10) of each problem number, in half points.
+#: Calibrated to the AoPS wiki's Competition ratings page: an AMC 10 runs from
+#: 1 to about 4, an AMC 12 from 1 to 4.5, and an AIME from 2.5 to 6.5 (7 and
+#: up is olympiad territory). Real papers vary from year to year, so this is
+#: where a problem sits on a typical paper, not a measurement of that problem.
+RATING_BY_NUMBER = {
+    'AMC 10': [1, 1, 1, 1, 1.5, 1.5, 1.5, 1.5, 1.5, 2, 2, 2, 2, 2, 2.5,
+               2.5, 2.5, 2.5, 3, 3, 3, 3.5, 3.5, 3.5, 4],
+    'AMC 12': [1, 1, 1, 1.5, 1.5, 1.5, 1.5, 1.5, 2, 2, 2, 2, 2.5, 2.5, 2.5,
+               2.5, 3, 3, 3, 3.5, 3.5, 3.5, 4, 4, 4.5],
+    'AIME': [2.5, 3, 3, 3.5, 3.5, 4, 4, 4.5, 4.5, 5, 5, 5.5, 5.5, 6, 6.5],
 }
 
 
+def _bands(level):
+    """[(last problem number, rating)] runs, for the contest guide."""
+    out = []
+    for number, rating in enumerate(RATING_BY_NUMBER[level], start=1):
+        if out and out[-1][1] == rating:
+            out[-1] = (number, rating)
+        else:
+            out.append((number, rating))
+    return out
+
+
+RATING_BANDS = {level: _bands(level) for level in RATING_BY_NUMBER}
+
+
 def rating_at(level, number):
-    """The AoPS-scale rating for problem `number` of a `level` paper."""
-    for last, rating in RATING_BANDS[level]:
-        if number <= last:
-            return rating
-    return RATING_BANDS[level][-1][1]
+    """The AoPS-scale rating (1-10) for problem `number` of a `level` paper."""
+    table = RATING_BY_NUMBER[level]
+    return table[min(max(number, 1), len(table)) - 1]
 
 
 def difficulty_at(level, number):
@@ -301,11 +512,14 @@ def _shape(row):
     if contest['level'] == 'AIME':
         answer = int(answer)
     choices = json.loads(row['choices']) if row.get('choices') else None
+    # Tagged from the text each time it is read, so better rules reach
+    # contests imported before them.
+    tags = guess_topics(row['statement'])
     return {
         'id': problem_id(row['contest_id'], number),
         'level': contest['level'],
-        'topic': row.get('topic') or guess_topic(row['statement']),
-        'also': [],
+        'topic': tags[0],
+        'also': tags[1:],
         'technique': 'official',
         'rating': rating_at(contest['level'], number),
         'difficulty': difficulty_at(contest['level'], number),
@@ -317,6 +531,7 @@ def _shape(row):
         'contest': row['contest_id'],
         'number': number,
         'diagram': row.get('diagram') or '',
+        'aops_url': '{}/Problem_{}'.format(contest['problems_url'], number),
     }
 
 
@@ -373,7 +588,7 @@ def imported_contests():
     return out
 
 
-def save(contest_id, problems, key, username):
+def save_contest(contest_id, problems, key, username):
     """Store a parsed contest with its key, replacing any earlier import."""
     now = datetime.now().isoformat(timespec='seconds')
     con = connect()
@@ -390,6 +605,9 @@ def save(contest_id, problems, key, username):
     finally:
         con.close()
     forget()
+
+
+save = save_contest
 
 
 def remove(contest_id):

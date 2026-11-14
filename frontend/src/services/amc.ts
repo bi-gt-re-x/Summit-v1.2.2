@@ -50,6 +50,8 @@ export interface Problem {
   official?: boolean;
   /** Asymptote source, 'image', or '' when there is no diagram. */
   diagram?: string;
+  /** The problem's page on the AoPS wiki (official problems only). */
+  aops_url?: string | null;
   answer?: string | number;
   /** Numbered steps; null for official problems. */
   solution?: string[] | null;
@@ -312,12 +314,16 @@ export interface ProblemFilters {
   q?: string;
   sort?: string;
   source?: string;
+  /** Whole rating steps, comma separated: "3" covers 3 and 3.5. */
+  rating?: string;
 }
 
 export interface ProblemList {
   problems: ProblemSummary[];
   total: number;
   counts: Record<Status, number>;
+  /** Problems in each whole rating step, "1" to "10". */
+  rating_counts: Record<string, number>;
   official: number;
   topics: { id: string; name: string; category: CategoryId }[];
   categories: Category[];
@@ -475,6 +481,24 @@ export interface PlanPayload {
   defaults: { dates: Record<Level, string>; goals: Record<Level, number> };
 }
 
+export interface ImportBatch {
+  url: string;
+  label: string;
+  contests: string[];
+}
+
+export interface BundleRow {
+  id: string;
+  name: string;
+  problems: number;
+  count: number;
+  answers: number;
+  complete: boolean;
+  diagrams: number;
+  issues: string[];
+  saved: boolean;
+}
+
 export interface ImportPreview {
   preview: {
     number: number;
@@ -529,6 +553,9 @@ export const amc = {
   importContest: (id: string, problems: string, key: string, save: boolean) =>
     post<ImportPreview>(`/api/amc/contests/${encodeURIComponent(id)}/import`, { problems, key, save }),
   removeImport: (id: string) => del<object>(`/api/amc/contests/${encodeURIComponent(id)}/import`),
+  importBatches: () => get<{ batches: ImportBatch[]; missing: number; total: number }>('/api/amc/official/batches'),
+  importBundle: (text: string, save: boolean) =>
+    post<{ contests: BundleRow[]; saved: number }>('/api/amc/official/import', { text, save }),
   logScore: (id: string, score: number, note: string) =>
     post<object>(`/api/amc/contests/${encodeURIComponent(id)}/log`, { score, note }),
   plan: () => get<PlanPayload>('/api/amc/plan'),

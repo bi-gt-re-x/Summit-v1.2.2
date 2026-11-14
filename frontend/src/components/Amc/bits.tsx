@@ -7,18 +7,25 @@ import { Link } from 'react-router-dom';
 import { CATEGORY_TONE, type CategoryId, type Pill, type ProblemSummary, type Status } from '@/services/amc';
 import { MathText } from './MathText';
 
+/** A rating as text: 3.5 → "3.5/10". */
+export function ratingText(rating: number) {
+  return `${rating}/10`;
+}
+
 /**
- * Difficulty: five pips for where it would sit on a real AMC 10 (1 = #1-5,
- * 5 = #21-25 and up), and the AoPS competition-scale rating beside them.
+ * Difficulty on the 1-10 AoPS competition scale: a ten-step meter (half a step
+ * for .5) and, with `label`, the number. An AMC 10 runs 1 to 4, an AMC 12 1 to
+ * 4.5 and an AIME 2.5 to 6.5; 7 and up is olympiad level.
  */
 export function Difficulty({ value, rating, label = true }: { value: number; rating?: number | null; label?: boolean }) {
-  const text = rating != null ? `AoPS rating ${rating} (difficulty ${value} of 5)` : `Difficulty ${value} of 5`;
+  const r = rating ?? value;
+  const text = `Rated ${r} out of 10 on the AoPS competition scale`;
   return (
     <span className="am-diff" title={text} aria-label={text}>
-      {[1, 2, 3, 4, 5].map((n) => (
-        <i key={n} className={n <= value ? 'on' : ''} />
+      {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+        <i key={n} className={n <= r ? 'on' : n - 0.5 === r ? 'half' : ''} />
       ))}
-      {label && <span className="am-diff-num">{rating != null ? `AoPS ${rating}` : value}</span>}
+      {label && <span className="am-diff-num">{ratingText(r)}</span>}
     </span>
   );
 }
@@ -255,11 +262,16 @@ export function Solution({
  * page says so plainly and keeps the source a click away for anyone who reads
  * Asymptote.
  */
-export function DiagramNote({ diagram }: { diagram: string }) {
+export function DiagramNote({ diagram, href }: { diagram: string; href?: string | null }) {
   return (
     <div className="am-callout am-callout-trap am-diagram">
       <span>Figure</span>
-      <p>This one has a figure we can't draw yet. Sketch it from the text.</p>
+      <p>
+        This one has a figure we can't draw yet.{' '}
+        {href
+          ? <a className="am-link" href={href} target="_blank" rel="noreferrer">See it on the AoPS wiki ↗</a>
+          : 'Sketch it from the text.'}
+      </p>
       {diagram !== 'image' && (
         <details>
           <summary>Asymptote source</summary>
@@ -280,7 +292,7 @@ export function ProblemPills({ pills, empty = 'No problems yet.' }: { pills: Pil
     <div className="am-pills">
       {pills.map((p) => (
         <Link key={p.id} to={`/problems/${p.id}`} className={`am-pill-link is-${p.status}`}
-              title={`${p.title} — ${STATUS_LABEL[p.status]}, AoPS rating ${p.rating ?? p.difficulty}`}>
+              title={`${p.title} — ${STATUS_LABEL[p.status]}, rated ${p.rating ?? p.difficulty}/10`}>
           <i className={`am-pill-diff d${p.difficulty}`} aria-hidden="true" />
           {p.short}
         </Link>

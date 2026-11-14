@@ -157,7 +157,7 @@ export default function Problem() {
             </div>
 
             <MathText text={p.statement} as="p" className="am-statement" />
-            {p.diagram && <DiagramNote diagram={p.diagram} />}
+            {p.diagram && <DiagramNote diagram={p.diagram} href={p.aops_url} />}
 
             <AnswerInput
               choices={p.choices}
@@ -253,7 +253,10 @@ export default function Problem() {
               <dt>Contest</dt><dd>{p.level}</dd>
               <dt>Category</dt><dd>{p.category_name}</dd>
               <dt>Technique</dt><dd><Link className="am-link" to={`/problems?technique=${p.technique}`}>{p.technique_name}</Link></dd>
-              <dt>AoPS rating</dt><dd>{p.rating ?? '—'} <span className="am-muted">({p.difficulty} of 5)</span></dd>
+              <dt>Rating</dt><dd>{p.rating != null ? `${p.rating}/10` : '—'} <span className="am-muted">AoPS scale</span></dd>
+              {p.aops_url && (
+                <><dt>Solutions</dt><dd><a className="am-link" href={p.aops_url} target="_blank" rel="noreferrer">AoPS wiki ↗</a></dd></>
+              )}
               {p.sources.map((s) => (
                 <span key={s.contest} style={{ display: 'contents' }}>
                   <dt>Appears in</dt>

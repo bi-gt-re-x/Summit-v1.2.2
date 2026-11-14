@@ -102,6 +102,7 @@ def public(problem, reveal=False):
         'sources': catalog.sources(problem['id']),
         'official': bool(problem.get('official')),
         'diagram': problem.get('diagram') or '',
+        'aops_url': problem.get('aops_url'),
     }
     if reveal:
         out.update(answer=problem['answer'], solution=problem['solution'],
