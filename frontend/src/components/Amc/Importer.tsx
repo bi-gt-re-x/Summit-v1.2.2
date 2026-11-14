@@ -4,7 +4,7 @@
  * The AoPS wiki blocks automated fetching (backend/amc/official.py explains),
  * so the reader copies the page source and the answer key, and this parses
  * them: Preview shows what was found and anything missing, Save stores it for
- * every account on this install. After that the contest is practised, graded
+ * every account on this install. After that the contest is practiced, graded
  * and timed here like the Step Mocks.
  */
 import { useState } from 'react';
@@ -60,7 +60,7 @@ export function Importer({ contest, onSaved }: { contest: PastContest; onSaved: 
           <a className="am-link" href={contest.answers_url} target="_blank" rel="noreferrer">answer key ↗</a>
           {aime ? ' — fifteen integers.' : ' — the letters, in any layout.'}
         </li>
-        <li>Preview, check it, and save. From then on every account here can practise and time it in-site.</li>
+        <li>Preview, check it, and save. From then on every account here can practice and time it in-site.</li>
       </ol>
       <div className="am-import-fields">
         <label className="am-field">

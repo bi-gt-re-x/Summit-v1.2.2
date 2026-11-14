@@ -14,7 +14,7 @@ wrong often enough to matter. So creating a problem is three steps:
    rewrite is attempted when it does not.
 
 Stored problems (table `amc_generated`) are shared by every account, served
-with ids `ai-xxxxxxxx` through backend/amc/problems.py, and practised,
+with ids `ai-xxxxxxxx` through backend/amc/problems.py, and practiced,
 reviewed and searched like any other problem.
 """
 import json

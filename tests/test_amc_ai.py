@@ -116,7 +116,7 @@ def test_a_written_problem_is_kept_only_when_a_second_solve_agrees(client, fake_
     listed = client.get('/api/amc/problems', params={'source': 'ai'}).json()
     assert [p['id'] for p in listed['problems']] == [made['id']] and listed['kinds']['ai'] == 1
     assert listed['problems'][0]['source'] == 'AI practice'
-    # It is practised like any other problem, with a solution that ends on its answer.
+    # It is practiced like any other problem, with a solution that ends on its answer.
     reply = _answer(client, made['id'], 'D')
     assert reply['correct'] and reply['problem']['solution'][-1] == r'The answer is $\textbf{(D)}$.'
 

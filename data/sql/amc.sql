@@ -137,3 +137,21 @@ CREATE TABLE IF NOT EXISTS amc_generated (
     provider    TEXT DEFAULT '',
     created_at  TEXT NOT NULL
 );
+
+-- Problems and solutions people post by hand (backend/amc/posts.py), written
+-- in LaTeX the way AoPS writes them. Shared by every account; only the author
+-- (or an importer account) may edit or delete one. `choices` is JSON, or
+-- NULL for an AIME problem, whose answer is an integer 0-999.
+CREATE TABLE IF NOT EXISTS amc_posts (
+    id          TEXT PRIMARY KEY,
+    author      TEXT NOT NULL,
+    level       TEXT NOT NULL,
+    title       TEXT DEFAULT '',
+    statement   TEXT NOT NULL,
+    choices     TEXT,
+    answer      TEXT NOT NULL,
+    solution    TEXT DEFAULT '',
+    created_at  TEXT NOT NULL,
+    updated_at  TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS amc_posts_created_idx ON amc_posts (created_at);

@@ -105,7 +105,7 @@ def _full_contest():
     return body, 'A' * 25
 
 
-def test_import_then_practise_and_time_it(client):
+def test_import_then_practice_and_time_it(client):
     body, key = _full_contest()
     preview = client.post('/api/amc/contests/2023-amc-10a/import', json={'problems': body, 'key': key}).json()
     assert preview['success'] and preview['issues'] == [] and not preview['saved']
@@ -119,7 +119,7 @@ def test_import_then_practise_and_time_it(client):
     assert detail['contest']['imported'] and len(detail['problems']) == 25
     assert 'answer' not in detail['problems'][0]
 
-    # Practised one at a time, in-site.
+    # Practiced one at a time, in-site.
     reply = client.post('/api/amc/problems/2023-amc-10a-3/attempt', json={'answer': 'B'}).json()
     assert reply['success'] and not reply['correct'] and reply['problem']['answer'] == 'A'
     assert client.get('/api/amc/problems/2023-amc-10a-3').json()['next'] == '2023-amc-10a-4'
@@ -226,7 +226,7 @@ def test_only_temu_can_import(app, client, monkeypatch):
     assert temu.get('/api/amc/contests').json()['can_import'] is True
     saved = temu.post('/api/amc/contests/2023-amc-10a/import', json={'problems': body, 'key': key, 'save': True}).json()
     assert saved['success'] and saved['saved'] and saved['complete']
-    # Everyone can then practise it, but still not remove it.
+    # Everyone can then practice it, but still not remove it.
     assert client.get('/api/amc/contests/2023-amc-10a').json()['contest']['imported'] is True
     assert client.delete('/api/amc/contests/2023-amc-10a/import').status_code == 403
 

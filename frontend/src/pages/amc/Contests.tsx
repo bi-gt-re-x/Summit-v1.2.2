@@ -36,7 +36,7 @@ export default function Contests() {
       <PageHeader title="Past Contests">
         <p>
           All {total} official papers since 2000. Papers marked ● are in Summit
-          ({data.imported} so far) and can be practised and timed here.
+          ({data.imported} so far) and can be practiced and timed here.
         </p>
       </PageHeader>
 

@@ -450,6 +450,33 @@ def strategies(username: str = Depends(current_username)):
     return ok(families=families, untagged=len(untagged))
 
 
+def _topic_next(problems):
+    """Up to three problems to do next on a topic, each with the reason: a miss
+    to retry, the next step up from the hardest one solved here, and a stretch
+    about a point and a half above that."""
+    picks = []
+    retry = next((p for p in problems if p['status'] in ('missed', 'review')), None)
+    if retry:
+        picks.append({**retry, 'kind': 'retry',
+                      'reason': 'You missed this one. Try it again before you open the solution.'})
+    fresh = [p for p in problems if p['status'] == 'new']
+    best = max((p['rating'] or 0 for p in problems if p['status'] == 'solved'), default=0)
+    step = next((p for p in fresh if (p['rating'] or 0) >= best), None) or (fresh[-1] if fresh else None)
+    if step:
+        picks.append({**step, 'kind': 'next', 'reason': (
+            'The next step up from the hardest one you have solved here ({:g}/10).'.format(best) if best
+            else 'The easiest problem here you have not tried. Start with it.')})
+    floor = (step['rating'] or 0) if step else best
+    aim = max(best, floor) + 1.5
+    stretch = [p for p in fresh if (p['rating'] or 0) > floor]
+    if stretch:
+        far = min(stretch, key=lambda p: abs((p['rating'] or 0) - aim))
+        picks.append({**far, 'kind': 'stretch',
+                      'reason': 'A stretch, about {:g} on the scale. Give it 15 minutes before any hint.'.format(
+                          far['rating'] or 0)})
+    return picks
+
+
 @router.get('/api/amc/topics/{topic_id}')
 def topic(topic_id: str, username: str = Depends(current_username)):
     t = catalog.TOPIC_BY_ID.get(topic_id)
@@ -469,14 +496,16 @@ def topic(topic_id: str, username: str = Depends(current_username)):
     groups = {}
     for row in problems:
         key = row['technique']
-        groups.setdefault(key, []).append(_pill(row['id'], hist, review_by_id))
+        # The list view shows each problem in full, so a row carries its source and statement.
+        groups.setdefault(key, []).append({**_pill(row['id'], hist, review_by_id), 'source': row['source'],
+                                           'statement': pb.get(row['id'])['statement']})
     family_order = {tid: i for i, (tid, _) in enumerate(
         (pair for f in catalog.STRATEGY_FAMILIES for pair in f['techniques']))}
     by_strategy = [{'id': k, 'name': 'Official problems' if k == 'official' else catalog.technique_name(k),
                     'idea': catalog.TECHNIQUE_IDEA.get(k, 'Imported contest problems, not yet tagged by strategy.'),
                     'pills': sorted(v, key=_pill_order)}
                    for k, v in sorted(groups.items(), key=lambda kv: family_order.get(kv[0], 999))]
-    return ok(by_strategy=by_strategy,
+    return ok(by_strategy=by_strategy, next=_topic_next(problems),
               topic={**t, **tstats[topic_id],
                      'category_name': catalog.CATEGORY_BY_ID[t['category']]['name']},
               problems=problems, siblings=siblings,

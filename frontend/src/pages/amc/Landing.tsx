@@ -477,7 +477,7 @@ export default function Landing() {
             <Reveal>
               <p className="lp-kicker">How it works</p>
               <h2 className="lp-h2">Four steps,<br />repeated until<br />the cutoff is easy.</h2>
-              <p className="lp-muted lp-climb-note">Each step feeds the next: your misses become reviews, your mocks become numbers, and the numbers pick what you practise.</p>
+              <p className="lp-muted lp-climb-note">Each step feeds the next: your misses become reviews, your mocks become numbers, and the numbers pick what you practice.</p>
             </Reveal>
           </div>
           <div className="lp-steps-wrap">

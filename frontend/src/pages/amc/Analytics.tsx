@@ -92,7 +92,7 @@ function Performance({ data }: { data: AnalyticsData }) {
               hint={`contest pace ${data.target === 'AIME' ? '12:00' : '3:00'}`} />
         <Stat label="Reliable up to" value={p.ceiling != null ? `${p.ceiling}/10` : '—'}
               hint={p.ceiling != null ? '70%+ right' : 'answer more'} />
-        <Stat label="Active days" value={String(p.active_days)} hint={`${p.minutes} min practised`} />
+        <Stat label="Active days" value={String(p.active_days)} hint={`${p.minutes} min practiced`} />
       </dl>
 
       <div className="am-grid am-grid-2">

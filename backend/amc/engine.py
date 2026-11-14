@@ -394,7 +394,7 @@ def plan_weeks(settings, tstats, mocks_taken, today):
 
 
 def today_items(settings, weeks, due_count, today, checks, practiced_today):
-    """`practiced_today` is the set of problem ids practised today."""
+    """`practiced_today` is the set of problem ids practiced today."""
     """The checklist for today, from the current week of the plan."""
     week = next((w for w in weeks if w['current']), weeks[0] if weeks else None)
     level = settings['target']

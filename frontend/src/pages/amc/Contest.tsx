@@ -116,7 +116,7 @@ export default function Contest() {
         {back}
         <PageHeader kicker={`${c.year} · ${c.level}`} title={c.name}>
           <p>
-            {c.count} problems in {c.minutes} minutes.{data.can_import ? ' Import it once to practise it here.' : ''}
+            {c.count} problems in {c.minutes} minutes.{data.can_import ? ' Import it once to practice it here.' : ''}
           </p>
         </PageHeader>
         <div className="am-grid am-grid-main">
@@ -156,7 +156,7 @@ export default function Contest() {
         actions={
           <>
             {firstOpen && (
-              <Link className="am-btn" to={`/problems/${firstOpen.id}`}>Practise one by one</Link>
+              <Link className="am-btn" to={`/problems/${firstOpen.id}`}>Practice one by one</Link>
             )}
             <Link className="am-btn am-btn-primary" to={`/contests/${c.id}/take`}>
               {official ? 'Start timed contest' : 'Start timed mock'}

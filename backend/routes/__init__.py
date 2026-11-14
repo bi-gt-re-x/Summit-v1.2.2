@@ -27,6 +27,8 @@ API_MODULES = (
     'amc',
     # The AI layer over it: insights, hints, explanations, new problems.
     'amc_ai',
+    # Problems and solutions posted by hand (backend/amc/posts.py).
+    'amc_posts',
     # The account: preferences, export and reset; the sign-up questions; the
     # bell; and `/api/stats`, the level and streak the nametag reads.
     'settings',

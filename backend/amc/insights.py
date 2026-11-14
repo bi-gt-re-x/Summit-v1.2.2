@@ -308,7 +308,7 @@ def prepare(level, goal, hours, days_left, projected, rating_rows, tstats, due, 
     else:
         lo = min(need_rating, top + 0.5)
         band = '{:g}'.format(lo) if lo == need_rating else '{:g}–{:g}'.format(lo, need_rating)
-        reach = ('You need to solve up to about #{} (AoPS {:g}). You are solid up to {:g}, so practise '
+        reach = ('You need to solve up to about #{} (AoPS {:g}). You are solid up to {:g}, so practice '
                  'problems rated {}.').format(right, need_rating, top, band)
 
     gap = None if projected is None else round(goal - projected, 1)
@@ -328,7 +328,7 @@ def prepare(level, goal, hours, days_left, projected, rating_rows, tstats, due, 
     if need_rating is not None:
         hi = int(need_rating)
         lo = int(min(need_rating, top + 0.5 if top is not None else official.rating_at(level, 1)))
-        steps.append({'title': 'Practise at your target level',
+        steps.append({'title': 'Practice at your target level',
                       'body': 'Problems rated up to {:g}/10, until you get 80% right first try.'.format(need_rating),
                       'to': '/problems?level={}&rating={}'.format(
                           level.replace(' ', '+'), ','.join(str(d) for d in range(lo, hi + 1)))})

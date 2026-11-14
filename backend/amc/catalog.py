@@ -379,6 +379,18 @@ TOPICS = [
                'Trap the answer between two bounds that are easy to compute.',
                'Use the answer choices: they are often far enough apart.']},
 ]
+# The Ideas on each topic page: a playbook of moves (what to do, when, and a
+# worked example) and the trap that costs the most points (backend/amc/ideas.py).
+# `ideas` keeps the moves as plain strings for search.
+from backend.amc.ideas import PLAYBOOK as _PLAYBOOK  # noqa: E402
+
+for _t in TOPICS:
+    if _t['id'] in _PLAYBOOK:
+        _t['playbook'], _t['trap'] = _PLAYBOOK[_t['id']]
+        _t['ideas'] = [m['move'] for m in _t['playbook']]
+    else:
+        _t['playbook'], _t['trap'] = [], ''
+
 TOPIC_BY_ID = {t['id']: t for t in TOPICS}
 CATEGORY_BY_ID = {c['id']: c for c in CATEGORIES}
 

@@ -1243,3 +1243,73 @@ html[data-theme="dark"] .am-predict-tag { color: #0d1117; }
 .am-hints li { padding: var(--space-2) var(--space-3); border-left: 3px solid var(--am-sage); background: var(--am-sage-soft); border-radius: 0 8px 8px 0; }
 .am-explained { margin-bottom: var(--space-3); }
 .am-explained p { margin: var(--space-1) 0; }
+
+/* Topic page: what to do next (Topic.tsx) */
+.am-picks { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-2); }
+.am-pick { display: grid; grid-template-columns: 92px minmax(0, 1fr) auto; gap: var(--space-3); align-items: center; padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--am-line); border-radius: 12px; text-decoration: none; color: var(--am-ink); background: var(--am-card);
+    transition: background .15s, border-color .15s; }
+.am-pick:hover { background: var(--am-hover); }
+.am-pick-kind { justify-self: start; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px;
+    background: var(--am-sage-soft); color: var(--am-sage); }
+.am-pick.is-retry .am-pick-kind { background: var(--am-bad-soft); color: var(--am-bad); }
+.am-pick.is-stretch .am-pick-kind { background: var(--am-warn-soft); color: var(--am-warn); }
+.am-pick-body { min-width: 0; font-size: var(--text-sm); }
+.am-pick-why { display: block; margin-top: 2px; color: var(--am-body); font-size: var(--text-xs); line-height: 1.45; }
+
+/* Topic page: the Ideas playbook */
+.am-play { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-3); counter-reset: play; }
+.am-play li { position: relative; padding: var(--space-4) var(--space-4) var(--space-4) 56px; border-radius: 14px; background: var(--am-inset); counter-increment: play; }
+.am-play li::before { content: counter(play); position: absolute; left: 16px; top: 16px; width: 26px; height: 26px; display: grid; place-items: center;
+    border-radius: 50%; background: var(--am-sage); color: var(--am-card); font-size: var(--text-xs); font-weight: 700; }
+.am-play h3 { margin: 0 0 var(--space-2); font-size: 16px; font-weight: 600; line-height: 1.35; color: var(--am-ink); }
+.am-play p { margin: 0; display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: var(--space-2); font-size: var(--text-sm); line-height: 1.6; color: var(--am-body); }
+.am-play p + p { margin-top: 6px; }
+.am-play p > span:first-child { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--am-muted); padding-top: 3px; }
+.am-play-example > span:last-child { color: var(--am-ink); }
+.am-play-trap { margin-top: var(--space-3); }
+.am-play-trap p { margin: 4px 0 0; }
+
+/* Topic page: problems by strategy, as an expandable list (StrategyList.tsx) */
+.am-slist { display: grid; gap: var(--space-2); }
+.am-slist-bar { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); font-size: var(--text-sm); margin-bottom: var(--space-1); }
+.am-slist-group { border: 1px solid var(--am-line); border-radius: 14px; overflow: hidden; background: var(--am-card); }
+.am-slist-group.is-open { border-color: color-mix(in srgb, var(--am-sage) 40%, var(--am-line)); }
+.am-slist-head { width: 100%; display: grid; grid-template-columns: 18px minmax(0, 1fr) auto; gap: var(--space-3); align-items: center;
+    padding: var(--space-3) var(--space-4); border: 0; background: none; color: var(--am-ink); font: inherit; text-align: left; cursor: pointer; }
+.am-slist-head:hover { background: var(--am-hover); }
+.am-slist-head:focus-visible { outline: 2px solid var(--am-sage); outline-offset: -2px; }
+.am-slist-chev { width: 8px; height: 8px; border-right: 2px solid var(--am-muted); border-bottom: 2px solid var(--am-muted); transform: rotate(-45deg); transition: transform .2s; justify-self: center; }
+.am-slist-group.is-open .am-slist-chev { transform: rotate(45deg); }
+.am-slist-name { display: grid; gap: 2px; min-width: 0; }
+.am-slist-name strong { font-size: 15px; font-weight: 600; }
+.am-slist-name > span { font-size: var(--text-sm); color: var(--am-muted); }
+.am-slist-side { display: grid; justify-items: end; gap: 4px; }
+.am-slist-count { font-size: var(--text-xs); color: var(--am-muted); white-space: nowrap; }
+.am-slist-dots { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 3px; max-width: 140px; }
+.am-slist-dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--am-line); }
+.am-slist-dots i.is-solved { background: var(--am-good); }
+.am-slist-dots i.is-missed { background: var(--am-bad); }
+.am-slist-dots i.is-review { background: var(--am-warn); }
+.am-slist-rows { margin: 0; padding: 0 var(--space-3) var(--space-3); list-style: none; display: grid; gap: var(--space-2); }
+.am-slist-row { display: grid; gap: var(--space-2); padding: var(--space-3) var(--space-4); border-radius: 10px; background: var(--am-inset);
+    border-left: 3px solid var(--am-line); text-decoration: none; color: var(--am-ink); transition: background .15s; }
+.am-slist-row:hover { background: var(--am-hover); }
+.am-slist-row.is-solved { border-left-color: var(--am-good); }
+.am-slist-row.is-missed { border-left-color: var(--am-bad); }
+.am-slist-row.is-review { border-left-color: var(--am-warn); }
+.am-slist-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px var(--space-3); font-size: var(--text-sm); }
+.am-slist-source { color: var(--am-muted); }
+.am-slist-tags { margin-left: auto; display: flex; align-items: center; gap: var(--space-2); }
+.am-slist-statement { font-size: 15px; line-height: 1.6; color: var(--am-body); display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.am-slist-statement .katex { font-size: 1.05em; }
+.am-slist-more { padding: var(--space-1) var(--space-2) 0; font-size: var(--text-sm); }
+@media (max-width: 640px) {
+    .am-pick { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+    .am-slist-head { grid-template-columns: 14px minmax(0, 1fr); }
+    .am-slist-side { grid-column: 2; justify-items: start; }
+    .am-slist-dots { justify-content: flex-start; max-width: none; }
+    .am-slist-tags { margin-left: 0; }
+    .am-play li { padding-left: var(--space-4); padding-top: 48px; }
+    .am-play p { grid-template-columns: minmax(0, 1fr); gap: 0; }
+}

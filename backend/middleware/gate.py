@@ -50,7 +50,7 @@ GATED_PATHS = ('/dashboard', '/calendar', '/goals', '/growth', '/analytics',
                '/tasks', '/analytics/goals', '/analytics/records',
                # The AMC prep pages: every one of them reads the account's own
                # answers, review log or plan.
-               '/problems', '/review', '/topics', '/contests', '/mock-contests', '/study-plan', '/search')
+               '/problems', '/review', '/topics', '/contests', '/mock-contests', '/posts', '/study-plan', '/search')
 
 #: Pages with an id in the path: one per subject, settings section and space.
 GATED_PREFIXES = ('/analytics/subject/', '/settings/', '/spaces/', '/team/',

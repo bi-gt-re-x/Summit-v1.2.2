@@ -108,6 +108,7 @@ SPA_ROUTES = (
     '/topics',
     '/topics/{topic_id}',
     '/mock-contests',
+    '/posts',
     '/contests',
     '/contests/{contest_id}',
     '/contests/{contest_id}/take',

@@ -175,7 +175,7 @@ export default function Dashboard() {
         <div className="am-stat">
           <dt>Mock contests</dt>
           <dd className="am-stat-value">{stats.mocks}</dd>
-          <dd className="am-stat-hint">{stats.minutes} min practised</dd>
+          <dd className="am-stat-hint">{stats.minutes} min practiced</dd>
         </div>
       </dl>
 

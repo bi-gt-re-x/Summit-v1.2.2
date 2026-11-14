@@ -5,10 +5,28 @@
 import { Link, useParams } from 'react-router-dom';
 import { ErrorState, Loading } from '@/components';
 import { MathText } from '@/components/Amc/MathText';
-import { Empty, Meter, PageHeader, PillLegend, ProblemPills } from '@/components/Amc/bits';
+import { Difficulty, Empty, Meter, PageHeader } from '@/components/Amc/bits';
+import { StrategyList } from '@/components/Amc/StrategyList';
 import { useApi, useDocumentTitle } from '@/hooks';
-import { amc, pct } from '@/services/amc';
+import { amc, pct, type NextPick } from '@/services/amc';
 import '@/styles/amc.css';
+
+const PICK_LABEL: Record<NextPick['kind'], string> = { retry: 'Retry', next: 'Next step', stretch: 'Stretch' };
+
+function Pick({ pick }: { pick: NextPick }) {
+  return (
+    <li>
+      <Link to={`/problems/${pick.id}`} className={`am-pick is-${pick.kind}`}>
+        <span className="am-pick-kind">{PICK_LABEL[pick.kind]}</span>
+        <span className="am-pick-body">
+          <strong>{pick.short ?? pick.id}</strong> <span className="am-muted">{pick.source}</span>
+          <span className="am-pick-why">{pick.reason}</span>
+        </span>
+        <Difficulty value={pick.difficulty} rating={pick.rating} />
+      </Link>
+    </li>
+  );
+}
 
 export default function Topic() {
   const { topicId = '' } = useParams();
@@ -30,7 +48,7 @@ export default function Topic() {
         kicker={topic.category_name}
         title={topic.name}
         actions={firstNew ? (
-          <Link className="am-btn am-btn-primary" to={`/problems/${firstNew.id}`}>Practise</Link>
+          <Link className="am-btn am-btn-primary" to={`/problems/${firstNew.id}`}>Practice</Link>
         ) : undefined}
       >
         <p>{topic.summary} On the {topic.levels.join(', ')}.</p>
@@ -38,37 +56,44 @@ export default function Topic() {
 
       <div className="am-grid am-grid-main">
         <div className="am-stack">
+          {data.next.length > 0 && (
+            <section className="am-card">
+              <div className="am-card-head"><h2>Do these next</h2></div>
+              <ol className="am-picks">
+                {data.next.map((p) => <Pick key={p.kind} pick={p} />)}
+              </ol>
+            </section>
+          )}
           <section className="am-card">
             <div className="am-card-head"><h2>Ideas</h2></div>
-            <ol className="am-ideas">
-              {topic.ideas.map((idea) => <li key={idea}><MathText text={idea} /></li>)}
-            </ol>
+            {topic.playbook?.length ? (
+              <ol className="am-play">
+                {topic.playbook.map((m) => (
+                  <li key={m.move}>
+                    <h3><MathText text={m.move} /></h3>
+                    <p className="am-play-when"><span>When</span><MathText text={m.when} /></p>
+                    <p className="am-play-example"><span>Example</span><MathText text={m.example} /></p>
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <ol className="am-ideas">
+                {topic.ideas.map((idea) => <li key={idea}><MathText text={idea} /></li>)}
+              </ol>
+            )}
+            {topic.trap && (
+              <div className="am-callout am-play-trap">
+                <span>Watch out</span>
+                <MathText text={topic.trap} as="p" />
+              </div>
+            )}
           </section>
           <section className="am-card">
             <div className="am-card-head">
               <h2>Problems by strategy</h2>
-              <Link to={`/problems?topic=${topic.id}`}>Open as a list</Link>
+              <Link to={`/problems?topic=${topic.id}`}>Open in Problems</Link>
             </div>
-            <PillLegend />
-            {data.by_strategy.length ? (
-              <div className="am-strategy-groups">
-                {data.by_strategy.map((g) => (
-                  <div key={g.id} className="am-strategy-group">
-                    <div className="am-strategy-group-head">
-                      {g.id === 'official' ? (
-                        <strong>{g.name}</strong>
-                      ) : (
-                        <Link className="am-link" to={`/topics?view=strategy#tech-${g.id}`}>{g.name}</Link>
-                      )}
-                      <span className="am-muted">{g.idea}</span>
-                    </div>
-                    <ProblemPills pills={g.pills} />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <Empty title="No problems yet" />
-            )}
+            {data.by_strategy.length ? <StrategyList groups={data.by_strategy} /> : <Empty title="No problems yet" />}
           </section>
         </div>
         <aside className="am-stack">

@@ -20,6 +20,8 @@ export interface ProblemSummary {
   technique_name: string;
   preview: string;
   source: string;
+  /** A compact label, such as M10-2·5. */
+  short?: string;
   /** The contest it first appears in, and its number there. */
   contest_id?: string | null;
   number?: number | null;
@@ -131,7 +133,29 @@ export interface Topic extends TopicStats {
   levels: Level[];
   summary: string;
   ideas: string[];
+  /** The Ideas card: what to do, when, and a worked example (backend/amc/ideas.py). */
+  playbook?: PlaybookMove[];
+  /** The mistake that costs the most points on this topic. */
+  trap?: string;
   pills?: Pill[];
+}
+
+export interface PlaybookMove {
+  move: string;
+  when: string;
+  example: string;
+}
+
+/** A problem on a topic page's strategy list: a pill plus what the row shows. */
+export interface TopicRow extends Pill {
+  source: string;
+  statement: string;
+}
+
+/** One of the up-to-three problems a topic page suggests doing next. */
+export interface NextPick extends ProblemSummary {
+  kind: 'retry' | 'next' | 'stretch';
+  reason: string;
 }
 
 export interface MockBrief {
@@ -657,7 +681,8 @@ export const amc = {
       problems: ProblemSummary[];
       siblings: { id: string; name: string }[];
       techniques: { id: string; name: string; count: number }[];
-      by_strategy: StrategyGroup[];
+      by_strategy: (Omit<StrategyGroup, 'pills'> & { pills: TopicRow[] })[];
+      next: NextPick[];
     }>(`/api/amc/topics/${encodeURIComponent(id)}`),
   strategies: () => get<{ families: StrategyFamily[]; untagged: number }>('/api/amc/strategies'),
   contests: () => get<ContestList>('/api/amc/contests'),
