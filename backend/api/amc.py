@@ -47,6 +47,8 @@ def _summary(_user, pid, hist, review_by_id):
         'preview': engine.plain(p['statement'])[:160],
         'source': '{} #{}'.format(sources[0]['name'], sources[0]['number']) if sources else 'Drill',
         'short': catalog.short_label(pid),
+        'contest_id': sources[0]['contest'] if sources else None,
+        'number': sources[0]['number'] if sources else None,
         'technique': p['technique'],
         'official': bool(p.get('official')),
         'status': engine.status_of(pid, hist, review_by_id),
@@ -178,20 +180,39 @@ def _mock_brief(row):
 # ---------------------------------------------------------------------------
 # Problems
 # ---------------------------------------------------------------------------
+def _kind(pid):
+    """'summit' (a Summit Mock set), 'step' (the original Step bank) or 'official'."""
+    if official.split_id(pid):
+        return 'official'
+    found = catalog.sources(pid)
+    if found and catalog.MOCK_BY_ID.get(found[0]['contest'], {}).get('family') == 'summit':
+        return 'summit'
+    return 'step'
+
+
 @router.get('/api/amc/problems')
 def list_problems(level: str = '', category: str = '', topic: str = '', difficulty: str = '',
                   status: str = '', technique: str = '', q: str = '', sort: str = 'source',
-                  source: str = '', rating: str = '', username: str = Depends(current_username)):
+                  source: str = '', rating: str = '', number: str = '', year: str = '', mock: str = '',
+                  username: str = Depends(current_username)):
     _, _, hist, review_by_id = _context(username)
     wanted_diff = {int(d) for d in difficulty.split(',') if d.strip().isdigit()}
     # Ratings by whole step: "3" is everything rated 3 or 3.5.
     wanted_rating = {int(r) for r in rating.split(',') if r.strip().isdigit()}
+    wanted_number = int(number) if number.strip().isdigit() else None
+    wanted_year = int(year) if year.strip().isdigit() else None
     toks = engine._tokens(q)
     rows = []
     for p in pb.all_problems():
-        if source == 'official' and not p.get('official'):
+        if source and _kind(p['id']) != source:
             continue
-        if source == 'step' and p.get('official'):
+        found = catalog.sources(p['id'])
+        if mock and not any(f['contest'] == mock for f in found):
+            continue
+        if wanted_number is not None and not any(f['number'] == wanted_number for f in found):
+            continue
+        if wanted_year is not None and not any(catalog.PAST_BY_ID.get(f['contest'], {}).get('year') == wanted_year
+                                               for f in found):
             continue
         tops = [p['topic']] + p['also']
         if level and p['level'] != level:
@@ -226,7 +247,23 @@ def list_problems(level: str = '', category: str = '', topic: str = '', difficul
     for p in pb.all_problems():
         counts[engine.status_of(p['id'], hist, review_by_id)] += 1
         rating_counts[str(min(10, max(1, int(p['rating']))))] += 1
-    return ok(problems=rows, total=len(pb.all_problems()), counts=counts, rating_counts=rating_counts,
+    everything = pb.all_problems()
+    kinds = {'summit': 0, 'step': 0, 'official': 0}
+    years = {}
+    for p in everything:
+        kind = _kind(p['id'])
+        kinds[kind] += 1
+        if kind == 'official':
+            y = catalog.PAST_BY_ID[p['contest']]['year']
+            years[y] = years.get(y, 0) + 1
+    return ok(problems=rows, total=len(everything), counts=counts, rating_counts=rating_counts,
+              kinds=kinds,
+              mocks=[{'id': m['id'], 'name': m['name'], 'level': m['level'], 'family': m['family'], 'set': m['set']}
+                     for m in catalog.MOCKS],
+              years=[{'year': y, 'count': n} for y, n in sorted(years.items(), reverse=True)],
+              families=[{'id': f['id'], 'name': f['name'],
+                         'techniques': [{'id': t, 'name': catalog.technique_name(t)} for t, _ in f['techniques']]}
+                        for f in catalog.STRATEGY_FAMILIES],
               official=sum(1 for p in pb.all_problems() if p.get('official')),
               topics=[{'id': t['id'], 'name': t['name'], 'category': t['category']} for t in catalog.TOPICS],
               categories=catalog.CATEGORIES,

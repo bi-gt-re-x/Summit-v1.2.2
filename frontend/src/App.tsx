@@ -43,6 +43,7 @@ const Review = lazy(() => import('@/pages/amc/Review'));
 const Topics = lazy(() => import('@/pages/amc/Topics'));
 const Topic = lazy(() => import('@/pages/amc/Topic'));
 const Contests = lazy(() => import('@/pages/amc/Contests'));
+const MockContests = lazy(() => import('@/pages/amc/MockContests'));
 const Contest = lazy(() => import('@/pages/amc/Contest'));
 const TakeMock = lazy(() => import('@/pages/amc/TakeMock'));
 const MockResult = lazy(() => import('@/pages/amc/MockResult'));
@@ -267,6 +268,7 @@ export default function App() {
               <Route path="/problems/:problemId" element={<Problem />} />
               <Route path="/topics" element={<Topics />} />
               <Route path="/topics/:topicId" element={<Topic />} />
+              <Route path="/mock-contests" element={<MockContests />} />
               <Route path="/contests" element={<Contests />} />
               <Route path="/contests/:contestId" element={<Contest />} />
               <Route path="/contests/:contestId/take" element={<TakeMock />} />

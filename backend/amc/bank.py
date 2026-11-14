@@ -627,4 +627,10 @@ for _p in PROBLEMS:
     _p['difficulty'] = tier(_p['rating'])
     _p['solution'] = SOLUTIONS[_p['id']]
 
+# The Summit Mock sets (backend/amc/sets/): fifteen more full papers, each
+# problem rated by its position and solved step by step.
+from backend.amc.sets import PROBLEMS as _SET_PROBLEMS  # noqa: E402
+
+PROBLEMS = PROBLEMS + _SET_PROBLEMS
+
 BY_ID = {p['id']: p for p in PROBLEMS}

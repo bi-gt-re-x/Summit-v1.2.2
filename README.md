@@ -11,19 +11,23 @@ paper, a study plan to contest day, and search across all of it.
 | --- | --- | --- |
 | Dashboard | `/dashboard` | Today's plan, the next problem, projected score vs goal, progress by category |
 | Review | `/review` | The error log: misses return after 3, 10 and 21 days until mastered |
-| Problems | `/problems`, `/problems/:id` | The bank in contest order (mock #1 to #25), filtered by contest, category, topic, rating 1-10 (the AoPS competition scale), technique and status; answer to unlock the solution, key insight and trap |
+| Problems | `/problems`, `/problems/:id` | Every problem in contest order (mock #1 to #25), with a chooser down the left for source (Summit Mock sets, Step problems, official papers), contest, mock set, year, problem number, rating 1-10 (the AoPS competition scale), topic, technique and status; answer to unlock the solution, key insight and trap |
 | Topics | `/topics`, `/topics/:id` | 63 topics in 5 categories and 92 techniques in 5 strategy families, each with key ideas and its problems |
-| Past Contests | `/contests`, `/contests/:id` | Timed Step Mocks graded 6 / 1.5 / 0 with a report; every official AMC 10/12 and AIME from 2000 to 2026, which can be imported one at a time (paste the AoPS page source and answer key) or many at once ("Import many papers": open a batch link, copy the page, paste) and then read whole like the AoPS problems page, practised, graded and timed in-site |
+| Mock Contests | `/mock-contests` | Five Summit Mock sets each for the AMC 10, AMC 12 and AIME (plus the original Step Mocks), in real problem order at real difficulty, sat on an exam screen with a cover page and bubble answer sheet, graded 6 / 1.5 / 0 with a report |
+| Past Contests | `/contests`, `/contests/:id` | Every official AMC 10/12 and AIME from 2000 to 2026, which can be imported one at a time (paste the AoPS page source and answer key) or many at once ("Import many papers": open a batch link, copy the page, paste) and then read whole like the AoPS problems page, practised, graded and timed in-site |
 | Study Plan | `/study-plan` | Contest, date, goal and hours become a week-by-week plan (Foundations, Core, Contest mode, Taper). Tell it more (experience, last score, strong/weak topics, resources, constraints) and the AI coach writes a personal plan; its follow-up questions refine it, and its topic order leads the weeks |
 | Search | `/search`, top bar / ⌘K | Problems, topics, contests and pages |
 
-The content lives in `backend/amc/` (`bank.py` is the problem bank, `catalog.py`
-the topics and contests, `engine.py` the rules), the API in
+The content lives in `backend/amc/` (`bank.py` is the problem bank, `sets/` the
+fifteen Summit Mock papers, `scale.py` the 1-10 rating by problem number,
+`catalog.py` the topics and contests, `engine.py` the rules), the API in
 `backend/api/amc.py`, the tables in `data/sql/amc.sql`, and the pages in
-`frontend/src/pages/amc/`. The Step Mock problems are original. Official MAA
+`frontend/src/pages/amc/`. The Step Mock and Summit Mock problems are original. Only the `temu` account (or the
+accounts in `AMC_IMPORTERS`) can bring official papers in. Official MAA
 problems are imported by pasting (`backend/amc/official.py` explains why the
 server can't fetch them) and live only in the install's database. `tests/test_amc_bank.py` recomputes every
-answer that can be brute-forced.
+answer that can be brute-forced, and `tests/test_amc_sets.py` recomputes every
+Summit Mock answer.
 
 The AI coach (`backend/amc/coach.py`) uses whichever model key is in `.env`:
 `GROQ_API_KEY` (free, console.groq.com; model `GROQ_MODEL`, default

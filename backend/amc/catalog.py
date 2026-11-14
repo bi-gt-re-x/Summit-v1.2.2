@@ -459,6 +459,19 @@ MOCKS = [
          'step-aime-16', 'step-aime-18', 'step-aime-17',
      ])},
 ]
+for _m in MOCKS:
+    _m.update(family='step', set=None)
+
+# Fifteen Summit Mock sets in real problem order (backend/amc/sets/).
+from backend.amc.sets import MOCKS as _SET_MOCKS  # noqa: E402
+
+for _m in _SET_MOCKS:
+    _m['blurb'] = {
+        'AMC 10': '25 problems in 75 minutes, real AMC 10 difficulty from #1 to #25 (rated 1 to 4).',
+        'AMC 12': '25 problems in 75 minutes, real AMC 12 difficulty (rated 1 to 4.5). Shares 8 problems with AMC 10 Set {}.'.format(_m['set']),
+        'AIME': '15 problems in 3 hours, real AIME difficulty (rated 2.5 to 6.5). Answers are 0 to 999.',
+    }[_m['level']]
+MOCKS = MOCKS + _SET_MOCKS
 MOCK_BY_ID = {m['id']: m for m in MOCKS}
 
 
@@ -527,7 +540,11 @@ def _check():
     """Every mock names real problems, every problem is in exactly one mock,
     and every problem names real topics."""
     placed = [pid for mock in MOCKS for pid in mock['problems']]
-    assert len(placed) == len(set(placed)), 'a problem is in two mocks'
+    # A problem is in one mock, except that an AMC 12 set shares eight
+    # problems with the AMC 10 set of the same number, as real papers do.
+    shared = {pid for m in MOCKS if m['family'] == 'summit' and m['level'] == 'AMC 12'
+              for pid in m['problems'] if pid.startswith('mock10-')}
+    assert len(placed) - len(shared) == len(set(placed)), 'a problem is in two mocks'
     assert set(placed) == set(BY_ID), 'problems in no mock: {}'.format(sorted(set(BY_ID) - set(placed)))
     for mock in MOCKS:
         assert len(mock['problems']) == FORMATS[mock['level']]['count'], mock['id']
@@ -666,7 +683,7 @@ TECHNIQUE_IDEA = {tid: idea for f in STRATEGY_FAMILIES for tid, idea in f['techn
 
 
 def short_label(problem_id):
-    """A pill's label: 'S10·7', 'S12·3', 'AIME·4', 'Drill·2', or "'23 10A·5"."""
+    """A pill's label: 'S10·7', 'M10-2·7' (Summit Mock AMC 10 Set 2 #7), 'MA-1·4', or "'23 10A·5"."""
     head, _, tail = problem_id.rpartition('-')
     if head in PAST_BY_ID and tail.isdigit():
         c = PAST_BY_ID[head]
@@ -675,7 +692,11 @@ def short_label(problem_id):
         return "'{} {}·{}".format(year, paper, int(tail))
     found = sources(problem_id)
     if found:
-        abbr = {'step-mock-10': 'S10', 'step-mock-12': 'S12', 'step-mock-aime': 'AIME'}[found[0]['contest']]
+        mock = MOCK_BY_ID[found[0]['contest']]
+        if mock['family'] == 'summit':
+            abbr = {'AMC 10': 'M10', 'AMC 12': 'M12', 'AIME': 'MA'}[mock['level']] + '-{}'.format(mock['set'])
+        else:
+            abbr = {'step-mock-10': 'S10', 'step-mock-12': 'S12', 'step-mock-aime': 'AIME'}[mock['id']]
         return '{}·{}'.format(abbr, found[0]['number'])
     return problem_id
 

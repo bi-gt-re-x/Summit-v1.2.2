@@ -20,6 +20,9 @@ export interface ProblemSummary {
   technique_name: string;
   preview: string;
   source: string;
+  /** The contest it first appears in, and its number there. */
+  contest_id?: string | null;
+  number?: number | null;
   status: Status;
   attempts: number;
 }
@@ -316,6 +319,10 @@ export interface ProblemFilters {
   source?: string;
   /** Whole rating steps, comma separated: "3" covers 3 and 3.5. */
   rating?: string;
+  /** Problem number within its contest, a past paper's year, or a mock contest id. */
+  number?: string;
+  year?: string;
+  mock?: string;
 }
 
 export interface ProblemList {
@@ -324,6 +331,10 @@ export interface ProblemList {
   counts: Record<Status, number>;
   /** Problems in each whole rating step, "1" to "10". */
   rating_counts: Record<string, number>;
+  kinds: Record<'summit' | 'step' | 'official', number>;
+  mocks: { id: string; name: string; level: Level; family: 'summit' | 'step'; set: number | null }[];
+  years: { year: number; count: number }[];
+  families: { id: string; name: string; techniques: { id: string; name: string }[] }[];
   official: number;
   topics: { id: string; name: string; category: CategoryId }[];
   categories: Category[];
@@ -369,6 +380,9 @@ export interface MockContest extends Format {
   name: string;
   level: Level;
   blurb: string;
+  /** 'summit': the five full sets per contest; 'step': the original warm-up mocks. */
+  family: 'summit' | 'step';
+  set: number | null;
   attempts: number;
   best: number | null;
 }

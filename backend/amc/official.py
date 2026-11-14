@@ -450,18 +450,7 @@ def guess_topic(statement):
     return guess_topics(statement)[0]
 
 
-#: AoPS competition-scale rating (1-10) of each problem number, in half points.
-#: Calibrated to the AoPS wiki's Competition ratings page: an AMC 10 runs from
-#: 1 to about 4, an AMC 12 from 1 to 4.5, and an AIME from 2.5 to 6.5 (7 and
-#: up is olympiad territory). Real papers vary from year to year, so this is
-#: where a problem sits on a typical paper, not a measurement of that problem.
-RATING_BY_NUMBER = {
-    'AMC 10': [1, 1, 1, 1, 1.5, 1.5, 1.5, 1.5, 1.5, 2, 2, 2, 2, 2, 2.5,
-               2.5, 2.5, 2.5, 3, 3, 3, 3.5, 3.5, 3.5, 4],
-    'AMC 12': [1, 1, 1, 1.5, 1.5, 1.5, 1.5, 1.5, 2, 2, 2, 2, 2.5, 2.5, 2.5,
-               2.5, 3, 3, 3, 3.5, 3.5, 3.5, 4, 4, 4.5],
-    'AIME': [2.5, 3, 3, 3.5, 3.5, 4, 4, 4.5, 4.5, 5, 5, 5.5, 5.5, 6, 6.5],
-}
+from backend.amc.scale import RATING_BY_NUMBER  # noqa: E402  (the per-number curve)
 
 
 def _bands(level):

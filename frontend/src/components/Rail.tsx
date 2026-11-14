@@ -155,6 +155,19 @@ export const TABS: Tab[] = [
     ),
   },
   {
+    to: '/mock-contests',
+    label: 'Mock Contests',
+    section: 'practice',
+    under: ['/contests/mock-', '/contests/step-mock-'],
+    icon: (
+      <svg {...stroke}>
+        <circle cx="12" cy="13" r="8" />
+        <path d="M12 9v4l2.5 2.5" />
+        <path d="M9 2h6" />
+      </svg>
+    ),
+  },
+  {
     to: '/contests',
     label: 'Past Contests',
     section: 'practice',
@@ -181,8 +194,17 @@ export const TABS: Tab[] = [
   },
 ];
 
+/** How specifically a tab claims the page: exact match beats any prefix, and a
+ * longer prefix beats a shorter one (a mock's page belongs to Mock Contests,
+ * not to Past Contests, though both claim paths under /contests/). */
+function claim(tab: Tab, pathname: string): number {
+  if (tab.to === pathname) return Number.MAX_SAFE_INTEGER;
+  return Math.max(0, ...(tab.under ?? []).filter((prefix) => pathname.startsWith(prefix)).map((p) => p.length));
+}
+
 function onPage(tab: Tab, pathname: string): boolean {
-  return tab.to === pathname || Boolean(tab.under?.some((prefix) => pathname.startsWith(prefix)));
+  const mine = claim(tab, pathname);
+  return mine > 0 && TABS.every((other) => other === tab || claim(other, pathname) <= mine);
 }
 
 function Section({
@@ -292,7 +314,7 @@ export function Rail() {
     <NavLink
       key={tab.to}
       to={tab.to}
-      className={({ isActive }) => `rail-link${isActive || onPage(tab, pathname) ? ' active' : ''}`}
+      className={() => `rail-link${onPage(tab, pathname) ? ' active' : ''}`}
       title={tab.badge === 'due' && due ? `${tab.label} — ${due} due` : tab.label}
     >
       {tab.icon}
@@ -376,7 +398,7 @@ export function Rail() {
                 key={tab.to}
                 to={tab.to}
                 role="menuitem"
-                className={({ isActive }) => `rail-sheet-link${isActive || onPage(tab, pathname) ? ' active' : ''}`}
+                className={() => `rail-sheet-link${onPage(tab, pathname) ? ' active' : ''}`}
                 onClick={() => setMoreOpen(false)}
               >
                 {tab.icon}

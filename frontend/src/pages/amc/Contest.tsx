@@ -102,7 +102,9 @@ export default function Contest() {
 
   const back = (
     <nav className="am-muted" style={{ fontSize: 13, marginBottom: 12 }}>
-      <Link to="/contests" className="am-link">← Past Contests</Link>
+      {c.kind === 'mock'
+        ? <Link to="/mock-contests" className="am-link">← Mock Contests</Link>
+        : <Link to="/contests" className="am-link">← Past Contests</Link>}
     </nav>
   );
 
@@ -149,7 +151,7 @@ export default function Contest() {
     <div className="amc-page">
       {back}
       <PageHeader
-        kicker={official ? `${c.year} · ${c.level} · Official` : `${c.level} · Step Mock`}
+        kicker={official ? `${c.year} · ${c.level} · Official` : `${c.level} · ${c.family === 'summit' ? 'Summit Mock' : 'Step Mock'}`}
         title={c.name}
         actions={
           <>
@@ -181,12 +183,12 @@ export default function Contest() {
             </span>
           </div>
           {official ? (
-            <ol className="am-sheet">
+            <ol className="am-booklet">
               {problems.map((p) => (
-                <li key={p.number} id={`problem-${p.number}`} className="am-sheet-item">
-                  <div className="am-sheet-head">
+                <li key={p.number} id={`problem-${p.number}`} className="am-booklet-item">
+                  <div className="am-booklet-head">
                     <h3><Link to={`/problems/${p.id}`}>Problem {p.number}</Link></h3>
-                    <span className="am-sheet-tags">
+                    <span className="am-booklet-tags">
                       <CategoryDot category={p.category} />
                       <Link className="am-muted" to={`/topics/${p.topic}`}>{p.topic_name}</Link>
                       <Difficulty value={p.difficulty} rating={p.rating} />
@@ -196,13 +198,13 @@ export default function Contest() {
                   <MathText text={p.statement} as="p" className="am-statement" />
                   {p.diagram && <DiagramNote diagram={p.diagram} href={p.aops_url} />}
                   {p.choices && (
-                    <p className="am-sheet-choices">
+                    <p className="am-booklet-choices">
                       {p.choices.map((choice, i) => (
                         <span key={i}><strong>({'ABCDE'.charAt(i)})</strong> <MathText text={choice} /></span>
                       ))}
                     </p>
                   )}
-                  <p className="am-sheet-links">
+                  <p className="am-booklet-links">
                     <Link className="am-link" to={`/problems/${p.id}`}>Answer it here</Link>
                     {p.aops_url && (
                       <a className="am-link" href={p.aops_url} target="_blank" rel="noreferrer">Solutions on AoPS ↗</a>

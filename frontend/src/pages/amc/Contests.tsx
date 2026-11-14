@@ -1,7 +1,7 @@
 /**
- * Past contests: the three Step Mocks this site can time and grade, and every
- * real AMC 10, AMC 12 and AIME since 2000, linked to the official problems
- * and answer keys on the AoPS wiki, with a place to log the score you got.
+ * Past contests: every real AMC 10, AMC 12 and AIME since 2000, linked to the
+ * official problems and answer keys on the AoPS wiki, with a place to log the
+ * score you got. The timed mocks have their own page (MockContests.tsx).
  */
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -35,27 +35,18 @@ export default function Contests() {
     <div className="amc-page">
       <PageHeader title="Past Contests">
         <p>
-          Timed mocks and all {total} official papers since 2000. Papers marked ● are in Summit
+          All {total} official papers since 2000. Papers marked ● are in Summit
           ({data.imported} so far) and can be practised and timed here.
         </p>
       </PageHeader>
 
-      <h2 className="am-h2" style={{ marginBottom: 12 }}>Timed mocks</h2>
-      <div className="am-grid am-grid-3" style={{ marginBottom: 32 }}>
-        {data.mocks.map((m) => (
-          <article key={m.id} className="am-mock">
-            <span className="am-kicker" style={{ margin: 0 }}>{m.level}</span>
-            <h3>{m.name}</h3>
-            <p>{m.blurb}</p>
-            <div className="am-mock-foot">
-              <span className="am-muted" style={{ fontSize: 13 }}>
-                {m.attempts ? `Best ${m.best} / ${m.max} · ${m.attempts} sitting${m.attempts === 1 ? '' : 's'}` : 'Not taken yet'}
-              </span>
-              <Link className="am-btn am-btn-primary am-btn-sm" to={`/contests/${m.id}`}>Open</Link>
-            </div>
-          </article>
-        ))}
-      </div>
+      <Link className="am-card am-mock-banner" to="/mock-contests">
+        <span>
+          <strong>Mock Contests</strong>
+          <span className="am-muted"> · {data.mocks.filter((m) => m.family === 'summit').length} full sets for the AMC 10, AMC 12 and AIME, timed and graded here</span>
+        </span>
+        <span aria-hidden="true">→</span>
+      </Link>
 
       <div className="am-grid am-grid-main">
         <section className="am-card">

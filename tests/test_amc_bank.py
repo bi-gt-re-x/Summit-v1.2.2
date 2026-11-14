@@ -172,7 +172,7 @@ def test_past_contests_cover_every_sitting():
 def test_every_problem_has_an_aops_rating_and_a_matching_tier():
     from backend.amc.solutions import tier
     for p in PROBLEMS:
-        assert 1 <= p['rating'] <= 6 and (p['rating'] * 2) == int(p['rating'] * 2), p['id']
+        assert 1 <= p['rating'] <= 10 and (p['rating'] * 2) == int(p['rating'] * 2), p['id']
         assert p['difficulty'] == tier(p['rating'])
 
 
