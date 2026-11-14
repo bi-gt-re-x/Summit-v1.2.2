@@ -62,13 +62,11 @@ function TopicPicker({
 function PlanForm({
   initial,
   defaults,
-  ai,
   onSaved,
   onCancel,
 }: {
   initial: (PlanSettings & { details?: PlanDetails }) | null;
   defaults: PlanPayload['defaults'];
-  ai: PlanPayload['ai'];
   onSaved: (payload: PlanPayload, fresh: boolean) => void;
   onCancel?: () => void;
 }) {
@@ -144,11 +142,7 @@ function PlanForm({
         </label>
       </div>
 
-      <h3 className="am-form-sub">Tell the coach about you</h3>
-      <p className="am-muted" style={{ fontSize: 13, margin: '0 0 12px', lineHeight: 1.5 }}>
-        Optional, and the more you say the more personal the plan.{' '}
-        {ai.available ? `It's written by ${ai.label}.` : 'Add an AI key to .env to have it written for you.'}
-      </p>
+      <h3 className="am-form-sub">About you <span className="am-muted">(optional)</span></h3>
       <div className="am-form">
         <div className="am-field am-field-wide">
           <span>Experience</span>
@@ -188,8 +182,7 @@ function PlanForm({
         </label>
       </div>
       <p className="am-muted" style={{ fontSize: 12, lineHeight: 1.5, margin: '12px 0 0' }}>
-        The default goals ({defaults.goals['AMC 10']} on the AMC 10, {defaults.goals['AMC 12']} on the AMC 12) sit
-        in the range recent AIME cutoffs have fallen in; check the MAA's published cutoffs for your year.
+        You qualify for the AIME with {defaults.goals['AMC 10']} on the AMC 10 or {defaults.goals['AMC 12']} on the AMC 12.
       </p>
       {message && <p className="am-error">{message}</p>}
       <div style={{ display: 'flex', gap: 8, marginTop: 16, flexWrap: 'wrap' }}>
@@ -225,11 +218,10 @@ function CoachCard({
   if (!payload.ai.available && !written) {
     return (
       <section className="am-card am-coach">
-        <div className="am-card-head"><h2>AI coach</h2></div>
+        <div className="am-card-head"><h2>Coach</h2></div>
         <p className="am-muted" style={{ margin: 0, fontSize: 13, lineHeight: 1.6 }}>
-          Add <code>GROQ_API_KEY</code> (free at console.groq.com) to <code>.env</code> — or <code>XAI_API_KEY</code> with{' '}
-          <code>MILESTONE_PROVIDER=grok</code> for Grok — and restart the server. The coach will then write you a
-          personal plan from your details and results.
+          To turn this on, add <code>GROQ_API_KEY</code> to <code>.env</code> (or <code>XAI_API_KEY</code> with{' '}
+          <code>MILESTONE_PROVIDER=grok</code>) and restart the server.
         </p>
       </section>
     );
@@ -238,10 +230,9 @@ function CoachCard({
   if (!written) {
     return (
       <section className="am-card am-coach">
-        <div className="am-card-head"><h2>AI coach</h2><span className="am-muted" style={{ fontSize: 12 }}>{payload.ai.label}</span></div>
+        <div className="am-card-head"><h2>Coach</h2><span className="am-muted" style={{ fontSize: 12 }}>{payload.ai.label}</span></div>
         <p style={{ margin: '0 0 12px', lineHeight: 1.6, color: 'var(--am-body)' }}>
-          Have the coach turn your details and results into a personal plan: phases, a weekly routine, milestones
-          and the order to study topics in.
+          Get a plan written from your details and results: phases, a weekly routine and milestones.
         </p>
         {error && <p className="am-error">{error}</p>}
         <button type="button" className="am-btn am-btn-primary" disabled={busy} onClick={() => onRun({})}>
@@ -255,7 +246,7 @@ function CoachCard({
   return (
     <section className="am-card am-coach">
       <div className="am-card-head">
-        <h2>Your coach's plan</h2>
+        <h2>Coach's plan</h2>
         <span className="am-muted" style={{ fontSize: 12 }}>
           {payload.plan?.coach_by}{payload.plan?.coach_at ? ` · ${shortDate(payload.plan.coach_at)}` : ''}
         </span>
@@ -335,9 +326,6 @@ function CoachCard({
           {busy && written.questions.length === 0 ? 'Rewriting…' : 'Rewrite plan'}
         </button>
       </div>
-      <p className="am-muted" style={{ fontSize: 12, margin: '10px 0 0' }}>
-        The coach's topic order now leads your week-by-week plan.
-      </p>
     </section>
   );
 }
@@ -379,18 +367,13 @@ export default function StudyPlan() {
   if (!plan || editing) {
     return (
       <div className="amc-page">
-        <PageHeader kicker="Plan" title="Study Plan">
-          <p>
-            A few answers and you get a week-by-week plan to contest day: your weakest high-weight topics first,
-            timed mocks as the date gets close, and a light final week. Tell the coach more and{' '}
-            {payload.ai.available ? `${payload.ai.label} writes` : 'an AI model can write'} a personal plan around it.
-          </p>
+        <PageHeader title="Study Plan">
+          <p>A week-by-week plan to contest day, weakest topics first.</p>
         </PageHeader>
         <div style={{ maxWidth: 980 }}>
           <PlanForm
             initial={plan}
             defaults={payload.defaults}
-            ai={payload.ai}
             onSaved={(p) => {
               setPayload(p);
               setEditing(false);
@@ -437,8 +420,7 @@ export default function StudyPlan() {
         }
       >
         <p>
-          {weeks.length} week{weeks.length === 1 ? '' : 's'} to the {plan.target}, about {plan.hours} hour{plan.hours === 1 ? '' : 's'} a
-          week. Focus topics are re-chosen from your results every time you open this page.
+          {weeks.length} week{weeks.length === 1 ? '' : 's'} to the {plan.target}, {plan.hours} hour{plan.hours === 1 ? '' : 's'} a week.
         </p>
       </PageHeader>
 
@@ -523,7 +505,7 @@ export default function StudyPlan() {
                 </div>
               ))}
             </div>
-            <p className="am-muted" style={{ fontSize: 12, margin: '12px 0 0' }}>Your ten least-covered topics for the {plan.target}.</p>
+            <p className="am-muted" style={{ fontSize: 12, margin: '12px 0 0' }}>Least covered for the {plan.target}.</p>
           </section>
         </aside>
       </div>

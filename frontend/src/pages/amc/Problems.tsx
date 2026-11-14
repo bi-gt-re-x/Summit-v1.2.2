@@ -64,7 +64,6 @@ export default function Problems() {
   return (
     <div className="amc-page">
       <PageHeader
-        kicker="Practice"
         title="Problems"
         actions={anyFilter ? (
           <button type="button" className="am-btn am-btn-ghost" onClick={() => setParams({}, { replace: true })}>
@@ -72,10 +71,7 @@ export default function Problems() {
           </button>
         ) : undefined}
       >
-        <p>
-          Step problems come with a full solution, the key insight and the trap that costs points. Official problems
-          are the real contests you have imported, graded against the real answer key.
-        </p>
+        <p>Step problems have full solutions. Official problems come from papers you import.</p>
       </PageHeader>
 
       <div className="am-filters">

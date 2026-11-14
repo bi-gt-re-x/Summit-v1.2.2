@@ -112,8 +112,7 @@ export default function Contest() {
         {back}
         <PageHeader kicker={`${c.year} · ${c.level}`} title={c.name}>
           <p>
-            {c.count} problems in {c.minutes} minutes · {c.scoring}. Import it once and every problem can be solved,
-            graded, reviewed and timed right here.
+            {c.count} problems in {c.minutes} minutes. Import it once to practise it here.
           </p>
         </PageHeader>
         <div className="am-grid am-grid-main">
@@ -151,7 +150,7 @@ export default function Contest() {
         }
       >
         <p>
-          {official ? 'The official paper, in Summit.' : c.blurb} {c.count} problems, {c.minutes} minutes, {c.scoring}.
+          {official ? `${c.count} problems in ${c.minutes} minutes.` : c.blurb}
         </p>
       </PageHeader>
       <div className="am-grid am-grid-main">
@@ -159,7 +158,7 @@ export default function Contest() {
           <div className="am-card-head">
             <h2>{official ? 'Problems' : "What's on it"}</h2>
             <span className="am-muted" style={{ fontSize: 13 }}>
-              {official ? 'Open one to practise it untimed' : 'Statements stay hidden until you start'}
+              {official ? 'Untimed practice' : 'Hidden until you start'}
             </span>
           </div>
           {official ? (
@@ -199,8 +198,7 @@ export default function Contest() {
           )}
           {official && (
             <p className="am-muted" style={{ fontSize: 12, margin: '12px 0 0' }}>
-              Topics are tagged automatically from each problem's wording, and difficulty from its position.
-              Problem text © the Mathematical Association of America.{' '}
+              Topics are guessed from the wording. Problems © MAA.{' '}
               <button type="button" className="am-link am-link-button" onClick={() => void unimport()}>Remove import</button>
             </p>
           )}
@@ -209,10 +207,10 @@ export default function Contest() {
           <section className="am-card">
             <div className="am-card-head"><h2>Before you start</h2></div>
             <ul className="am-list" style={{ display: 'grid', gap: 8 }}>
-              <li>Find {c.minutes} quiet minutes. The clock keeps running if you leave the page.</li>
-              <li>Scrap paper and pencil only — no calculator.</li>
-              {c.level !== 'AIME' && <li>Leave a problem blank unless you'd bet on your answer: blanks are worth 1.5.</li>}
-              <li>Wrong and blank answers go to your review log.</li>
+              <li>You need {c.minutes} minutes. The clock keeps running if you leave.</li>
+              <li>Pencil and paper. No calculator.</li>
+              {c.level !== 'AIME' && <li>A blank is worth 1.5, so skip what you can't narrow down.</li>}
+              <li>Wrong and blank answers go to Review.</li>
             </ul>
           </section>
           {logCard}

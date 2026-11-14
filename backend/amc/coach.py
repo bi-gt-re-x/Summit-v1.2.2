@@ -46,6 +46,9 @@ Rules:
 - Ask follow-up questions only if the answer would change the plan; ask none
   if you have what you need.
 - Be concrete: name problem ranges, timings and habits, not platitudes.
+- Write plainly, like a good teacher talking to a student. Short sentences,
+  everyday words. No em dashes, no hype, no filler like "unlock", "master",
+  "journey", "level up" or "dive into".
 """
 
 SCHEMA = {
@@ -256,7 +259,7 @@ def clean(found, target):
     summary = str(found.get('summary') or '').strip()[:1200]
     if not summary or not phases:
         raise planner.PlannerUnavailable('The model returned an incomplete plan. Try again.')
-    return {
+    return _plain({
         'summary': summary,
         'starting_point': str(found.get('starting_point') or '').strip()[:800],
         'phases': phases,
@@ -265,7 +268,19 @@ def clean(found, target):
         'focus_order': _topics(found.get('focus_order'), target),
         'tips': _strings(found.get('tips'), 6),
         'questions': _strings(found.get('questions'), 3, 300),
-    }
+    })
+
+
+def _plain(value):
+    """Models lean on em dashes; the site's copy doesn't. Swap them for commas
+    throughout the plan."""
+    if isinstance(value, str):
+        return value.replace(' — ', ', ').replace(' – ', ', ').replace('—', ', ')
+    if isinstance(value, list):
+        return [_plain(v) for v in value]
+    if isinstance(value, dict):
+        return {k: _plain(v) for k, v in value.items()}
+    return value
 
 
 def write_plan(plan, details, tstats, projected, mocks, review_counts, answers, today):
@@ -273,8 +288,8 @@ def write_plan(plan, details, tstats, projected, mocks, review_counts, answers, 
     message meant for the page when it cannot."""
     if not planner.provider():
         raise planner.PlannerUnavailable(
-            'The AI coach needs a model key in .env: GROQ_API_KEY (free, console.groq.com), '
-            'or XAI_API_KEY with MILESTONE_PROVIDER=grok for Grok. Restart the server after adding it.')
+            'The coach needs GROQ_API_KEY in .env (or XAI_API_KEY with MILESTONE_PROVIDER=grok). '
+            'Restart the server after adding it.')
     if not available():
         raise planner.PlannerUnavailable(
             'The configured model cannot answer in the fixed shape a plan needs. '

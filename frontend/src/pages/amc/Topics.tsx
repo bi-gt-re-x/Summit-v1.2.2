@@ -96,7 +96,7 @@ function TopicView({ query }: { query: string }) {
                   <span className="am-topic-levels">
                     {t.levels.map((l) => <span key={l}>{l.replace('AMC ', '')}</span>)}
                   </span>
-                  <Link className="am-link" to={`/topics/${t.id}`}>Key ideas →</Link>
+                  <Link className="am-link" to={`/topics/${t.id}`}>Open →</Link>
                 </div>
               </article>
             ))}
@@ -169,8 +169,8 @@ function StrategyView({ query }: { query: string }) {
       ))}
       {data.untagged > 0 && (
         <p className="am-muted" style={{ fontSize: 13 }}>
-          {data.untagged} imported official problem{data.untagged === 1 ? ' is' : 's are'} not tagged by strategy yet;
-          they appear under their topics.
+          {data.untagged} imported problem{data.untagged === 1 ? ' has' : 's have'} no strategy tag yet. Find
+          {data.untagged === 1 ? ' it' : ' them'} under By topic.
         </p>
       )}
     </>
@@ -192,15 +192,15 @@ export default function Topics() {
   const intro = useMemo(
     () =>
       view === 'topic'
-        ? 'Five areas, thirty-two topics. Algebra dominates the early problems; geometry, number theory and counting take over from about #15.'
-        : 'The same problems, grouped by the move that cracks them. Learn a strategy once and it works across topics.',
+        ? '32 topics in five areas.'
+        : 'The same problems, grouped by the method that solves them.',
     [view],
   );
 
   return (
     <div className="amc-page">
-      <PageHeader kicker="Learn" title="Topics">
-        <p>{intro} Every pill is a problem: tap one to solve it.</p>
+      <PageHeader title="Topics">
+        <p>{intro} Each pill is a problem.</p>
       </PageHeader>
 
       <div className="am-topics-bar">

@@ -39,8 +39,8 @@ export default function Search() {
 
   return (
     <div className="amc-page">
-      <PageHeader kicker="Find" title="Search">
-        <p>Search every problem's text, topic and technique, every topic's ideas, and every contest since 2000.</p>
+      <PageHeader title="Search">
+        <p>Problems, topics and contests.</p>
       </PageHeader>
       <form className="am-search-box" onSubmit={(e) => { e.preventDefault(); go(draft); }}>
         <input className="am-input" type="search" autoFocus placeholder="Try “circles”, “2019 AIME” or “stars and bars”"
@@ -59,7 +59,7 @@ export default function Search() {
       ) : error || !data ? (
         <ErrorState message={error ?? 'Search failed.'} onRetry={reload} />
       ) : total === 0 ? (
-        <Empty title={`Nothing matches “${q}”`}>Every word has to match. Try fewer words, or a topic name.</Empty>
+        <Empty title={`Nothing matches “${q}”`}>Try fewer words.</Empty>
       ) : (
         <>
           {data.pages.length > 0 && (

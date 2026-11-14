@@ -12,15 +12,15 @@ from backend.amc.bank import BY_ID, PROBLEMS
 # ---------------------------------------------------------------------------
 CATEGORIES = [
     {'id': 'algebra', 'name': 'Algebra', 'color': 'blue',
-     'blurb': 'Equations, functions, sequences and polynomials. Dominates the first half of every AMC.'},
+     'blurb': 'Equations, functions, sequences and polynomials.'},
     {'id': 'number-theory', 'name': 'Number Theory', 'color': 'amber',
-     'blurb': 'Divisibility, primes, remainders and digits. A steady third of the late problems.'},
+     'blurb': 'Divisibility, primes, remainders and digits.'},
     {'id': 'counting', 'name': 'Counting & Probability', 'color': 'green',
-     'blurb': 'Casework, combinations, probability and expected value. Where careful bookkeeping wins.'},
+     'blurb': 'Casework, combinations, probability and expected value.'},
     {'id': 'geometry', 'name': 'Geometry', 'color': 'rose',
-     'blurb': 'Triangles, circles, area and coordinates. The heaviest single category from #15 on.'},
+     'blurb': 'Triangles, circles, area and coordinates.'},
     {'id': 'misc', 'name': 'Logic, Statistics & Misc', 'color': 'slate',
-     'blurb': 'Means and medians, logic puzzles, and the odd one out.'},
+     'blurb': 'Means, medians, logic puzzles and everything else.'},
 ]
 
 # weight: how much of a typical contest the topic accounts for, 1 (rare) to 3
@@ -239,7 +239,7 @@ def _by_rating(ids):
 # scale (backend/amc/solutions.py).
 MOCKS = [
     {'id': 'step-mock-10', 'name': 'Step Mock AMC 10', 'level': 'AMC 10',
-     'blurb': 'A full 25-problem AMC 10, from warm-up arithmetic to counting and probability problems rated 3-3.5.',
+     'blurb': '25 problems in 75 minutes, rated 1 to 3.5.',
      'problems': _by_rating([
          'step-10-01', 'step-10-03', 'step-10-04', 'step-10-05', 'step-10-08', 'step-10-18',
          'step-10-06', 'step-10-09', 'step-10-10', 'step-10-11', 'step-10-12', 'step-10-13', 'step-10-15',
@@ -249,7 +249,7 @@ MOCKS = [
          'step-10-26', 'step-10-28', 'step-10-27',
      ])},
     {'id': 'step-mock-12', 'name': 'Step Mock AMC 12', 'level': 'AMC 12',
-     'blurb': 'Logs, trig, complex numbers and sequences, finishing with problems rated 3.5-4.',
+     'blurb': '25 problems in 75 minutes, rated 1.5 to 4.',
      'problems': _by_rating([
          'step-12-01', 'step-12-02', 'step-12-03', 'step-12-05', 'step-12-17', 'step-12-18',
          'step-10-16', 'step-10-20', 'step-10-22',
@@ -259,7 +259,7 @@ MOCKS = [
          'step-12-13', 'step-12-16', 'step-12-14',
      ])},
     {'id': 'step-mock-aime', 'name': 'Step Mock AIME', 'level': 'AIME',
-     'blurb': 'Fifteen integer-answer problems over three hours, up to a 4.5 on the AoPS scale. Every answer is 000-999.',
+     'blurb': '15 problems in 3 hours, rated 1.5 to 4.5. Answers are 0 to 999.',
      'problems': _by_rating([
          'step-aime-05', 'step-aime-06', 'step-aime-10', 'step-aime-01', 'step-aime-04', 'step-aime-08',
          'step-aime-09', 'step-aime-11', 'step-aime-12', 'step-aime-13', 'step-aime-14', 'step-aime-15',
@@ -371,7 +371,7 @@ STRATEGY_FAMILIES = [
          ('geometric-probability', 'Probability as favourable area over total area.'),
      ]},
     {'id': 'algebraic', 'name': 'Algebraic strategies', 'color': 'blue',
-     'blurb': 'Moves that make an expression or equation give itself up.',
+     'blurb': 'Ways to simplify expressions and solve equations.',
      'techniques': [
          ('set-up-equations', 'Name the unknown, translate the words, solve.'),
          ('substitution', 'Swap in a new variable or a cleverly chosen value.'),
@@ -397,7 +397,7 @@ STRATEGY_FAMILIES = [
          ('legendre', 'Count a prime’s power in n! with Legendre’s formula.'),
      ]},
     {'id': 'geometric', 'name': 'Geometric strategies', 'color': 'rose',
-     'blurb': 'Ways to see a figure so the answer is visible.',
+     'blurb': 'Ways to set up a figure so the answer is easy to find.',
      'techniques': [
          ('similarity-ratios', 'Find similar triangles; lengths scale by k, areas by k².'),
          ('coordinates', 'Put the figure on axes and compute.'),
@@ -406,7 +406,7 @@ STRATEGY_FAMILIES = [
          ('british-flag', 'For P in a rectangle, PA² + PC² = PB² + PD².'),
      ]},
     {'id': 'general', 'name': 'General problem solving', 'color': 'slate',
-     'blurb': 'Habits that crack problems in every topic.',
+     'blurb': 'Habits that help in every topic.',
      'techniques': [
          ('small-cases', 'Try n = 1, 2, 3 and read off the pattern.'),
          ('graphing', 'Sketch both sides and count where they cross.'),

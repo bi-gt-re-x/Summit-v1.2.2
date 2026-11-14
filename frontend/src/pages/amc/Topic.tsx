@@ -24,22 +24,22 @@ export default function Topic() {
   return (
     <div className="amc-page">
       <nav className="am-muted" style={{ fontSize: 13, marginBottom: 12 }}>
-        <Link to="/topics" className="am-link">← Topics</Link> / {topic.category_name}
+        <Link to="/topics" className="am-link">← Topics</Link>
       </nav>
       <PageHeader
         kicker={topic.category_name}
         title={topic.name}
         actions={firstNew ? (
-          <Link className="am-btn am-btn-primary" to={`/problems/${firstNew.id}`}>Practise this topic</Link>
+          <Link className="am-btn am-btn-primary" to={`/problems/${firstNew.id}`}>Practise</Link>
         ) : undefined}
       >
-        <p>{topic.summary} Shows up on the {topic.levels.join(', ')}.</p>
+        <p>{topic.summary} On the {topic.levels.join(', ')}.</p>
       </PageHeader>
 
       <div className="am-grid am-grid-main">
         <div className="am-stack">
           <section className="am-card">
-            <div className="am-card-head"><h2>Key ideas</h2></div>
+            <div className="am-card-head"><h2>Ideas</h2></div>
             <ol className="am-ideas">
               {topic.ideas.map((idea) => <li key={idea}><MathText text={idea} /></li>)}
             </ol>

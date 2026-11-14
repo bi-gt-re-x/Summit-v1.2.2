@@ -32,11 +32,10 @@ export default function Contests() {
 
   return (
     <div className="amc-page">
-      <PageHeader kicker="Contests" title="Past Contests">
+      <PageHeader title="Past Contests">
         <p>
-          Sit a full Step Mock or a real past paper under contest timing and scoring, then study the report of what
-          it cost you. Any of the {total} official papers since 2000 can be imported once and then practised and
-          timed here; {data.imported} {data.imported === 1 ? 'is' : 'are'} in Summit so far (marked ●).
+          Timed mocks and all {total} official papers since 2000. Import a paper once to practise it here
+          ({data.imported} so far, marked ●).
         </p>
       </PageHeader>
 
@@ -47,11 +46,6 @@ export default function Contests() {
             <span className="am-kicker" style={{ margin: 0 }}>{m.level}</span>
             <h3>{m.name}</h3>
             <p>{m.blurb}</p>
-            <div className="am-mock-meta">
-              <span>{m.count} problems</span>
-              <span>{m.minutes} minutes</span>
-              <span>{m.scoring}</span>
-            </div>
             <div className="am-mock-foot">
               <span className="am-muted" style={{ fontSize: 13 }}>
                 {m.attempts ? `Best ${m.best} / ${m.max} · ${m.attempts} sitting${m.attempts === 1 ? '' : 's'}` : 'Not taken yet'}
@@ -111,22 +105,8 @@ export default function Contests() {
                 </tbody>
               </table>
             ) : (
-              <p className="am-muted" style={{ margin: 0, fontSize: 13 }}>Mocks you sit and scores you log appear here.</p>
+              <p className="am-muted" style={{ margin: 0, fontSize: 13 }}>No scores yet.</p>
             )}
-          </section>
-          <section className="am-card">
-            <div className="am-card-head"><h2>Formats</h2></div>
-            <dl className="am-kv">
-              {(Object.keys(data.formats) as Level[]).map((l) => (
-                <span key={l} style={{ display: 'contents' }}>
-                  <dt>{l}</dt>
-                  <dd>{data.formats[l].count} in {data.formats[l].minutes} min</dd>
-                </span>
-              ))}
-            </dl>
-            <p className="am-muted" style={{ fontSize: 12, lineHeight: 1.5, margin: '12px 0 0' }}>
-              AMC: 6 points per right answer, 1.5 per blank, 0 per wrong, out of 150. AIME: one point each, out of 15.
-            </p>
           </section>
         </aside>
       </div>

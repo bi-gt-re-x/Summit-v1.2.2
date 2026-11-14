@@ -55,7 +55,6 @@ export default function Review() {
   return (
     <div className="amc-page">
       <PageHeader
-        kicker="Error log"
         title="Review"
         actions={data.due.length ? (
           <button type="button" className="am-btn am-btn-primary"
@@ -64,10 +63,7 @@ export default function Review() {
           </button>
         ) : undefined}
       >
-        <p>
-          Missed problems return after {data.intervals.join(', ')} days. Get one right when it's due and it moves up a
-          stage; three in a row and it's mastered. Miss it again and it starts over.
-        </p>
+        <p>Misses come back after {data.intervals.join(', ')} days. Get one right three times and it's mastered.</p>
       </PageHeader>
 
       <dl className="am-stats">
@@ -95,10 +91,10 @@ export default function Review() {
             items={lists[tab]}
             empty={
               tab === 'due'
-                ? { title: 'All caught up', body: 'Nothing is due today. New misses will land here in three days.' }
+                ? { title: 'All caught up', body: 'Nothing due today.' }
                 : tab === 'upcoming'
-                  ? { title: 'Nothing scheduled', body: 'Miss a problem — or add one from its page — and it shows up here.' }
-                  : { title: 'Nothing mastered yet', body: 'Pass a problem on three spaced reviews and it graduates here.' }
+                  ? { title: 'Nothing scheduled', body: 'Missed problems show up here.' }
+                  : { title: 'Nothing mastered yet', body: 'Problems you get right on all three reviews end up here.' }
             }
           />
         </div>
@@ -115,19 +111,18 @@ export default function Review() {
             </div>
           </section>
           <section className="am-card">
-            <div className="am-card-head"><h2>By topic</h2></div>
+            <div className="am-card-head">
+              <h2>By topic</h2>
+              <Link to="/problems?status=missed">All misses</Link>
+            </div>
             {data.by_topic.length ? (
               <ul className="am-list">
                 {data.by_topic.map((t) => <li key={t.name}><span>{t.name}</span><span className="am-muted">{t.count}</span></li>)}
               </ul>
             ) : (
-              <p className="am-muted" style={{ margin: 0, fontSize: 13 }}>Your log is empty.</p>
+              <p className="am-muted" style={{ margin: 0, fontSize: 13 }}>Nothing yet.</p>
             )}
           </section>
-          <p className="am-muted" style={{ fontSize: 12, lineHeight: 1.5, margin: 0 }}>
-            Tip: write a note on each miss — the one-line reason you got it wrong is what makes the next review stick.{' '}
-            <Link className="am-link" to="/problems?status=missed">See every missed problem</Link>
-          </p>
         </aside>
       </div>
     </div>

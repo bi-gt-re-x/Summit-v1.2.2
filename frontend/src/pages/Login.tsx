@@ -55,7 +55,7 @@ const TITLES: Record<AuthStep, string> = {
 const POINTS: [IconName, string][] = [
   ['target', 'Problems tagged by topic, strategy and AoPS difficulty'],
   ['timer', 'Timed mock contests, scored like the real thing'],
-  ['sparkles', 'A study plan written around your goal and your misses'],
+  ['sparkles', 'A study plan built around your goal'],
 ];
 
 export default function Login() {
@@ -148,10 +148,7 @@ export default function Login() {
         {home}
         <div className="auth-pitch">
           <h1>Train for the AMC. Qualify for the AIME.</h1>
-          <p>
-            Step-by-step solutions, a review log that brings every miss back until it sticks,
-            and a plan to contest day.
-          </p>
+          <p>Practice, mocks and a study plan for the AMC 10, AMC 12 and AIME.</p>
           <ul className="auth-points">
             {POINTS.map(([icon, text]) => (
               <li key={icon}>
@@ -161,7 +158,7 @@ export default function Login() {
             ))}
           </ul>
         </div>
-        <p className="auth-aside-foot">100% free · No credit card · Your data stays yours</p>
+        <p className="auth-aside-foot">Free. No credit card.</p>
       </aside>
 
       <main className="auth-main">

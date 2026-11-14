@@ -121,7 +121,7 @@ export function AmcProfile({ onDone, say }: { onDone: () => void; say: (text: st
         });
         if (!reply.success) {
           // The account is set up either way; the plan can be made later.
-          say(reply.message || 'Your plan could not be saved; make it from Study Plan.');
+          say(reply.message || 'Your plan was not saved. Make it from Study Plan.');
         } else if (reply.ai.available) {
           // The AI coach writes the personal plan in the background; nobody
           // waits for it, and it is on the Study Plan page when they look.

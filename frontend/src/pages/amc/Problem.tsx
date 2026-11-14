@@ -193,16 +193,16 @@ export default function Problem() {
                   {result.correct
                     ? result.moved && result.review
                       ? result.review.status === 'mastered'
-                        ? 'Mastered — it leaves your review log.'
+                        ? 'Mastered. It leaves your review log.'
                         : `Next review ${shortDate(result.review.due)}.`
                       : `Solved in ${clock(seconds)}.`
-                    : `The answer is ${p.format === 'choice' ? `(${p.answer})` : p.answer}. It's in your review log for ${result.review ? shortDate(result.review.due) : 'later'}.`}
+                    : `The answer is ${p.format === 'choice' ? `(${p.answer})` : p.answer}. You'll see it again ${result.review ? shortDate(result.review.due) : 'later'}.`}
                 </span>
               </div>
             )}
             {revealed && (
               <div className="am-verdict is-wrong" role="status">
-                Revealed. <span>It counts as a miss and comes back for review in 3 days.</span>
+                Revealed. <span>Counts as a miss. Back in 3 days.</span>
               </div>
             )}
             {seenBefore && last && (
@@ -219,8 +219,7 @@ export default function Problem() {
             {(result || revealed || seenBefore) && (
               p.official ? (
                 <p className="am-muted" style={{ margin: '16px 0 0', fontSize: 13, lineHeight: 1.6 }}>
-                  This is an official problem, so Summit has its answer but no write-up of its own. If you missed it,
-                  it's in your review log and comes back in 3 days.
+                  Official problem: answer only, no write-up.
                 </p>
               ) : (
                 <Solution solution={p.solution} insight={p.insight} trap={p.trap} />
@@ -249,7 +248,7 @@ export default function Problem() {
 
         <aside className="am-stack">
           <section className="am-card">
-            <div className="am-card-head"><h2>About this problem</h2></div>
+            <div className="am-card-head"><h2>Details</h2></div>
             <dl className="am-kv">
               <dt>Contest</dt><dd>{p.level}</dd>
               <dt>Category</dt><dd>{p.category_name}</dd>
@@ -273,11 +272,11 @@ export default function Problem() {
               <>
                 <p className="am-muted" style={{ margin: '0 0 12px', fontSize: 13, lineHeight: 1.5 }}>
                   {data.review.review_status === 'mastered'
-                    ? 'Mastered: you got it right on three spaced reviews.'
-                    : `Stage ${data.review.stage} of 3 · next review ${shortDate(data.review.due)} · missed ${data.review.misses}×`}
+                    ? 'Mastered.'
+                    : `Stage ${data.review.stage} of 3 · next ${shortDate(data.review.due)} · missed ${data.review.misses}×`}
                 </p>
                 <div className="am-note-box">
-                  <textarea className="am-input" placeholder="Why did you miss it? What will you do differently?"
+                  <textarea className="am-input" placeholder="Why did you miss it?"
                             value={note} onChange={(e) => setNote(e.target.value)} aria-label="Review note" />
                   <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
                     <button type="button" className="am-btn am-btn-ghost am-btn-sm" onClick={() => void toggleReview()}>
@@ -292,7 +291,7 @@ export default function Problem() {
             ) : (
               <>
                 <p className="am-muted" style={{ margin: '0 0 12px', fontSize: 13, lineHeight: 1.5 }}>
-                  Missed problems join the log automatically and come back after 3, 10 and 21 days.
+                  Misses are added on their own.
                 </p>
                 <button type="button" className="am-btn am-btn-sm" onClick={() => void toggleReview()}>
                   Add to review

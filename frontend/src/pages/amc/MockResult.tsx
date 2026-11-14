@@ -29,7 +29,7 @@ export default function MockResult() {
       <nav className="am-muted" style={{ fontSize: 13, marginBottom: 12 }}>
         <Link to={`/contests/${contest.id}`} className="am-link">← {contest.name}</Link>
       </nav>
-      <PageHeader kicker={`${contest.level} · ${shortDate(result.at)}`} title={`${contest.name} report`}
+      <PageHeader kicker={`${contest.level} · ${shortDate(result.at)}`} title={contest.name}
                   actions={
                     <>
                       <Link className="am-btn" to="/review">Review misses</Link>
@@ -72,7 +72,7 @@ export default function MockResult() {
               ))}
             </ul>
           ) : (
-            <p style={{ margin: '8px 0 0' }}>A perfect paper. Nothing lost anywhere.</p>
+            <p style={{ margin: '8px 0 0' }}>Perfect paper.</p>
           )}
         </section>
       </div>

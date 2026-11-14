@@ -53,7 +53,7 @@ export function Compare({ now, before }: { now: PerformanceWindow; before: Perfo
       <Row label="Answered" now={now.answered} before={before.answered} kind="count" show={count} />
       <Row label="Accuracy" now={now.accuracy} before={before.accuracy} kind="pct" show={pct} />
       <Row label="Time per problem" now={now.avg_seconds} before={before.avg_seconds} kind="secs" show={secs} />
-      <Row label="Days practised" now={now.days} before={before.days} kind="count" show={count} />
+      <Row label="Days active" now={now.days} before={before.days} kind="count" show={count} />
     </dl>
   );
 }
@@ -68,10 +68,7 @@ export function RecentPerformanceCard({ data }: { data: RecentPerformance }) {
         <Link to="/analytics">Analytics</Link>
       </div>
       {!any ? (
-        <p className="am-muted" style={{ margin: 0, lineHeight: 1.6 }}>
-          Nothing in the last two weeks yet. Answer a few problems and this shows how this week compares with
-          last — accuracy, pace, and your latest mock scores.
-        </p>
+        <p className="am-muted" style={{ margin: 0 }}>Nothing in the last two weeks.</p>
       ) : (
         <div className="am-perf">
           <Compare now={now} before={before} />
@@ -99,13 +96,6 @@ export function RecentPerformanceCard({ data }: { data: RecentPerformance }) {
                 </li>
               ))}
             </ul>
-          )}
-          {now.hardest && (
-            <p className="am-muted" style={{ margin: 0, fontSize: 13 }}>
-              Hardest solved this week:{' '}
-              <Link className="am-link" to={`/problems/${now.hardest.id}`}>{now.hardest.short}</Link>, AoPS{' '}
-              {now.hardest.rating}.
-            </p>
           )}
           {data.mocks.length > 0 && (
             <div className="am-rows">

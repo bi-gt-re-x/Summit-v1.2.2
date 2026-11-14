@@ -1,5 +1,5 @@
 /**
- * Analytics, under Prep: three views of one question — how do I get my score?
+ * Analytics, under Prep: three views of one question, how do I get my score?
  *
  *   Performance  how you are doing: accuracy by AoPS rating and category, the
  *                weekly trend, mock scores, topics, and what happens to misses.
@@ -31,9 +31,9 @@ import {
 import '@/styles/amc.css';
 
 const VIEWS = [
-  { id: 'performance', label: 'Your performance' },
-  { id: 'contests', label: 'What’s on the contest' },
-  { id: 'prepare', label: 'How to prepare' },
+  { id: 'performance', label: 'Performance' },
+  { id: 'contests', label: 'The contest' },
+  { id: 'prepare', label: 'Plan' },
 ] as const;
 type View = (typeof VIEWS)[number]['id'];
 const LEVELS: Level[] = ['AMC 10', 'AMC 12', 'AIME'];
@@ -64,9 +64,7 @@ function Performance({ data }: { data: AnalyticsData }) {
   if (!p.attempted) {
     return (
       <Empty title="No answers yet">
-        Analytics fill in as you practise. Start with the{' '}
-        <Link className="am-link" to="/contests/step-mock-10">Step Mock AMC 10</Link> or any{' '}
-        <Link className="am-link" to="/problems">problem</Link>.
+        Solve a few <Link className="am-link" to="/problems">problems</Link> to see your stats.
       </Empty>
     );
   }
@@ -83,19 +81,17 @@ function Performance({ data }: { data: AnalyticsData }) {
     <>
       <dl className="am-stats">
         <Stat label="Attempted" value={String(p.attempted)} hint={`${p.solved} solved`} />
-        <Stat label="First-try accuracy" value={pct(p.accuracy)} hint="right on the first answer" />
+        <Stat label="First-try accuracy" value={pct(p.accuracy)} />
         <Stat label="Time per problem" value={p.avg_seconds ? clock(p.avg_seconds) : '—'}
               hint={`contest pace ${data.target === 'AIME' ? '12:00' : '3:00'}`} />
         <Stat label="Reliable up to" value={p.ceiling != null ? `AoPS ${p.ceiling}` : '—'}
-              hint={p.ceiling != null ? '70%+ first try' : 'needs more answers'} />
+              hint={p.ceiling != null ? '70%+ right' : 'answer more'} />
         <Stat label="Active days" value={String(p.active_days)} hint={`${p.minutes} min practised`} />
       </dl>
 
       <div className="am-grid am-grid-2">
         <section className="am-card">
-          <div className="am-card-head"><h2>Accuracy by difficulty</h2></div>
-          <p className="am-card-sub">First-try accuracy at each AoPS rating. The ratings rise along a real paper, so
-            this is the stretch of the contest you can count on.</p>
+          <div className="am-card-head"><h2>By difficulty</h2></div>
           {tried.length ? (
             <Bars rows={tried.map((row) => ({
               key: String(row.rating),
@@ -109,7 +105,6 @@ function Performance({ data }: { data: AnalyticsData }) {
 
         <section className="am-card">
           <div className="am-card-head"><h2>By category</h2><Link to="/topics">Topics</Link></div>
-          <p className="am-card-sub">First-try accuracy in each of the five categories, and how many you have tried.</p>
           <Bars rows={p.categories.map((c) => ({
             key: c.id,
             label: <><CategoryDot category={c.id as CategoryId} /> {c.name}</>,
@@ -123,7 +118,7 @@ function Performance({ data }: { data: AnalyticsData }) {
           <div className="am-card-head"><h2>Week by week</h2></div>
           <Columns
             caption="Problems answered each week for the last 8 weeks"
-            idle={<>Last 8 weeks · tap a week for its numbers</>}
+            idle={<>Last 8 weeks</>}
             labelEvery={2}
             points={p.weeks.map((w) => ({
               key: w.start,
@@ -142,7 +137,7 @@ function Performance({ data }: { data: AnalyticsData }) {
             <>
               <Columns
                 caption="Mock and logged contest scores, oldest first"
-                idle={<>{p.mocks.length} contest{p.mocks.length === 1 ? '' : 's'} · tap one for its score</>}
+                idle={<>{p.mocks.length} contest{p.mocks.length === 1 ? '' : 's'}</>}
                 max={scoreMax}
                 goal={goalLine}
                 labelEvery={Math.max(1, Math.ceil(p.mocks.length / 4))}
@@ -157,14 +152,14 @@ function Performance({ data }: { data: AnalyticsData }) {
               {goalLine && <Legend items={[{ label: 'Score', tone: 'strong' }, { label: 'Your goal', tone: 'goal' }]} />}
             </>
           ) : (
-            <Empty title="No contest scores yet">
-              Take a <Link className="am-link" to="/contests">timed mock</Link> or log a past paper you sat.
+            <Empty title="No scores yet">
+              Take a <Link className="am-link" to="/contests">timed mock</Link>.
             </Empty>
           )}
         </section>
 
         <section className="am-card">
-          <div className="am-card-head"><h2>Topics to fix</h2></div>
+          <div className="am-card-head"><h2>Weakest topics</h2></div>
           {weakest.length ? (
             <ul className="am-list am-topic-list">
               {weakest.map((t) => (
@@ -196,18 +191,13 @@ function Performance({ data }: { data: AnalyticsData }) {
         </section>
 
         <section className="am-card">
-          <div className="am-card-head"><h2>What happens to misses</h2><Link to="/review">Review</Link></div>
+          <div className="am-card-head"><h2>Misses</h2><Link to="/review">Review</Link></div>
           <dl className="am-mini-stats">
-            <div><dt>Missed first time</dt><dd>{r.missed_first}</dd></div>
-            <div><dt>Solved since</dt><dd>{r.recovered}</dd></div>
+            <div><dt>Missed</dt><dd>{r.missed_first}</dd></div>
+            <div><dt>Fixed since</dt><dd>{r.recovered}</dd></div>
             <div><dt>Still open</dt><dd>{r.open}</dd></div>
-            <div><dt>Answers revealed</dt><dd>{r.revealed}</dd></div>
+            <div><dt>Revealed</dt><dd>{r.revealed}</dd></div>
           </dl>
-          <p className="am-card-sub" style={{ marginBottom: 0 }}>
-            {r.missed_first
-              ? `You have turned ${pct(r.recovered / r.missed_first)} of your misses into solves. Each one left open is a point you have already shown you can lose.`
-              : 'No misses yet. Push up the difficulty until some appear — that is where the points are.'}
-          </p>
         </section>
 
         <section className="am-card">
@@ -217,7 +207,7 @@ function Performance({ data }: { data: AnalyticsData }) {
               const score = p.projected[l];
               return (
                 <div key={l} className="am-bar-row">
-                  <span className="am-bar-label">{l}{l === data.target ? ' · your contest' : ''}</span>
+                  <span className="am-bar-label">{l}</span>
                   <span className="am-muted" style={{ fontSize: 12 }}>
                     {score == null ? `after ${p.projection_min} answers` : `${score} / ${MAX[l]}`}
                   </span>
@@ -255,20 +245,19 @@ function Contests({ data }: { data: AnalyticsData }) {
           <section className="am-card">
             <div className="am-card-head"><h2>The format</h2></div>
             <p className="am-prose">{g.format}</p>
-            <p className="am-prose"><strong>Who takes it.</strong> {g.who}</p>
-            <div className="am-callout am-callout-insight">
-              <span>{level === 'AIME' ? 'After the AIME' : 'Qualifying for the AIME'}</span>
-              <p>{g.qualify}</p>
-            </div>
+            <p className="am-prose">{g.who}</p>
+            <p className="am-prose" style={{ marginBottom: 0 }}>
+              <strong>{level === 'AIME' ? 'Next round.' : 'AIME cutoff.'}</strong> {g.qualify}
+            </p>
           </section>
           <section className="am-card">
-            <div className="am-card-head"><h2>What appears where</h2></div>
+            <div className="am-card-head"><h2>By problem number</h2></div>
             <ol className="am-sections">
               {g.sections.map((s) => (
                 <li key={s.range}>
                   <div className="am-sections-head">
                     <strong>#{s.range}</strong>
-                    <span className="am-muted">AoPS {s.rating} · about {s.minutes} min</span>
+                    <span className="am-muted">AoPS {s.rating} · ~{s.minutes} min</span>
                   </div>
                   <p>{s.what}</p>
                 </li>
@@ -278,8 +267,7 @@ function Contests({ data }: { data: AnalyticsData }) {
         </div>
         <div className="am-stack">
           <section className="am-card">
-            <div className="am-card-head"><h2>Topics on a typical paper</h2></div>
-            <p className="am-card-sub">Approximate share of a recent {level}, by category.</p>
+            <div className="am-card-head"><h2>Topic mix</h2><span className="am-muted" style={{ fontSize: 12 }}>approx.</span></div>
             <Bars max={40} rows={g.shares.map((s) => ({
               key: s.id,
               label: <><CategoryDot category={s.id as CategoryId} /> {s.name}</>,
@@ -288,13 +276,13 @@ function Contests({ data }: { data: AnalyticsData }) {
             }))} format={(v) => `~${v}%`} />
             {g.measured && (
               <p className="am-card-sub" style={{ marginBottom: 0 }}>
-                On the {g.measured.papers} {level} paper{g.measured.papers === 1 ? '' : 's'} imported here:{' '}
+                Your {g.measured.papers} imported paper{g.measured.papers === 1 ? '' : 's'}:{' '}
                 {g.shares.map((s) => `${s.name} ${g.measured?.shares[s.id] ?? 0}%`).join(', ')}.
               </p>
             )}
           </section>
           <section className="am-card">
-            <div className="am-card-head"><h2>Difficulty along the paper</h2></div>
+            <div className="am-card-head"><h2>Difficulty</h2></div>
             <table className="am-table">
               <thead><tr><th>Problems</th><th>AoPS rating</th></tr></thead>
               <tbody>
@@ -308,7 +296,7 @@ function Contests({ data }: { data: AnalyticsData }) {
             </table>
           </section>
           <section className="am-card">
-            <div className="am-card-head"><h2>On almost every paper</h2></div>
+            <div className="am-card-head"><h2>Common topics</h2></div>
             <div className="am-chips">
               {g.key_topics.map((t) => (
                 <Link key={t.id} className="am-chip" to={`/topics/${t.id}`}>
@@ -334,18 +322,18 @@ function Prepare({ data }: { data: AnalyticsData }) {
     <>
       {!data.has_plan && (
         <div className="am-callout am-callout-insight" style={{ marginBottom: 'var(--space-4)' }}>
-          <span>No study plan yet</span>
+          <span>No study plan</span>
           <p>
-            This assumes the AMC 10, the AIME qualifying score and 4 hours a week.{' '}
-            <Link className="am-link" to="/study-plan">Set your contest, date and goal</Link> to make it yours.
+            Using the AMC 10, a goal of 100 and 4 hours a week.{' '}
+            <Link className="am-link" to="/study-plan">Make a plan</Link>
           </p>
         </div>
       )}
       <dl className="am-stats">
         <Stat label="Your goal" value={String(p.goal)} hint={`on the ${data.target}`} />
         <Stat label="Projected now" value={projected == null ? '—' : String(projected)}
-              hint={p.gap == null ? `after ${data.performance.projection_min} answers` : p.gap > 0 ? `${p.gap} to go` : 'at or above your goal'} />
-        <Stat label="Right answers needed" value={String(p.right_needed)} hint={data.target === 'AIME' ? 'of 15' : 'of 25, the rest blank'} />
+              hint={p.gap == null ? `after ${data.performance.projection_min} answers` : p.gap > 0 ? `${p.gap} to go` : 'goal reached'} />
+        <Stat label="Right answers needed" value={String(p.right_needed)} hint={data.target === 'AIME' ? 'of 15' : 'rest left blank'} />
         <Stat label="Contest day" value={data.days_left != null ? `${data.days_left} days` : '—'}
               hint={data.exam_date ? shortDate(data.exam_date) : 'set it on Study Plan'} />
       </dl>
@@ -353,18 +341,18 @@ function Prepare({ data }: { data: AnalyticsData }) {
         <div className="am-stack">
           {p.phase && (
             <section className="am-card am-phase-card">
-              <span className="am-kicker">Where you are · {p.phase.weeks} week{p.phase.weeks === 1 ? '' : 's'} out</span>
+              <span className="am-kicker">{p.phase.weeks} week{p.phase.weeks === 1 ? '' : 's'} out</span>
               <h2>{p.phase.name}</h2>
               <p className="am-prose" style={{ margin: 0 }}>{p.phase.text}</p>
             </section>
           )}
           <section className="am-card">
-            <div className="am-card-head"><h2>What your goal takes</h2></div>
+            <div className="am-card-head"><h2>Your goal</h2></div>
             <p className="am-prose">{p.split}</p>
             <p className="am-prose" style={{ marginBottom: 0 }}>{p.reach}</p>
           </section>
           <section className="am-card">
-            <div className="am-card-head"><h2>Your next steps</h2><Link to="/study-plan">Study Plan</Link></div>
+            <div className="am-card-head"><h2>Next steps</h2><Link to="/study-plan">Study Plan</Link></div>
             <ol className="am-steps-list">
               {p.steps.map((s) => (
                 <li key={s.title}>
@@ -377,22 +365,20 @@ function Prepare({ data }: { data: AnalyticsData }) {
         </div>
         <div className="am-stack">
           <section className="am-card">
-            <div className="am-card-head"><h2>Topics worth the most</h2></div>
-            <p className="am-card-sub">Common on the {data.target} and not yet in hand — most points first.</p>
+            <div className="am-card-head"><h2>Topics to study</h2></div>
             <ul className="am-list am-topic-list">
               {p.focus.map((t) => (
                 <li key={t.id}>
                   <Link className="am-link" to={`/topics/${t.id}`}>
                     <CategoryDot category={t.category as CategoryId} /> {t.name}
                   </Link>
-                  <span className="am-muted">{Math.round(t.mastery * 100)}% mastered</span>
+                  <span className="am-muted">{Math.round(t.mastery * 100)}%</span>
                 </li>
               ))}
             </ul>
           </section>
           <section className="am-card">
-            <div className="am-card-head"><h2>Your week</h2></div>
-            <p className="am-card-sub">{hours} hour{hours === 1 ? '' : 's'} a week, split the way that gains the most.</p>
+            <div className="am-card-head"><h2>Your week</h2><span className="am-muted" style={{ fontSize: 12 }}>{hours} h</span></div>
             <Bars max={hours} format={(v) => `${v} h`} rows={p.week.map((w) => ({
               key: w.what, label: w.what, value: w.hours,
             }))} />
@@ -411,8 +397,8 @@ export default function Analytics() {
 
   return (
     <div className="amc-page">
-      <PageHeader kicker="Prep" title="Analytics">
-        <p>How you are doing, what the {data?.target ?? 'AMC'} actually tests, and how to get from here to your goal.</p>
+      <PageHeader title="Analytics">
+        <p>How you're doing, what's on the test, and what to do next.</p>
       </PageHeader>
       <div className="am-tabs" role="tablist" aria-label="Analytics">
         {VIEWS.map((v) => (

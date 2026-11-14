@@ -75,12 +75,11 @@ def recent_performance(attempts, mocks, today):
     if a is not None and b is not None:
         delta = round((a - b) * 100)
         if delta >= 5:
-            notes.append({'tone': 'up', 'text': 'Accuracy up {} points on last week.'.format(delta)})
+            notes.append({'tone': 'up', 'text': 'Accuracy up {} points from last week.'.format(delta)})
         elif delta <= -5:
-            notes.append({'tone': 'down', 'text': 'Accuracy down {} points on last week — slow down and check '
-                                                  'the trap on each miss.'.format(-delta)})
+            notes.append({'tone': 'down', 'text': 'Accuracy down {} points from last week.'.format(-delta)})
         else:
-            notes.append({'tone': 'flat', 'text': 'Accuracy steady against last week.'})
+            notes.append({'tone': 'flat', 'text': 'Accuracy about the same as last week.'})
     if this_week['answered'] and last_week['answered']:
         if this_week['answered'] >= last_week['answered'] * 1.25:
             notes.append({'tone': 'up', 'text': 'More problems than last week ({} vs {}).'.format(
@@ -94,11 +93,10 @@ def recent_performance(attempts, mocks, today):
         diff = same[0]['score'] - same[1]['score']
         if diff:
             notes.append({'tone': 'up' if diff > 0 else 'down',
-                          'text': 'Latest {} score {} on the one before ({:+g}).'.format(
-                              same[0]['level'], 'up' if diff > 0 else 'down', diff)})
+                          'text': 'Last {} score {:+g} from the one before.'.format(same[0]['level'], diff)})
     if this_week['revealed'] >= 3 and this_week['revealed'] > this_week['answered'] / 3:
-        notes.append({'tone': 'down', 'text': '{} answers revealed this week; commit to an answer first, then '
-                                              'check.'.format(this_week['revealed'])})
+        notes.append({'tone': 'down', 'text': '{} answers revealed this week. Try an answer first.'.format(
+            this_week['revealed'])})
     return {'this_week': this_week, 'last_week': last_week, 'days': days, 'mocks': scored, 'notes': notes}
 
 
@@ -109,59 +107,56 @@ def recent_performance(attempts, mocks, today):
 #: competition ratings. Shares are approximate for a typical recent paper.
 GUIDE = {
     'AMC 10': {
-        'who': 'Students in grade 10 and below.',
+        'who': 'For grade 10 and below.',
         'format': '25 multiple-choice problems in 75 minutes. 6 points for a right answer, 1.5 for a blank, 0 for '
-                  'a wrong one — so a blank beats a guess you cannot narrow down. No calculators.',
-        'qualify': 'From the 2026–27 contests, 100 points on the AMC 10 qualifies for the AIME (before that the '
-                   'line moved every year with the scores — 103.5 on the 2019 10A, 108 on the 10B).',
+                  'a wrong one. No calculator.',
+        'qualify': 'Score 100 to qualify (fixed from 2026–27). It used to change each year, for example 103.5 on '
+                   'the 2019 10A and 108 on the 10B.',
         'shares': {'algebra': 30, 'geometry': 25, 'counting': 20, 'number-theory': 20, 'misc': 5},
         'sections': [
             {'range': '1–10', 'rating': '1–1.5', 'minutes': 20,
-             'what': 'Arithmetic, percents and rates, short word problems, a first counting or area question. '
-                     'Every point here is expected — speed and accuracy, not ideas.'},
+             'what': 'Arithmetic, percents, rates, short word problems, easy counting and area. Go fast and '
+                     'don’t make careless mistakes.'},
             {'range': '11–20', 'rating': '2–2.5', 'minutes': 35,
-             'what': 'One idea each: casework, similar triangles, remainders, a system to set up, a probability '
-                     'with a small sample space. Most AIME qualifiers are decided here.'},
+             'what': 'Casework, similar triangles, remainders, systems of equations, simple probability. Most '
+                     'qualifying scores are won or lost here.'},
             {'range': '21–25', 'rating': '3–3.5', 'minutes': 20,
-             'what': 'Multi-step counting and probability, number theory with structure, geometry that needs a '
-                     'construction. Pick the one or two that look most like problems you have done.'},
+             'what': 'Harder counting and probability, number theory, geometry that needs an extra line. Try the '
+                     'one or two that look familiar.'},
         ],
     },
     'AMC 12': {
-        'who': 'Students in grade 12 and below.',
-        'format': '25 multiple-choice problems in 75 minutes, scored like the AMC 10 (6 / 1.5 / 0). The first '
-                  'half overlaps the AMC 10’s middle; the second half adds precalculus.',
-        'qualify': 'From the 2026–27 contests, 85 points on the AMC 12 qualifies for the AIME (before that it '
-                   'moved every year — 84 on the 2019 12A, 94.5 on the 12B).',
+        'who': 'For grade 12 and below.',
+        'format': '25 multiple-choice problems in 75 minutes, scored like the AMC 10. The second half adds '
+                  'precalculus.',
+        'qualify': 'Score 85 to qualify (fixed from 2026–27). It used to change each year, for example 84 on the '
+                   '2019 12A and 94.5 on the 12B.',
         'shares': {'algebra': 35, 'geometry': 25, 'counting': 18, 'number-theory': 17, 'misc': 5},
         'sections': [
             {'range': '1–10', 'rating': '1.5–2', 'minutes': 20,
-             'what': 'The AMC 10’s easier middle: word problems, quick counting, ratios, a coordinate question.'},
+             'what': 'Like the middle of the AMC 10: word problems, quick counting, ratios, coordinates.'},
             {'range': '11–20', 'rating': '2.5–3', 'minutes': 35,
-             'what': 'Logarithms, trigonometry, complex numbers and sequences join the usual four. Know the '
-                     'identities cold so these are one-step.'},
+             'what': 'Logs, trig, complex numbers and sequences on top of the usual topics. Know the identities '
+                     'well.'},
             {'range': '21–25', 'rating': '3.5–4', 'minutes': 20,
-             'what': 'Polynomials and their roots, roots of unity, 3D and trig-heavy geometry, hard counting. '
-                     'Close to early AIME difficulty.'},
+             'what': 'Polynomial roots, roots of unity, 3D and trig geometry, hard counting. About as hard as the '
+                     'early AIME.'},
         ],
     },
     'AIME': {
-        'who': 'Invited from the AMC 10 and AMC 12.',
-        'format': '15 problems in 3 hours, each answer an integer from 0 to 999. One point each, nothing taken '
-                  'off for a wrong answer — always write something down.',
-        'qualify': 'USAJMO and USAMO invitations use an index: AMC score + 10 × AIME score. The line moves every '
-                   'year; check the MAA’s announcement for the current one.',
+        'who': 'By invitation, from AMC 10 and AMC 12 scores.',
+        'format': '15 problems in 3 hours. Every answer is a whole number from 0 to 999. One point each, and no '
+                  'penalty for wrong answers, so always answer.',
+        'qualify': 'USAJMO and USAMO use AMC score + 10 × AIME score. The cutoff changes every year.',
         'shares': {'geometry': 28, 'algebra': 25, 'counting': 25, 'number-theory': 22, 'misc': 0},
         'sections': [
             {'range': '1–5', 'rating': '2.5–3.5', 'minutes': 50,
-             'what': 'Late-AMC difficulty without answer choices: counting, digits, a geometry computation. '
-                     'Every serious AIME score starts with these five.'},
+             'what': 'Like the end of the AMC, with no answer choices: counting, digits, geometry.'},
             {'range': '6–10', 'rating': '4', 'minutes': 70,
-             'what': 'Two or three ideas chained together. Modular arithmetic, recursion for counting, coordinates '
-                     'or trig to finish a geometry problem.'},
+             'what': 'Two or three steps each. Mods, recursion, coordinates or trig.'},
             {'range': '11–15', 'rating': '5–6', 'minutes': 60,
-             'what': 'Olympiad-flavoured: clever bijections, polynomial and complex-number structure, hard '
-                     'geometry. One of these is a great day.'},
+             'what': 'Very hard. Bijections, polynomials, complex numbers, hard geometry. Solving one is a good '
+                     'result.'},
         ],
     },
 }
@@ -278,19 +273,15 @@ def phase(days_left):
     weeks = days_left / 7
     if weeks > 16:
         return {'name': 'Foundation', 'weeks': round(weeks),
-                'text': 'Plenty of time. Learn topics properly — new ideas over speed — and take a full mock '
-                        'every three or four weeks to see where the points are.'}
+                'text': 'Learn new topics well. Speed comes later. Take a mock every 3 or 4 weeks.'}
     if weeks > 6:
         return {'name': 'Build', 'weeks': round(weeks),
-                'text': 'Shift toward the problems that decide your score. A timed mock every two weeks, and '
-                        'every miss into Review.'}
+                'text': 'Work on the problems that decide your score. A timed mock every 2 weeks.'}
     if weeks > 2:
         return {'name': 'Sharpen', 'weeks': round(weeks),
-                'text': 'Contest conditions now: a timed paper each week, past contests over new topics, and '
-                        'the review log cleared before each one.'}
+                'text': 'A timed paper every week. Past contests over new topics. Clear Review before each one.'}
     return {'name': 'Taper', 'weeks': max(0, round(weeks)),
-            'text': 'Light and confident: re-do problems you have solved, keep the routine, sleep. Nothing new '
-                    'in the last few days.'}
+            'text': 'Redo problems you know. Nothing new. Sleep well.'}
 
 
 def prepare(level, goal, hours, days_left, projected, rating_rows, tstats, due, mocks_taken, avg_seconds):
@@ -302,24 +293,24 @@ def prepare(level, goal, hours, days_left, projected, rating_rows, tstats, due, 
         split = '{} right answers out of 15.'.format(right)
     else:
         blanks = count - right
-        split = '{} right and {} blank = {:g}. Every extra right answer is worth 4.5 more; every wrong one costs ' \
-                '1.5 against leaving it blank.'.format(right, blanks, right * 6 + blanks * 1.5)
+        split = '{} right and {} blank = {:g} points. Each wrong answer costs 1.5 compared with a blank.'.format(
+            right, blanks, right * 6 + blanks * 1.5)
     need_rating = official.rating_at(level, max(1, right)) if right else None
     top = ceiling(rating_rows)
 
     if need_rating is None:
-        reach = 'Your goal does not need any right answers — raise it on the Study Plan.'
+        reach = 'Your goal is very low. Raise it on Study Plan.'
     elif top is None:
-        reach = ('Your goal means solving through about #{} — problems rated up to {:g}. Answer a few more '
-                 'problems so we can tell where you are.').format(right, need_rating)
+        reach = ('You need to solve up to about #{} (AoPS {:g}). Answer more problems to see where you '
+                 'stand.').format(right, need_rating)
     elif top >= need_rating:
-        reach = ('Your goal means solving through about #{} (rated up to {:g}), and you already solve problems '
-                 'rated {:g} reliably. The work is consistency and pace.').format(right, need_rating, top)
+        reach = ('You need to solve up to about #{} (AoPS {:g}). You already get {:g} problems right, so work '
+                 'on speed and fewer mistakes.').format(right, need_rating, top)
     else:
         lo = min(need_rating, top + 0.5)
         band = '{:g}'.format(lo) if lo == need_rating else '{:g}–{:g}'.format(lo, need_rating)
-        reach = ('Your goal means solving through about #{} (rated up to {:g}). You are reliable to about {:g}, '
-                 'so the problems rated {} are where your points are.').format(right, need_rating, top, band)
+        reach = ('You need to solve up to about #{} (AoPS {:g}). You are solid up to {:g}, so practise '
+                 'problems rated {}.').format(right, need_rating, top, band)
 
     gap = None if projected is None else round(goal - projected, 1)
 
@@ -332,39 +323,36 @@ def prepare(level, goal, hours, days_left, projected, rating_rows, tstats, due, 
 
     steps = []
     if focus:
-        steps.append({'title': 'Close the biggest topic gaps',
-                      'body': 'Start with {} — common on the {} and not yet solid for you.'.format(
-                          ', '.join(f['name'] for f in focus[:3]), level),
+        steps.append({'title': 'Work on weak topics',
+                      'body': 'Start with {}.'.format(', '.join(f['name'] for f in focus[:3])),
                       'to': '/topics/{}'.format(focus[0]['id'])})
     if need_rating is not None:
         hi = official.difficulty_at(level, max(1, right))
         lo = min(hi, tier(top + 0.5) if top is not None else official.difficulty_at(level, 1))
-        steps.append({'title': 'Drill the problems that decide your score',
-                      'body': 'Positions up to #{} on the {} are rated up to {:g}. Practise at that level until '
-                              'first-try accuracy is over 80%.'.format(right, level, need_rating),
+        steps.append({'title': 'Practise at your target level',
+                      'body': 'Problems up to AoPS {:g}, until you get 80% right first try.'.format(need_rating),
                       'to': '/problems?level={}&difficulty={}'.format(
                           level.replace(' ', '+'), ','.join(str(d) for d in range(lo, hi + 1)))})
     if due:
-        steps.append({'title': 'Clear your review log',
-                      'body': '{} missed problem{} due. Re-solving a miss is the fastest point you will gain.'.format(
-                          due, ' is' if due == 1 else 's are'),
+        steps.append({'title': 'Clear Review',
+                      'body': '{} missed problem{} due.'.format(due, ' is' if due == 1 else 's are'),
                       'to': '/review'})
     if not mocks_taken:
-        steps.append({'title': 'Take a full timed mock',
-                      'body': 'One sitting under contest conditions shows your pacing and where points leak.',
+        steps.append({'title': 'Take a timed mock',
+                      'body': 'See how you do under real timing.',
                       'to': '/contests'})
     pace = PACE[level]
     if avg_seconds and avg_seconds > pace * 1.2:
-        steps.append({'title': 'Work on pace',
-                      'body': 'You average {} per problem; the {} allows about {}. Time yourself on sets of '
-                              'five.'.format(_clock(avg_seconds), level, _clock(pace)),
+        steps.append({'title': 'Speed up',
+                      'body': 'You take {} per problem. The {} gives you about {}. Time sets of five.'.format(
+                          _clock(avg_seconds), level, _clock(pace)),
                       'to': '/problems?level={}'.format(level.replace(' ', '+'))})
 
     hours = max(1, hours or 1)
     week = [
-        {'what': 'New problems in your focus topics', 'hours': round(hours * 0.45, 1)},
-        {'what': 'Review log and re-solving misses', 'hours': round(hours * 0.2, 1)},
-        {'what': 'Timed mocks and past papers', 'hours': round(hours * 0.35, 1)},
+        {'what': 'New problems', 'hours': round(hours * 0.45, 1)},
+        {'what': 'Review', 'hours': round(hours * 0.2, 1)},
+        {'what': 'Mocks and past papers', 'hours': round(hours * 0.35, 1)},
     ]
     return {'goal': goal, 'right_needed': right, 'split': split, 'need_rating': need_rating, 'ceiling': top,
             'reach': reach, 'gap': gap, 'focus': focus, 'steps': steps, 'week': week,

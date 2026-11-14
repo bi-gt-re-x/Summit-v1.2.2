@@ -374,10 +374,10 @@ def plan_weeks(settings, tstats, mocks_taken, today):
         week_end = week_start + timedelta(days=6)
         mock_done = any(week_start.isoformat() <= d <= week_end.isoformat() for d in taken)
         notes = {
-            'Foundations': 'Learn the core ideas of each focus topic, then work its easier problems untimed.',
-            'Core': 'Mix focus topics with review. Time yourself: aim for under 3 minutes on #1-15.',
-            'Contest mode': 'Full timed mocks. Spend the rest of the week on what the mock cost you.',
-            'Taper': 'Light review of your error log and formulas. Sleep well; no new material.',
+            'Foundations': 'Learn each focus topic, then do its easier problems untimed.',
+            'Core': 'Focus topics plus review. Aim for under 3 minutes on #1-15.',
+            'Contest mode': 'One timed mock, then work on what you missed.',
+            'Taper': 'Light review only. Nothing new. Sleep well.',
         }
         weeks.append({
             'number': i + 1, 'start': week_start.isoformat(), 'end': week_end.isoformat(),
@@ -404,7 +404,7 @@ def today_items(settings, weeks, due_count, today, checks, practiced_today):
                       'to': '/review', 'auto': False})
     if week and week['focus']:
         focus = week['focus'][0]
-        items.append({'key': 'read', 'label': 'Read the key ideas for {}'.format(focus['name']),
+        items.append({'key': 'read', 'label': 'Read the ideas for {}'.format(focus['name']),
                       'to': '/topics/' + focus['id'], 'auto': False})
         done = sum(1 for pid in practiced_today
                    if bank_of.get(pid) and focus['id'] in [bank_of.get(pid)['topic']] + bank_of.get(pid)['also'])
@@ -416,7 +416,7 @@ def today_items(settings, weeks, due_count, today, checks, practiced_today):
         items.append({'key': 'mock', 'label': "Sit this week's timed mock", 'to': '/contests/' + mock_id,
                       'auto': False})
     if week and week['phase'] == 'Taper':
-        items.append({'key': 'formulas', 'label': 'Skim the key ideas of every topic', 'to': '/topics', 'auto': False})
+        items.append({'key': 'formulas', 'label': 'Skim the ideas for every topic', 'to': '/topics', 'auto': False})
     for item in items:
         item['done'] = item['key'] in ticked or (
             'goal' in item and item['progress'] >= item['goal'])

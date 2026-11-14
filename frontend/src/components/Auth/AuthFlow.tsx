@@ -45,10 +45,10 @@ export type AuthStep = 'choose' | 'login' | 'create' | 'inbox' | 'profile';
 
 const COPY: Record<AuthStep, [string, string]> = {
   choose: ['Welcome', 'Log in or create an account to continue.'],
-  login: ['Log in', 'Good to see you again.'],
+  login: ['Log in', 'Welcome back.'],
   create: ['Create account', "Start with your email. It's free."],
   inbox: ['Check your inbox', "Click the link we sent and you're in."],
-  profile: ['Your contest', 'A few quick taps and your study plan is ready.'],
+  profile: ['Your contest', 'A few questions to set up your plan.'],
 };
 
 /** Good enough to catch a typo before asking the server. The server decides. */

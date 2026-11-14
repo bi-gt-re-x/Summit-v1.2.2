@@ -221,7 +221,7 @@ export function Solution({
     <div className="am-solution">
       {insight && (
         <div className="am-callout am-callout-insight">
-          <span>Key insight</span>
+          <span>Main idea</span>
           <MathText text={insight} as="p" />
         </div>
       )}
@@ -242,7 +242,7 @@ export function Solution({
       </div>
       {trap && (
         <div className="am-callout am-callout-trap">
-          <span>The trap</span>
+          <span>Common mistake</span>
           <MathText text={trap} as="p" />
         </div>
       )}
@@ -259,7 +259,7 @@ export function DiagramNote({ diagram }: { diagram: string }) {
   return (
     <div className="am-callout am-callout-trap am-diagram">
       <span>Figure</span>
-      <p>This problem comes with a diagram that Summit can't draw yet. Sketch it from the description.</p>
+      <p>This one has a figure we can't draw yet. Sketch it from the text.</p>
       {diagram !== 'image' && (
         <details>
           <summary>Asymptote source</summary>

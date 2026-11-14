@@ -48,7 +48,7 @@ export function Check({ on, onToggle, label }: { on: boolean; onToggle: () => vo
 
 export function TodayList({ items, onToggle }: { items: TodayItem[]; onToggle: (item: TodayItem) => void }) {
   if (!items.length) {
-    return <Empty title="Nothing left for today">Your plan has no more tasks today. Pick any problem to keep the streak going.</Empty>;
+    return <Empty title="Done for today">Solve any problem to keep your streak.</Empty>;
   }
   return (
     <ul className="am-today">
@@ -97,9 +97,8 @@ function Projection({ data }: { data: DashboardData }) {
       </div>
       <p className="am-muted" style={{ margin: 0, fontSize: 13, lineHeight: 1.5 }}>
         {score == null
-          ? `Answer ${data.projection_min} problems and this becomes a projected score, from your first-try accuracy at each difficulty.`
-          : <>From your first-try accuracy at each difficulty, answering a problem only when you are likelier
-            right than not{level === 'AIME' ? '' : ' (a blank is worth 1.5)'}. It firms up as you solve more.</>}
+          ? `Answer ${data.projection_min} problems to see this.`
+          : 'Based on your first-try accuracy at each difficulty.'}
       </p>
     </section>
   );
@@ -148,10 +147,7 @@ export default function Dashboard() {
             {plan.goal_score}.
           </p>
         ) : (
-          <p>
-            Every problem is tagged by topic, technique and difficulty. Misses come back for review after 3, 10 and
-            21 days until they stick.
-          </p>
+          <p>Pick a problem to start, or make a study plan.</p>
         )}
       </PageHeader>
 
@@ -174,7 +170,7 @@ export default function Dashboard() {
         <div className="am-stat">
           <dt>Due for review</dt>
           <dd className="am-stat-value">{stats.due}</dd>
-          <dd className="am-stat-hint">{stats.in_review} in the log · {stats.mastered} mastered</dd>
+          <dd className="am-stat-hint">{stats.in_review} in Review</dd>
         </div>
         <div className="am-stat">
           <dt>Mock contests</dt>
@@ -194,11 +190,10 @@ export default function Dashboard() {
               <TodayList items={plan.today} onToggle={(item) => void toggle(item)} />
             ) : (
               <Empty title="No study plan yet">
-                Tell us which contest you're taking and when. You'll get a week-by-week plan that puts your
-                weakest topics first and schedules timed mocks.
+                Pick your contest and date to get a weekly plan.
                 <br />
                 <Link className="am-btn am-btn-primary" to="/study-plan" style={{ marginTop: 12 }}>
-                  Build my plan
+                  Make a plan
                 </Link>
               </Empty>
             )}
@@ -256,32 +251,12 @@ export default function Dashboard() {
                   <Link to={`/topics/${t.id}`} className="am-link" style={{ fontWeight: 500, color: 'var(--am-ink)' }}>
                     {t.name}
                   </Link>
-                  <span className="am-muted">{t.accuracy == null ? 'not started' : pct(t.accuracy)}</span>
+                  <span className="am-muted">{t.accuracy == null ? 'New' : pct(t.accuracy)}</span>
                 </li>
               ))}
             </ul>
           </section>
 
-          <section className="am-card">
-            <div className="am-card-head">
-              <h2>Last contest</h2>
-              <Link to="/contests">Contests</Link>
-            </div>
-            {data.last_mock ? (
-              <div style={{ display: 'grid', gap: 8 }}>
-                <strong>{data.last_mock.name}</strong>
-                <span className="am-countdown">
-                  <strong>{data.last_mock.score}</strong>
-                  <span className="am-muted">/ {data.last_mock.max} · {shortDate(data.last_mock.at)}</span>
-                </span>
-                {data.last_mock.kind === 'mock' && (
-                  <Link className="am-link" to={`/mocks/${data.last_mock.id}`}>See the report</Link>
-                )}
-              </div>
-            ) : (
-              <Empty title="No contests yet">Sit a timed Step Mock, or log a score from a past AMC.</Empty>
-            )}
-          </section>
         </div>
       </div>
     </div>
