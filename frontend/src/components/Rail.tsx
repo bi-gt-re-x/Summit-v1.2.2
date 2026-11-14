@@ -182,6 +182,17 @@ export const TABS: Tab[] = [
     ),
   },
   {
+    to: '/posts',
+    label: 'Posts',
+    section: 'practice',
+    icon: (
+      <svg {...stroke}>
+        <path d="M4 20h4L19 9l-4-4L4 16Z" />
+        <path d="m13.5 6.5 4 4" />
+      </svg>
+    ),
+  },
+  {
     to: '/search',
     label: 'Search',
     section: 'practice',

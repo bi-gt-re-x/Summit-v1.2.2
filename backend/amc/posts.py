@@ -34,6 +34,12 @@ def to_dollars(text):
     return re.sub(r'\\\((.*?)\\\)', lambda m: '$' + m.group(1).strip() + '$', text, flags=re.S)
 
 
+def _choice(text):
+    """One answer choice. TeX typed without `$` signs (`\\frac12`) is wrapped in them."""
+    text = to_dollars(text)
+    return '$' + text + '$' if '$' not in text and re.search(r'[\\^_{}]', text) else text
+
+
 def _unbalanced(text):
     """True when the `$` signs (not counting `\\$`) do not pair up."""
     return len(re.findall(r'(?<!\\)\$', text.replace('$$', ''))) % 2 == 1
@@ -66,7 +72,7 @@ def clean(level, title, statement, choices, answer, solution):
             raise Invalid('An AIME answer is a whole number from 0 to 999.')
         answer = str(int(answer))
     else:
-        choices = [to_dollars(c) for c in (choices or [])]
+        choices = [_choice(c) for c in (choices or [])]
         if not any(choices):
             stem, found = split(statement)
             if found:

@@ -152,6 +152,32 @@ export interface TopicRow extends Pill {
   statement: string;
 }
 
+/** A problem and solution someone posted by hand (backend/amc/posts.py). */
+export interface Post {
+  id: string;
+  author: string;
+  level: Level;
+  title: string;
+  statement: string;
+  /** Five choices for the AMC; null for an AIME problem. */
+  choices: string[] | null;
+  /** A letter A-E, or the AIME integer. */
+  answer: string;
+  solution: string;
+  created_at: string;
+  updated_at: string;
+  can_edit: boolean;
+}
+
+export interface PostDraft {
+  level: Level;
+  title: string;
+  statement: string;
+  choices: string[] | null;
+  answer: string;
+  solution: string;
+}
+
 /** One of the up-to-three problems a topic page suggests doing next. */
 export interface NextPick extends ProblemSummary {
   kind: 'retry' | 'next' | 'stretch';
@@ -663,6 +689,12 @@ export const amc = {
   hint: (id: string, level: number) =>
     post<{ hint: string; level: number }>(`/api/amc/ai/hint/${encodeURIComponent(id)}`, { level }),
   explain: (id: string) => post<Explanation>(`/api/amc/ai/explain/${encodeURIComponent(id)}`, {}),
+  posts: (level = '') => get<{ posts: Post[]; levels: Level[] }>('/api/amc/posts', level ? { level } : {}),
+  createPost: (draft: PostDraft) => post<{ post: Post }>('/api/amc/posts', draft),
+  editPost: (id: string, draft: PostDraft) => put<{ post: Post }>(`/api/amc/posts/${encodeURIComponent(id)}`, draft),
+  deletePost: (id: string) => del<object>(`/api/amc/posts/${encodeURIComponent(id)}`),
+  splitChoices: (statement: string) =>
+    post<{ statement: string; choices: string[] }>('/api/amc/posts/split', { statement }),
   createProblem: (body: { like?: string; level?: string; topic?: string; technique?: string; rating?: number }) =>
     post<{ id: string }>('/api/amc/ai/create', body),
   problems: (filters: ProblemFilters) => get<ProblemList>('/api/amc/problems', { ...filters }),

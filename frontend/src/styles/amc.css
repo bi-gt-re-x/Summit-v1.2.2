@@ -1313,3 +1313,40 @@ html[data-theme="dark"] .am-predict-tag { color: #0d1117; }
     .am-play li { padding-left: var(--space-4); padding-top: 48px; }
     .am-play p { grid-template-columns: minmax(0, 1fr); gap: 0; }
 }
+
+/* Posted problems (pages/amc/Posts.tsx). Problem text is set in Computer Modern
+   (KaTeX_Main, the font AoPS's LaTeX renders in) so words and math match. */
+.am-post-compose { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-4); align-items: start; margin-bottom: var(--space-8); }
+.am-post-preview { position: sticky; top: var(--space-4); max-height: calc(100vh - 2 * var(--space-4)); overflow: auto; }
+.am-post-form { display: grid; gap: var(--space-4); }
+.am-post-form .am-field > span small { text-transform: none; letter-spacing: 0; font-weight: 400; margin-left: 6px; }
+.am-code { font-family: var(--font-mono, 'JetBrains Mono', ui-monospace, monospace); font-size: 13px; }
+.am-post-label { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+.am-post-label .am-btn { margin-left: auto; text-transform: none; letter-spacing: 0; }
+.am-post-choices { display: grid; gap: 6px; }
+.am-post-choice { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: var(--space-2); align-items: center; }
+.am-post-choice > button { height: 36px; border-radius: 50%; border: 1px solid var(--am-line); background: var(--am-card); color: var(--am-muted);
+    font: inherit; font-weight: 700; cursor: pointer; }
+.am-post-choice.is-right > button { background: var(--am-good); border-color: var(--am-good); color: var(--am-card); }
+.am-post-actions { display: flex; gap: var(--space-2); }
+.am-post-listhead { display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-3); }
+.am-post-listhead .am-h2 { margin: 0; }
+.am-post-head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-3); margin-bottom: var(--space-2); }
+.am-post-tools { display: flex; gap: 4px; }
+.am-post-title { margin: 0 0 2px; font-family: var(--am-serif); font-size: 20px; color: var(--am-ink); }
+
+.am-tex { font-family: KaTeX_Main, 'Latin Modern Roman', 'CMU Serif', 'Computer Modern Serif', Georgia, serif; font-size: 18px; line-height: 1.6; color: var(--am-ink); }
+.am-tex .katex { font-size: 1.06em; }
+.am-tex .katex-display { margin: .6em 0; overflow-x: auto; overflow-y: hidden; }
+.am-tex-h { margin: var(--space-4) 0 var(--space-2); padding-bottom: 4px; border-bottom: 1px solid var(--am-line);
+    font-family: var(--am-serif); font-weight: 400; font-size: 20px; }
+.am-tex-h:first-child { margin-top: 0; }
+.am-tex-p { margin: 0 0 .7em; overflow-wrap: anywhere; }
+.am-tex-choices { display: flex; flex-wrap: wrap; gap: 6px 28px; margin: .4em 0 0; }
+.am-tex-choices > span { white-space: nowrap; padding: 1px 6px; border-radius: 6px; }
+.am-tex-choices > span.is-right { background: var(--am-good-soft); color: var(--am-good); }
+.am-tex-answer { margin: 0; }
+@media (max-width: 900px) {
+    .am-post-compose { grid-template-columns: minmax(0, 1fr); }
+    .am-post-preview { position: static; max-height: none; }
+}
