@@ -73,17 +73,17 @@ def test_every_account_endpoint_requires_a_session(app, anon):
 
 def test_the_username_a_caller_sends_is_ignored(client, stranger):
     """`?username=` names somebody else; the session still decides."""
-    client.post('/api/amc/problems/step-10-02/attempt', json={'answer': 'A'})
+    client.post('/api/amc/problems/step-10-04/attempt', json={'answer': 'A'})
     theirs = stranger.get('/api/amc/review', params={'username': 'tester'}).json()
     assert theirs['due'] == [] and theirs['upcoming'] == []
 
 
 def test_the_username_in_a_body_is_ignored(client, stranger):
     """A body naming another account still writes to the caller's own."""
-    stranger.post('/api/amc/problems/step-10-02/attempt',
+    stranger.post('/api/amc/problems/step-10-04/attempt',
                   json={'answer': 'A', 'username': 'tester'})
     assert client.get('/api/amc/review').json()['upcoming'] == []
-    assert stranger.get('/api/amc/review').json()['upcoming'][0]['id'] == 'step-10-02'
+    assert stranger.get('/api/amc/review').json()['upcoming'][0]['id'] == 'step-10-04'
 
 
 def test_a_mock_cannot_be_read_or_deleted_by_another_account(client, stranger):

@@ -34,8 +34,8 @@ built around the topics that will gain them the most points. Contest facts to
 respect: the AMC 10/12 is 25 multiple-choice problems in 75 minutes, scored 6
 per correct, 1.5 per blank, 0 per wrong; the AIME is 15 integer answers
 (000-999) in 3 hours. Problems 1-10 are mostly algebra and arithmetic; geometry,
-number theory and counting dominate from about #15. Recent AIME qualifying
-cutoffs have mostly been around 95-115 on the AMC 10 and 75-95 on the AMC 12.
+number theory and counting dominate from about #15. From the 2026-27 contests
+the AIME qualifying score is fixed at 100 on the AMC 10 and 85 on the AMC 12.
 
 Rules:
 - Use only topic ids from the list provided, exactly as written.

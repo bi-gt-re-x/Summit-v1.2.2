@@ -13,8 +13,8 @@
  * preference on the account (Settings, Appearance), cached in localStorage so
  * a folded rail doesn't swing open and shut on load.
  *
- * The destinations are the AMC prep site's: Dashboard, Review, Problems,
- * Topics, Past Contests, Study Plan and Search. Review carries a count of what
+ * The destinations are the AMC prep site's: Dashboard, Review, Study Plan,
+ * Analytics, Problems, Topics, Past Contests and Search. Review carries a count of what
  * is due today, and the foot shows how much of the problem bank is solved —
  * both read the dashboard's numbers through hooks/useAmcSummary, one request
  * for the whole chrome.
@@ -112,6 +112,17 @@ export const TABS: Tab[] = [
         <rect x="3" y="4" width="18" height="17" rx="2" />
         <path d="M3 9h18M8 2v4M16 2v4" />
         <path d="m9 15 2 2 4-4" />
+      </svg>
+    ),
+  },
+  {
+    to: '/analytics',
+    label: 'Analytics',
+    section: 'prep',
+    icon: (
+      <svg {...stroke}>
+        <path d="M3 3v18h18" />
+        <path d="M7 15v3M11 11v7M15 13v5M19 7v11" />
       </svg>
     ),
   },

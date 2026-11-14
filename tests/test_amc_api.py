@@ -4,7 +4,7 @@ from datetime import date, timedelta
 
 import pytest
 
-from backend.amc import engine
+from backend.amc import catalog, engine
 from backend.amc.bank import BY_ID
 
 
@@ -38,27 +38,27 @@ def test_problem_hides_answer_until_attempted(client, today):
 
 
 def test_a_miss_comes_back_after_3_10_21_days(client, today):
-    client.post('/api/amc/problems/step-10-02/attempt', json={'answer': 'A'})
+    client.post('/api/amc/problems/step-10-04/attempt', json={'answer': 'A'})
     queue = client.get('/api/amc/review').json()
-    assert queue['due'] == [] and queue['upcoming'][0]['id'] == 'step-10-02'
+    assert queue['due'] == [] and queue['upcoming'][0]['id'] == 'step-10-04'
     assert queue['upcoming'][0]['due'] == '2026-11-15'
 
     # Right answer before it is due: no change.
-    client.post('/api/amc/problems/step-10-02/attempt', json={'answer': 'C', 'source': 'review'})
+    client.post('/api/amc/problems/step-10-04/attempt', json={'answer': 'B', 'source': 'review'})
     assert client.get('/api/amc/review').json()['upcoming'][0]['stage'] == 0
 
     for days, stage in ((3, 1), (10, 2)):
         today['day'] += timedelta(days=days)
-        assert client.get('/api/amc/review').json()['due'][0]['id'] == 'step-10-02'
-        client.post('/api/amc/problems/step-10-02/attempt', json={'answer': 'C', 'source': 'review'})
+        assert client.get('/api/amc/review').json()['due'][0]['id'] == 'step-10-04'
+        client.post('/api/amc/problems/step-10-04/attempt', json={'answer': 'B', 'source': 'review'})
         row = client.get('/api/amc/review').json()['upcoming'][0]
         assert row['stage'] == stage
 
     today['day'] += timedelta(days=21)
-    client.post('/api/amc/problems/step-10-02/attempt', json={'answer': 'C', 'source': 'review'})
+    client.post('/api/amc/problems/step-10-04/attempt', json={'answer': 'B', 'source': 'review'})
     queue = client.get('/api/amc/review').json()
     assert queue['due'] == [] and queue['upcoming'] == []
-    assert queue['mastered'][0]['id'] == 'step-10-02'
+    assert queue['mastered'][0]['id'] == 'step-10-04'
 
 
 def test_a_wrong_review_starts_over(client, today):
@@ -83,7 +83,7 @@ def test_blank_answer_is_refused(client, today):
 
 def test_mock_is_scored_like_the_real_thing(client, today):
     answers = {}
-    for i, pid in enumerate(['step-10-{:02d}'.format(n) for n in range(1, 26)], start=1):
+    for i, pid in enumerate(catalog.MOCK_BY_ID['step-mock-10']['problems'], start=1):
         if i <= 20:
             answers[str(i)] = BY_ID[pid]['answer']   # 20 right
         elif i <= 22:
@@ -101,7 +101,8 @@ def test_mock_is_scored_like_the_real_thing(client, today):
 
 
 def test_aime_mock_scores_one_per_answer(client, today):
-    answers = {str(i): BY_ID['step-aime-{:02d}'.format(i)]['answer'] for i in range(1, 8)}
+    aime = catalog.MOCK_BY_ID['step-mock-aime']['problems']
+    answers = {str(i): BY_ID[pid]['answer'] for i, pid in enumerate(aime[:7], start=1)}
     reply = client.post('/api/amc/contests/step-mock-aime/submit', json={'answers': answers}).json()
     assert client.get('/api/amc/mocks/' + reply['id']).json()['result']['score'] == 7
 
@@ -153,7 +154,7 @@ def test_search_finds_problems_topics_and_contests(client, today):
 
 
 def test_accounts_are_separate(client, stranger, today):
-    client.post('/api/amc/problems/step-10-02/attempt', json={'answer': 'A'})
+    client.post('/api/amc/problems/step-10-04/attempt', json={'answer': 'A'})
     assert stranger.get('/api/amc/review').json()['upcoming'] == []
     assert stranger.get('/api/amc/dashboard').json()['stats']['attempted'] == 0
 
@@ -167,7 +168,7 @@ def test_projection_rises_with_results():
 
 
 def test_resetting_amc_progress_clears_only_amc_rows(client, today):
-    client.post('/api/amc/problems/step-10-02/attempt', json={'answer': 'A'})
+    client.post('/api/amc/problems/step-10-04/attempt', json={'answer': 'A'})
     client.put('/api/amc/plan', json={'target': 'AIME', 'exam_date': '2027-02-05',
                                       'goal_score': 7, 'hours': 4})
     assert not client.post('/api/settings/reset', json={'scope': 'amc'}).json()['success']
@@ -190,7 +191,8 @@ def test_topics_carry_their_problems_as_pills(client, today):
     cats = client.get('/api/amc/topics').json()['categories']
     circles = next(t for c in cats for t in c['topics'] if t['id'] == 'circles')
     pill = next(p for p in circles['pills'] if p['id'] == 'step-10-16')
-    assert pill['short'] == 'S10·16' and pill['status'] == 'solved'
+    assert pill['short'] == catalog.short_label('step-10-16') and pill['status'] == 'solved'
+    assert pill['short'].startswith('S12·')  # it sits in the AMC 12 mock now
     # Secondary topics list the problem too.
     right = next(t for c in cats for t in c['topics'] if t['id'] == 'right-triangles')
     assert any(p['id'] == 'step-10-16' for p in right['pills'])
@@ -202,7 +204,7 @@ def test_strategies_group_every_problem_by_technique(client, today):
     names = [f['name'] for f in body['families']]
     assert names[0] == 'Counting strategies'
     total = sum(len(t['pills']) for f in body['families'] for t in f['techniques'])
-    assert total == 60 and body['untagged'] == 0
+    assert total == 65 and body['untagged'] == 0
     vieta = next(t for f in body['families'] for t in f['techniques'] if t['id'] == 'vieta')
     assert vieta['idea'] and {'step-10-11', 'step-12-04'} <= {p['id'] for p in vieta['pills']}
 

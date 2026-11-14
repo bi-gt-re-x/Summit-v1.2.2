@@ -228,20 +228,43 @@ AOPS = 'https://artofproblemsolving.com/wiki/index.php/'
 
 # The three mocks the app can grade, built from the bank. The AMC 12 one shares
 # its easier half with the AMC 10 the way the real A and B papers do.
+def _by_rating(ids):
+    """Easiest first, as on a real paper; ties keep the order given."""
+    from backend.amc.solutions import RATINGS
+    return sorted(ids, key=lambda pid: (RATINGS[pid], ids.index(pid)))
+
+
+# The three mocks the app can grade. Every bank problem belongs to exactly one
+# of them, and each runs from easy to its contest's hardest band on the AoPS
+# scale (backend/amc/solutions.py).
 MOCKS = [
     {'id': 'step-mock-10', 'name': 'Step Mock AMC 10', 'level': 'AMC 10',
-     'blurb': 'A full 25-problem AMC 10, from warm-up arithmetic to a functional equation at #25.',
-     'problems': ['step-10-{:02d}'.format(i) for i in range(1, 26)]},
+     'blurb': 'A full 25-problem AMC 10, from warm-up arithmetic to counting and probability problems rated 3-3.5.',
+     'problems': _by_rating([
+         'step-10-01', 'step-10-03', 'step-10-04', 'step-10-05', 'step-10-08', 'step-10-18',
+         'step-10-06', 'step-10-09', 'step-10-10', 'step-10-11', 'step-10-12', 'step-10-13', 'step-10-15',
+         'step-10-17', 'step-drill-04', 'step-drill-08',
+         'step-10-19', 'step-10-21', 'step-10-25', 'step-drill-05',
+         'step-10-23', 'step-10-24',
+         'step-10-26', 'step-10-28', 'step-10-27',
+     ])},
     {'id': 'step-mock-12', 'name': 'Step Mock AMC 12', 'level': 'AMC 12',
-     'blurb': 'Logs, trig and complex numbers alongside the harder half of the AMC 10 set.',
-     'problems': ['step-10-06', 'step-10-10', 'step-12-01', 'step-10-11', 'step-12-02',
-                  'step-10-13', 'step-10-15', 'step-12-03', 'step-10-16', 'step-12-04',
-                  'step-10-18', 'step-12-05', 'step-10-19', 'step-12-06', 'step-10-21',
-                  'step-12-07', 'step-10-23', 'step-12-08', 'step-12-12', 'step-10-24',
-                  'step-12-09', 'step-12-10', 'step-10-25', 'step-drill-06', 'step-12-11']},
+     'blurb': 'Logs, trig, complex numbers and sequences, finishing with problems rated 3.5-4.',
+     'problems': _by_rating([
+         'step-12-01', 'step-12-02', 'step-12-03', 'step-12-05', 'step-12-17', 'step-12-18',
+         'step-10-16', 'step-10-20', 'step-10-22',
+         'step-12-04', 'step-12-06', 'step-12-07', 'step-12-12', 'step-drill-01', 'step-drill-02',
+         'step-12-08', 'step-12-09', 'step-12-10', 'step-drill-03',
+         'step-12-11', 'step-drill-06', 'step-12-15',
+         'step-12-13', 'step-12-16', 'step-12-14',
+     ])},
     {'id': 'step-mock-aime', 'name': 'Step Mock AIME', 'level': 'AIME',
-     'blurb': 'Fifteen integer-answer problems over three hours. Every answer is 000-999.',
-     'problems': ['step-aime-{:02d}'.format(i) for i in range(1, 16)]},
+     'blurb': 'Fifteen integer-answer problems over three hours, up to a 4.5 on the AoPS scale. Every answer is 000-999.',
+     'problems': _by_rating([
+         'step-aime-05', 'step-aime-06', 'step-aime-10', 'step-aime-01', 'step-aime-04', 'step-aime-08',
+         'step-aime-09', 'step-aime-11', 'step-aime-12', 'step-aime-13', 'step-aime-14', 'step-aime-15',
+         'step-aime-16', 'step-aime-18', 'step-aime-17',
+     ])},
 ]
 MOCK_BY_ID = {m['id']: m for m in MOCKS}
 
@@ -308,7 +331,11 @@ def sources(problem_id):
 
 
 def _check():
-    """Every mock names real problems and every problem names real topics."""
+    """Every mock names real problems, every problem is in exactly one mock,
+    and every problem names real topics."""
+    placed = [pid for mock in MOCKS for pid in mock['problems']]
+    assert len(placed) == len(set(placed)), 'a problem is in two mocks'
+    assert set(placed) == set(BY_ID), 'problems in no mock: {}'.format(sorted(set(BY_ID) - set(placed)))
     for mock in MOCKS:
         assert len(mock['problems']) == FORMATS[mock['level']]['count'], mock['id']
         for pid in mock['problems']:
@@ -382,6 +409,8 @@ STRATEGY_FAMILIES = [
      'blurb': 'Habits that crack problems in every topic.',
      'techniques': [
          ('small-cases', 'Try n = 1, 2, 3 and read off the pattern.'),
+         ('graphing', 'Sketch both sides and count where they cross.'),
+         ('bounding', 'Trap the answer between two estimates you can compute.'),
          ('pairing', 'Pair terms that combine nicely (k with n-k, sin with cos).'),
          ('rates', 'Rates add; times do not.'),
          ('known-formula', 'Recognise the standard formula the problem is built on.'),
@@ -404,8 +433,6 @@ def short_label(problem_id):
     if found:
         abbr = {'step-mock-10': 'S10', 'step-mock-12': 'S12', 'step-mock-aime': 'AIME'}[found[0]['contest']]
         return '{}·{}'.format(abbr, found[0]['number'])
-    if problem_id.startswith('step-drill-'):
-        return 'Drill·{}'.format(int(problem_id.rsplit('-', 1)[1]))
     return problem_id
 
 

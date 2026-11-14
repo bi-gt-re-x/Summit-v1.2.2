@@ -30,19 +30,22 @@ answer. tests/test_amc_bank.py checks that every solution ends on its answer.
 """
 
 RATINGS = {
-    'step-10-01': 1, 'step-10-02': 1, 'step-10-03': 1, 'step-10-04': 1, 'step-10-05': 1,
-    'step-10-06': 1.5, 'step-10-07': 1, 'step-10-08': 1, 'step-10-09': 1.5, 'step-10-10': 1.5,
-    'step-10-11': 1.5, 'step-10-12': 1.5, 'step-10-13': 1.5, 'step-10-14': 1, 'step-10-15': 1.5,
+    'step-10-01': 1, 'step-10-03': 1, 'step-10-04': 1, 'step-10-05': 1,
+    'step-10-06': 1.5, 'step-10-08': 1, 'step-10-09': 1.5, 'step-10-10': 1.5,
+    'step-10-11': 1.5, 'step-10-12': 1.5, 'step-10-13': 1.5, 'step-10-15': 1.5,
     'step-10-16': 1.5, 'step-10-17': 1.5, 'step-10-18': 1, 'step-10-19': 2, 'step-10-20': 1.5,
     'step-10-21': 2, 'step-10-22': 1.5, 'step-10-23': 2.5, 'step-10-24': 2.5, 'step-10-25': 2,
     'step-12-01': 1.5, 'step-12-02': 1.5, 'step-12-03': 1.5, 'step-12-04': 2, 'step-12-05': 1.5,
     'step-12-06': 2, 'step-12-07': 2, 'step-12-08': 2.5, 'step-12-09': 2.5, 'step-12-10': 2.5,
     'step-12-11': 3, 'step-12-12': 2,
-    'step-aime-01': 2, 'step-aime-02': 1.5, 'step-aime-03': 1.5, 'step-aime-04': 2, 'step-aime-05': 1.5,
-    'step-aime-06': 1.5, 'step-aime-07': 1, 'step-aime-08': 2, 'step-aime-09': 2, 'step-aime-10': 1.5,
+    'step-aime-01': 2,   'step-aime-04': 2, 'step-aime-05': 1.5,
+    'step-aime-06': 1.5, 'step-aime-08': 2, 'step-aime-09': 2, 'step-aime-10': 1.5,
     'step-aime-11': 2.5, 'step-aime-12': 3, 'step-aime-13': 3, 'step-aime-14': 3, 'step-aime-15': 3.5,
+    'step-10-26': 3, 'step-10-27': 3.5, 'step-10-28': 3,
+    'step-12-13': 3.5, 'step-12-14': 4, 'step-12-15': 3, 'step-12-16': 3.5, 'step-12-17': 1.5, 'step-12-18': 1.5,
+    'step-aime-16': 4, 'step-aime-17': 4.5, 'step-aime-18': 4,
     'step-drill-01': 2, 'step-drill-02': 2, 'step-drill-03': 2.5, 'step-drill-04': 1.5,
-    'step-drill-05': 1.5, 'step-drill-06': 3, 'step-drill-07': 1, 'step-drill-08': 1.5,
+    'step-drill-05': 2, 'step-drill-06': 3, 'step-drill-08': 1.5,
 }
 
 
@@ -60,15 +63,89 @@ def tier(rating):
 
 
 SOLUTIONS = {
+    'step-12-17': [
+        r'Write the cube sum in terms of $x + y$ and $xy$: $x^3 + y^3 = (x + y)^3 - 3xy(x + y)$.',
+        r'So $370 = 10^3 - 30xy$, giving $30xy = 630$ and $xy = 21$.',
+        r'(Check: $x, y = 3, 7$ and $27 + 343 = 370$.) The answer is $\textbf{(C)}\ 21$.',
+    ],
+    'step-12-18': [
+        r'A $6 \times 6$ grid has $7$ vertical and $7$ horizontal lines.',
+        r'A rectangle is fixed by choosing $2$ of the vertical lines and $2$ of the horizontal lines.',
+        r'That is $\binom{7}{2}^2 = 21^2 = 441$ rectangles: $\textbf{(D)}\ 441$.',
+    ],
+    'step-drill-05': [
+        r'$65 = 5 \cdot 13$, so we need $n^2 \equiv -1$ modulo $5$ and modulo $13$.',
+        r'Modulo $5$: squares of $0$-$4$ are $0, 1, 4, 4, 1$, so $n \equiv 2$ or $3$.',
+        r'Modulo $13$: $5^2 = 25 \equiv -1$ and $8^2 = 64 \equiv -1$, and a quadratic has at most two roots mod a prime, so $n \equiv 5$ or $8$.',
+        r'By CRT that is $2 \cdot 2 = 4$ residues mod $65$: $n \equiv 8, 18, 47, 57$. In $1$-$100$ these give $8, 18, 47, 57$ and $8 + 65 = 73$, $18 + 65 = 83$.',
+        r'That is $6$ values, so the answer is $\textbf{(C)}\ 6$.',
+    ],
+    'step-10-26': [
+        r'Split the string into runs of equal letters. No three consecutive identical letters means every run has length $1$ or $2$.',
+        r'So the run lengths are an ordered list of $1$s and $2$s summing to $10$. If $c_n$ counts such lists for total $n$, then $c_n = c_{n-1} + c_{n-2}$ (the last run is $1$ or $2$) with $c_1 = 1$, $c_2 = 2$.',
+        r'That gives $1, 2, 3, 5, 8, 13, 21, 34, 55, 89$, so $c_{10} = 89$.',
+        r'The runs alternate letters, so the whole string is fixed once we choose the first letter: $2 \cdot 89 = 178$. The answer is $\textbf{(C)}\ 178$.',
+    ],
+    'step-10-27': [
+        r'Call the five pairs $\{1,2\}, \{2,3\}, \ldots, \{5,6\}$ bad. Use inclusion-exclusion over which bad pairs are forced to be adjacent.',
+        r'If a chosen set of $k$ pairs forms $j$ chains (pairs sharing a number join into one chain, like $2,3,4$), the chains act as single blocks: there are $6 - k$ blocks, and each chain can run up or down, giving $2^j (6-k)!$ arrangements.',
+        r'Adding by size: $k = 0$: $720$. $k = 1$: $5 \cdot 2 \cdot 120 = 1200$. $k = 2$: $4$ touching pairs give $4 \cdot 2 \cdot 24 = 192$ and $6$ separate pairs give $6 \cdot 4 \cdot 24 = 576$, total $768$.',
+        r'$k = 3$: one chain of three pairs ($3$ ways, $2 \cdot 6$ each) $= 36$; a chain of two plus a separate pair ($6$ ways, $4 \cdot 6$ each) $= 144$; three separate ($1$ way, $8 \cdot 6$) $= 48$; total $228$. $k = 4$: $2 \cdot 4 + 3 \cdot 8 = 32$. $k = 5$: $2$.',
+        r'So the count is $720 - 1200 + 768 - 228 + 32 - 2 = 90$: $\textbf{(C)}\ 90$.',
+    ],
+    'step-10-28': [
+        r'Let $p_n$ be the probability that the frog ever lands on $n$. It lands on $n$ by jumping $1$ from $n-1$ or $2$ from $n-2$, and these are different last jumps, so $p_n = \tfrac{1}{2} p_{n-1} + \tfrac{1}{2} p_{n-2}$.',
+        r'Start with $p_0 = 1$ (it starts there) and $p_1 = \tfrac{1}{2}$ (only by a first jump of $1$).',
+        r'Then $p_2 = \tfrac{3}{4}$, $p_3 = \tfrac{5}{8}$, $p_4 = \tfrac{11}{16}$, $p_5 = \tfrac{21}{32}$, $p_6 = \tfrac{43}{64}$.',
+        r'Finally $p_7 = \tfrac{1}{2} \cdot \tfrac{43}{64} + \tfrac{1}{2} \cdot \tfrac{21}{32} = \tfrac{43 + 42}{128} = \tfrac{85}{128}$: $\textbf{(C)}\ \frac{85}{128}$.',
+    ],
+    'step-12-13': [
+        r'Since $|\sin x| \le 1$, any solution has $\left|\frac{x}{30}\right| \le 1$, so $-30 \le x \le 30$. Both sides are odd functions, so solutions come in pairs $\pm x$, plus $x = 0$.',
+        r'For $x > 0$, solutions need $\sin x > 0$, i.e. $x$ in a hump $(2\pi k, 2\pi k + \pi)$. In the first hump the line starts below $\sin x$ (slope $\frac{1}{30} < 1$) and ends above it, so it crosses once.',
+        r'The humps starting at $2\pi, 4\pi, 6\pi, 8\pi$ end before $9\pi \approx 28.3 < 30$, and the line stays below $1$ there, so it enters and leaves each: $2$ crossings each, $8$ in all. The next hump starts at $10\pi > 30$.',
+        r'So there are $1 + 8 = 9$ positive solutions, $9$ negative ones, and $x = 0$: $19$ in all. The answer is $\textbf{(C)}\ 19$.',
+    ],
+    'step-12-14': [
+        r'Since $z^7 = 1$ and $z \ne 1$, $1 + z + z^2 + \cdots + z^6 = 0$. Let $S = z + z^2 + z^4$ and $S^\prime = z^3 + z^5 + z^6$, so $S + S^\prime = -1$.',
+        r'Multiply out $S S^\prime$: the nine products are $z^4, z^6, z^7, z^5, z^7, z^8, z^7, z^9, z^{10}$, which reduce to $z^4 + z^6 + 1 + z^5 + 1 + z + 1 + z^2 + z^3 = 3 + (-1) = 2$.',
+        r'So $S$ and $S^\prime$ are the roots of $t^2 + t + 2 = 0$: $S = \frac{-1 \pm i\sqrt{7}}{2}$, and $1 + S = \frac{1 \pm i\sqrt{7}}{2}$.',
+        r'Then $|1 + S|^2 = \frac{1 + 7}{4} = 2$: $\textbf{(C)}\ 2$.',
+    ],
+    'step-12-15': [
+        r'$n^3 - n = (n-1)n(n+1)$, a product of three consecutive integers, so it is always divisible by $3$. Since $48 = 3 \cdot 16$, we need $16 \mid (n-1)n(n+1)$.',
+        r'If $n$ is even, $n - 1$ and $n + 1$ are odd, so we need $16 \mid n$: $n = 16, 32, \ldots, 96$, which is $6$ values.',
+        r'If $n$ is odd, write $n - 1 = 2k$: $(n-1)(n+1) = 4k(k+1)$, so we need $4 \mid k(k+1)$, i.e. $k \equiv 0$ or $3 \pmod 4$, i.e. $n \equiv 1$ or $7 \pmod 8$. That is $13$ values ($1, 9, \ldots, 97$) plus $12$ values ($7, 15, \ldots, 95$).',
+        r'In total $6 + 13 + 12 = 31$: $\textbf{(C)}\ 31$.',
+    ],
+    'step-12-16': [
+        r'Square the recursion: $a_{n+1}^2 = a_n^2 + 2 + \frac{1}{a_n^2}$.',
+        r'Adding from $n = 1$ to $99$: $a_{100}^2 = 1 + 2 \cdot 99 + \sum_{k=1}^{99} \frac{1}{a_k^2} = 199 + \sum_{k=1}^{99} \frac{1}{a_k^2}$.',
+        r'The sum is at least its first term, $1$, and since $a_k^2 \ge 2k - 1$ it is at most $\sum_{k=1}^{99} \frac{1}{2k-1} < 4$. So $200 < a_{100}^2 < 203$.',
+        r'That puts $a_{100}$ between $\sqrt{200} \approx 14.1$ and $\sqrt{203} \approx 14.2$, closest to $\textbf{(C)}\ 14$.',
+    ],
+    'step-aime-16': [
+        r'Since $5^2 = 25 \equiv -1 \pmod{13}$: if $a \not\equiv 0$, then $a^2 + b^2 \equiv 0$ exactly when $b \equiv 5a$ or $b \equiv -5a \equiv 8a \pmod{13}$. If $a \equiv 0$, then $b \equiv 0$.',
+        r'In $1$-$50$ ($50 = 3 \cdot 13 + 11$), residues $1$-$11$ each occur $4$ times and residues $12$ and $0$ occur $3$ times.',
+        r'Both multiples of $13$: $3 \cdot 3 = 9$ pairs.',
+        r'For the $12$ nonzero residues $r$ and the $2$ partners $5r, 8r$ of each, that is $24$ residue pairs. Residue $12$ is the only nonzero one occurring $3$ times, and it is in exactly $4$ of these pairs: $(12, 5)$, $(12, 8)$, $(5, 12)$, $(8, 12)$, each giving $3 \cdot 4 = 12$ pairs of numbers. The other $20$ residue pairs give $4 \cdot 4 = 16$ each. That is $4 \cdot 12 + 20 \cdot 16 = 368$.',
+        r'Total $9 + 368 = 377$: $\boxed{377}$.',
+    ],
+    'step-aime-17': [
+        r'Only the end of the sequence matters. Let $p_s$ be the probability $HHH$ comes first, from the state $s$: nothing yet, $H$, $HH$, $T$, or $TH$.',
+        r'The transitions give: $p_{\varnothing} = \tfrac12 p_H + \tfrac12 p_T$; $p_H = \tfrac12 p_{HH} + \tfrac12 p_T$; $p_{HH} = \tfrac12 \cdot 1 + \tfrac12 p_T$; $p_T = \tfrac12 p_{TH} + \tfrac12 p_T$; $p_{TH} = \tfrac12 p_{HH} + \tfrac12 \cdot 0$.',
+        r'From $p_T = \tfrac12 p_{TH} + \tfrac12 p_T$ we get $p_T = p_{TH} = \tfrac12 p_{HH}$. Then $p_{HH} = \tfrac12 + \tfrac14 p_{HH}$, so $p_{HH} = \tfrac23$ and $p_T = \tfrac13$.',
+        r'Then $p_H = \tfrac13 + \tfrac16 = \tfrac12$ and $p_{\varnothing} = \tfrac14 + \tfrac16 = \tfrac{5}{12}$.',
+        r'So $\frac{m}{n} = \frac{5}{12}$ and $m + n = \boxed{017}$.',
+    ],
+    'step-aime-18': [
+        r'The numbers $\omega^k$ for $k = 1, \ldots, 6$ are the roots of $\frac{x^7 - 1}{x - 1} = x^6 + x^5 + \cdots + x + 1$, so $\prod_{k=1}^{6} (x - \omega^k) = x^6 + x^5 + \cdots + 1$.',
+        r'Put $x = 4$: the product is $\frac{4^7 - 1}{4 - 1} = \frac{16383}{3} = 5461$.',
+        r'The remainder when $5461$ is divided by $1000$ is $\boxed{461}$.',
+    ],
     'step-10-01': [
         r'The numerator is three equal terms: $3^2+3^2+3^2 = 3\cdot 9 = 27$.',
         r'The denominator is three equal terms too: $3^{-1}+3^{-1}+3^{-1} = 3\cdot\frac{1}{3} = 1$.',
         r'So the value is $\frac{27}{1} = 27$, and the answer is $\textbf{(D)}\ 27$.',
-    ],
-    'step-10-02': [
-        r'Muffins are priced in groups of $3$, so count groups: $27 \div 3 = 9$ groups.',
-        r'Each group costs $\$4$, so the total is $9 \cdot 4 = 36$ dollars.',
-        r'The answer is $\textbf{(C)}\ 36$.',
     ],
     'step-10-03': [
         r'A mean of $12$ over five numbers means they sum to $5 \cdot 12 = 60$.',
@@ -90,11 +167,6 @@ SOLUTIONS = {
         r'Multiples of $5$ below $100$: $\lfloor 99/5 \rfloor = 19$.',
         r'Multiples of both, i.e. of $15$: $\lfloor 99/15 \rfloor = 6$.',
         r'Exactly one of the two: $(33 - 6) + (19 - 6) = 27 + 13 = 40$, so the answer is $\textbf{(C)}\ 40$.',
-    ],
-    'step-10-07': [
-        r'The rectangle’s perimeter is $2(6 + 10) = 32$, and its area is $6 \cdot 10 = 60$.',
-        r'A square with perimeter $32$ has side $8$ and area $64$.',
-        r'The difference is $64 - 60 = 4$, so the answer is $\textbf{(C)}\ 4$.',
     ],
     'step-10-08': [
         r'The odd digits are $1, 3, 5, 7, 9$: five of them, and none is $0$.',
@@ -127,11 +199,6 @@ SOLUTIONS = {
         r'Powers of $3$ modulo $7$ go $3, 2, 6, 4, 5, 1$, then repeat: the cycle has length $6$.',
         r'Since $100 = 6 \cdot 16 + 4$, we have $3^{100} \equiv 3^4 \pmod 7$.',
         r'$3^4 = 81 = 77 + 4$, so the remainder is $4$: $\textbf{(D)}\ 4$.',
-    ],
-    'step-10-14': [
-        r'In tanks per hour: pipe $A$ adds $\frac{1}{6}$, pipe $B$ adds $\frac{1}{4}$, and the drain removes $\frac{1}{12}$.',
-        r'Net rate: $\frac{2}{12} + \frac{3}{12} - \frac{1}{12} = \frac{4}{12} = \frac{1}{3}$ tank per hour.',
-        r'One tank at $\frac{1}{3}$ tank per hour takes $3$ hours, so the answer is $\textbf{(C)}\ 3$.',
     ],
     'step-10-15': [
         r'With one vertex at the origin, the shoelace formula is Area $= \frac{1}{2}\lvert x_1 y_2 - x_2 y_1 \rvert$.',
@@ -261,16 +328,6 @@ SOLUTIONS = {
         r'Inclusion-exclusion: $166 - 83 - 55 + 27 = 55$.',
         r'The answer is $\boxed{055}$.',
     ],
-    'step-aime-02': [
-        r'Write the cube sum in terms of $x + y$ and $xy$: $x^3 + y^3 = (x + y)^3 - 3xy(x + y)$.',
-        r'So $370 = 10^3 - 30xy$, giving $30xy = 630$ and $xy = 21$.',
-        r'(Check: $x, y = 3, 7$ and $27 + 343 = 370$.) The answer is $\boxed{021}$.',
-    ],
-    'step-aime-03': [
-        r'A $6 \times 6$ grid has $7$ vertical and $7$ horizontal lines.',
-        r'A rectangle is fixed by choosing $2$ vertical and $2$ horizontal lines: $\binom{7}{2}^2 = 21^2 = 441$.',
-        r'The answer is $\boxed{441}$.',
-    ],
     'step-aime-04': [
         r'Since $b = 100 - a$, $\gcd(a, b) = \gcd(a, 100 - a) = \gcd(a, 100)$.',
         r'So we need $1 \le a \le 99$ with $\gcd(a, 100) = 1$, and each such $a$ gives one ordered pair.',
@@ -286,11 +343,6 @@ SOLUTIONS = {
         r'A $0$ could only be the smallest digit, which would put it first: impossible, so the digits come from $1$-$9$.',
         r'Any $4$ distinct digits can be written in increasing order in exactly one way.',
         r'So the count is $\binom{9}{4} = 126$: $\boxed{126}$.',
-    ],
-    'step-aime-07': [
-        r'Use coordinates $A(0, 0)$, $B(12, 0)$, $C(12, 12)$, $D(0, 12)$, so $E = (6, 0)$ and $F = (12, 6)$.',
-        r'The square minus three corner right triangles leaves $DEF$: $ADE$ has legs $12, 6$ (area $36$), $EBF$ has legs $6, 6$ (area $18$), $FCD$ has legs $6, 12$ (area $36$).',
-        r'$[DEF] = 144 - 36 - 18 - 36 = 54$, so the answer is $\boxed{054}$.',
     ],
     'step-aime-08': [
         r'There are $\binom{52}{2} = 1326$ pairs of cards.',
@@ -361,21 +413,11 @@ SOLUTIONS = {
         r'$2026 = 4 \cdot 506 + 2$, so $7^{2026} \equiv 7^2 = 49 \pmod{100}$.',
         r'The last two digits are $49$: $\textbf{(D)}\ 49$.',
     ],
-    'step-drill-05': [
-        r'Modulo $5$, the squares of $0, 1, 2, 3, 4$ are $0, 1, 4, 4, 1$.',
-        r'$n^2 + 1 \equiv 0$ needs $n^2 \equiv 4$, i.e. $n \equiv 2$ or $3 \pmod 5$.',
-        r'$1$ to $100$ is $20$ full blocks of five, each with $2$ such $n$: $40$ in all, answer $\textbf{(C)}\ 40$.',
-    ],
     'step-drill-06': [
         r'All right/up paths from $(0, 0)$ to $(6, 6)$: $\binom{12}{6} = 924$.',
         r'A bad path touches the line $y = x + 1$. Reflect its part after the first touch across that line: it now ends at $(5, 7)$, and this matches bad paths one-to-one with all paths to $(5, 7)$.',
         r'There are $\binom{12}{5} = 792$ of those.',
         r'Good paths: $924 - 792 = 132$, the Catalan number $C_6$. The answer is $\textbf{(B)}\ 132$.',
-    ],
-    'step-drill-07': [
-        r'$|2x - 7| \le 9$ means $-9 \le 2x - 7 \le 9$.',
-        r'Adding $7$: $-2 \le 2x \le 16$, so $-1 \le x \le 8$.',
-        r'That interval holds $8 - (-1) + 1 = 10$ integers: $\textbf{(C)}\ 10$.',
     ],
     'step-drill-08': [
         r'Suppose Ava is a knight. Then Ben, who calls her a knave, is a knave, and since exactly one is a knave, Cal is a knight. But Cal claims to be the same type as Ben, which is false: a contradiction.',

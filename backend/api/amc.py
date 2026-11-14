@@ -11,7 +11,7 @@ from typing import Dict, Optional, Union
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
-from backend.amc import catalog, coach, engine, store
+from backend.amc import catalog, coach, engine, insights, store
 from backend.amc import official
 from backend.amc import problems as pb
 from backend.api.guard import current_username
@@ -112,13 +112,6 @@ def dashboard(username: str = Depends(current_username)):
             next_problem = _summary(username, pool[0]['id'], hist, review_by_id)
             break
 
-    recent = []
-    for row in reversed(attempts[-8:]):
-        if pb.get(row['problem_id']):
-            item = _summary(username, row['problem_id'], hist, review_by_id)
-            item.update(correct=bool(row['correct']), at=row['at'], via=row['source'])
-            recent.append(item)
-
     # No number until there is something to base it on: with no answers the
     # projection is only the prior, and a score on the dashboard reads as a fact.
     enough = len(hist) >= engine.PROJECTION_MIN
@@ -145,10 +138,17 @@ def dashboard(username: str = Depends(current_username)):
         weakest=[{'id': t['id'], 'name': t['name'], 'mastery': tstats[t['id']]['mastery'],
                   'accuracy': tstats[t['id']]['accuracy']} for t in weakest[:4]],
         next_problem=next_problem,
-        recent=recent,
+        performance=insights.recent_performance(attempts, mocks, today),
         plan=plan_view,
         last_mock=_mock_brief(mocks[0]) if mocks else None,
     )
+
+
+@router.get('/api/amc/analytics')
+def analytics(username: str = Depends(current_username)):
+    attempts, reviews, hist, review_by_id = _context(username)
+    return ok(**insights.analytics(attempts, hist, review_by_id, reviews, store.mocks(username),
+                                   store.plan(username), _today()))
 
 
 def _mock_brief(row):
@@ -555,6 +555,9 @@ def submit(contest_id: str, body: SubmitBody, username: str = Depends(current_us
         if new_review:
             statements += store.review_upsert(username, new_review)
             reviews[row['problem_id']] = new_review
+    # Which problems this sitting was, in order, so a mock that is later
+    # reordered or revised is still graded against what was actually asked.
+    answers['_ids'] = list(mock['problems'])
     mock_id, insert = store.mock_row(username, contest_id, 'mock', answers, graded['score'], graded['correct'],
                                      graded['wrong'], graded['blank'], body.seconds)
     statements.append(insert)
@@ -570,6 +573,9 @@ def mock_result(mock_id: str, username: str = Depends(current_username)):
     mock = _gradable(row['contest_id'])
     if not mock:
         return fail('That contest is no longer available.')
+    asked = row['answers'].get('_ids')
+    if isinstance(asked, list) and asked and all(pb.get(pid) for pid in asked):
+        mock = {**mock, 'problems': asked}
     graded = engine.score_mock(mock, row['answers'])
     report = engine.mock_report(mock, graded)
     problems = []

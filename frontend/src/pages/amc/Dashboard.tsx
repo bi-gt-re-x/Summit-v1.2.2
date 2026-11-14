@@ -1,12 +1,13 @@
 /**
  * The dashboard: where signing in lands. Today's plan, the next problem worth
  * doing, a projected score against the goal, how each category is going, and
- * what was answered last.
+ * how this week compares with last.
  */
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ErrorState, Loading } from '@/components';
 import { CategoryDot, Difficulty, Empty, Meter, PageHeader } from '@/components/Amc/bits';
+import { RecentPerformanceCard } from '@/components/Amc/Performance';
 import { useApi, useDocumentTitle } from '@/hooks';
 import { useNametag } from '@/hooks/useNametag';
 import {
@@ -219,35 +220,7 @@ export default function Dashboard() {
             </section>
           )}
 
-          <section className="am-card">
-            <div className="am-card-head">
-              <h2>Recent answers</h2>
-              <Link to="/problems">All problems</Link>
-            </div>
-            {data.recent.length ? (
-              <div className="am-rows">
-                {data.recent.map((r, i) => (
-                  <Link key={`${r.id}-${i}`} to={`/problems/${r.id}`} className="am-row">
-                    <div className="am-row-main">
-                      <div className="am-row-head">
-                        <CategoryDot category={r.category} />
-                        <strong>{r.source}</strong>
-                        <span className="am-muted">{r.topic_name}</span>
-                      </div>
-                    </div>
-                    <div className="am-row-side">
-                      <span className="am-muted" style={{ fontSize: 12 }}>{shortDate(r.at)}</span>
-                      <span className={`am-pill ${r.correct ? 'am-pill-solved' : 'am-pill-missed'}`}>
-                        {r.via === 'reveal' ? 'Revealed' : r.correct ? 'Right' : 'Wrong'}
-                      </span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <Empty title="No answers yet">Your answers show up here. Start with problem 1 of the Step Mock AMC 10.</Empty>
-            )}
-          </section>
+          <RecentPerformanceCard data={data.performance} />
         </div>
 
         <div className="am-stack">

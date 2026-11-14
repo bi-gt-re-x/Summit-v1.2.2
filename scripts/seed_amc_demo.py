@@ -57,10 +57,10 @@ def seed():
     clear()
     today = date.today()
     rows, reviews = [], {}
-    # Problems 1-14 of the AMC 10 mock over the last two weeks; a few misses.
-    misses = {'step-10-04', 'step-10-09', 'step-10-12', 'step-10-13'}
-    for i, n in enumerate(range(1, 15)):
-        pid = 'step-10-{:02d}'.format(n)
+    # The first 14 problems of the AMC 10 mock over the last two weeks; a few misses.
+    first = catalog.MOCK_BY_ID['step-mock-10']['problems'][:14]
+    misses = {first[3], first[7], first[10], first[12]}
+    for i, pid in enumerate(first):
         p = BY_ID[pid]
         days_ago = 13 - i
         right = pid not in misses
@@ -71,7 +71,7 @@ def seed():
                       'practice', at(days_ago))))
         if not right:
             reviews[pid] = engine.after_answer(None, pid, False, today - timedelta(days=days_ago))
-    for pid in ('step-aime-01', 'step-aime-03', 'step-12-01', 'step-12-02'):
+    for pid in ('step-aime-01', 'step-aime-05', 'step-12-01', 'step-12-02'):
         rows.append(('INSERT INTO amc_attempts (id, user_id, problem_id, answer, correct, seconds, source, at) '
                      'VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
                      (uuid.uuid4().hex, USERNAME, pid, str(BY_ID[pid]['answer']), 1, 240, 'practice', at(1))))
@@ -88,6 +88,7 @@ def seed():
         else:
             answers[str(n)] = ''
     graded = engine.score_mock(mock, answers)
+    answers['_ids'] = list(mock['problems'])
     _, insert = store.mock_row(USERNAME, mock['id'], 'mock', answers, graded['score'], graded['correct'],
                                graded['wrong'], graded['blank'], 4200)
     rows.append(insert)
@@ -97,7 +98,7 @@ def seed():
     exam = date(today.year + (1 if today >= date(today.year, 11, 5) else 0), 11, 5)
     if (exam - today).days < 21:
         exam = exam.replace(year=exam.year + 1)
-    store.save_plan(USERNAME, 'AMC 10', exam.isoformat(), 105, 6, {})
+    store.save_plan(USERNAME, 'AMC 10', exam.isoformat(), 100, 6, {})
     print('Seeded {}. Sign in locally with the password in this script.'.format(USERNAME))
 
 

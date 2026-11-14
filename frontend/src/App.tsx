@@ -47,6 +47,7 @@ const Contest = lazy(() => import('@/pages/amc/Contest'));
 const TakeMock = lazy(() => import('@/pages/amc/TakeMock'));
 const MockResult = lazy(() => import('@/pages/amc/MockResult'));
 const StudyPlan = lazy(() => import('@/pages/amc/StudyPlan'));
+const Analytics = lazy(() => import('@/pages/amc/Analytics'));
 const Search = lazy(() => import('@/pages/amc/Search'));
 
 /**
@@ -55,7 +56,7 @@ const Search = lazy(() => import('@/pages/amc/Search'));
  */
 export const RETIRED_PATHS = [
   '/tasks', '/calendar', '/calendar/day', '/calendar/week', '/calendar/month', '/goals', '/growth',
-  '/analytics', '/analytics/growth', '/analytics/review', '/analytics/goals', '/analytics/records',
+  '/analytics/growth', '/analytics/review', '/analytics/goals', '/analytics/records',
   '/analytics/subject/:subjectId', '/recommendations', '/insights', '/habits', '/subjects', '/trends',
   '/skill-trees', '/growth-tree', '/log', '/behavior', '/notes', '/timer', '/achievements',
   '/achievements/badges', '/achievements/growth', '/records', '/records/growth', '/records/badges',
@@ -271,6 +272,7 @@ export default function App() {
               <Route path="/contests/:contestId/take" element={<TakeMock />} />
               <Route path="/mocks/:mockId" element={<MockResult />} />
               <Route path="/study-plan" element={<StudyPlan />} />
+              <Route path="/analytics" element={<Analytics />} />
               <Route path="/search" element={<Search />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/settings/:section" element={<Settings />} />

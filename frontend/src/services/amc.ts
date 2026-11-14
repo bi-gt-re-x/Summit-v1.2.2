@@ -1,6 +1,6 @@
 /**
  * The AMC prep API (backend/api/amc.py): dashboard, problems, review, topics,
- * contests, study plan and search. Every call is for the signed-in account.
+ * contests, study plan, analytics and search. Every call is for the signed-in account.
  */
 import { del, get, post, put } from './api';
 
@@ -187,7 +187,7 @@ export interface Dashboard {
   categories: Category[];
   weakest: { id: string; name: string; mastery: number; accuracy: number | null }[];
   next_problem: ProblemSummary | null;
-  recent: (ProblemSummary & { correct: boolean; at: string; via: string })[];
+  performance: RecentPerformance;
   plan: null | {
     target: Level;
     exam_date: string;
@@ -197,6 +197,109 @@ export interface Dashboard {
     today: TodayItem[];
   };
   last_mock: MockBrief | null;
+}
+
+export interface PerformanceWindow {
+  answered: number;
+  correct: number;
+  accuracy: number | null;
+  revealed: number;
+  minutes: number;
+  avg_seconds: number | null;
+  days: number;
+  hardest: { id: string; rating: number; short: string } | null;
+}
+
+export interface ScorePoint {
+  id: string;
+  contest_id: string;
+  name: string;
+  level: Level | '';
+  kind: 'mock' | 'logged';
+  score: number;
+  max: number | null;
+  at: string;
+}
+
+export interface Note {
+  tone: 'up' | 'down' | 'flat';
+  text: string;
+}
+
+/** The dashboard's recent performance: this week against last. */
+export interface RecentPerformance {
+  this_week: PerformanceWindow;
+  last_week: PerformanceWindow;
+  days: { date: string; answered: number; correct: number }[];
+  mocks: ScorePoint[];
+  notes: Note[];
+}
+
+export interface RatingRow {
+  rating: number;
+  attempted: number;
+  first_right: number;
+  accuracy: number | null;
+  avg_seconds: number | null;
+}
+
+export interface ContestGuide {
+  level: Level;
+  count: number;
+  minutes: number;
+  max: number;
+  scoring: string;
+  who: string;
+  format: string;
+  qualify: string;
+  sections: { range: string; rating: string; minutes: number; what: string }[];
+  shares: { id: string; name: string; share: number }[];
+  measured: null | { papers: number; problems: number; shares: Record<string, number> };
+  bands: { last: number; rating: number }[];
+  key_topics: { id: string; name: string; category: string }[];
+}
+
+export interface Analytics {
+  target: Level;
+  goal: number;
+  has_plan: boolean;
+  exam_date: string | null;
+  days_left: number | null;
+  hours: number | null;
+  performance: {
+    attempted: number;
+    solved: number;
+    accuracy: number | null;
+    avg_seconds: number | null;
+    minutes: number;
+    active_days: number;
+    projected: Record<Level, number | null>;
+    projection_min: number;
+    categories: Category[];
+    ratings: RatingRow[];
+    ceiling: number | null;
+    weeks: { start: string; answered: number; correct: number; accuracy: number | null }[];
+    topics: {
+      id: string; name: string; category: string; weight: number; levels: Level[];
+      attempted: number; problems: number; accuracy: number | null; mastery: number; review: number;
+    }[];
+    recovery: { missed_first: number; recovered: number; open: number; revealed: number };
+    mocks: ScorePoint[];
+  };
+  contests: Record<Level, ContestGuide>;
+  prepare: {
+    goal: number;
+    right_needed: number;
+    split: string;
+    need_rating: number | null;
+    ceiling: number | null;
+    reach: string;
+    gap: number | null;
+    focus: { id: string; name: string; category: string; weight: number; mastery: number; accuracy: number | null }[];
+    steps: { title: string; body: string; to: string }[];
+    week: { what: string; hours: number }[];
+    phase: null | { name: string; weeks: number; text: string };
+  };
 }
 
 export interface ProblemFilters {
@@ -397,6 +500,7 @@ export interface SearchResults {
 
 export const amc = {
   dashboard: () => get<Dashboard>('/api/amc/dashboard'),
+  analytics: () => get<Analytics>('/api/amc/analytics'),
   problems: (filters: ProblemFilters) => get<ProblemList>('/api/amc/problems', { ...filters }),
   problem: (id: string) => get<ProblemDetail>(`/api/amc/problems/${encodeURIComponent(id)}`),
   attempt: (id: string, answer: string, seconds: number, source: 'practice' | 'review' = 'practice') =>

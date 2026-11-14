@@ -77,13 +77,13 @@ export default function Landing() {
               <a className="secondary" href="#features">See what's inside</a>
             </div>
             <div className="am-landing-numbers">
-              <div><strong>60</strong><span>graded problems</span></div>
+              <div><strong>65</strong><span>problems with step-by-step solutions</span></div>
               <div><strong>156</strong><span>official papers indexed</span></div>
               <div><strong>32</strong><span>topics</span></div>
             </div>
           </div>
           <div className="am-landing-card amc-page" style={{ padding: 28, margin: 0, width: '100%' }}>
-            <p className="am-kicker">Try one · Step Mock AMC 10 #21</p>
+            <p className="am-kicker">Try one · Step Mock AMC 10 #18</p>
             <MathText text={SAMPLE.statement} as="p" className="am-statement" />
             <AnswerInput
               choices={SAMPLE.choices}
@@ -94,7 +94,7 @@ export default function Landing() {
               given={checked ? pick : undefined}
             />
             <div className="am-answer-bar">
-              <span className="am-muted" style={{ fontSize: 13 }}>Difficulty 4 of 5 · Factors &amp; Divisors</span>
+              <span className="am-muted" style={{ fontSize: 13 }}>AoPS rating 2 · Factors &amp; Divisors</span>
               {checked ? (
                 <button type="button" className="am-btn" onClick={() => { setPick(''); setChecked(false); }}>Reset</button>
               ) : (

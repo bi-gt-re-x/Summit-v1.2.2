@@ -5,7 +5,7 @@ fails here rather than marking a student wrong for being right. The rest are
 checked for shape: five choices and a letter, or an integer from 0 to 999.
 """
 from fractions import Fraction
-from itertools import combinations, permutations
+from itertools import combinations, permutations, product
 from math import gcd
 
 import pytest
@@ -52,8 +52,13 @@ COMPUTED = {
                                 if 1000 % a == 0 and (1000 // a) % b == 0)),
     'step-drill-02': ('$63$', sum(1 for n in range(1, 1000) if sum(map(int, str(n))) == 10)),
     'step-drill-04': ('$49$', pow(7, 2026, 100)),
-    'step-drill-05': ('$40$', sum(1 for n in range(1, 101) if (n * n + 1) % 5 == 0)),
-    'step-drill-07': ('$10$', sum(1 for x in range(-50, 50) if abs(2 * x - 7) <= 9)),
+    'step-drill-05': ('$6$', sum(1 for n in range(1, 101) if (n * n + 1) % 65 == 0)),
+    'step-12-15': ('$31$', sum(1 for n in range(1, 101) if (n ** 3 - n) % 48 == 0)),
+    'step-12-17': ('$21$', next(x * y for x in range(11) for y in range(11) if x + y == 10 and x ** 3 + y ** 3 == 370)),
+    'step-12-18': ('$441$', sum(1 for a in range(7) for b in range(a + 1, 7) for c in range(7) for d in range(c + 1, 7))),
+    'step-10-26': ('$178$', sum(1 for s in product('AB', repeat=10)
+                                 if not any(s[i] == s[i + 1] == s[i + 2] for i in range(8)))),
+    'step-10-27': ('$90$', sum(1 for p in permutations(range(1, 7)) if all(abs(p[i] - p[i + 1]) != 1 for i in range(5)))),
 }
 
 
@@ -80,8 +85,6 @@ def test_fraction_answers():
 
 AIME = {
     'step-aime-01': sum(1 for n in range(1, 1001) if n % 6 == 0 and n % 4 and n % 9),
-    'step-aime-02': 21,  # (x+y)^3 - 3xy(x+y) = 370 with x+y = 10
-    'step-aime-03': (7 * 6 // 2) ** 2,
     'step-aime-04': sum(1 for a in range(1, 100) if gcd(a, 100 - a) == 1),
     'step-aime-05': sum(1000 // 5 ** k for k in range(1, 6)),
     'step-aime-06': sum(1 for c in combinations(range(1, 10), 4)),
@@ -92,6 +95,8 @@ AIME = {
     'step-aime-12': (lambda f: f.numerator + f.denominator)(
         Fraction(65, 8) * (Fraction(65, 8) - 2 * 4)),
     'step-aime-14': next(k for k in range(1, 200) if pow(2, k, 125) == 1),
+    'step-aime-16': sum(1 for a in range(1, 51) for b in range(1, 51) if (a * a + b * b) % 13 == 0),
+    'step-aime-18': ((4 ** 7 - 1) // 3) % 1000,
     'step-aime-15': sum(1 for m in range(1 << 9) if sum(i + 1 for i in range(9) if m >> i & 1) % 3 == 0),
 }
 
@@ -101,9 +106,44 @@ def test_aime_answers(pid):
     assert BY_ID[pid]['answer'] == AIME[pid]
 
 
-def test_aime_two_has_real_solutions():
-    # x + y = 10, xy = 21 -> roots of t^2 - 10t + 21: 3 and 7.
-    assert 3 ** 3 + 7 ** 3 == 370
+def test_the_harder_problems_by_computation():
+    import cmath
+    import math
+
+    # step-10-28: the frog lands on 7.
+    p = [Fraction(1), Fraction(1, 2)]
+    for _ in range(2, 8):
+        p.append(p[-1] / 2 + p[-2] / 2)
+    assert BY_ID['step-10-28']['answer'] == letter('step-10-28', r'$\frac{%d}{%d}$' % (p[7].numerator, p[7].denominator))
+
+    # step-12-13: sign changes of sin x - x/30 on [-31, 31], counting x = 0 once.
+    xs = [i / 2000 for i in range(-62000, 62001)]
+    vals = [math.sin(x) - x / 30 for x in xs]
+    crossings = sum(1 for a, b in zip(vals, vals[1:]) if a == 0 or a * b < 0)
+    assert '$%d$' % crossings == BY_ID['step-12-13']['choices']['ABCDE'.index(BY_ID['step-12-13']['answer'])]
+
+    # step-12-14: the same value for every 7th root of unity but 1.
+    for k in range(1, 7):
+        z = cmath.exp(2j * math.pi * k / 7)
+        assert abs(abs(1 + z + z ** 2 + z ** 4) ** 2 - 2) < 1e-9
+    assert BY_ID['step-12-14']['answer'] == letter('step-12-14', '$2$')
+
+    # step-12-16: run the recursion.
+    a = 1.0
+    for _ in range(99):
+        a += 1 / a
+    assert BY_ID['step-12-16']['answer'] == letter('step-12-16', '$%d$' % (2 * round(a / 2)))
+
+    # step-aime-17: P(HHH before THT) = 5/12 by simulation of the exact chain.
+    states = {'': 0, 'H': 0, 'HH': 0, 'T': 0, 'TH': 0}
+    prob = dict.fromkeys(states, Fraction(1, 2))
+    for _ in range(200):
+        prob = {
+            '': (prob['H'] + prob['T']) / 2, 'H': (prob['HH'] + prob['T']) / 2,
+            'HH': (1 + prob['T']) / 2, 'T': (prob['TH'] + prob['T']) / 2, 'TH': prob['HH'] / 2,
+        }
+    assert abs(float(prob['']) - 5 / 12) < 1e-12
+    assert BY_ID['step-aime-17']['answer'] == 5 + 12
 
 
 def test_grading_normalizes_answers():

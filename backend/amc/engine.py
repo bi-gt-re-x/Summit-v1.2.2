@@ -14,9 +14,10 @@ LETTERS = 'ABCDE'
 #: marks it mastered.
 INTERVALS = [3, 10, 21]
 
-#: Typical AIME qualifying targets used as default goals. Real cutoffs move
-#: every year; these are round numbers in the range recent years have fallen.
-DEFAULT_GOALS = {'AMC 10': 105, 'AMC 12': 90, 'AIME': 7}
+#: Default goals: the AIME qualifying score, which from the 2026-27 contests
+#: is fixed at 100 on the AMC 10 and 85 on the AMC 12 (it used to move every
+#: year with the score distribution), and a solid AIME score.
+DEFAULT_GOALS = {'AMC 10': 100, 'AMC 12': 85, 'AIME': 7}
 
 #: Chance of solving a problem of each difficulty with no history yet.
 PRIOR = {1: 0.9, 2: 0.75, 3: 0.55, 4: 0.35, 5: 0.15}
@@ -432,6 +433,7 @@ PAGES = [
     {'name': 'Topics', 'to': '/topics', 'words': 'topics algebra geometry number theory counting probability'},
     {'name': 'Past Contests', 'to': '/contests', 'words': 'contests past papers mock exam amc aime timed'},
     {'name': 'Study Plan', 'to': '/study-plan', 'words': 'study plan schedule weeks calendar goal'},
+    {'name': 'Analytics', 'to': '/analytics', 'words': 'analytics performance accuracy trend stats cutoff format prepare goal'},
     {'name': 'Settings', 'to': '/settings', 'words': 'settings account preferences theme'},
 ]
 

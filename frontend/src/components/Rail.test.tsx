@@ -24,7 +24,13 @@ function summary(overrides: Partial<Dashboard['stats']> = {}): Dashboard {
     categories: [],
     weakest: [],
     next_problem: null,
-    recent: [],
+    performance: {
+      this_week: { answered: 0, correct: 0, accuracy: null, revealed: 0, minutes: 0, avg_seconds: null, days: 0, hardest: null },
+      last_week: { answered: 0, correct: 0, accuracy: null, revealed: 0, minutes: 0, avg_seconds: null, days: 0, hardest: null },
+      days: [],
+      mocks: [],
+      notes: [],
+    },
     plan: null,
     last_mock: null,
   };

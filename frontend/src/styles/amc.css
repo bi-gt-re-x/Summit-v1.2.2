@@ -1019,3 +1019,129 @@ mark.am-hl { background: var(--am-warn-soft); color: inherit; border-radius: 3px
 }
 /* Text with line breaks in it (pasted official problems) keeps its paragraphs. */
 .am-statement, .am-solution-body p, .am-steps-solution li > div, .am-callout p { white-space: pre-line; }
+
+/* ---- Charts (components/Amc/Charts.tsx) ------------------------------------ */
+.am-chart { margin: 0; display: grid; gap: 6px; min-width: 0; }
+.am-cols {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 120px;
+    border-bottom: 1px solid var(--am-line);
+}
+.am-col {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 64px;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+}
+.am-col:focus-visible { outline: 2px solid var(--am-sage); outline-offset: 1px; border-radius: 4px; }
+.am-col-bar {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    width: 100%;
+    min-height: 0;
+    border-radius: 4px 4px 0 0;
+    background: var(--am-sage-soft);
+    box-shadow: inset 0 0 0 1px var(--am-line);
+    overflow: hidden;
+}
+.am-col-bar i { display: block; width: 100%; background: var(--am-sage); }
+.am-col:hover .am-col-bar, .am-col.is-on .am-col-bar { box-shadow: inset 0 0 0 1px var(--am-sage); }
+.am-col:hover .am-col-bar i, .am-col.is-on .am-col-bar i { background: var(--am-good); }
+.am-cols-goal {
+    position: absolute;
+    left: 0;
+    right: 0;
+    border-top: 2px dashed var(--am-warn);
+    pointer-events: none;
+    z-index: 1;
+}
+.am-cols-goal em {
+    position: absolute;
+    right: 0;
+    bottom: 2px;
+    font-style: normal;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--am-muted);
+    background: var(--am-card);
+    padding: 0 4px;
+    border-radius: 4px;
+}
+.am-cols-labels { display: flex; gap: 2px; font-size: 11px; color: var(--am-faint); }
+.am-cols-labels span { flex: 1 1 0; min-width: 0; max-width: 64px; white-space: nowrap; overflow: visible; }
+.am-cols-labels span:last-child { display: flex; justify-content: flex-end; }
+.am-chart-readout { min-height: 20px; font-size: var(--text-sm); color: var(--am-body); }
+.am-legend { display: flex; flex-wrap: wrap; gap: var(--space-3); margin: var(--space-2) 0 0; padding: 0; list-style: none; font-size: 12px; color: var(--am-muted); }
+.am-legend li { display: inline-flex; align-items: center; gap: 6px; }
+.am-legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; }
+.am-legend-strong { background: var(--am-sage); }
+.am-legend-soft { background: var(--am-sage-soft); box-shadow: inset 0 0 0 1px var(--am-line); }
+.am-legend-goal { height: 0 !important; border-top: 2px dashed var(--am-warn); border-radius: 0 !important; }
+
+.am-hbars { display: grid; gap: var(--space-3); }
+.am-hbar { display: grid; grid-template-columns: minmax(0, 11rem) minmax(0, 1fr) 3.5rem; gap: var(--space-3); align-items: center; font-size: var(--text-sm); }
+.am-hbar-label { display: flex; align-items: center; gap: var(--space-2); color: var(--am-body); min-width: 0; }
+.am-hbar-track { height: 8px; border-radius: 999px; background: var(--am-line); overflow: hidden; }
+.am-hbar-track i { display: block; height: 100%; border-radius: inherit; background: var(--tone, var(--am-sage)); }
+.am-hbar-value { text-align: right; font-variant-numeric: tabular-nums; color: var(--am-ink); font-weight: 600; }
+@media (max-width: 480px) {
+    .am-hbar { grid-template-columns: minmax(0, 1fr) 3.5rem; gap: 4px var(--space-3); }
+    .am-hbar-track { grid-column: 1 / -1; grid-row: 2; }
+}
+
+/* ---- Recent performance (components/Amc/Performance.tsx) ------------------ */
+.am-perf { display: grid; gap: var(--space-4); }
+.am-compare { margin: 0; display: grid; gap: 0; }
+.am-compare-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 6rem);
+    gap: var(--space-3);
+    align-items: baseline;
+    padding: var(--space-2) 0;
+    border-top: 1px solid var(--am-line-soft);
+    font-size: var(--text-sm);
+}
+.am-compare-row dt { color: var(--am-body); }
+.am-compare-row dd { margin: 0; }
+.am-compare-row dd:last-child { text-align: right; }
+.am-compare-row strong { font-variant-numeric: tabular-nums; }
+.am-compare-head { border-top: 0; padding-top: 0; color: var(--am-faint); font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.am-delta { font-size: 12px; font-weight: 600; color: var(--am-muted); margin-left: 4px; white-space: nowrap; }
+.am-delta.is-up { color: var(--am-good); }
+.am-delta.is-down { color: var(--am-bad); }
+.am-notes { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-2); }
+.am-notes li { display: flex; gap: var(--space-2); align-items: baseline; font-size: var(--text-sm); color: var(--am-body); line-height: 1.5; }
+.am-notes li > span { font-size: 10px; flex: none; color: var(--am-muted); }
+.am-notes li.is-up > span { color: var(--am-good); }
+.am-notes li.is-down > span { color: var(--am-bad); }
+
+/* ---- Analytics (pages/amc/Analytics.tsx) ----------------------------------- */
+.am-card-sub { margin: 0 0 var(--space-3); color: var(--am-muted); font-size: var(--text-sm); line-height: 1.55; }
+.am-prose { margin: 0 0 var(--space-3); color: var(--am-body); line-height: 1.65; }
+.am-topic-list li { align-items: center; }
+.am-topic-list .am-link { display: inline-flex; align-items: center; gap: var(--space-2); min-width: 0; }
+.am-topic-list .am-muted { flex: none; font-size: 12px; }
+.am-mini-stats { margin: 0 0 var(--space-3); display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: var(--space-3); }
+.am-mini-stats dt { color: var(--am-muted); font-size: 12px; }
+.am-mini-stats dd { margin: 2px 0 0; font-family: var(--am-serif); font-size: 26px; color: var(--am-ink); }
+.am-sections { margin: 0; padding: 0; list-style: none; display: grid; gap: var(--space-3); }
+.am-sections li { padding: var(--space-3) var(--space-4); border: 1px solid var(--am-line); border-radius: 10px; background: var(--am-inset); }
+.am-sections-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--space-2); font-size: var(--text-sm); }
+.am-sections p { margin: var(--space-2) 0 0; color: var(--am-body); line-height: 1.6; font-size: var(--text-sm); }
+.am-steps-list { margin: 0; padding-left: 1.4em; display: grid; gap: var(--space-3); }
+.am-steps-list a { text-decoration: none; color: var(--am-ink); }
+.am-steps-list a:hover strong { text-decoration: underline; }
+.am-steps-list p { margin: 4px 0 0; color: var(--am-body); font-size: var(--text-sm); line-height: 1.6; }
+.am-phase-card { background: var(--am-sage-soft); border-color: var(--am-sage); }
+.am-phase-card h2 { margin: 4px 0 var(--space-2); font-family: var(--am-serif); font-weight: 400; font-size: 28px; }
