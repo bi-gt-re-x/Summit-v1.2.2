@@ -20,22 +20,32 @@ import { amc, pct, type Diagnosis, type Level, type SmartStats } from '@/service
 const LEVELS: Level[] = ['AMC 10', 'AMC 12', 'AIME'];
 const MAX: Record<Level, number> = { 'AMC 10': 150, 'AMC 12': 150, AIME: 15 };
 
+/** Levels to one decimal: the model is not sure of the second. */
+const lv = (v: number | null) => (v == null ? '–' : v.toFixed(1));
+
+/** AMC scores move in steps of 1.5, so a whole number reads truer than 73.6. */
+const score = (v: number, level: Level) => (level === 'AIME' ? String(Math.round(v * 10) / 10) : String(Math.round(v)));
+
 function Forecast({ stats, level }: { stats: SmartStats; level: Level }) {
   const c = stats.contests[level];
+  const mine = level === stats.level;
   return (
-    <div className={`am-forecast${level === stats.level ? ' is-target' : ''}`}>
-      <span className="am-kicker" style={{ margin: 0 }}>{level}{level === stats.level ? ' · your contest' : ''}</span>
-      <strong className="am-forecast-score">{c.expected}<small> / {MAX[level]}</small></strong>
-      <span className="am-muted">80% range {c.low}–{c.high}</span>
+    <div className={`am-predict${mine ? ' is-target' : ''}`}>
+      <div className="am-predict-head">
+        <span className="am-predict-name">{level}</span>
+        {mine && <span className="am-predict-tag">Your contest</span>}
+      </div>
+      <p className="am-predict-score">{score(c.expected, level)}<small>/ {MAX[level]}</small></p>
+      <p className="am-predict-line">Likely <strong>{score(c.low, level)}–{score(c.high, level)}</strong></p>
       {c.target != null && c.chance != null && (
-        <span>
+        <div className="am-predict-chance">
           <Meter value={c.chance} tone={c.chance >= 0.6 ? 'good' : c.chance >= 0.3 ? 'warn' : 'bad'} />
-          <span className="am-muted" style={{ fontSize: 12 }}> {pct(c.chance)} chance of {c.target}+</span>
-        </span>
+          <p className="am-predict-line"><strong>{pct(c.chance)}</strong> chance of {c.target}+</p>
+        </div>
       )}
-      <span className="am-muted" style={{ fontSize: 12 }}>
-        {c.reach ? `Usually right through #${c.reach} of ${c.count}` : `Not yet right more often than not on #1`}
-      </span>
+      <p className="am-predict-line">
+        {c.reach ? `Usually right through #${c.reach} of ${c.count}` : 'Not yet usually right on #1'}
+      </p>
     </div>
   );
 }
@@ -93,7 +103,7 @@ function Coach({ initial, available, setup, label }: {
           {d.this_week.length > 0 && (
             <>
               <h3 className="am-h3">This week</h3>
-              <ol className="am-coach-week">
+              <ol className="am-ai-week">
                 {d.this_week.map((w, i) => (
                   <li key={i}>
                     <strong><MathText text={w.action} /></strong>
@@ -159,7 +169,7 @@ export function Insights() {
       <dl className="am-stats">
         <div className="am-stat">
           <dt>Your level</dt>
-          <dd className="am-stat-value">{s.theta}<small style={{ fontSize: 14 }}> / 10</small></dd>
+          <dd className="am-stat-value">{lv(s.theta)}<small style={{ fontSize: 14 }}> / 10</small></dd>
           <dd className="am-stat-hint">likely {s.band} · the rating you solve half the time</dd>
         </div>
         <div className="am-stat">
@@ -175,8 +185,8 @@ export function Insights() {
       </dl>
 
       <section className="am-card">
-        <div className="am-card-head"><h2>Predicted scores</h2><span className="am-muted" style={{ fontSize: 12 }}>answering when it beats a blank</span></div>
-        <div className="am-forecasts">{LEVELS.map((l) => <Forecast key={l} stats={s} level={l} />)}</div>
+        <div className="am-card-head"><h2>Predicted scores</h2><span className="am-muted" style={{ fontSize: 12 }}>blanks where a guess would cost points</span></div>
+        <div className="am-predicts">{LEVELS.map((l) => <Forecast key={l} stats={s} level={l} />)}</div>
       </section>
 
       <div className="am-grid am-grid-main">
@@ -188,7 +198,7 @@ export function Insights() {
               {s.next_problems.map((p) => (
                 <li key={p.id}>
                   <Link className="am-link" to={`/problems/${p.id}`}>{p.short}</Link>
-                  <span className="am-muted"> {p.topic_name} · {p.rating}/10 · {pct(p.chance)} likely</span>
+                  <span className="am-muted">{p.topic_name} · {p.rating}/10 · {pct(p.chance)} chance you get it</span>
                 </li>
               ))}
             </ul>
@@ -205,7 +215,7 @@ export function Insights() {
           {s.focus.map((t) => (
             <div key={t.id} className="am-ability">
               <Link className="am-link" to={`/topics/${t.id}`}><CategoryDot category={t.category} /> {t.name}</Link>
-              <span className="am-muted">{t.theta == null ? 'not tried yet' : `level ${t.theta} · ${t.right}/${t.answered} right`}</span>
+              <span className="am-muted">{t.theta == null ? 'not tried yet' : `level ${lv(t.theta)} · ${t.right}/${t.answered} right`}</span>
             </div>
           ))}
           {s.strong.length > 0 && (
@@ -214,7 +224,7 @@ export function Insights() {
               {s.strong.map((t) => (
                 <div key={t.id} className="am-ability">
                   <span><CategoryDot category={t.category} /> {t.name}</span>
-                  <span className="am-muted">level {t.theta}</span>
+                  <span className="am-muted">level {lv(t.theta)}</span>
                 </div>
               ))}
             </>
@@ -235,7 +245,7 @@ export function Insights() {
               {s.techniques.slice(0, 4).map((t) => (
                 <div key={t.id} className="am-ability">
                   <Link className="am-link" to={`/problems?technique=${t.id}`}>{t.name}</Link>
-                  <span className="am-muted">level {t.theta} · {t.answered} answered</span>
+                  <span className="am-muted">level {lv(t.theta)} · {t.answered} answered</span>
                 </div>
               ))}
             </>
